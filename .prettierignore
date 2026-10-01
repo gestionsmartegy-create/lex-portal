@@ -5,3 +5,4 @@ docs
 diagrams
 supabase
 *.md
+types/database.ts
