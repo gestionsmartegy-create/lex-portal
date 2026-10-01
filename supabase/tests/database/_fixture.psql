@@ -1,0 +1,81 @@
+-- ============================================================================
+-- Jeu d'essai commun aux tests pgTAP (inclus par \ir dans chaque *.test.sql).
+-- Extension .psql : volontairement ignoré par `supabase test db` comme test.
+-- Tout est créé DANS la transaction du test, puis annulé (rollback).
+-- ============================================================================
+
+set client_min_messages to warning;
+create extension if not exists pgtap with schema extensions;
+create schema if not exists tests;
+
+-- Les tests ne dépendent pas des données fictives du seed : on vide les tables
+-- métier (annulé par le rollback du test). Les comptes du seed restent, sans
+-- aucun dossier rattaché.
+truncate table public.matters, public.organizations, public.notifications,
+               public.client_invitations restart identity cascade;
+
+-- Simule une session : rôle Postgres + claims JWT lus par auth.uid()/auth.jwt().
+create or replace function tests.authenticate_as(p_user uuid, p_aal text default 'aal2')
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_user, 'role', 'authenticated', 'aal', p_aal)::text, true);
+  perform set_config('role', 'authenticated', true);
+end $$;
+
+create or replace function tests.as_anon()
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('role', 'anon')::text, true);
+  perform set_config('role', 'anon', true);
+end $$;
+
+create or replace function tests.clear_authentication()
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('role', 'postgres', true);
+end $$;
+
+grant usage on schema tests to anon, authenticated;
+grant execute on all functions in schema tests to anon, authenticated;
+
+-- Identifiants fixes (lisibles dans les messages d'échec).
+--   …0a admin  …0b Wilson (équipe du dossier 1)  …0c autre personnel  …0d intrus Entra hors domaine
+--   …01 John (client, read_write sur dossier 1)  …02 Jane (cliente, read sur dossier 2)
+insert into auth.users (id, email, raw_app_meta_data, aud, role) values
+  ('00000000-0000-0000-0000-00000000000a', 'admin@lexcanadalaw.com',       '{"provider":"azure"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-00000000000b', 'wilson@lexcanadalaw.com',      '{"provider":"azure"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-00000000000c', 'other.staff@lexcanadalaw.com', '{"provider":"azure"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-00000000000d', 'intrus@gmail.com',             '{"provider":"azure"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-000000000001', 'john@example.com',             '{"provider":"email"}', 'authenticated', 'authenticated'),
+  ('00000000-0000-0000-0000-000000000002', 'jane@example.com',             '{"provider":"email"}', 'authenticated', 'authenticated');
+
+-- Promotion et activation : réservées au serveur (ici postgres, sans claims).
+update public.profiles set role = 'firm_admin' where email = 'admin@lexcanadalaw.com';
+update public.profiles set status = 'active' where role = 'client' and email like '%@example.com';
+
+insert into public.matters (id, display_number, title, practice_area, is_mock) values
+  ('10000000-0000-0000-0000-000000000001', 'LC-2026-0142', 'Permanent Residency Application', 'Immigration', true),
+  ('10000000-0000-0000-0000-000000000002', 'LC-2026-0115', 'Commercial Lease Review', 'Real Estate', true);
+
+insert into public.matter_team (matter_id, user_id, role) values
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b', 'responsible');
+
+insert into public.matter_access (matter_id, user_id, access_level) values
+  ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'read_write'),
+  ('10000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'read');
+
+insert into public.documents (matter_id, provider, display_name, scan_status, folder) values
+  ('10000000-0000-0000-0000-000000000001', 'sharepoint',       'Engagement Agreement.pdf', 'clean',    'shared'),
+  ('10000000-0000-0000-0000-000000000001', 'sharepoint',       'Internal memo.docx',       'clean',    'internal'),
+  ('10000000-0000-0000-0000-000000000001', 'supabase_storage', 'Infected.pdf',             'infected', 'client_upload'),
+  ('10000000-0000-0000-0000-000000000001', 'sharepoint',       'Pending scan.pdf',         'pending',  'client_upload');
+
+insert into public.conversations (id, matter_id, scope, subject, created_by) values
+  ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'matter', 'Questions',
+   '00000000-0000-0000-0000-00000000000b');
+insert into public.conversation_participants (conversation_id, user_id) values
+  ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001');
+insert into public.messages (conversation_id, sender_id, body) values
+  ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b', 'Bonjour M. Doe');
