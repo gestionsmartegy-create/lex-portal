@@ -10,10 +10,10 @@
 |---|---|---|---|
 | client | John Doe | `john.doe@example.com` | `client_number` = `2026-0142`, MFA à enrôler au premier login |
 | client | Jane Roe (QVYON Technologies) | `jane.roe@example.com` | Membre de l'organisation fictive « QVYON Technologies » |
-| staff | Me Wilson Saintelmy | (compte Entra ID réel du cabinet, créé à la première connexion) | Responsable des dossiers ci-dessous. Associé réel : seul son nom apparaît dans les fixtures |
-| firm_admin | (à désigner par le cabinet) | `…@lexcanadalaw.com` | Promotion manuelle (database.md §9) |
+| staff (simulé) | « Me Wilson Saintelmy » | `demo.staff@lexcanadalaw.com` | Compte **fictif** local (`provider = azure` simulé). Le vrai compte du personnel sera créé par Microsoft Entra ID (J3) |
+| firm_admin (simulé) | « Admin Démo » | `demo.admin@lexcanadalaw.com` | Compte **fictif** local. Le vrai firm_admin est à désigner par le cabinet (open-questions) |
 
-Les mots de passe des comptes de test sont générés au moment du seed et consignés dans `supabase/seed.local.md`, un fichier **ignoré par Git**. Ils ne figurent jamais dans le dépôt.
+Les mots de passe sont générés par `pnpm db:seed-passwords` (après `pnpm db:reset`) et écrits **uniquement** dans `supabase/seed.local.md`, un fichier ignoré par Git. Le script vérifie que chaque compte peut se connecter, sans jamais afficher les mots de passe. Données chargées : `supabase/seed.sql`.
 
 ## Dossiers (`matters`)
 

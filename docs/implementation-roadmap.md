@@ -16,19 +16,19 @@
 
 ## Phase 1 — Fondations (détail)
 
-### 1.1 Socle
-- [ ] Next.js (version stable courante, App Router), TypeScript `strict`, pnpm, ESLint, Prettier.
-- [ ] Tailwind CSS v4 + shadcn/ui ; tokens de `docs/design-system.md` (**faire valider les couleurs avant de les figer**).
-- [ ] `next-intl` : routes `/[locale]`, `messages/fr.json` et `messages/en.json`, FR par défaut (à confirmer).
-- [ ] Polices via `next/font/google` (Playfair Display, DM Sans, Cormorant Garamond).
-- [ ] Structure de dossiers d'`AGENTS.md` §3, `.env.example` (sans valeurs).
-- [ ] En-têtes de sécurité : CSP avec nonce (sans `unsafe-inline` pour les scripts), HSTS, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`.
+### 1.1 Socle — ✅ J1 (2026-10-01, ADR 0006)
+- [x] Next.js (version stable courante, App Router), TypeScript `strict`, pnpm, ESLint, Prettier.
+- [x] Tailwind CSS v4 + shadcn/ui ; tokens de `docs/design-system.md` (**faire valider les couleurs avant de les figer**).
+- [x] `next-intl` : routes `/[locale]`, `messages/fr.json` et `messages/en.json`, FR par défaut (à confirmer).
+- [x] Polices via `next/font/google` (Playfair Display, DM Sans, Cormorant Garamond).
+- [x] Structure de dossiers d'`AGENTS.md` §3, `.env.example` (sans valeurs).
+- [x] En-têtes de sécurité : CSP avec nonce (sans `unsafe-inline` pour les scripts), HSTS, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`.
 
-### 1.2 Base de données
-- [ ] `supabase init` ; `supabase/schema.sql` devient la migration initiale ; `supabase db reset` sans erreur.
-- [ ] `supabase/tests/rls-scenarios.sql` converti en pgTAP (`supabase test db`). Au minimum les 32 scénarios, plus les 12 de `security.md` §2.
-- [ ] `supabase gen types typescript` → `types/database.ts`.
-- [ ] `supabase/seed.sql` d'après `docs/mock-data.md`.
+### 1.2 Base de données — ✅ J2 (2026-10-01, ADR 0007)
+- [x] `supabase init` ; migration initiale (= schéma v2.1) + durcissement des privilèges par défaut ; `pnpm db:reset` sans erreur (PostgreSQL 17).
+- [x] 60 tests pgTAP bloquants (`pnpm db:test`) : les 32 scénarios + `security.md` §2 réalisables en base. Contre-épreuve faite (politique affaiblie → 7 échecs).
+- [x] `pnpm db:types` → `types/database.ts` ; `types/domain.ts`.
+- [x] `supabase/seed.sql` d'après `docs/mock-data.md` ; `pnpm db:seed-passwords`.
 
 ### 1.3 Authentification
 - [ ] Client : connexion, MFA TOTP obligatoire (enrôlement à la 1re connexion), mot de passe oublié et réinitialisation, déconnexion, « déconnecter tous les appareils ».

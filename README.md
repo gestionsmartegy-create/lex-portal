@@ -3,7 +3,7 @@
 Portail client sécurisé et bilingue (FR/EN) du cabinet **Lex Canada Law**, avec un espace d'administration pour le cabinet.
 Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, région Canada) + Clio Manage (région CA) + Microsoft Entra ID / SharePoint.
 
-> **État au 2026-10-01** : Phase 1, jalon **J1 (socle) terminé** sur la branche `feat/j1-socle` : Next.js 16, design system, FR/EN, CSP. Prochain jalon : J2 (base de données, **Docker requis**).
+> **État au 2026-10-01** : Phase 1. **J1 (socle)** et **J2 (base de données)** terminés sur `feat/j1-socle` puis `feat/j2-base-de-donnees` : Supabase local, 2 migrations, 60 tests pgTAP, types, données fictives. Prochain jalon : J3 (authentification).
 
 ## Contenu du dépôt
 
@@ -13,8 +13,10 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `CLAUDE.md` | Instructions propres à Claude Code (importe AGENTS.md) |
 | `CLAUDE_CODE_PROMPT.md` | Prompt de démarrage à coller dans Claude Code, et prompts des phases suivantes |
 | `.claude/settings.json` | Interdit à Claude Code de lire les fichiers `.env*` et de pousser vers Supabase distant |
-| `supabase/schema.sql` | **Schéma de base de données v2**, exécutable (22 tables publiques, schémas `private` et `audit`, RLS complète : 47 politiques) |
-| `supabase/tests/rls-scenarios.sql` | 32 scénarios de sécurité validés sur PostgreSQL 16 (à convertir en pgTAP) |
+| `supabase/migrations/` | **Migrations — font foi** (ADR 0007) |
+| `supabase/schema.sql` | Référence figée du **schéma de base de données v2.1**, exécutable (22 tables publiques, schémas `private` et `audit`, RLS complète : 47 politiques) |
+| `supabase/tests/database/` | **60 tests pgTAP bloquants** (RLS, rôles, révocation, audit, privilèges) |
+| `supabase/smoke/` | Test de fumée hors Supabase (32 scénarios) |
 | `docs/database.md` | Architecture de la base : rôles, ERD, dictionnaire, matrice RLS, stockage, rétention |
 | `docs/class-diagram.md` | Diagramme de classes v2.1 (Mermaid) : 58 classes, 15 énumérations |
 | `diagrams/class-diagram-v2.drawio` | Même diagramme, éditable dans [app.diagrams.net](https://app.diagrams.net) |
@@ -27,7 +29,7 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `docs/auth-entra-id-integration.md` | Authentification client (MFA) et personnel (Microsoft) |
 | `docs/security.md`, `docs/privacy-and-data-residency.md` | Exigences de sécurité et de confidentialité |
 | `docs/open-questions.md` | **Décisions qui reviennent au cabinet**, à trancher avant les phases concernées |
-| `docs/decisions/` | ADR 0001 à 0005 (0004 : SharePoint, dépôt officiel · 0005 : DocuSign) |
+| `docs/decisions/` | ADR 0001 à 0007 (0004 SharePoint · 0005 DocuSign · 0006 socle J1 · 0007 base de données J2) |
 | `docs/reference/` | PDF du cabinet : mémorandum EA, schéma directeur, architecture verrouillée |
 | `docs/archive/` | Versions v1 remplacées (schéma, diagramme, modèle de données, cartographie des pages) |
 
@@ -40,7 +42,19 @@ cp .env.example .env.local   # facultatif en J1
 pnpm dev           # http://localhost:3000 → /en ou /fr
 ```
 
-Vérifications : `pnpm lint && pnpm typecheck && pnpm test && pnpm build`. Guide visuel du design system : http://localhost:3000/en/styleguide (développement uniquement).
+### Base de données locale (Docker via OrbStack)
+
+```bash
+pnpm db:start            # 1er lancement : téléchargement des images (plusieurs minutes)
+pnpm db:reset            # migrations + données fictives
+pnpm db:seed-passwords   # mots de passe de test → supabase/seed.local.md (ignoré par Git)
+pnpm db:test             # 60 tests pgTAP — doivent tous passer
+```
+
+Studio local : http://127.0.0.1:54323 · e-mails locaux (Inbucket) : http://127.0.0.1:54324.
+Si `docker` est introuvable, terminez la configuration d'OrbStack (ouvrir l'application), ou exportez `DOCKER_HOST=unix://$HOME/.orbstack/run/docker.sock` (ADR 0007).
+
+Vérifications : `pnpm lint && pnpm typecheck && pnpm test && pnpm db:test && pnpm build`. Guide visuel du design system : http://localhost:3000/en/styleguide (développement uniquement).
 
 ## Démarrer avec Claude Code
 

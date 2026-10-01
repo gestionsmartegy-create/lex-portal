@@ -53,6 +53,25 @@ Ces tests doivent être **automatisés** autant que possible (tests d'intégrati
 | 11 | Injection SQL via un champ de recherche ou de filtre | Aucune exécution — requêtes paramétrées uniquement, jamais de concatenation de chaînes SQL | Revue de code systématique |
 | 12 | Un utilisateur avec accès `read` sur un dossier tente une action d'écriture via l'API | Bloqué par `access_level` et par la politique RLS correspondante | Automatisé |
 
+### Couverture automatisée (mise à jour J2, 2026-10-01)
+
+| # | Test automatisé | Statut |
+|---|---|---|
+| 1 | `supabase/tests/database/03_acces_dossiers.test.sql` (T7, T8) | ✅ base. Réponse 404 identique côté application : J3/J5 (e2e) |
+| 2 | `03_acces_dossiers` (T29 : même session, accès coupé) | ✅ base |
+| 3 | URL de téléchargement transférée | ⏳ Phase 3 (téléchargement en flux par le serveur, pas d'URL réutilisable) |
+| 4 | Webhook falsifié | ⏳ Phase 2 (`private.webhook_events`) |
+| 5 | Jeton Clio expiré | ⏳ Phase 2 |
+| 6 | Fichier malveillant | ✅ base partielle (`04_documents` : fichier `infected` ou `pending` invisible) ; pipeline antivirus en Phase 3 |
+| 7 | Révocation pendant une session active | ✅ base (`03_acces_dossiers`, T29) ; e2e en J6 |
+| 8 | Compte Microsoft hors tenant | ✅ base (`02_identite` : hors domaine → suspendu) ; restriction du tenant Azure en J3 |
+| 9 | Compte du tenant avec un domaine non listé | ✅ base (`02_identite`, T26) |
+| 10 | Client sur `/admin/*` | ✅ base (`03_acces_dossiers` : aucun droit d'administration) ; garde de route en J3/J5 |
+| 11 | Injection SQL | Revue de code (requêtes paramétrées via supabase-js) |
+| 12 | Accès `read` qui tente d'écrire | ✅ base (`03_acces_dossiers`, `05_messagerie`) |
+
+Structure (`01_structure`) : RLS sur toutes les tables de `public`, aucune table sans politique, `private` et `audit` fermés, `search_path` vide sur toutes les fonctions `security definer`, nouvelles tables et RPC fermées par défaut.
+
 ## 3. Ce qui n'est pas encore tranché (nécessite une décision du cabinet)
 
 - Choix définitif du coffre-fort de secrets (Supabase Vault seul vs Azure Key Vault dédié).
