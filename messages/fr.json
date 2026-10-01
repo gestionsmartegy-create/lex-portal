@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "title": "Portail client — Lex Canada Law",
+    "description": "Portail client sécurisé de Lex Canada Law."
+  },
+  "common": {
+    "brand": "Lex Canada Law",
+    "brandMonogram": "LC",
+    "clientPortal": "Portail client",
+    "barristers": "Barristers & Solicitors · Avocats & Notaires",
+    "demoData": "Données de démonstration",
+    "skipToContent": "Aller au contenu principal",
+    "language": "Langue",
+    "switchTo": "English",
+    "copyright": "© {year} Lex Canada Law. Tous droits réservés. Strictement confidentiel."
+  },
+  "home": {
+    "eyebrow": "Portail client",
+    "title": "Vos dossiers juridiques,",
+    "titleAccent": "toujours à portée de main.",
+    "body": "Consultez vos dossiers, échangez en toute sécurité avec votre équipe juridique, signez vos documents et suivez l'avancement de vos affaires — au même endroit.",
+    "status": "Le portail est en préparation. La connexion sera bientôt disponible.",
+    "ctaBooking": "Prendre rendez-vous",
+    "security": "Connexion chiffrée (TLS) · Authentification à deux facteurs"
+  },
+  "status": {
+    "active": "Actif",
+    "pending": "En attente",
+    "completed": "Terminé",
+    "urgent": "Action requise"
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page introuvable",
+      "body": "Cette page n'existe pas ou vous n'y avez pas accès.",
+      "back": "Retour à l'accueil"
+    }
+  },
+  "styleguide": {
+    "title": "Guide de style",
+    "intro": "Développement uniquement — jetons de docs/design-system.md.",
+    "colors": "Couleurs",
+    "typography": "Typographie",
+    "buttons": "Boutons",
+    "badges": "Badges",
+    "fields": "Champs",
+    "displaySample": "Connectez-vous à votre portail",
+    "bodySample": "Saisissez vos identifiants pour accéder à votre espace client sécurisé.",
+    "accentSample": "toujours à portée de main.",
+    "emailLabel": "Adresse e-mail",
+    "linkSample": "Mot de passe oublié ?",
+    "primary": "Accéder à mon portail",
+    "outlineGold": "Prendre rendez-vous",
+    "ghostWhite": "Connexion du personnel"
+  }
+}
