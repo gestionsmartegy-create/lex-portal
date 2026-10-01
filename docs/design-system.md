@@ -69,6 +69,16 @@ Badge : `inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold 
 
 **Accessibilité (ADR 0006, décidé) :** le doré `#B8962E` sur blanc a un contraste ≈ 2,8:1. Il reste utilisé pour les icônes, bordures, focus et grands textes. **Les liens et textes dorés de moins de 18px utilisent `gold-ink #8A6D1A`** (≈ 4,9:1). `ink-subtle #8A8A9A` (≈ 3,4:1) est réservé aux textes ≥ 14px ; en dessous, utiliser `ink-muted`.
 
+## 1 bis. Logo
+
+| Fichier | Usage |
+|---|---|
+| `public/brand/logo-mark-white.png` (700×242) | Monogramme « LC » + feuille d'érable, **blanc et or**, sur fond marine (barre latérale, accueil, panneau de connexion). Fourni par le cabinet le 2026-10-01 |
+| `public/brand/logo-mark-dark.png` (700×242) | Même logo **noir et or** sur fond clair (formulaires, page introuvable, en-tête blanc). Repris de lexcanadalaw.com |
+| `app/icon.png`, `app/apple-icon.png` | Icônes du site, reprises de lexcanadalaw.com |
+
+Composant : `components/shared/brand-mark.tsx` (`tone="light" | "dark"`, `size="sm" | "md" | "lg"`). Il remplace le monogramme texte « LC ✦ » de la maquette Manus. Le texte alternatif est « Lex Canada Law ».
+
 ## 2. Typographie
 
 Google Fonts, chargées avec `next/font/google` (auto-hébergées, aucun appel externe à l'exécution, compatible avec une CSP stricte).

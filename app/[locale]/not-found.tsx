@@ -11,7 +11,7 @@ export default function NotFound() {
       id="main"
       className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 text-center"
     >
-      <BrandMark className="mb-10 items-center" />
+      <BrandMark size="lg" className="mb-10" />
       <h1 className="text-3xl font-bold">{t("title")}</h1>
       <p className="mt-3 max-w-md text-sm text-ink-muted">{t("body")}</p>
       <Button asChild variant="primary" size="brand" className="mt-8">

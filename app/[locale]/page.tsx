@@ -16,7 +16,7 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
   return (
     <main id="main" className="flex min-h-screen flex-col bg-marine text-white">
       <header className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <BrandMark tone="light" />
+        <BrandMark tone="light" priority />
         <LocaleSwitcher tone="light" />
       </header>
 

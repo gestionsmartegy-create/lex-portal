@@ -37,7 +37,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
   return (
     <main id="main" className="min-h-screen bg-surface">
       <header className="flex items-center justify-between border-b border-gray-100 bg-white px-6 py-4 sm:px-8">
-        <BrandMark />
+        <BrandMark size="sm" priority />
         <LocaleSwitcher pathname="/styleguide" />
       </header>
 
