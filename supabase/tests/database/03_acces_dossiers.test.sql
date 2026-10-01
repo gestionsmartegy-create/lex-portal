@@ -19,7 +19,7 @@ select tests.clear_authentication();
 
 -- T6 : sans MFA (aal1), un client ne voit rien
 select tests.authenticate_as('00000000-0000-0000-0000-000000000001', 'aal1');
-select is((select count(*) from public.matters), 0::bigint, 'T6 · client sans MFA : aucun dossier');
+select is((select count(*) from public.matters), 99::bigint, 'T6 · CONTRE-ÉPREUVE (doit échouer)');
 select tests.clear_authentication();
 
 -- T7 / T8 · security.md 1 : isolation entre clients
