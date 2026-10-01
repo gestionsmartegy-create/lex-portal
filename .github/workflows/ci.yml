@@ -1,0 +1,87 @@
+# Intégration continue — ADR 0008.
+# Compte GitHub gratuit : ces contrôles ne sont pas imposés techniquement.
+# Règle (AGENTS.md §10) : ne JAMAIS fusionner une demande dont un contrôle est rouge ou en cours.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  app:
+    name: Application (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6 # version lue dans package.json (packageManager)
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  database:
+    name: Base de données (60 tests pgTAP, dérive des types)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Services strictement nécessaires : Postgres, Auth (crée auth.*), PostgREST, Kong, postgres-meta (types).
+      # Sortie redirigée : elle contient les clés de démonstration locales.
+      - name: Démarrer Supabase local (migrations + seed)
+        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor > /dev/null
+      - name: Tests pgTAP (bloquants)
+        run: pnpm db:test
+      - name: Types générés à jour
+        run: |
+          pnpm db:types
+          git diff --exit-code -- types/database.ts \
+            || (echo "::error::types/database.ts n'est pas à jour : lancer « pnpm db:types » et committer." && exit 1)
+      - name: Arrêter Supabase
+        if: always()
+        run: pnpm exec supabase stop --no-backup > /dev/null 2>&1 || true
+
+  secrets:
+    name: Recherche de secrets (gitleaks, tout l'historique)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GITLEAKS_VERSION: 8.30.1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Installer gitleaks (binaire officiel, somme de contrôle vérifiée)
+        run: |
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          file="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL -o "$file" "$base/$file"
+          curl -sSfL -o checksums.txt "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          grep " $file\$" checksums.txt | sha256sum -c -
+          tar -xzf "$file" gitleaks
+      - name: Analyse
+        run: ./gitleaks git --config .gitleaks.toml --redact --no-banner --verbose .
