@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.development.local)",
+      "Read(./.env.production)",
+      "Read(./.env.production.local)",
+      "Read(./supabase/seed.local.md)",
+      "Read(./supabase/.temp/**)",
+      "Bash(supabase db push:*)",
+      "Bash(supabase link:*)",
+      "Bash(git push --force:*)"
+    ]
+  }
+}

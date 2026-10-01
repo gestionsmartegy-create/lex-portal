@@ -1,0 +1,24 @@
+# Secrets — ne jamais committer (sauf .env.example)
+.env
+.env.*
+!.env.example
+supabase/seed.local.md
+supabase/.temp/
+supabase/.branches/
+
+# Dépendances et builds
+node_modules/
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+next-env.d.ts
+
+# Divers
+.DS_Store
+.tmp/
+*.log
+.vercel/
