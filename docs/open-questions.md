@@ -72,8 +72,8 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Hébergement final : Vercel (déjà utilisé) ou Azure App Service (cité dans `technical-access-requirements.md`) ? | Choix du worker de synchronisation (Vercel Cron ou Azure Functions) et du coffre-fort (Supabase Vault ou Azure Key Vault). Le code reste neutre en attendant | Élevée |
 | Accès administrateur au projet Supabase « lex law » existant et région réelle ? | Sinon : nouveau projet en `ca-central-1` (ADR 0002) | Élevée |
 | Cadre réglementaire applicable : LPRPDE + règles de la Nova Scotia Barristers' Society (infonuagique) ; Loi 25 seulement pour les clients du Québec ? | Contenu de l'AIVP et des mentions de confidentialité | Élevée |
-| Langue par défaut du portail : FR (spécification) ou EN (le site public est 100 % anglais) ? | Redirection de `/` et langue des e-mails | Moyenne |
-| Couleur des liens en petit texte : or `#B8962E` (contraste 2,8:1, insuffisant) ou variante `#8A6D1A` (4,9:1) ? | Conformité WCAG AA | Moyenne |
+| ~~Langue par défaut du portail~~ | ✅ **Anglais** (ADR 0006) ; détection du navigateur active | — |
+| ~~Couleur des liens en petit texte~~ | ✅ **`gold-ink #8A6D1A`** (ADR 0006) | — |
 | Domaine du portail (`portal.lexcanadalaw.com` ?) | URI de redirection OAuth de production (Clio, Entra), CSP, e-mails | Élevée |
 | Qui est le premier firm_admin ? | Personne ne peut inviter de client | Élevée |
 | Durée d'inactivité avant déconnexion, taille maximale des fichiers, formats acceptés | Paramètres de sécurité et d'interface | Moyenne |

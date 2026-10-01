@@ -97,7 +97,7 @@ create table public.profiles (
   email              text not null,
   first_name         text,
   last_name          text,
-  preferred_language text not null default 'fr' check (preferred_language in ('fr', 'en')),
+  preferred_language text not null default 'en' check (preferred_language in ('en', 'fr')),
   phone              text,
   role               public.app_role    not null default 'client',
   status             public.user_status not null default 'invited',
@@ -421,7 +421,7 @@ create table public.client_invitations (
   email              text not null,
   first_name         text,
   last_name          text,
-  preferred_language text not null default 'fr' check (preferred_language in ('fr', 'en')),
+  preferred_language text not null default 'en' check (preferred_language in ('en', 'fr')),
   clio_contact_id    text,
   organization_id    uuid references public.organizations(id) on delete set null,
   token_hash         text not null unique,       -- SHA-256 du jeton ; le jeton clair n'est jamais stocké
