@@ -1,5 +1,7 @@
 # Lex Canada Law — Portail Client
 
+[![CI](https://github.com/SmartegyCanada/lex-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/SmartegyCanada/lex-portal/actions/workflows/ci.yml)
+
 Portail client sécurisé et bilingue (FR/EN) du cabinet **Lex Canada Law**, avec un espace d'administration pour le cabinet.
 Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, région Canada) + Clio Manage (région CA) + Microsoft Entra ID / SharePoint.
 
@@ -29,7 +31,8 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `docs/auth-entra-id-integration.md` | Authentification client (MFA) et personnel (Microsoft) |
 | `docs/security.md`, `docs/privacy-and-data-residency.md` | Exigences de sécurité et de confidentialité |
 | `docs/open-questions.md` | **Décisions qui reviennent au cabinet**, à trancher avant les phases concernées |
-| `docs/decisions/` | ADR 0001 à 0007 (0004 SharePoint · 0005 DocuSign · 0006 socle J1 · 0007 base de données J2) |
+| `.github/workflows/ci.yml` | **CI** : application (lint, types, tests, build), base de données (60 tests pgTAP, dérive des types), recherche de secrets (gitleaks). Ne jamais fusionner si un contrôle est rouge (ADR 0008) |
+| `docs/decisions/` | ADR 0001 à 0008 (0004 SharePoint · 0005 DocuSign · 0006 socle J1 · 0007 base de données J2 · 0008 CI) |
 | `docs/reference/` | PDF du cabinet : mémorandum EA, schéma directeur, architecture verrouillée |
 | `docs/archive/` | Versions v1 remplacées (schéma, diagramme, modèle de données, cartographie des pages) |
 
