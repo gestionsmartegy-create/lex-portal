@@ -180,11 +180,222 @@
     }
   },
   "portal": {
-    "temp": {
-      "greeting": "Hello {name}",
-      "greetingNoName": "Hello",
-      "matters": "{count, plural, =0 {You have no active matter yet.} one {You have # matter in your portal.} other {You have # matters in your portal.}}",
-      "comingSoon": "The full dashboard arrives in the next milestone (J5)."
+    "nav": {
+      "label": "Portal navigation",
+      "overview": "Overview",
+      "matters": "My matters",
+      "documents": "Documents",
+      "messages": "Messages",
+      "billing": "Billing",
+      "appointments": "Appointments",
+      "notifications": "Notifications",
+      "profile": "Profile & security",
+      "signOut": "Sign out",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "clientNumber": "Client #{number}",
+      "countLabel": "{count} new"
+    },
+    "header": {
+      "notifications": "Notifications",
+      "noNotifications": "No new notifications.",
+      "seeAll": "See all notifications",
+      "account": "Account menu",
+      "profile": "Profile & security"
+    },
+    "common": {
+      "viewAll": "View all",
+      "updated": "Updated {time}",
+      "freshness": "Updated {time}",
+      "freshnessUnknown": "Not synchronized yet",
+      "matter": "Matter {number}",
+      "progress": "Progress",
+      "empty": "Nothing here yet.",
+      "back": "Back",
+      "download": "Download",
+      "due": "Due {date}",
+      "lead": "Lead: {name}",
+      "loading": "Loading…"
+    },
+    "matterStatus": {
+      "open": "Active",
+      "action_required": "Action required",
+      "on_hold": "On hold",
+      "closed": "Closed"
+    },
+    "dashboard": {
+      "title": "Welcome back, {name}",
+      "titleNoName": "Welcome back",
+      "subtitle": "Here is an overview of your files with Lex Canada Law.",
+      "actionRequired": "Action required",
+      "actionSignature": "{title} — signature required",
+      "actionRequest": "Document requested: {title}",
+      "actionInvoice": "Invoice {title} is overdue",
+      "actionDue": "before {date}",
+      "actionCta": "View",
+      "cards": {
+        "activeMatters": "Active matters",
+        "pendingDocuments": "Pending documents",
+        "unreadMessages": "Unread messages",
+        "outstanding": "Outstanding balance"
+      },
+      "recentMatters": "Recent matters",
+      "recentMessages": "Recent messages",
+      "noMatters": "You have no matter in your portal yet.",
+      "noMessages": "No messages yet."
+    },
+    "matters": {
+      "title": "My matters",
+      "subtitle": "All your active and past legal files.",
+      "filterLabel": "Filter matters",
+      "filters": {
+        "all": "All",
+        "active": "Active",
+        "closed": "Closed"
+      },
+      "none": "No matter matches this filter.",
+      "opened": "Opened {date}"
+    },
+    "matter": {
+      "tabsLabel": "Matter sections",
+      "tabs": {
+        "overview": "Overview",
+        "timeline": "Timeline",
+        "documents": "Documents",
+        "messages": "Messages",
+        "invoices": "Invoices",
+        "appointments": "Appointments"
+      },
+      "description": "Description",
+      "practiceArea": "Practice area",
+      "responsible": "Responsible lawyer",
+      "opened": "Opened",
+      "closed": "Closed",
+      "access": "Your access",
+      "accessRead": "Read only",
+      "accessWrite": "Read and reply",
+      "timelineEmpty": "No milestones yet.",
+      "stepDone": "Completed {date}",
+      "stepPending": "Upcoming",
+      "newMessage": "Write to the firm"
+    },
+    "documents": {
+      "title": "Documents",
+      "subtitle": "Consult and download your legal documents.",
+      "tabsLabel": "Document folders",
+      "tabs": {
+        "shared": "Shared by the firm",
+        "uploads": "My uploads",
+        "signed": "Signed"
+      },
+      "filterMatter": "Matter",
+      "allMatters": "All matters",
+      "none": "No document in this folder.",
+      "requests": "Requested documents",
+      "requestDue": "Due {date}",
+      "uploadSoon": "Uploading documents to the portal will be available soon. In the meantime, send them to your lawyer.",
+      "signatures": "Awaiting your signature",
+      "signSoon": "Electronic signature will be available soon: your lawyer will send you the document.",
+      "status": {
+        "uploaded": "Uploaded",
+        "in_review": "In review",
+        "pending_signature": "Signature required",
+        "signed": "Signed",
+        "rejected": "Rejected",
+        "accepted": "Accepted"
+      },
+      "downloadLabel": "Download {name}"
+    },
+    "messages": {
+      "title": "Messages",
+      "subtitle": "Secure exchanges with your legal team.",
+      "none": "No conversation yet.",
+      "unread": "Unread",
+      "you": "You",
+      "firm": "Lex Canada Law",
+      "composeLabel": "Your message",
+      "send": "Send",
+      "sending": "Sending…",
+      "readOnly": "Your access to this matter is read only: you cannot reply here. Contact your lawyer if needed.",
+      "closed": "This conversation is closed.",
+      "newTitle": "New message",
+      "subject": "Subject",
+      "matter": "Matter",
+      "start": "Start the conversation",
+      "errors": {
+        "EMPTY": "Please write a message.",
+        "TOO_LONG": "The message is too long (5,000 characters maximum).",
+        "NOT_FOUND": "This conversation is not available.",
+        "FAILED": "The message could not be sent. Please try again.",
+        "INVALID": "Please check the form."
+      },
+      "backToList": "All conversations",
+      "emptyThread": "No message in this conversation yet.",
+      "participant": "Participant"
+    },
+    "billing": {
+      "title": "Billing",
+      "subtitle": "Your invoices and balances.",
+      "invoices": "Invoices",
+      "none": "No invoice yet.",
+      "issued": "Issued {date}",
+      "balance": "Balance due",
+      "pay": "Pay now",
+      "paySoon": "Online payment will be available soon.",
+      "status": {
+        "due": "Due",
+        "overdue": "Overdue",
+        "paid": "Paid",
+        "void": "Void"
+      },
+      "balanceValue": "Balance due: {amount}"
+    },
+    "appointments": {
+      "title": "Appointments",
+      "subtitle": "Your upcoming and past meetings with the firm.",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "none": "No appointment.",
+      "with": "With {name}",
+      "join": "Join the meeting",
+      "addToCalendar": "Add to my calendar",
+      "timezone": "Times shown in {zone}."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Stay informed on every update to your files.",
+      "markAll": "Mark all as read",
+      "none": "You have no notification.",
+      "unread": "Unread",
+      "open": "Open",
+      "markRead": "Mark as read"
+    },
+    "profile": {
+      "title": "Profile & security",
+      "subtitle": "Your personal information, language and security.",
+      "identity": "Personal information",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "emailHint": "To change your email address, contact the firm.",
+      "phone": "Phone",
+      "language": "Preferred language",
+      "languages": {
+        "en": "English",
+        "fr": "Français"
+      },
+      "save": "Save",
+      "saved": "Your changes were saved.",
+      "notifications": "Notifications",
+      "emailNotifications": "Receive an email when there is something new (the email never contains the content).",
+      "security": "Security",
+      "mfaOn": "Two-step verification is active on your account.",
+      "changePassword": "Change my password",
+      "signOutAll": "Sign out of all devices",
+      "errors": {
+        "INVALID": "Please check the form.",
+        "FAILED": "The changes could not be saved."
+      }
     }
   },
   "admin": {

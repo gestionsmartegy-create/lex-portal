@@ -7,9 +7,12 @@ import loadLocalSupabase from "./tests/integration/global-setup";
  * jamais affichée ; tout hôte distant est refusé.
  */
 loadLocalSupabase();
-const PORT = 3100;
+// E2E_DEV=1 : itération locale rapide sur le serveur de développement (port 3000), jamais en CI.
+const DEV = process.env.E2E_DEV === "1" && !process.env.CI;
+const PORT = DEV ? 3000 : 3100;
 const BASE_URL = `http://localhost:${PORT}`;
 process.env.APP_BASE_URL = BASE_URL;
+if (DEV) process.env.TRUSTED_PROXY_HOPS ??= "1";
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -24,7 +27,7 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Desktop Chrome"], viewport: { width: 375, height: 812 } } },
   ],
   webServer: {
-    command: `pnpm build && node scripts/serve-standalone.mts ${PORT}`,
+    command: DEV ? "pnpm dev" : `pnpm build && node scripts/serve-standalone.mts ${PORT}`,
     url: `${BASE_URL}/en/login`,
     timeout: 300_000,
     reuseExistingServer: !process.env.CI,

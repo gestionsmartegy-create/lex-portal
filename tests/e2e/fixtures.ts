@@ -71,3 +71,14 @@ export async function expectAccessible(page: Page) {
   );
   expect(details).toEqual([]);
 }
+
+/** Connexion complète : mot de passe, enrôlement TOTP (clé affichée), arrivée sur le portail. */
+export async function signInWithMfa(page: Page, email: string, password: string) {
+  const { generate } = await import("otplib");
+  await signInWithPassword(page, email, password);
+  await page.waitForURL(/\/login\/mfa/);
+  const secret = (await page.locator("code").innerText()).replace(/\s/g, "");
+  await page.getByLabel("6-digit code").fill(await generate({ secret }));
+  await page.getByRole("button", { name: "Verify" }).click();
+  await page.waitForURL(/\/en\/portal$/);
+}

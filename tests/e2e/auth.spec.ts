@@ -13,10 +13,11 @@ test.describe("authentification client (J3, ADR 0011)", () => {
     await page.getByRole("button", { name: "Verify" }).click();
 
     await expect(page).toHaveURL(/\/en\/portal$/);
-    await expect(page.getByRole("heading", { name: "Hello Avery" })).toBeVisible();
-    await expect(page.getByText("You have 1 matter in your portal.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Welcome back, Avery" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Permanent Residency Application/ })).toBeVisible();
 
-    await page.getByRole("button", { name: /^sign out$/i }).click();
+    await page.getByRole("button", { name: "Account menu" }).click();
+    await page.getByRole("menuitem", { name: "Sign out" }).click();
     await expect(page).toHaveURL(/\/en\/login/);
     await page.goto("/en/portal");
     await expect(page).toHaveURL(/\/en\/login\?next=%2Fen%2Fportal/);
