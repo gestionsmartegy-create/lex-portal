@@ -1,12 +1,27 @@
 "use server";
 
 import "server-only";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 import { requireStaff } from "@/server/auth/session";
 import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { createInvitation } from "@/server/services/invitation";
+import {
+  grantMatterAccess,
+  resendInvitation,
+  revokeInvitation,
+  revokeMatterAccess,
+  setClientStatus,
+} from "@/server/services/admin";
 import { resetClientMfa } from "@/server/services/mfa-reset";
 import { provisionStaff } from "@/server/services/staff";
-import { createInvitationSchema, mfaResetSchema, provisionStaffSchema } from "@/server/validation/auth";
+import {
+  createInvitationSchema,
+  localeSchema,
+  mfaResetSchema,
+  provisionStaffSchema,
+} from "@/server/validation/auth";
 
 export type AdminActionState = {
   error?: "INVALID" | "DUPLICATE" | "EXISTS" | "DOMAIN" | "RATE_LIMITED" | "NOT_ELIGIBLE" | "FAILED";
@@ -66,4 +81,69 @@ export async function resetClientMfaAction(_prev: unknown, formData: FormData): 
     user.id,
   );
   return result.ok ? { ok: true } : { error: result.code };
+}
+
+// ---------------------------------------------------------------------------
+// Espace cabinet (J5) : actions par formulaire, résultat affiché via ?notice=
+// ---------------------------------------------------------------------------
+const idForm = z.object({ id: z.uuid(), locale: localeSchema });
+
+export async function setClientStatusAction(formData: FormData): Promise<void> {
+  const parsed = idForm
+    .extend({ status: z.enum(["active", "suspended"]) })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  const { user } = await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const result = await setClientStatus(parsed.data.id, parsed.data.status, user.id);
+  revalidatePath(`/${parsed.data.locale}/admin/clients`);
+  redirect(
+    `/${parsed.data.locale}/admin/clients?notice=${result.ok ? (parsed.data.status === "suspended" ? "suspended" : "reactivated") : "failed"}`,
+  );
+}
+
+export async function revokeInvitationAction(formData: FormData): Promise<void> {
+  const parsed = idForm.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  const { user } = await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const result = await revokeInvitation(parsed.data.id, user.id);
+  redirect(`/${parsed.data.locale}/admin/invitations?notice=${result.ok ? "revoked" : "failed"}`);
+}
+
+export async function resendInvitationAction(formData: FormData): Promise<void> {
+  const parsed = idForm.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  const { user } = await requireStaff(parsed.data.locale, ["firm_admin"]);
+  if (!(await hitRateLimit(`invite:user:${user.id}`, RATE_LIMITS.invitationCreateByUser)))
+    redirect(`/${parsed.data.locale}/admin/invitations?notice=failed`);
+  const result = await resendInvitation(parsed.data.id, user.id);
+  redirect(`/${parsed.data.locale}/admin/invitations?notice=${result.ok ? "resent" : "failed"}`);
+}
+
+const grantSchema = z.object({
+  matterId: z.uuid(),
+  email: z.string().trim().toLowerCase().pipe(z.email()),
+  accessLevel: z.enum(["read", "read_write"]),
+  locale: localeSchema,
+});
+
+export async function grantMatterAccessAction(_prev: unknown, formData: FormData): Promise<AdminActionState> {
+  const parsed = grantSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "INVALID" };
+  await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const result = await grantMatterAccess(parsed.data.matterId, parsed.data.email, parsed.data.accessLevel);
+  if (!result.ok) return { error: result.code };
+  revalidatePath(`/${parsed.data.locale}/admin/matters/${parsed.data.matterId}/access`);
+  return { ok: true };
+}
+
+export async function revokeMatterAccessAction(formData: FormData): Promise<void> {
+  const parsed = idForm
+    .extend({ matterId: z.uuid(), reason: z.string().trim().min(1).max(500) })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const result = await revokeMatterAccess(parsed.data.id, parsed.data.reason);
+  redirect(
+    `/${parsed.data.locale}/admin/matters/${parsed.data.matterId}/access?notice=${result.ok ? "revoked" : "failed"}`,
+  );
 }

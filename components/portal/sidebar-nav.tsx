@@ -7,21 +7,34 @@ import { BrandMark } from "@/components/shared/brand-mark";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { PORTAL_NAV, type PortalNavKey } from "./nav-items";
+import { ADMIN_NAV, PORTAL_NAV } from "./nav-items";
 
 type Props = {
-  counts: Partial<Record<PortalNavKey, number>>;
-  user: { name: string; initials: string; clientNumber: string | null };
+  /** Espace : les icônes restent côté client (non sérialisables depuis un Server Component). */
+  area?: "portal" | "admin";
+  /** Admin : afficher les entrées réservées au firm_admin. */
+  isFirmAdmin?: boolean;
+  counts: Partial<Record<string, number>>;
+  user: { name: string; initials: string; subtitle: string | null };
   locale: string;
   logout: (formData: FormData) => Promise<void>;
 };
 
-function NavList({ counts, onNavigate }: { counts: Props["counts"]; onNavigate?: () => void }) {
-  const t = useTranslations("portal.nav");
+function NavList({
+  area = "portal",
+  isFirmAdmin,
+  counts,
+  onNavigate,
+}: Pick<Props, "area" | "isFirmAdmin" | "counts"> & { onNavigate?: () => void }) {
+  const t = useTranslations(area === "admin" ? "admin.nav" : "portal.nav");
   const pathname = usePathname();
+  const items =
+    area === "admin"
+      ? ADMIN_NAV.filter((i) => !("adminOnly" in i && i.adminOnly) || isFirmAdmin)
+      : PORTAL_NAV;
   return (
     <ul className="space-y-1">
-      {PORTAL_NAV.map(({ key, href, icon: Icon, ...rest }) => {
+      {items.map(({ key, href, icon: Icon, ...rest }) => {
         const exact = "exact" in rest && rest.exact;
         const active = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
         const count = counts[key] ?? 0;
@@ -54,19 +67,28 @@ function NavList({ counts, onNavigate }: { counts: Props["counts"]; onNavigate?:
   );
 }
 
-function SidebarBody({ counts, user, locale, logout, onNavigate }: Props & { onNavigate?: () => void }) {
+function SidebarBody({
+  area = "portal",
+  isFirmAdmin,
+  counts,
+  user,
+  locale,
+  logout,
+  onNavigate,
+}: Props & { onNavigate?: () => void }) {
   const t = useTranslations("portal.nav");
+  const ta = useTranslations("admin.nav");
   const tc = useTranslations("common");
   return (
     <div className="flex h-full flex-col bg-marine text-white">
       <div className="px-6 pt-7 pb-6">
         <BrandMark tone="light" size="sm" />
         <p className="mt-3 text-[9px] font-semibold tracking-[0.25em] text-white/60 uppercase">
-          {tc("clientPortal")}
+          {area === "admin" ? ta("workspace") : tc("clientPortal")}
         </p>
       </div>
       <nav aria-label={t("label")} className="flex-1 overflow-y-auto py-2">
-        <NavList counts={counts} onNavigate={onNavigate} />
+        <NavList area={area} isFirmAdmin={isFirmAdmin} counts={counts} onNavigate={onNavigate} />
       </nav>
       <div className="border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
@@ -78,11 +100,7 @@ function SidebarBody({ counts, user, locale, logout, onNavigate }: Props & { onN
           </span>
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{user.name}</p>
-            {user.clientNumber ? (
-              <p className="truncate text-xs text-white/60">
-                {t("clientNumber", { number: user.clientNumber })}
-              </p>
-            ) : null}
+            {user.subtitle ? <p className="truncate text-xs text-white/60">{user.subtitle}</p> : null}
           </div>
         </div>
         <form action={logout} className="mt-3">

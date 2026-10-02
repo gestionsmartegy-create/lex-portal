@@ -16,17 +16,18 @@ export default async function PortalLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params;
   setRequestLocale(locale);
   const { profile } = await requireClientSession(locale, `/${locale}/portal`);
-  const [counts, notifications, t] = await Promise.all([
+  const [counts, notifications, t, tNav] = await Promise.all([
     getDashboardCounts(),
     listNotifications(5),
     getTranslations("common"),
+    getTranslations("portal.nav"),
   ]);
 
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.email;
   const user = {
     name,
     initials: initials(profile.first_name, profile.last_name, profile.email[0]?.toUpperCase()),
-    clientNumber: profile.client_number,
+    subtitle: profile.client_number ? tNav("clientNumber", { number: profile.client_number }) : null,
   };
   const navCounts = {
     matters: counts.activeMatters,

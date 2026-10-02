@@ -1,48 +1,83 @@
+import { FolderOpen, MailPlus, Users } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { LogoutButtons } from "@/components/auth/logout-buttons";
-import { BrandMark } from "@/components/shared/brand-mark";
+import { EmptyState, PageHeader, SectionCard, StatCard } from "@/components/portal/ui";
+import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { logoutAction } from "@/server/actions/auth";
+import { formatRelative } from "@/lib/format";
 import { requireStaff } from "@/server/auth/session";
+import { getAdminOverview, listAuditEvents } from "@/server/services/admin";
 
-// Page minimale J3 : prouve la garde du personnel. Espace complet en J5.
 export default async function AdminHome({ params }: PageProps<"/[locale]/admin">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { role } = await requireStaff(locale);
-  const t = await getTranslations("admin");
+  const isAdmin = role === "firm_admin";
+  const [t, overview, events] = await Promise.all([
+    getTranslations("admin.overview"),
+    getAdminOverview(),
+    isAdmin ? listAuditEvents({ limit: 8 }) : Promise.resolve([]),
+  ]);
 
   return (
-    <main id="main" className="min-h-screen bg-surface">
-      <header className="flex items-center bg-marine px-6 py-4 sm:px-8">
-        <BrandMark tone="light" size="sm" priority />
-      </header>
-      <section className="mx-auto max-w-3xl space-y-6 p-6 sm:p-10">
-        <h1 className="text-[28px] font-bold">{t("temp.title")}</h1>
-        <p className="text-ink-muted">{t("temp.role", { role })}</p>
-        <p className="text-sm text-ink-muted">{t("temp.comingSoon")}</p>
-        {role === "firm_admin" ? (
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link
-                href="/admin/invitations"
-                className="inline-flex min-h-6 items-center text-gold-ink hover:underline"
-              >
-                {t("temp.invitations")} →
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/staff"
-                className="inline-flex min-h-6 items-center text-gold-ink hover:underline"
-              >
-                {t("temp.staff")} →
-              </Link>
-            </li>
-          </ul>
+    <>
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        {isAdmin ? (
+          <StatCard
+            label={t("pendingInvitations")}
+            value={String(overview.pendingInvitations)}
+            icon={MailPlus}
+            tone="gold"
+            href="/admin/invitations"
+          />
         ) : null}
-        <LogoutButtons action={logoutAction} locale={locale} />
-      </section>
-    </main>
+        {isAdmin ? (
+          <StatCard
+            label={t("activeClients")}
+            value={String(overview.activeClients)}
+            icon={Users}
+            tone="blue"
+            href="/admin/clients"
+          />
+        ) : null}
+        <StatCard
+          label={t("openMatters")}
+          value={String(overview.openMatters)}
+          icon={FolderOpen}
+          tone="marine"
+          href="/admin/matters"
+        />
+      </div>
+      {isAdmin ? (
+        <div className="grid gap-6 lg:grid-cols-3">
+          <SectionCard title={t("recentEvents")} className="lg:col-span-2">
+            {events.length === 0 ? (
+              <EmptyState icon={FolderOpen} message={t("noEvents")} />
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {events.map((e) => (
+                  <li key={e.id} className="flex items-baseline justify-between gap-3 py-2 text-sm">
+                    <span className="font-mono text-xs text-marine">{e.action}</span>
+                    <span className="text-xs text-ink-muted">{formatRelative(e.occurred_at, locale)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </SectionCard>
+          <SectionCard title={t("quick")}>
+            <div className="flex flex-col gap-3">
+              <Button asChild variant="primary" size="brand">
+                <Link href="/admin/invitations">{t("inviteClient")}</Link>
+              </Button>
+              <Button asChild variant="outline-gold" size="brand">
+                <Link href="/admin/matters">{t("manageAccess")}</Link>
+              </Button>
+            </div>
+          </SectionCard>
+        </div>
+      ) : (
+        <p className="text-sm text-ink-muted">{t("staffOnly")}</p>
+      )}
+    </>
   );
 }
