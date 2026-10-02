@@ -286,7 +286,11 @@ Le dépôt officiel est **SharePoint** (ADR 0004). Supabase ne garde que des ré
 
 Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_enrolled`, `auth.logout_all`, `matter.viewed`, `document.downloaded`, `document.uploaded`, `invoice.viewed`, `payment.initiated`, `signature.requested`, `integration.connected`.
 
-## 9. Mise en œuvre (Phase 1)
+## 9. Mise en œuvre (Phase 1) — **fait en J2 (ADR 0007)**
+
+> État au 2026-10-01 : les migrations `supabase/migrations/20261001120000_initial_schema.sql` (= schéma v2.1) et `…120100_harden_default_privileges.sql` **font foi** ; `supabase/schema.sql` est figé. Commandes : `pnpm db:start · db:reset · db:test · db:types · db:seed-passwords`.
+
+
 
 1. `supabase init`, puis `supabase/schema.sql` → première migration `supabase/migrations/<horodatage>_initial_schema.sql`.
 2. `supabase db reset` doit passer sans erreur.

@@ -3,11 +3,11 @@
 -- ============================================================================
 -- Validé le 2026-10-01 sur PostgreSQL 16 avec _stub-supabase-auth.sql.
 -- Lancer sur une base vierge :
---   psql -f _stub-supabase-auth.sql -f ../schema.sql -f rls-scenarios.sql
+--   psql -f supabase/smoke/_stub-supabase-auth.sql -f supabase/schema.sql -f supabase/smoke/rls-scenarios.sql
 -- (sur Supabase local : ne pas charger le stub, le schéma auth existe déjà).
 -- Chaque ligne « Txx ok » / valeur « expect » doit être vérifiée.
--- À CONVERTIR EN TESTS pgTAP (supabase/tests/*.test.sql) en Phase 1 et à
--- rendre bloquants en CI. Ne jamais supprimer un scénario.
+-- Converti en pgTAP le 2026-10-01 : supabase/tests/database/*.test.sql (BLOQUANTS).
+-- Ce fichier reste un test de fumée hors Supabase. Ne jamais supprimer un scénario.
 -- ============================================================================
 \set ON_ERROR_STOP 0
 \pset tuples_only on

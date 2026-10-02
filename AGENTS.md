@@ -79,8 +79,9 @@ lex-portal/
 ├─ i18n/ · messages/fr.json · messages/en.json
 ├─ types/                        database.ts (GÉNÉRÉ, ne pas éditer) · domain.ts
 ├─ supabase/
-│  ├─ config.toml · migrations/ · seed.sql · schema.sql (référence v2)
-│  └─ tests/                     tests pgTAP (*.test.sql) + rls-scenarios.sql
+│  ├─ config.toml · migrations/ (FONT FOI) · seed.sql · schema.sql (référence v2.1 figée)
+│  ├─ tests/database/            tests pgTAP (*.test.sql) + _fixture.psql
+│  └─ smoke/                     test de fumée hors Supabase
 ├─ tests/
 │  ├─ unit/                      Vitest
 │  └─ e2e/                       Playwright
@@ -112,10 +113,11 @@ pnpm dev                     # http://localhost:3000
 pnpm lint && pnpm typecheck               # next typegen + tsc
 pnpm test                    # Vitest
 pnpm test:e2e                # Playwright
-supabase start               # Supabase local (Docker)
-supabase db reset            # migrations + seed
-supabase test db             # tests pgTAP (RLS) — BLOQUANTS
-supabase gen types typescript --local > types/database.ts
+pnpm db:start                # Supabase local (Docker via OrbStack ; CLI épinglée dans le projet, ADR 0007)
+pnpm db:reset                # migrations + seed (données fictives, sans mot de passe)
+pnpm db:seed-passwords       # mots de passe locaux → supabase/seed.local.md (jamais affichés)
+pnpm db:test                 # tests pgTAP (RLS) — BLOQUANTS
+pnpm db:types                # régénère types/database.ts
 python3 diagrams/generate_class_diagram.py   # régénère le diagramme de classes
 ```
 

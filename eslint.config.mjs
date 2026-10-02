@@ -27,7 +27,16 @@ const eslintConfig = defineConfig([
       "react/no-danger": "error", // AGENTS.md §7 : pas de dangerouslySetInnerHTML
     },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "supabase/**", "diagrams/**", "docs/**"]),
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "supabase/**",
+    "diagrams/**",
+    "docs/**",
+    "types/database.ts",
+  ]),
 ]);
 
 export default eslintConfig;

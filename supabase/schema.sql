@@ -1,3 +1,9 @@
+-- ############################################################################
+-- RÉFÉRENCE FIGÉE (ADR 0007) — NE PLUS MODIFIER CE FICHIER.
+-- Les migrations de supabase/migrations/ font foi. Ce fichier est identique
+-- à la première migration (20261001120000_initial_schema.sql). Toute évolution
+-- = NOUVELLE migration + tests pgTAP + pnpm db:types.
+-- ############################################################################
 -- ============================================================================
 -- LEX CANADA LAW — PORTAIL CLIENT — SCHÉMA SUPABASE v2.0
 -- ============================================================================
