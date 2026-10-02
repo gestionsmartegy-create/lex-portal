@@ -54,3 +54,18 @@ revoke all on function public.record_audit_event(text, text, text, uuid, jsonb, 
   from public, anon, authenticated;
 grant execute on function public.record_audit_event(text, text, text, uuid, jsonb, uuid, inet, text, text)
   to service_role;
+
+-- ----------------------------------------------------------------------------
+-- Rôle EFFECTIF de la session courante, tel que la RLS le voit (ADR 0010).
+-- NULL si la session n'est pas valide : client sans aal2, personnel sans
+-- session Microsoft, compte inactif. Les gardes de route du serveur s'appuient
+-- sur cette fonction pour ne jamais diverger de la base.
+-- ----------------------------------------------------------------------------
+create or replace function public.current_session_role()
+returns public.app_role
+language sql stable security definer set search_path = '' as $$
+  select private.current_app_role()
+$$;
+
+revoke all on function public.current_session_role() from public, anon;
+grant execute on function public.current_session_role() to authenticated, service_role;

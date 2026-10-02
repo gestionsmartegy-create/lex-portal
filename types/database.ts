@@ -553,6 +553,9 @@ isOneToOne: false
               "active_matters": number,"outstanding_balance": number,"pending_documents": number,"unread_messages": number
             }[]
                            },
+"current_session_role":
+{ Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
+                           },
 "list_audit_events":
 { Args: { "p_before"?: string,"p_limit"?: number,"p_matter_id"?: string }; Returns: unknown[]
                           SetofOptions: {

@@ -1,7 +1,7 @@
 -- J3 : limitation de débit et relais d'audit serveur (ADR 0010).
 begin;
 \ir _fixture.psql
-select plan(10);
+select plan(14);
 
 select ok(not has_function_privilege('anon', 'public.rate_limit_hit(text, integer, integer)', 'EXECUTE'),
   'rate_limit_hit inaccessible à anon');
@@ -31,6 +31,20 @@ select ok(public.record_audit_event('auth.login', 'session', null, null, '{}', '
   'record_audit_event écrit dans audit.events');
 select is((select actor_email from audit.events where action = 'auth.login' order by id desc limit 1),
   'john@example.com', 'L''acteur est résolu depuis le profil');
+
+-- current_session_role : le rôle tel que la RLS le voit
+select tests.authenticate_as('00000000-0000-0000-0000-000000000001', 'aal1');
+select is(public.current_session_role(), null, 'Client sans MFA : aucun rôle effectif');
+select tests.clear_authentication();
+select tests.authenticate_as('00000000-0000-0000-0000-000000000001', 'aal2');
+select is(public.current_session_role()::text, 'client', 'Client avec MFA : rôle client');
+select tests.clear_authentication();
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal2', 'password');
+select is(public.current_session_role(), null, 'Personnel sans Microsoft : aucun rôle effectif');
+select tests.clear_authentication();
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'oauth');
+select is(public.current_session_role()::text, 'firm_admin', 'firm_admin via Microsoft : rôle effectif');
+select tests.clear_authentication();
 
 select * from finish();
 rollback;
