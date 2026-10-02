@@ -98,3 +98,13 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | **Alerte « nouvelle connexion »** par e-mail : souhaitée ? | Elle demande de reconnaître les appareils (sinon un e-mail à chaque connexion) | Faible |
 | ~~Adresse de signalement des failles (security.txt)~~ | ✅ **admin@lexcanadalaw.com** (2026-10-02, ADR 0011). Domaine **`lexcanadalaw.com`** confirmé, aussi pour l'administrateur Microsoft 365 (2026-10-02) | — |
 
+## Décisions du 2026-10-02 (préproduction, ADR 0013)
+
+| Question | Décision | — |
+|---|---|---|
+| ~~Hébergement final : Vercel ou Azure ?~~ | ✅ **Vercel** | — |
+| ~~Accès au projet Supabase « lex law » existant et région réelle ?~~ | ✅ Réutilisé **si** `ca-central-1` et vide (sinon nouveau projet) ; vérification par le responsable, `docs/runbooks/preprod-deploy.md` §1.1 | — |
+| ~~Fournisseur d'e-mails de production~~ | ✅ **SMTP Microsoft 365** (boîte du cabinet) | — |
+| ~~Coffre-fort des jetons OAuth : Supabase Vault ou Azure Key Vault ?~~ | ✅ **Supabase Vault** | — |
+| Domaine de préproduction (`portal-preprod.lexcanadalaw.com` ?) puis de production | Adresses de retour OAuth (Clio, Entra), Site URL Supabase | Élevée |
+

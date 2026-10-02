@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildSecurityTxt, SECURITY_CONTACT_EMAIL } from "@/lib/security-txt";
 import { buildCsp, buildReportOnlyCsp, CSP_REPORT_PATH, reportingEndpoints } from "@/server/security/csp";
 import { parseCspReport, redactUrl } from "@/server/validation/csp-report";
+import { smtpTransportUrl } from "@/server/providers/notifications/smtp";
 
 describe("rapports CSP (ADR 0011)", () => {
   it("la politique bloquante déclare report-to et report-uri", () => {
@@ -76,5 +77,15 @@ describe("security.txt (RFC 9116)", () => {
     const expires = new Date(/Expires: (.+)/.exec(txt)![1]!);
     expect(expires.getTime()).toBeGreaterThan(now.getTime());
     expect(expires.getTime() - now.getTime()).toBeLessThan(366 * 24 * 3600 * 1000);
+  });
+});
+
+describe("SMTP (ADR 0013)", () => {
+  it("impose STARTTLS hors local, jamais en local (Mailpit)", () => {
+    expect(smtpTransportUrl("smtp://u%40lexcanadalaw.com:p@smtp.office365.com:587")).toContain(
+      "requireTLS=true",
+    );
+    expect(smtpTransportUrl("smtp://127.0.0.1:54325")).not.toContain("requireTLS");
+    expect(smtpTransportUrl("smtps://u:p@smtp.example.com:465")).not.toContain("requireTLS");
   });
 });
