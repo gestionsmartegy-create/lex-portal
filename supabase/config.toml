@@ -86,14 +86,16 @@ allowed_cidrs_v6 = ["::/0"]
 # enabled = true
 
 [realtime]
-enabled = true
+# Lex Canada : désactivé en local tant que non utilisé (notifications temps réel : Phase 2) — économise la mémoire (ADR 0010).
+enabled = false
 # Bind realtime via either IPv4 or IPv6. (default: IPv4)
 # ip_version = "IPv6"
 # The maximum length in bytes of HTTP request headers. (default: 4096)
 # max_header_length = 4096
 
 [studio]
-enabled = true
+# Lex Canada : désactivé par défaut pour économiser la mémoire (Mac 8 Go). Réactiver ponctuellement si besoin.
+enabled = false
 # Port to use for Supabase Studio.
 port = 54323
 # External URL of the API server that frontend connects to.
@@ -108,13 +110,15 @@ enabled = true
 # Port to use for the email testing server web interface.
 port = 54324
 # Uncomment to expose additional ports for testing user applications that send emails.
-# smtp_port = 54325
+# Lex Canada : SMTP exposé pour que l'application envoie ses e-mails à Mailpit (local uniquement).
+smtp_port = 54325
 # pop3_port = 54326
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
 [storage]
-enabled = true
+# Lex Canada : désactivé tant que le stockage n'est pas utilisé (quarantaine des dépôts : Phase 3).
+enabled = false
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 

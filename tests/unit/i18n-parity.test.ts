@@ -14,7 +14,8 @@ function placeholders(messages: unknown): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   const walk = (value: unknown, path: string) => {
     if (typeof value === "string") {
-      out[path] = [...value.matchAll(/\{(\w+)/g)].map((m) => m[1] ?? "").sort();
+      // Variable ICU = « {nom} » ou « {nom, … » ; le texte des branches plurielles n'en est pas.
+      out[path] = [...value.matchAll(/\{(\w+)(?=[},])/g)].map((m) => m[1] ?? "").sort();
     } else if (value && typeof value === "object") {
       for (const [k, v] of Object.entries(value)) walk(v, path ? `${path}.${k}` : k);
     }

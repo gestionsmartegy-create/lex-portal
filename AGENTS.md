@@ -117,6 +117,8 @@ pnpm db:start                # Supabase local (Docker via OrbStack ; CLI épingl
 pnpm db:reset                # migrations + seed (données fictives, sans mot de passe)
 pnpm db:seed-passwords       # mots de passe locaux → supabase/seed.local.md (jamais affichés)
 pnpm db:test                 # tests pgTAP (RLS) — BLOQUANTS
+pnpm test:integration        # vraies sessions Auth contre Supabase local (ADR 0010)
+pnpm env:local               # écrit .env.local depuis Supabase local (valeurs jamais affichées)
 pnpm db:types                # régénère types/database.ts
 python3 diagrams/generate_class_diagram.py   # régénère le diagramme de classes
 ```

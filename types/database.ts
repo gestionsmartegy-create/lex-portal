@@ -548,10 +548,16 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "client_dashboard_counts":
+            "authorize_staff_provisioning":
+{ Args: { "p_actor": string,"p_email": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: undefined
+                           },
+"client_dashboard_counts":
 { Args: Record<PropertyKey, never>; Returns: {
               "active_matters": number,"outstanding_balance": number,"pending_documents": number,"unread_messages": number
             }[]
+                           },
+"current_session_role":
+{ Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
                            },
 "list_audit_events":
 { Args: { "p_before"?: string,"p_limit"?: number,"p_matter_id"?: string }; Returns: unknown[]
@@ -578,7 +584,16 @@ isOneToOne: false
         to: "matter_access"
         isOneToOne: false
         isSetofReturn: true
-      } }
+      } },
+"rate_limit_check":
+{ Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"rate_limit_hit":
+{ Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"record_audit_event":
+{ Args: { "p_action": string,"p_actor_id"?: string,"p_ip"?: unknown,"p_matter_id"?: string,"p_metadata"?: Json,"p_request_id"?: string,"p_resource_id"?: string,"p_resource_type": string,"p_user_agent"?: string }; Returns: number
+                           }
           }
           Enums: {
             "access_level": "read"|"read_write","app_role": "client"|"staff"|"firm_admin","appointment_status": "scheduled"|"completed"|"cancelled","conversation_scope": "matter"|"general","document_folder": "shared"|"client_upload"|"signed"|"internal","document_provider": "sharepoint"|"clio"|"supabase_storage"|"imanage","document_status": "uploaded"|"in_review"|"accepted"|"rejected"|"pending_signature"|"signed","invitation_status": "pending"|"accepted"|"expired"|"revoked","invoice_status": "due"|"overdue"|"paid"|"void","matter_status": "open"|"action_required"|"on_hold"|"closed","notification_priority": "urgent"|"info"|"success","notification_type": "document_requested"|"document_received"|"new_document"|"new_message"|"appointment_scheduled"|"appointment_reminder"|"matter_status_changed"|"matter_completed"|"invoice_issued"|"payment_received"|"signature_required"|"security_alert","org_member_role": "owner"|"member","org_type": "client_organization"|"partner","payment_status": "pending"|"processing"|"succeeded"|"failed"|"refunded"|"cancelled","request_status": "pending"|"fulfilled"|"overdue"|"cancelled","scan_status": "pending"|"clean"|"infected"|"failed"|"not_required","signature_status": "to_sign"|"sent"|"viewed"|"signed"|"declined"|"expired","team_role": "responsible"|"originating"|"collaborator"|"assistant","user_status": "invited"|"active"|"suspended"|"deactivated"

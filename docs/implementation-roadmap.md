@@ -30,12 +30,12 @@
 - [x] `pnpm db:types` → `types/database.ts` ; `types/domain.ts`.
 - [x] `supabase/seed.sql` d'après `docs/mock-data.md` ; `pnpm db:seed-passwords`.
 
-### 1.3 Authentification
-- [ ] Client : connexion, MFA TOTP obligatoire (enrôlement à la 1re connexion), mot de passe oublié et réinitialisation, déconnexion, « déconnecter tous les appareils ».
-- [ ] Invitation : création par un firm_admin, e-mail avec jeton à usage unique (72 h, haché en base), activation, création du mot de passe, enrôlement MFA, puis `matter_access` créé depuis `client_invitation_matters`.
-- [ ] Personnel : « Se connecter avec Microsoft » (voir `auth-entra-id-integration.md`).
-- [ ] Middleware : session, redirection MFA, garde par rôle ; le serveur revérifie ensuite (`requireRole`).
-- [ ] Limitation de débit : connexion, réinitialisation, invitation (`private.rate_limit_buckets`).
+### 1.3 Authentification — ✅ J3 (2026-10-01, ADR 0010 ; en revue)
+- [x] Client : connexion, MFA TOTP obligatoire (enrôlement à la 1re connexion), mot de passe oublié et réinitialisation, déconnexion, « déconnecter tous les appareils ».
+- [x] Invitation : création par un firm_admin, e-mail avec jeton à usage unique (72 h, haché en base), activation, création du mot de passe, enrôlement MFA, puis `matter_access` créé depuis `client_invitation_matters`.
+- [x] Personnel : « Se connecter avec Microsoft » (voir `auth-entra-id-integration.md`).
+- [x] Middleware : session, redirection MFA, garde par rôle ; le serveur revérifie ensuite (`requireRole`).
+- [x] Limitation de débit : connexion, réinitialisation, invitation (`private.rate_limit_buckets`).
 
 ### 1.4 Portail client (données fictives)
 - [ ] `MockDocumentStore` qui reproduit les **sous-dossiers SharePoint** (shared / client_upload / signed / internal), pour que l'interface Documents soit définitive dès la Phase 1.
