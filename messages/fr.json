@@ -93,7 +93,8 @@
       "verifySubtitle": "Saisissez le code à 6 chiffres de votre application d'authentification.",
       "code": "Code à 6 chiffres",
       "submit": "Vérifier",
-      "qrAlt": "Code QR pour ajouter votre compte Lex Canada à une application d'authentification"
+      "qrAlt": "Code QR pour ajouter votre compte Lex Canada à une application d'authentification",
+      "lostLink": "Vous avez perdu l'accès à votre application d'authentification ?"
     },
     "forgot": {
       "title": "Réinitialiser votre mot de passe",
@@ -135,6 +136,24 @@
       "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas.",
       "INVITATION_INVALID": "Cette invitation est invalide ou a expiré.",
       "UNEXPECTED": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "session": {
+      "timedOut": "Vous avez été déconnecté après 30 minutes d'inactivité. Veuillez vous reconnecter.",
+      "warningTitle": "Votre session va expirer",
+      "warningBody": "Pour votre sécurité, vous serez déconnecté après 30 minutes d'inactivité.",
+      "remaining": "Temps restant : {time}",
+      "remainingAnnounce": "{seconds, plural, one {# seconde} other {# secondes}} avant la déconnexion.",
+      "stay": "Rester connecté",
+      "signOut": "Se déconnecter maintenant"
+    },
+    "mfaLost": {
+      "title": "Vous avez perdu l'accès à votre application d'authentification ?",
+      "intro": "Pour votre sécurité, la vérification en deux étapes ne peut pas être réinitialisée en ligne. Un administrateur du cabinet la réinitialise après avoir vérifié votre identité.",
+      "step1": "Appelez Lex Canada Law au numéro que vous connaissez déjà (lettre de mandat ou site web du cabinet). N'utilisez pas un numéro reçu dans un courriel ou un message inattendu.",
+      "step2": "Le cabinet vous rappellera au numéro inscrit à votre dossier et vous demandera de confirmer des informations sur votre dossier.",
+      "step3": "Vous recevrez ensuite un e-mail pour choisir un nouveau mot de passe, puis vous ajouterez à nouveau votre application d'authentification.",
+      "never": "Le cabinet ne vous demandera jamais votre mot de passe ni un code de vérification, que ce soit par téléphone, par e-mail ou par texto.",
+      "back": "Retour à la connexion"
     }
   },
   "emails": {
@@ -146,6 +165,17 @@
       "cta": "Activer mon accès",
       "expiry": "Ce lien est à usage unique et expire dans 72 heures.",
       "ignore": "Si vous n'attendiez pas ce message, vous pouvez l'ignorer.",
+      "signature": "Lex Canada Law"
+    },
+    "mfaReset": {
+      "subject": "Votre vérification en deux étapes a été réinitialisée par Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "À votre demande, Lex Canada Law a réinitialisé la vérification en deux étapes de votre compte du portail client. Pour votre sécurité, votre mot de passe a aussi été réinitialisé et vous avez été déconnecté de tous vos appareils.",
+      "action": "Utilisez le bouton ci-dessous pour choisir un nouveau mot de passe. Vous ajouterez ensuite à nouveau votre application d'authentification.",
+      "cta": "Choisir un nouveau mot de passe",
+      "expiry": "Ce lien est à usage unique et expire dans 1 heure.",
+      "warning": "Si vous n'avez rien demandé, contactez immédiatement le cabinet par téléphone, au numéro que vous connaissez déjà.",
       "signature": "Lex Canada Law"
     }
   },
@@ -192,7 +222,23 @@
       "EXISTS": "Un compte existe déjà pour cette adresse.",
       "DOMAIN": "Les comptes du personnel doivent utiliser un domaine du cabinet.",
       "RATE_LIMITED": "Trop de tentatives. Patientez.",
-      "FAILED": "Une erreur est survenue. Veuillez réessayer."
+      "FAILED": "Une erreur est survenue. Veuillez réessayer.",
+      "NOT_ELIGIBLE": "Aucun compte client ne correspond à cette adresse. La vérification en deux étapes du personnel se gère dans Microsoft 365."
+    },
+    "mfaReset": {
+      "title": "Réinitialiser la vérification en deux étapes d'un client",
+      "procedure": "Réservé aux administrateurs du cabinet. Avant de réinitialiser, vérifiez l'identité du client selon la procédure (docs/runbooks/mfa-reset.md) : rappelez le numéro inscrit dans Clio — jamais un numéro donné pendant l'appel — et faites confirmer deux informations que seul le client connaît.",
+      "clientEmail": "Adresse e-mail du client",
+      "verification": "Vérification d'identité",
+      "verificationCallback": "Rappel au numéro inscrit dans Clio",
+      "verificationInPerson": "En personne, avec une pièce d'identité avec photo",
+      "reason": "Motif",
+      "reasonLost": "Appareil perdu ou volé",
+      "reasonNew": "Nouvel appareil",
+      "reasonOther": "Autre",
+      "confirm": "J'ai vérifié l'identité du client selon la procédure.",
+      "submit": "Réinitialiser la vérification en deux étapes",
+      "done": "C'est fait. Le client a été déconnecté de tous ses appareils et a reçu un e-mail pour choisir un nouveau mot de passe."
     }
   }
 }

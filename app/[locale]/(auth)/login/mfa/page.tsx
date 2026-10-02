@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { MfaForm } from "@/components/auth/mfa-form";
+import { Link } from "@/i18n/navigation";
 import { safeNextPath } from "@/lib/safe-redirect";
 import { verifyMfaAction } from "@/server/actions/auth";
 import { getSessionRole, getUser } from "@/server/auth/session";
@@ -40,6 +41,16 @@ export default async function MfaPage({ params, searchParams }: PageProps<"/[loc
         {enrollment ? t("enrollSubtitle") : t("verifySubtitle")}
       </p>
       <MfaForm action={verifyMfaAction} locale={locale} next={next} enrollment={enrollment} />
+      {!enrollment ? (
+        <p className="mt-6 text-center text-sm">
+          <Link
+            href="/login/mfa/lost"
+            className="inline-flex min-h-6 items-center text-gold-ink hover:underline"
+          >
+            {t("lostLink")}
+          </Link>
+        </p>
+      ) : null}
     </AuthShell>
   );
 }

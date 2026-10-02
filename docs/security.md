@@ -100,3 +100,12 @@ Ce document ne remplace pas un audit de sécurité indépendant. Il ne constitue
 | Alerte e-mail sur changement de mot de passe | `tests/integration/auth.test.ts` |
 | Rapport CSP : validation, URL réduite | `tests/unit/security-hardening.test.ts` |
 
+### Contrôles ajoutés en J3.2 (ADR 0012)
+| Contrôle | Test |
+|---|---|
+| Inactivité > 32 min ou session > 12 h : expirée, sans prolongation possible | `supabase/tests/database/11_sessions.test.sql` |
+| Session sans identifiant, mal formée ou d'un autre compte : refusée | `11_sessions.test.sql` |
+| Avertissement à 28 min, « Rester connecté », déconnexion à 30 min | `tests/e2e/auth.spec.ts` (horloge simulée) |
+| Réinitialisation MFA : facteur supprimé, sessions coupées, ancien mot de passe refusé, e-mail envoyé, audit | `tests/integration/sessions-mfa.test.ts` |
+| Réinitialisation refusée pour le personnel et pour un compte inconnu | `tests/integration/sessions-mfa.test.ts` |
+

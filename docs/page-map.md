@@ -66,6 +66,8 @@ graph TD
 |---|---|---|---|---|
 | `/[locale]/login` | Public | Écran partagé de la maquette, e-mail + mot de passe | Supabase Auth | 1 |
 | `/[locale]/login/mfa` | Client connecté en `aal1` | Saisie TOTP ; enrôlement obligatoire à la 1re connexion | Supabase Auth MFA | 1 |
+| `/[locale]/login/mfa/lost` | Public | Marche à suivre si l'application d'authentification est perdue (aucune réinitialisation en ligne, ADR 0012) | — | 1 |
+| `/[locale]/admin/security/mfa-reset` | firm_admin | Réinitialisation de la MFA d'un client après vérification d'identité (`docs/runbooks/mfa-reset.md`) | Supabase Auth (admin) | 1 |
 | `/[locale]/forgot-password`, `/reset-password` | Public | Réinitialisation. Message neutre (« si un compte existe… ») : pas d'énumération des comptes | Supabase Auth | 1 |
 | `/[locale]/invite/[token]` | Public, jeton valide | Activation : vérification du jeton, création du mot de passe, puis enrôlement MFA | `client_invitations` (serveur) | 1 |
 | `/[locale]/staff/login` | Personnel | Bouton « Se connecter avec Microsoft » (tenant LEXCANADALAW.COM) | Entra ID via Supabase Auth | 1 |

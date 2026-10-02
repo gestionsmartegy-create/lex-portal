@@ -4,6 +4,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { Link } from "@/i18n/navigation";
 import { publicEnv } from "@/lib/env.public";
 import { safeNextPath } from "@/lib/safe-redirect";
+import { TIMEOUT_REASON } from "@/lib/session-timeout";
 import { loginAction } from "@/server/actions/auth";
 
 export default async function LoginPage({ params, searchParams }: PageProps<"/[locale]/login">) {
@@ -15,7 +16,13 @@ export default async function LoginPage({ params, searchParams }: PageProps<"/[l
   // On ne propage que des chemins internes validés.
   const next = rawNext && safeNextPath(rawNext, locale, "") ? rawNext : undefined;
   const notice =
-    sp.signedOut === "all" ? t("login.signedOutAll") : sp.error === "link" ? t("login.linkError") : undefined;
+    sp.signedOut === "all"
+      ? t("login.signedOutAll")
+      : sp.error === "link"
+        ? t("login.linkError")
+        : sp.reason === TIMEOUT_REASON
+          ? t("session.timedOut")
+          : undefined;
 
   return (
     <AuthShell pathname="/login">

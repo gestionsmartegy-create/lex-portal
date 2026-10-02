@@ -15,4 +15,5 @@ export default function setup() {
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = status.ANON_KEY ?? status.PUBLISHABLE_KEY;
   process.env.SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY ?? status.SECRET_KEY;
   process.env.APP_BASE_URL = "http://localhost:3000";
+  process.env.SMTP_URL = "smtp://127.0.0.1:54325"; // Mailpit local (aucun e-mail réel)
 }

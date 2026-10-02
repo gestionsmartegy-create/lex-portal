@@ -92,3 +92,39 @@ test.describe("pages publiques : accessibilité et en-têtes", () => {
     expect(bad.status()).toBe(415);
   });
 });
+
+test.describe("expiration de session (ADR 0012)", () => {
+  test("avertissement à 28 min, « Rester connecté », puis déconnexion à 30 min", async ({ page, client }) => {
+    await page.clock.install();
+    await signInWithPassword(page, client.email, client.password);
+    await expect(page).toHaveURL(/\/en\/login\/mfa/);
+    const secret = (await page.locator("code").innerText()).replace(/\s/g, "");
+    await page.getByLabel("6-digit code").fill(await generate({ secret }));
+    await page.getByRole("button", { name: "Verify" }).click();
+    await expect(page).toHaveURL(/\/en\/portal$/);
+
+    // 28 min sans activité : la fenêtre d'alerte apparaît avec le compte à rebours.
+    await page.clock.fastForward("28:01");
+    const dialog = page.getByRole("alertdialog", { name: "Your session is about to expire" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/^1:5\d$/)).toBeVisible();
+    await expectAccessible(page);
+
+    await dialog.getByRole("button", { name: "Stay signed in" }).click();
+    await expect(dialog).toBeHidden();
+
+    // 30 min de plus sans activité : déconnexion et message.
+    await page.clock.fastForward("30:02");
+    await expect(page).toHaveURL(/\/en\/login\?reason=timeout/);
+    await expect(page.getByText("You were signed out after 30 minutes of inactivity.")).toBeVisible();
+    await page.goto("/en/portal");
+    await expect(page).toHaveURL(/\/en\/login\?next=/);
+  });
+
+  test("page « téléphone perdu » : aucune réinitialisation en ligne, accessible", async ({ page }) => {
+    await page.goto("/fr/login/mfa/lost");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("perdu l'accès");
+    await expect(page.getByRole("button")).toHaveCount(0); // aucune action en libre-service
+    await expectAccessible(page);
+  });
+});

@@ -93,7 +93,8 @@
       "verifySubtitle": "Enter the 6-digit code from your authenticator app.",
       "code": "6-digit code",
       "submit": "Verify",
-      "qrAlt": "QR code to add your Lex Canada account to an authenticator app"
+      "qrAlt": "QR code to add your Lex Canada account to an authenticator app",
+      "lostLink": "Lost access to your authenticator app?"
     },
     "forgot": {
       "title": "Reset your password",
@@ -135,6 +136,24 @@
       "PASSWORD_MISMATCH": "The passwords do not match.",
       "INVITATION_INVALID": "This invitation is invalid or has expired.",
       "UNEXPECTED": "Something went wrong. Please try again."
+    },
+    "session": {
+      "timedOut": "You were signed out after 30 minutes of inactivity. Please sign in again.",
+      "warningTitle": "Your session is about to expire",
+      "warningBody": "For your security, you will be signed out after 30 minutes of inactivity.",
+      "remaining": "Time remaining: {time}",
+      "remainingAnnounce": "{seconds, plural, one {# second} other {# seconds}} remaining before sign-out.",
+      "stay": "Stay signed in",
+      "signOut": "Sign out now"
+    },
+    "mfaLost": {
+      "title": "Lost access to your authenticator app?",
+      "intro": "For your security, two-step verification cannot be reset online. A firm administrator resets it after verifying your identity.",
+      "step1": "Call Lex Canada Law using the phone number you already know (your engagement letter or the firm's website). Do not use a number from an unexpected email or message.",
+      "step2": "The firm will call you back at the number on your file and ask you to confirm information about your matter.",
+      "step3": "You will then receive an email to choose a new password, and you will add your authenticator app again.",
+      "never": "The firm will never ask for your password or a verification code — by phone, email or text message.",
+      "back": "Back to sign in"
     }
   },
   "emails": {
@@ -146,6 +165,17 @@
       "cta": "Activate my access",
       "expiry": "This link can be used once and expires in 72 hours.",
       "ignore": "If you were not expecting this email, you can ignore it.",
+      "signature": "Lex Canada Law"
+    },
+    "mfaReset": {
+      "subject": "Your two-step verification was reset by Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "At your request, Lex Canada Law has reset the two-step verification on your client portal account. For your security, your password was also reset and you were signed out everywhere.",
+      "action": "Use the button below to choose a new password. You will then add your authenticator app again.",
+      "cta": "Choose a new password",
+      "expiry": "This link can be used once and expires in 1 hour.",
+      "warning": "If you did not ask for this, contact the firm immediately by phone, using the number you already know.",
       "signature": "Lex Canada Law"
     }
   },
@@ -192,7 +222,23 @@
       "EXISTS": "An account already exists for this address.",
       "DOMAIN": "Staff accounts must use a firm domain.",
       "RATE_LIMITED": "Too many attempts. Please wait.",
-      "FAILED": "Something went wrong. Please try again."
+      "FAILED": "Something went wrong. Please try again.",
+      "NOT_ELIGIBLE": "No client account matches this address. Staff two-step verification is managed in Microsoft 365."
+    },
+    "mfaReset": {
+      "title": "Reset a client's two-step verification",
+      "procedure": "Firm administrators only. Before resetting, verify the client's identity according to the procedure (docs/runbooks/mfa-reset.md): call back the number on file in Clio — never a number given during the call — and confirm two pieces of information only the client knows.",
+      "clientEmail": "Client email address",
+      "verification": "Identity verification",
+      "verificationCallback": "Call-back to the number on file in Clio",
+      "verificationInPerson": "In person, with photo ID",
+      "reason": "Reason",
+      "reasonLost": "Lost or stolen device",
+      "reasonNew": "New device",
+      "reasonOther": "Other",
+      "confirm": "I verified the client's identity according to the procedure.",
+      "submit": "Reset two-step verification",
+      "done": "Done. The client was signed out everywhere and received an email to choose a new password."
     }
   }
 }

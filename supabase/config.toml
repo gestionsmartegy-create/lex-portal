@@ -167,7 +167,9 @@ site_url = "http://localhost:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = ["http://localhost:3000/en/**", "http://localhost:3000/fr/**", "http://localhost:3000/api/auth/callback"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
-jwt_expiry = 3600
+# Lex Canada (ADR 0012) : 15 min. Un jeton volé après déconnexion reste utilisable 15 min au plus ;
+# le proxy le rafraîchit automatiquement pendant l'activité.
+jwt_expiry = 900
 # JWT issuer URL. If not set, defaults to auth.external_url.
 # jwt_issuer = ""
 # Path to JWT signing key. DO NOT commit your signing keys file to git.
@@ -303,11 +305,10 @@ max_frequency = "5s"
 # 4152127777 = "123456"
 
 # Configure logged in session timeouts.
-# [auth.sessions]
-# Force log out after the specified duration.
-# timebox = "24h"
-# Force log out if the user has been inactive longer than the specified duration.
-# inactivity_timeout = "8h"
+# Lex Canada (ADR 0012) : durée maximale de 12 h côté GoTrue (plan Pro en production).
+# L'inactivité de 30 min est imposée par public.touch_session(), indépendamment du plan.
+[auth.sessions]
+timebox = "12h"
 
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
 # [auth.hook.before_user_created]

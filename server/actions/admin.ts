@@ -4,11 +4,12 @@ import "server-only";
 import { requireStaff } from "@/server/auth/session";
 import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { createInvitation } from "@/server/services/invitation";
+import { resetClientMfa } from "@/server/services/mfa-reset";
 import { provisionStaff } from "@/server/services/staff";
-import { createInvitationSchema, provisionStaffSchema } from "@/server/validation/auth";
+import { createInvitationSchema, mfaResetSchema, provisionStaffSchema } from "@/server/validation/auth";
 
 export type AdminActionState = {
-  error?: "INVALID" | "DUPLICATE" | "EXISTS" | "DOMAIN" | "RATE_LIMITED" | "FAILED";
+  error?: "INVALID" | "DUPLICATE" | "EXISTS" | "DOMAIN" | "RATE_LIMITED" | "NOT_ELIGIBLE" | "FAILED";
   ok?: boolean;
 };
 
@@ -51,4 +52,18 @@ export async function provisionStaffAction(_prev: unknown, formData: FormData): 
   );
   if (result.ok) return { ok: true };
   return { error: result.code === "EXISTS" ? "EXISTS" : result.code === "DOMAIN" ? "DOMAIN" : "FAILED" };
+}
+
+/** Réinitialisation de la MFA d'un client (firm_admin, après vérification d'identité, ADR 0012). */
+export async function resetClientMfaAction(_prev: unknown, formData: FormData): Promise<AdminActionState> {
+  const parsed = mfaResetSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) return { error: "INVALID" };
+  const { user } = await requireStaff(parsed.data.locale, ["firm_admin"]);
+  if (!(await hitRateLimit(`mfa_reset:user:${user.id}`, RATE_LIMITS.mfaResetByUser)))
+    return { error: "RATE_LIMITED" };
+  const result = await resetClientMfa(
+    { email: parsed.data.email, verification: parsed.data.verification, reason: parsed.data.reason },
+    user.id,
+  );
+  return result.ok ? { ok: true } : { error: result.code };
 }
