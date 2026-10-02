@@ -27,6 +27,9 @@
 | Activités / temps facturable (contexte du dossier) | Clio Manage | Activities | Lecture | `.../api/v4/activities.json` | Activities | Oui | Confirmé | — |
 | Prospects / intake (hors périmètre client actif) | Clio Grow | Contacts (Grow) | Lecture/Écriture | Portail développeur Grow distinct | Scopes Grow | Custom Actions disponibles (Activities, Contacts, Documents, Matters concernés par ce mécanisme) | Confirmé (hors périmètre du portail client) | N/A |
 
+## 2 bis. Utilisation dans le code (ADR 0014)
+`server/providers/clio/` : lecture de contacts, matters et bills uniquement. Les listes de champs (`fields=`) sont dans `schemas.ts`, **à revérifier** sur le compte développeur du cabinet.
+
 ## 3. Points explicitement non confirmés (« à valider »)
 
 - Disponibilité et permissions exactes de l'endpoint de création de lien de paiement Clio Payments pour un compte canadien.

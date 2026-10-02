@@ -327,7 +327,8 @@
         "TOO_LONG": "The message is too long (5,000 characters maximum).",
         "NOT_FOUND": "This conversation is not available.",
         "FAILED": "The message could not be sent. Please try again.",
-        "INVALID": "Please check the form."
+        "INVALID": "Please check the form.",
+        "RATE_LIMITED": "Too many messages in a short time. Please wait a few minutes."
       },
       "backToList": "All conversations",
       "emptyThread": "No message in this conversation yet.",
@@ -458,7 +459,8 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "roleStaff": "Staff",
-      "roleAdmin": "Firm administrator"
+      "roleAdmin": "Firm administrator",
+      "integrations": "Integrations"
     },
     "overview": {
       "title": "Firm workspace",
@@ -550,6 +552,46 @@
       "none": "No event.",
       "older": "Older events",
       "system": "System"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Connections of the portal to the firm's software. Read only: the portal never changes Clio.",
+      "clio": "Clio Manage (Canada)",
+      "mockMode": "Demonstration mode: the portal uses a simulated Clio with fictitious data. Real Clio is enabled once the firm's developer application is configured (INTEGRATION_MODE_CLIO=live).",
+      "status": {
+        "connected": "Connected",
+        "not_configured": "Not connected",
+        "error": "Error — reconnect",
+        "revoked": "Disconnected"
+      },
+      "connectedOn": "Connected {date}",
+      "lastSync": "Last synchronization {time}",
+      "neverSynced": "Never synchronized",
+      "connect": "Connect Clio",
+      "disconnect": "Disconnect",
+      "syncNow": "Synchronize now",
+      "importTitle": "Import a client's matters",
+      "importHint": "Enter the email of the client's contact in Clio. Only that client's matters and issued invoices are imported. Importing never gives access: grant it afterwards in Matters & access, or invite the client.",
+      "importEmail": "Client email in Clio",
+      "importSubmit": "Import",
+      "imported": "{matters, plural, =0 {No matter} one {# matter} other {# matters}} and {bills, plural, =0 {no invoice} one {# invoice} other {# invoices}} imported.",
+      "notices": {
+        "connected": "Clio is connected.",
+        "disconnected": "Clio was disconnected and its tokens deleted.",
+        "synced": "Synchronization completed.",
+        "failed": "The operation failed. Try again or reconnect Clio."
+      },
+      "errors": {
+        "INVALID": "Please enter a valid email.",
+        "NOT_FOUND": "No Clio contact has this exact email address.",
+        "AMBIGUOUS": "Several Clio contacts share this email address: correct them in Clio first.",
+        "NOT_CONNECTED": "Clio is not connected.",
+        "TOKEN_REVOKED": "Clio access was revoked: reconnect Clio.",
+        "RATE_LIMITED": "Clio is limiting requests. Try again in a minute.",
+        "UPSTREAM": "Clio is not responding. Try again later.",
+        "INVALID_RESPONSE": "Clio returned an unexpected response.",
+        "FAILED": "The operation failed."
+      }
     }
   }
 }

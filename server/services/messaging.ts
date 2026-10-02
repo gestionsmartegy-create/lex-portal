@@ -15,7 +15,10 @@ export async function listConversations(opts: { matterId?: string; limit?: numbe
     .from("conversations")
     .select("id, matter_id, subject, last_message_at, closed_at, created_at, matters(display_number, title)")
     .order("last_message_at", { ascending: false, nullsFirst: false });
-  if (opts.matterId) query = query.eq("matter_id", opts.matterId);
+  if (opts.matterId) {
+    await assertMatterAccess(opts.matterId);
+    query = query.eq("matter_id", opts.matterId);
+  }
   if (opts.limit) query = query.limit(opts.limit);
   const { data: conversations } = await query;
   if (!conversations?.length) return [];

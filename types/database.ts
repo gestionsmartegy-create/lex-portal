@@ -559,6 +559,23 @@ isOneToOne: false
 "current_session_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
                            },
+"integration_disconnect":
+{ Args: { "p_provider": string,"p_region": string }; Returns: undefined
+                           },
+"integration_read_tokens":
+{ Args: { "p_provider": string,"p_region": string }; Returns: string
+                           },
+"integration_report":
+{ Args: { "p_error"?: string,"p_ok": boolean,"p_provider": string,"p_region": string }; Returns: undefined
+                           },
+"integration_save_tokens":
+{ Args: { "p_actor"?: string,"p_payload": string,"p_provider": string,"p_region": string,"p_scopes": (string)[] }; Returns: undefined
+                           },
+"integration_status_list":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "connected_at": string,"last_error": string,"last_sync_at": string,"provider": string,"region": string,"status": string
+            }[]
+                           },
 "list_audit_events":
 { Args: { "p_before"?: string,"p_limit"?: number,"p_matter_id"?: string }; Returns: unknown[]
                           SetofOptions: {

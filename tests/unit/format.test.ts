@@ -47,8 +47,27 @@ describe("rendez-vous .ics et PDF de démonstration", () => {
     expect(ics).toContain("BEGIN:VCALENDAR\r\n");
     expect(ics).toContain("DTSTART:20261011T170000Z");
     expect(ics).toContain("DTEND:20261011T180000Z");
-    expect(ics).toContain("SUMMARY:Consultation\; suivi — Lex Canada Law");
-    expect(ics).toContain("LOCATION:Teams\\, salle 2");
+    expect(ics).toContain(String.raw`SUMMARY:Consultation\; suivi — Lex Canada Law`);
+    expect(ics).toContain(String.raw`LOCATION:Teams\, salle 2`);
+  });
+
+  it("ics : aucune injection de propriété par un retour chariot seul ; URL non échappée", () => {
+    const ics = toIcs({
+      id: "a2",
+      matter_id: "m",
+      title: "Rendez-vous\rATTENDEE:mailto:evil@example.com",
+      description: null,
+      starts_at: "2026-10-11T17:00:00Z",
+      ends_at: null,
+      timezone: "America/Halifax",
+      location: null,
+      meeting_url: "https://teams.example.com/meet?a=1,2",
+      with_staff_name: null,
+      status: "scheduled",
+      matters: null,
+    });
+    expect(ics.split("\r\n").some((line) => line.startsWith("ATTENDEE"))).toBe(false);
+    expect(ics).toContain("URL:https://teams.example.com/meet?a=1,2");
   });
 
   it("le PDF fictif est un PDF valide qui le dit", () => {

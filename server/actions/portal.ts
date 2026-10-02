@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
+import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { recordAudit } from "@/server/services/audit";
 import { messageBodySchema, sendMessage, startConversation } from "@/server/services/messaging";
 import {
@@ -21,6 +22,12 @@ import { localeSchema } from "@/server/validation/auth";
  */
 export type PortalActionState = { error?: string; ok?: boolean };
 
+/** Limite d'envoi par utilisateur (revue J4/J5, M2) : 30 messages / 10 min. */
+async function withinMessageLimit(): Promise<boolean> {
+  const user = await getUser();
+  return Boolean(user) && (await hitRateLimit(`message:user:${user!.id}`, RATE_LIMITS.messageSendByUser));
+}
+
 const sendSchema = z.object({ conversationId: z.uuid(), body: messageBodySchema, locale: localeSchema });
 
 export async function sendMessageAction(_prev: unknown, formData: FormData): Promise<PortalActionState> {
@@ -29,6 +36,7 @@ export async function sendMessageAction(_prev: unknown, formData: FormData): Pro
     const code = parsed.error.issues.find((i) => i.path[0] === "body")?.message;
     return { error: code === "EMPTY" || code === "TOO_LONG" ? code : "INVALID" };
   }
+  if (!(await withinMessageLimit())) return { error: "RATE_LIMITED" };
   const result = await sendMessage(parsed.data.conversationId, parsed.data.body);
   if (!result.ok) return { error: result.code };
   revalidatePath(`/${parsed.data.locale}/portal/messages/${parsed.data.conversationId}`);
@@ -51,6 +59,7 @@ export async function startConversationAction(
     const code = parsed.error.issues[0]?.message;
     return { error: code === "EMPTY" || code === "TOO_LONG" ? code : "INVALID" };
   }
+  if (!(await withinMessageLimit())) return { error: "RATE_LIMITED" };
   const result = await startConversation(parsed.data.matterId, parsed.data.subject, parsed.data.body);
   if (!result.ok) return { error: result.code };
   redirect(`/${parsed.data.locale}/portal/messages/${result.conversationId}`);

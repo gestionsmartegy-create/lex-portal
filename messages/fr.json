@@ -327,7 +327,8 @@
         "TOO_LONG": "Le message est trop long (5 000 caractères au maximum).",
         "NOT_FOUND": "Cette conversation n'est pas disponible.",
         "FAILED": "Le message n'a pas pu être envoyé. Veuillez réessayer.",
-        "INVALID": "Veuillez vérifier le formulaire."
+        "INVALID": "Veuillez vérifier le formulaire.",
+        "RATE_LIMITED": "Trop de messages en peu de temps. Veuillez patienter quelques minutes."
       },
       "backToList": "Toutes les conversations",
       "emptyThread": "Aucun message dans cette conversation pour l'instant.",
@@ -458,7 +459,8 @@
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu",
       "roleStaff": "Personnel",
-      "roleAdmin": "Administrateur du cabinet"
+      "roleAdmin": "Administrateur du cabinet",
+      "integrations": "Intégrations"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -550,6 +552,46 @@
       "none": "Aucun événement.",
       "older": "Événements plus anciens",
       "system": "Système"
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "subtitle": "Connexions du portail aux logiciels du cabinet. En lecture seule : le portail ne modifie jamais Clio.",
+      "clio": "Clio Manage (Canada)",
+      "mockMode": "Mode démonstration : le portail utilise un Clio simulé avec des données fictives. Le vrai Clio s'active une fois l'application développeur du cabinet configurée (INTEGRATION_MODE_CLIO=live).",
+      "status": {
+        "connected": "Connecté",
+        "not_configured": "Non connecté",
+        "error": "Erreur — reconnecter",
+        "revoked": "Déconnecté"
+      },
+      "connectedOn": "Connecté le {date}",
+      "lastSync": "Dernière synchronisation {time}",
+      "neverSynced": "Jamais synchronisé",
+      "connect": "Connecter Clio",
+      "disconnect": "Déconnecter",
+      "syncNow": "Synchroniser maintenant",
+      "importTitle": "Importer les dossiers d'un client",
+      "importHint": "Saisissez l'e-mail du contact du client dans Clio. Seuls les dossiers de ce client et ses factures émises sont importés. L'import ne donne aucun accès : accordez-le ensuite dans Dossiers et accès, ou invitez le client.",
+      "importEmail": "E-mail du client dans Clio",
+      "importSubmit": "Importer",
+      "imported": "{matters, plural, =0 {Aucun dossier} one {# dossier} other {# dossiers}} et {bills, plural, =0 {aucune facture} one {# facture} other {# factures}} importés.",
+      "notices": {
+        "connected": "Clio est connecté.",
+        "disconnected": "Clio a été déconnecté et ses jetons supprimés.",
+        "synced": "Synchronisation terminée.",
+        "failed": "L'opération a échoué. Réessayez ou reconnectez Clio."
+      },
+      "errors": {
+        "INVALID": "Veuillez saisir un e-mail valide.",
+        "NOT_FOUND": "Aucun contact Clio n'a exactement cette adresse e-mail.",
+        "AMBIGUOUS": "Plusieurs contacts Clio partagent cette adresse : corrigez-les d'abord dans Clio.",
+        "NOT_CONNECTED": "Clio n'est pas connecté.",
+        "TOKEN_REVOKED": "L'accès à Clio a été retiré : reconnectez Clio.",
+        "RATE_LIMITED": "Clio limite les requêtes. Réessayez dans une minute.",
+        "UPSTREAM": "Clio ne répond pas. Réessayez plus tard.",
+        "INVALID_RESPONSE": "Clio a renvoyé une réponse inattendue.",
+        "FAILED": "L'opération a échoué."
+      }
     }
   }
 }
