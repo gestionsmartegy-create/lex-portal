@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { isStaffEmail } from "@/lib/auth-constants";
 
 // Mêmes exigences que Supabase Auth (config.toml) : ≥ 12 caractères, 4 classes.
 export const passwordSchema = z
@@ -48,7 +49,8 @@ export const acceptInvitationSchema = z
   .refine((v) => v.password === v.confirm, { message: "PASSWORD_MISMATCH", path: ["confirm"] });
 
 export const createInvitationSchema = z.object({
-  email: emailSchema,
+  // Un client ne reçoit jamais une adresse du cabinet (revue J3, M3).
+  email: emailSchema.refine((e) => !isStaffEmail(e), "STAFF_EMAIL"),
   firstName: z.string().trim().max(100).optional(),
   lastName: z.string().trim().max(100).optional(),
   preferredLanguage: localeSchema,

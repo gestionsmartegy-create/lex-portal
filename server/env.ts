@@ -7,21 +7,29 @@ const integrationMode = z.enum(["mock", "live"]).default("mock");
  * Variables serveur, validées au premier accès. Les secrets (clé service_role,
  * secret cron) ne doivent JAMAIS être importés côté client (AGENTS.md §2.2).
  */
-const schema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  APP_BASE_URL: z.url().default("http://localhost:3000"),
-  NEXT_PUBLIC_SUPABASE_URL: z.url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  SMTP_URL: z.string().min(1).optional(),
-  EMAIL_FROM: z.string().min(3).default("Lex Canada Law <no-reply@lexcanadalaw.test>"),
-  CRON_SECRET: z.string().min(32).optional(),
-  INTEGRATION_MODE_CLIO: integrationMode,
-  INTEGRATION_MODE_SHAREPOINT: integrationMode,
-  INTEGRATION_MODE_SIGNATURE: integrationMode,
-  INTEGRATION_MODE_PAYMENTS: integrationMode,
-  INTEGRATION_MODE_MALWARE: integrationMode,
-});
+const schema = z
+  .object({
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    APP_BASE_URL: z.url().default("http://localhost:3000"),
+    NEXT_PUBLIC_SUPABASE_URL: z.url(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+    SMTP_URL: z.string().min(1).optional(),
+    EMAIL_FROM: z.string().min(3).default("Lex Canada Law <no-reply@lexcanadalaw.test>"),
+    CRON_SECRET: z.string().min(32).optional(),
+    INTEGRATION_MODE_CLIO: integrationMode,
+    INTEGRATION_MODE_SHAREPOINT: integrationMode,
+    INTEGRATION_MODE_SIGNATURE: integrationMode,
+    INTEGRATION_MODE_PAYMENTS: integrationMode,
+    INTEGRATION_MODE_MALWARE: integrationMode,
+    // Nombre de proxys de confiance devant l'application (revue J3, M2) : l'IP du client
+    // est lue à droite de x-forwarded-for, en sautant ce nombre de proxys.
+    TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
+  })
+  // Liens d'invitation et de réinitialisation : jamais « localhost » en production (revue J3, F1).
+  .refine((e) => e.NODE_ENV !== "production" || Boolean(process.env.APP_BASE_URL), {
+    message: "APP_BASE_URL est obligatoire en production",
+  });
 
 export type ServerEnv = z.infer<typeof schema>;
 

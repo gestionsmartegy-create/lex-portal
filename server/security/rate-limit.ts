@@ -13,6 +13,20 @@ export const RATE_LIMITS = {
   invitationCreateByUser: { max: 50, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
+/** Lecture SANS incrément (true = encore autorisé). Échec fermé. */
+export async function checkRateLimit(key: string, rule: RateLimitRule): Promise<boolean> {
+  const { data, error } = await createSupabaseServiceClient().rpc("rate_limit_check", {
+    p_key: key,
+    p_max: rule.max,
+    p_window_seconds: rule.windowSeconds,
+  });
+  if (error) {
+    console.error(JSON.stringify({ event: "rate_limit_error", code: error.code }));
+    return false;
+  }
+  return data === true;
+}
+
 /**
  * true = action autorisée. En cas d'erreur technique, on REFUSE (échec fermé).
  * service_role : seule la RPC rate_limit_hit est appelée (usage permis, AGENTS.md §6).

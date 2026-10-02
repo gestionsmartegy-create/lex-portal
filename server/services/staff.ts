@@ -20,6 +20,14 @@ export async function provisionStaff(
     return { ok: false as const, code: "DOMAIN" };
 
   const admin = createSupabaseServiceClient();
+  // Autorisation préalable exigée par la base pour un compte non-Microsoft du domaine (migration 160000).
+  const { error: authError } = await admin.rpc("authorize_staff_provisioning", {
+    p_email: input.email,
+    p_role: input.role,
+    p_actor: actorId,
+  });
+  if (authError) return { ok: false as const, code: "DOMAIN" };
+
   const { data, error } = await admin.auth.admin.createUser({
     email: input.email,
     email_confirm: true,

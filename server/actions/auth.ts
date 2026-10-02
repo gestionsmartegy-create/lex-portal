@@ -8,7 +8,7 @@ import { getAssurance, getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { serverEnv } from "@/server/env";
 import { getRequestContext } from "@/server/security/request-context";
-import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
+import { checkRateLimit, hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { hashForKey } from "@/server/security/tokens";
 import { recordAudit } from "@/server/services/audit";
 import { acceptInvitation } from "@/server/services/invitation";
@@ -47,9 +47,12 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<A
   if (!parsed.success) return { error: "INVALID_CREDENTIALS" };
   const { email, password, locale, next } = parsed.data;
 
+  // Par IP : chaque essai compte. Par compte : seuls les ÉCHECS comptent (revue J3, F3),
+  // pour qu'un tiers ne puisse pas bloquer un client en connaissant seulement son e-mail.
+  const accountKey = `login:acct:${hashForKey(email)}`;
   if (
     !(await hitRateLimit(await ipKey("login"), RATE_LIMITS.loginByIp)) ||
-    !(await hitRateLimit(`login:acct:${hashForKey(email)}`, RATE_LIMITS.loginByAccount))
+    !(await checkRateLimit(accountKey, RATE_LIMITS.loginByAccount))
   ) {
     return { error: "RATE_LIMITED" };
   }
@@ -59,10 +62,11 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<A
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user) {
+    await hitRateLimit(accountKey, RATE_LIMITS.loginByAccount);
     await recordAudit({
       action: "auth.login_failed",
       resourceType: "session",
-      metadata: { reason: "credentials" },
+      metadata: { reason: "credentials", account: hashForKey(email) }, // empreinte, jamais l'e-mail
     });
     return { error: "INVALID_CREDENTIALS" }; // message neutre : n'indique jamais si le compte existe
   }
@@ -103,7 +107,7 @@ export async function verifyMfaAction(_prev: unknown, formData: FormData): Promi
     action: "auth.login",
     resourceType: "session",
     actorId: user.id,
-    metadata: { method: "password+totp" },
+    metadata: { method: "totp" },
   });
   return routeAfterLogin(locale, next);
 }

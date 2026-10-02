@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import { SESSION_COOKIE_OPTIONS } from "@/server/db/cookie-options";
 import { buildCsp, generateNonce } from "@/server/security/csp";
 
 // Next.js 16 : « proxy » remplace « middleware » (node_modules/next/dist/docs/…/proxy.md).
@@ -32,6 +33,7 @@ export default async function proxy(request: NextRequest) {
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (url && anon) {
     const supabase = createServerClient(url, anon, {
+      cookieOptions: SESSION_COOKIE_OPTIONS,
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (toSet) => {

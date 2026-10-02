@@ -1,5 +1,6 @@
 import "server-only";
 import type { AccessLevel } from "@/types/domain";
+import { isStaffEmail } from "@/lib/auth-constants";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { createSupabaseServiceClient } from "@/server/db/service-client";
 import { serverEnv } from "@/server/env";
@@ -96,7 +97,7 @@ export async function findValidInvitation(token: string) {
  *  1. réservation ATOMIQUE pending → accepted (usage unique, même en concurrence) ;
  *  2. création du compte (e-mail confirmé) ;
  *  3. profil actif + langue AVANT l'enrôlement MFA ; accès aux dossiers ; liens.
- * Toute erreur après la réservation annule (compte supprimé, invitation rouverte).
+ * Toute erreur après la réservation annule (voir rollback).
  */
 export async function acceptInvitation(token: string, password: string) {
   if (!isWellFormedToken(token)) return { ok: false as const };
@@ -115,13 +116,37 @@ export async function acceptInvitation(token: string, password: string) {
     .maybeSingle();
   if (!reserved) return { ok: false as const };
 
-  let userId: string | null = null;
-  const rollback = async () => {
-    if (userId) await admin.auth.admin.deleteUser(userId);
+  // Une invitation client vers une adresse du cabinet est révoquée, jamais activée (revue J3, M3).
+  if (isStaffEmail(reserved.email)) {
     await admin
       .from("client_invitations")
-      .update({ status: "pending", accepted_at: null })
+      .update({ status: "revoked", revoked_at: now })
       .eq("id", reserved.id);
+    return { ok: false as const };
+  }
+
+  let userId: string | null = null;
+  /**
+   * Compensation (revue J3, F4) : si le compte ne peut pas être supprimé, ou si
+   * l'invitation ne peut pas être rouverte (une autre est déjà en attente),
+   * l'invitation est RÉVOQUÉE — jamais un état « rouvert » avec un compte orphelin.
+   */
+  const rollback = async () => {
+    let reopened = false;
+    const deleted = userId ? !(await admin.auth.admin.deleteUser(userId)).error : true;
+    if (deleted) {
+      const { error } = await admin
+        .from("client_invitations")
+        .update({ status: "pending", accepted_at: null })
+        .eq("id", reserved.id);
+      reopened = !error;
+    }
+    if (!reopened) {
+      await admin
+        .from("client_invitations")
+        .update({ status: "revoked", revoked_at: new Date().toISOString() })
+        .eq("id", reserved.id);
+    }
   };
 
   try {

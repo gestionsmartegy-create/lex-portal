@@ -548,7 +548,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "client_dashboard_counts":
+            "authorize_staff_provisioning":
+{ Args: { "p_actor": string,"p_email": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: undefined
+                           },
+"client_dashboard_counts":
 { Args: Record<PropertyKey, never>; Returns: {
               "active_matters": number,"outstanding_balance": number,"pending_documents": number,"unread_messages": number
             }[]
@@ -582,6 +585,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"rate_limit_check":
+{ Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+                           },
 "rate_limit_hit":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
                            },

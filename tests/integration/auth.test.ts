@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { generateInvitationToken, hashToken } from "@/server/security/tokens";
 import { acceptInvitation, findValidInvitation } from "@/server/services/invitation";
@@ -102,6 +103,27 @@ describe("invitation → activation → MFA → accès (vraies sessions)", () =>
 });
 
 describe("invitations invalides", () => {
+  it("une invitation client vers une adresse du cabinet est révoquée, jamais activée (revue J3, M3)", async () => {
+    const token = await makeInvitation(uniqueEmail("x", "lexcanadalaw.com"));
+    expect(await acceptInvitation(token, testPassword())).toEqual({ ok: false });
+    expect(await findValidInvitation(token)).toBeNull();
+    const { data } = await admin
+      .from("client_invitations")
+      .select("status")
+      .eq("token_hash", hashToken(token))
+      .single();
+    expect(data?.status).toBe("revoked");
+  });
+
+  it("la base refuse un compte e-mail non pré-créé sur le domaine du cabinet (revue J3, M3)", async () => {
+    const { error } = await admin.auth.admin.createUser({
+      email: uniqueEmail("rogue", "lexcanadalaw.com"),
+      password: testPassword(),
+      email_confirm: true,
+    });
+    expect(error).not.toBeNull();
+  });
+
   it("une invitation expirée est refusée", async () => {
     const token = await makeInvitation(uniqueEmail("expired"), { expired: true });
     expect(await findValidInvitation(token)).toBeNull();
@@ -116,6 +138,13 @@ describe("invitations invalides", () => {
 
 describe("personnel", () => {
   async function createStaff(email: string, password: string) {
+    // Comme provisionStaff : autorisation serveur préalable (migration 160000).
+    const { error: authError } = await admin.rpc("authorize_staff_provisioning", {
+      p_email: email,
+      p_role: "staff",
+      p_actor: randomUUID(), // created_by sans clé étrangère : acteur fictif de test
+    });
+    if (authError) throw authError;
     const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
     if (error || !data.user) throw error;
     createdUsers.push(data.user.id);
