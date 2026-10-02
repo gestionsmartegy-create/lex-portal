@@ -52,6 +52,12 @@
 - Le personnel fictif local utilise `@lexcanadalaw.test`, seul domaine autorisé au mot de passe, et uniquement en local.
 - **À trancher en J3** : avec `enable_signup = false`, Supabase refuse aussi la création de compte par Microsoft. Proposition : le firm_admin pré-crée le compte du personnel, et la première connexion Microsoft s'y rattache.
 
+## 5 ter. Mise en œuvre J3 (ADR 0010)
+
+- **Pré-création** : le firm_admin crée le compte du personnel dans `/admin/staff` (sans mot de passe). La première connexion Microsoft s'y rattache par l'e-mail vérifié.
+- **Activation de Microsoft** (responsable) : App Registration single-tenant, puis redirect URI `https://<projet>.supabase.co/auth/v1/callback`, puis `SUPABASE_AUTH_EXTERNAL_AZURE_CLIENT_ID`, `…_SECRET` et `…_URL` (tenant, jamais `common`), puis `[auth.external.azure] enabled = true`, puis `NEXT_PUBLIC_STAFF_SSO_ENABLED=true`. **N'activer aucun autre fournisseur OAuth.**
+- **À vérifier au premier essai réel** : le rattachement automatique de l'identité Microsoft au compte pré-créé (`app_metadata.providers` doit contenir `azure`).
+
 ## 6. Points à confirmer
 
 - Durée d'inactivité et durée maximale de session acceptées par le cabinet.
