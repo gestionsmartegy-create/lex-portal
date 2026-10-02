@@ -139,10 +139,10 @@ python3 diagrams/generate_class_diagram.py   # régénère le diagramme de class
 - Dans la **même** migration qu'une nouvelle table de `public` : `enable row level security`, ses politiques, ses `GRANT` explicites et ses tests pgTAP.
 - Les tables qui ne sont pas destinées à l'API vont dans **`private`** ; l'audit va dans **`audit`**.
 - Les fonctions `security definer` ont toujours `set search_path = ''` et des noms entièrement qualifiés.
-- `service_role` n'est utilisé que dans `server/db/createServiceClient`. Usages permis : synchronisation, webhooks, acceptation d'invitation, écriture d'audit, notifications. Chaque usage est commenté avec sa justification.
+- `service_role` n'est utilisé que dans `server/db/createServiceClient`. Usages permis : synchronisation, webhooks, acceptation d'invitation, écriture d'audit, notifications, et **lecture de l'emplacement externe d'un document** (SharePoint) pour le téléchargement, via **un helper serveur unique** qui (1) vérifie la visibilité du document avec la session de l'utilisateur, (2) lit avec service_role les seules colonnes d'emplacement, (3) journalise `document.downloaded`. Chaque usage est commenté avec sa justification.
 - Les lectures de l'interface utilisent le client **avec la session de l'utilisateur** (RLS appliquée), jamais `service_role`.
 - **Toujours sélectionner des colonnes explicites**, jamais `select("*")` : sur `matters`, `documents`, `invoices` et `matter_access`, certaines colonnes internes ne sont pas lisibles par l'API utilisateur (ADR 0009) et une sélection `*` échoue.
-- Droits **conditionnés à la session** (ADR 0009) : client = compte actif + MFA (`aal2`) ; personnel = connexion Microsoft (`amr` oauth) ou `aal2`. Ne jamais contourner ce contrôle côté application.
+- Droits **conditionnés à la session** (ADR 0009) : client = compte actif + MFA (`aal2`) ; personnel = **connexion Microsoft uniquement** (`amr` oauth + identité azure). Un mot de passe, un lien magique ou une récupération ne donnent jamais de droits au personnel, même avec MFA. Ne jamais contourner ce contrôle côté application, et n'activer aucun autre fournisseur OAuth.
 - Après chaque migration : `supabase db reset`, puis `supabase test db`, puis régénération de `types/database.ts`, puis mise à jour de `docs/database.md` et du diagramme de classes si le modèle a changé.
 
 ## 7. Sécurité — vérifications avant de considérer une tâche terminée
