@@ -61,7 +61,10 @@
 
 **Livrable :** démonstration en préproduction + rapport de fin de phase (format d'`AGENTS.md` §9).
 
-## Phase 2 — Clio Manage (lecture)
+## Phase 2 — Clio Manage (lecture) — 🟡 démarrée le 2026-10-03 (ADR 0013, ADR 0014)
+- [x] OAuth PKCE, jetons dans Vault, `ClioManageClient` (débit, 429, pagination, Zod), import par contact, synchronisation planifiée, faux Clio.
+- [ ] Vérification des champs sur le compte développeur, webhooks, calendrier.
+
 - OAuth 2.0 Authorization Code + PKCE, région CA (`ca.app.clio.com`), jetons dans le coffre-fort (`OAuthTokenStore`).
 - `ClioManageClient` : matters, contacts, calendar_entries, bills, activities. Respect de **50 req/min**, `Retry-After` sur 429, pagination de 200 par page, backoff exponentiel. Toutes les réponses validées par Zod.
 - `SyncService` : jobs dans `private.sync_jobs` (verrou, reprise, état `dead` après `max_attempts`), déclenchés par une tâche planifiée (Vercel Cron ou Azure Functions, selon l'hébergeur).

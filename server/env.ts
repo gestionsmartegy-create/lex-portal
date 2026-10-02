@@ -24,7 +24,13 @@ const schema = z
     INTEGRATION_MODE_MALWARE: integrationMode,
     // Nombre de proxys de confiance devant l'application (revue J3, M2) : l'IP du client
     // est lue à droite de x-forwarded-for, en sautant ce nombre de proxys.
+    // Clio Manage, région CA (Phase 2, ADR 0014) : requis seulement si INTEGRATION_MODE_CLIO=live.
+    CLIO_CLIENT_ID: z.string().min(1).optional(),
+    CLIO_CLIENT_SECRET: z.string().min(1).optional(),
     TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
+  })
+  .refine((e) => e.INTEGRATION_MODE_CLIO !== "live" || Boolean(e.CLIO_CLIENT_ID && e.CLIO_CLIENT_SECRET), {
+    message: "CLIO_CLIENT_ID et CLIO_CLIENT_SECRET sont requis en mode live",
   })
   // Liens d'invitation et de réinitialisation : jamais « localhost » en production (revue J3, F1).
   .refine((e) => e.NODE_ENV !== "production" || Boolean(process.env.APP_BASE_URL), {

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MailPlus,
   MessageSquare,
+  PlugZap,
   ScrollText,
   ShieldAlert,
   UserCog,
@@ -35,6 +36,7 @@ export const ADMIN_NAV = [
   { key: "invitations", href: "/admin/invitations", icon: MailPlus, adminOnly: true },
   { key: "matters", href: "/admin/matters", icon: FolderOpen },
   { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
+  { key: "integrations", href: "/admin/integrations", icon: PlugZap, adminOnly: true },
   { key: "staff", href: "/admin/staff", icon: UserCog, adminOnly: true },
   { key: "security", href: "/admin/security/mfa-reset", icon: ShieldAlert, adminOnly: true },
 ] as const;

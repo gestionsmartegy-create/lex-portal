@@ -152,7 +152,9 @@ Suivez `docs/auth-entra-id-integration.md` §2 :
    - `CLIO_CLIENT_SECRET` (**Sensitive**) ;
    - `INTEGRATION_MODE_CLIO` = `live` ;
    - redéployez.
-3. Prévenez-moi : la page `/admin/integrations` (bouton « Connecter Clio ») arrive avec le bloc 4. Vous y connecterez **votre** compte Clio ; le jeton est conservé chiffré dans Supabase Vault.
+3. Dans le portail, allez dans `/en/admin/integrations` → **Connecter Clio**, puis connectez-vous avec **votre** compte Clio. Le jeton est conservé chiffré dans Supabase Vault et n'est jamais affiché (ADR 0014).
+4. Toujours dans `/admin/integrations`, utilisez **Importer les dossiers d'un client** avec l'e-mail d'un contact **de test** dans Clio. Accordez ensuite l'accès dans « Dossiers et accès », ou invitez ce contact.
+5. **Synchronisation automatique** : `vercel.json` la planifie toutes les 30 minutes, ce qui demande le **plan Pro de Vercel** (le plan Hobby limite à une exécution par jour). `CRON_SECRET` doit être défini : Vercel l'envoie automatiquement.
 
 ---
 

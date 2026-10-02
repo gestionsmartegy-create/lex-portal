@@ -49,6 +49,6 @@
 
 | # | Story | Statut |
 |---|---|---|
-| D1 | En tant qu'**Admin**, je veux connecter Clio, pour que les dossiers, factures et rendez-vous viennent de Clio, en lecture. | ⏳ bloc 4 (Phase 2) |
+| D1 | En tant qu'**Admin**, je veux connecter Clio, puis importer les dossiers et factures d'un client, en lecture. <ul><li>OAuth PKCE.</li><li>Jetons chiffrés dans Vault.</li><li>Brouillons jamais importés.</li><li>L'import ne donne aucun accès.</li><li>Synchronisation toutes les 30 min.</li></ul> | ✅ sur le faux Clio (`clio-sync.test.ts`, `admin.spec.ts`) ; 🟡 vrai Clio dès que vos identifiants sont saisis. Rendez-vous Clio : ⏳ |
 | D2 | En tant que **Client**, je veux voir les vrais documents de SharePoint et y déposer les miens (avec antivirus). | ⏳ Phase 3 |
 | D3 | En tant que **Client**, je veux signer avec DocuSign et payer en ligne. | ⏳ Phase 4 |

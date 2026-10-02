@@ -23,6 +23,10 @@ export type AuditAction =
   | "profile.suspended"
   | "profile.reactivated"
   | "profile.updated"
+  | "integration.connected"
+  | "integration.disconnected"
+  | "integration.imported"
+  | "integration.synced"
   | "invitation.sent"
   | "staff.provisioned";
 

@@ -14,7 +14,10 @@ import {
   revokeMatterAccess,
   setClientStatus,
 } from "@/server/services/admin";
+import { getClioTokenStore } from "@/server/providers";
+import { recordAudit } from "@/server/services/audit";
 import { resetClientMfa } from "@/server/services/mfa-reset";
+import { importClioContact, syncLinkedMatters } from "@/server/services/sync";
 import { provisionStaff } from "@/server/services/staff";
 import {
   createInvitationSchema,
@@ -146,4 +149,43 @@ export async function revokeMatterAccessAction(formData: FormData): Promise<void
   redirect(
     `/${parsed.data.locale}/admin/matters/${parsed.data.matterId}/access?notice=${result.ok ? "revoked" : "failed"}`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Intégrations : Clio Manage en lecture (Phase 2, ADR 0014)
+// ---------------------------------------------------------------------------
+export type ImportState = { error?: string; ok?: boolean; matters?: number; bills?: number };
+
+export async function importClioContactAction(_prev: unknown, formData: FormData): Promise<ImportState> {
+  const parsed = z
+    .object({ email: z.string().trim().toLowerCase().pipe(z.email()), locale: localeSchema })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "INVALID" };
+  const { user } = await requireStaff(parsed.data.locale, ["firm_admin"]);
+  if (!(await hitRateLimit(`clio_import:user:${user.id}`, RATE_LIMITS.invitationCreateByUser)))
+    return { error: "RATE_LIMITED" };
+  const result = await importClioContact(parsed.data.email, user.id);
+  if (!result.ok) return { error: result.code };
+  revalidatePath(`/${parsed.data.locale}/admin`, "layout");
+  return { ok: true, matters: result.matters, bills: result.bills };
+}
+
+export async function syncClioNowAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  const { user } = await requireStaff(locale, ["firm_admin"]);
+  const result = await syncLinkedMatters(user.id);
+  redirect(`/${locale}/admin/integrations?notice=${result.ok ? "synced" : "failed"}`);
+}
+
+export async function disconnectClioAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  const { user } = await requireStaff(locale, ["firm_admin"]);
+  await getClioTokenStore().disconnect();
+  await recordAudit({
+    action: "integration.disconnected",
+    resourceType: "integration",
+    resourceId: "clio_manage",
+    actorId: user.id,
+  });
+  redirect(`/${locale}/admin/integrations?notice=disconnected`);
 }

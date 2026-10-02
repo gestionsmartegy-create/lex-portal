@@ -1,4 +1,4 @@
-import { waitForEmail } from "../integration/helpers";
+import { serviceClient, waitForEmail } from "../integration/helpers";
 import { createStaffSession, expect, expectAccessible, signInWithMfa, test, testIp } from "./fixtures";
 
 /** Espace cabinet (J5, ADR 0013) : pages, octroi et révocation, rôles. */
@@ -22,6 +22,7 @@ test.describe("espace cabinet", () => {
         "/en/admin/audit",
         "/en/admin/staff",
         "/fr/admin/security/mfa-reset",
+        "/en/admin/integrations",
       ]) {
         await page.goto(path);
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -118,5 +119,26 @@ test.describe("espace cabinet", () => {
     await clientPage.goto("/en/admin");
     await expect(clientPage.getByRole("heading", { name: "Page not found" })).toBeVisible();
     await clientContext.close();
+  });
+
+  test("intégrations : import depuis le faux Clio, sans accès accordé", async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    const staff = await createStaffSession(context, baseURL!, "firm_admin");
+    try {
+      await page.goto("/en/admin/integrations");
+      await expect(page.getByText(/Demonstration mode/)).toBeVisible();
+      await page.getByLabel("Client email in Clio").fill("legal@northwind.example.com");
+      await page.getByRole("button", { name: "Import" }).click();
+      await expect(page.getByText("1 matter and no invoice imported.")).toBeVisible();
+      await page.goto("/en/admin/matters");
+      await expect(page.getByText("Shareholder Agreement")).toBeVisible();
+    } finally {
+      const admin = serviceClient();
+      await admin.from("matters").delete().eq("clio_matter_id", "7700002");
+      await staff.cleanup();
+    }
   });
 });
