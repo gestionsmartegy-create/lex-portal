@@ -4,8 +4,17 @@ import type { EmailSender, OutgoingEmail } from "./email-sender";
 
 /**
  * Envoi SMTP (nodemailer). En local : Mailpit de Supabase (aucun e-mail réel).
- * En production : fournisseur à décider par le cabinet (open-questions).
+ * Préproduction / production : SMTP Microsoft 365 (ADR 0013). Hors local, STARTTLS est
+ * EXIGÉ (requireTLS) : jamais d'envoi en clair, même si le serveur ne propose pas TLS.
  */
+/** Hors local, impose STARTTLS sur smtp:// (smtps:// est chiffré d'emblée). */
+export function smtpTransportUrl(smtpUrl: string): string {
+  const url = new URL(smtpUrl);
+  const local = ["127.0.0.1", "localhost"].includes(url.hostname);
+  if (!local && url.protocol === "smtp:") url.searchParams.set("requireTLS", "true");
+  return url.toString();
+}
+
 export class SmtpEmailSender implements EmailSender {
   private readonly transport;
 
@@ -13,7 +22,7 @@ export class SmtpEmailSender implements EmailSender {
     smtpUrl: string,
     private readonly from: string,
   ) {
-    this.transport = nodemailer.createTransport(smtpUrl);
+    this.transport = nodemailer.createTransport(smtpTransportUrl(smtpUrl));
   }
 
   async send(email: OutgoingEmail): Promise<void> {
