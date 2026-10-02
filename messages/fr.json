@@ -180,11 +180,222 @@
     }
   },
   "portal": {
-    "temp": {
-      "greeting": "Bonjour {name}",
-      "greetingNoName": "Bonjour",
-      "matters": "{count, plural, =0 {Vous n'avez encore aucun dossier.} one {Vous avez # dossier dans votre portail.} other {Vous avez # dossiers dans votre portail.}}",
-      "comingSoon": "Le tableau de bord complet arrive au prochain jalon (J5)."
+    "nav": {
+      "label": "Navigation du portail",
+      "overview": "Tableau de bord",
+      "matters": "Mes dossiers",
+      "documents": "Documents",
+      "messages": "Messages",
+      "billing": "Facturation",
+      "appointments": "Rendez-vous",
+      "notifications": "Notifications",
+      "profile": "Profil et sécurité",
+      "signOut": "Déconnexion",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "clientNumber": "Client nº {number}",
+      "countLabel": "{count} nouveau(x)"
+    },
+    "header": {
+      "notifications": "Notifications",
+      "noNotifications": "Aucune nouvelle notification.",
+      "seeAll": "Voir toutes les notifications",
+      "account": "Menu du compte",
+      "profile": "Profil et sécurité"
+    },
+    "common": {
+      "viewAll": "Tout voir",
+      "updated": "Mis à jour {time}",
+      "freshness": "Mis à jour {time}",
+      "freshnessUnknown": "Pas encore synchronisé",
+      "matter": "Dossier {number}",
+      "progress": "Avancement",
+      "empty": "Rien pour l'instant.",
+      "back": "Retour",
+      "download": "Télécharger",
+      "due": "Échéance : {date}",
+      "lead": "Responsable : {name}",
+      "loading": "Chargement…"
+    },
+    "matterStatus": {
+      "open": "Actif",
+      "action_required": "Action requise",
+      "on_hold": "En pause",
+      "closed": "Clos"
+    },
+    "dashboard": {
+      "title": "Bon retour, {name}",
+      "titleNoName": "Bon retour",
+      "subtitle": "Voici un aperçu de vos dossiers chez Lex Canada Law.",
+      "actionRequired": "Action requise",
+      "actionSignature": "{title} — signature requise",
+      "actionRequest": "Document demandé : {title}",
+      "actionInvoice": "La facture {title} est en retard",
+      "actionDue": "avant le {date}",
+      "actionCta": "Voir",
+      "cards": {
+        "activeMatters": "Dossiers actifs",
+        "pendingDocuments": "Documents en attente",
+        "unreadMessages": "Messages non lus",
+        "outstanding": "Solde à payer"
+      },
+      "recentMatters": "Dossiers récents",
+      "recentMessages": "Messages récents",
+      "noMatters": "Aucun dossier dans votre portail pour l'instant.",
+      "noMessages": "Aucun message pour l'instant."
+    },
+    "matters": {
+      "title": "Mes dossiers",
+      "subtitle": "Tous vos dossiers juridiques, en cours et passés.",
+      "filterLabel": "Filtrer les dossiers",
+      "filters": {
+        "all": "Tous",
+        "active": "En cours",
+        "closed": "Clos"
+      },
+      "none": "Aucun dossier ne correspond à ce filtre.",
+      "opened": "Ouvert le {date}"
+    },
+    "matter": {
+      "tabsLabel": "Sections du dossier",
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "timeline": "Chronologie",
+        "documents": "Documents",
+        "messages": "Messages",
+        "invoices": "Factures",
+        "appointments": "Rendez-vous"
+      },
+      "description": "Description",
+      "practiceArea": "Domaine",
+      "responsible": "Avocat responsable",
+      "opened": "Ouvert le",
+      "closed": "Clos le",
+      "access": "Votre accès",
+      "accessRead": "Lecture seule",
+      "accessWrite": "Lecture et réponse",
+      "timelineEmpty": "Aucune étape pour l'instant.",
+      "stepDone": "Terminée le {date}",
+      "stepPending": "À venir",
+      "newMessage": "Écrire au cabinet"
+    },
+    "documents": {
+      "title": "Documents",
+      "subtitle": "Consultez et téléchargez vos documents juridiques.",
+      "tabsLabel": "Dossiers de documents",
+      "tabs": {
+        "shared": "Partagés par le cabinet",
+        "uploads": "Mes dépôts",
+        "signed": "Signés"
+      },
+      "filterMatter": "Dossier",
+      "allMatters": "Tous les dossiers",
+      "none": "Aucun document dans ce dossier.",
+      "requests": "Documents demandés",
+      "requestDue": "À remettre avant le {date}",
+      "uploadSoon": "Le dépôt de documents dans le portail sera bientôt disponible. En attendant, transmettez-les à votre avocat.",
+      "signatures": "En attente de votre signature",
+      "signSoon": "La signature électronique sera bientôt disponible : votre avocat vous transmettra le document.",
+      "status": {
+        "uploaded": "Déposé",
+        "in_review": "En examen",
+        "pending_signature": "Signature requise",
+        "signed": "Signé",
+        "rejected": "Refusé",
+        "accepted": "Accepté"
+      },
+      "downloadLabel": "Télécharger {name}"
+    },
+    "messages": {
+      "title": "Messages",
+      "subtitle": "Échanges sécurisés avec votre équipe juridique.",
+      "none": "Aucune conversation pour l'instant.",
+      "unread": "Non lu",
+      "you": "Vous",
+      "firm": "Lex Canada Law",
+      "composeLabel": "Votre message",
+      "send": "Envoyer",
+      "sending": "Envoi…",
+      "readOnly": "Votre accès à ce dossier est en lecture seule : vous ne pouvez pas répondre ici. Contactez votre avocat au besoin.",
+      "closed": "Cette conversation est close.",
+      "newTitle": "Nouveau message",
+      "subject": "Objet",
+      "matter": "Dossier",
+      "start": "Démarrer la conversation",
+      "errors": {
+        "EMPTY": "Veuillez écrire un message.",
+        "TOO_LONG": "Le message est trop long (5 000 caractères au maximum).",
+        "NOT_FOUND": "Cette conversation n'est pas disponible.",
+        "FAILED": "Le message n'a pas pu être envoyé. Veuillez réessayer.",
+        "INVALID": "Veuillez vérifier le formulaire."
+      },
+      "backToList": "Toutes les conversations",
+      "emptyThread": "Aucun message dans cette conversation pour l'instant.",
+      "participant": "Participant"
+    },
+    "billing": {
+      "title": "Facturation",
+      "subtitle": "Vos factures et soldes.",
+      "invoices": "Factures",
+      "none": "Aucune facture pour l'instant.",
+      "issued": "Émise le {date}",
+      "balance": "Solde dû",
+      "pay": "Payer",
+      "paySoon": "Le paiement en ligne sera bientôt disponible.",
+      "status": {
+        "due": "À payer",
+        "overdue": "En retard",
+        "paid": "Payée",
+        "void": "Annulée"
+      },
+      "balanceValue": "Solde dû : {amount}"
+    },
+    "appointments": {
+      "title": "Rendez-vous",
+      "subtitle": "Vos rencontres à venir et passées avec le cabinet.",
+      "upcoming": "À venir",
+      "past": "Passés",
+      "none": "Aucun rendez-vous.",
+      "with": "Avec {name}",
+      "join": "Rejoindre la rencontre",
+      "addToCalendar": "Ajouter à mon agenda",
+      "timezone": "Heures affichées dans le fuseau {zone}."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Restez informé de chaque mise à jour de vos dossiers.",
+      "markAll": "Tout marquer comme lu",
+      "none": "Vous n'avez aucune notification.",
+      "unread": "Non lue",
+      "open": "Ouvrir",
+      "markRead": "Marquer comme lue"
+    },
+    "profile": {
+      "title": "Profil et sécurité",
+      "subtitle": "Vos informations, votre langue et votre sécurité.",
+      "identity": "Informations personnelles",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "emailHint": "Pour changer d'adresse e-mail, contactez le cabinet.",
+      "phone": "Téléphone",
+      "language": "Langue préférée",
+      "languages": {
+        "en": "English",
+        "fr": "Français"
+      },
+      "save": "Enregistrer",
+      "saved": "Vos modifications sont enregistrées.",
+      "notifications": "Notifications",
+      "emailNotifications": "Recevoir un e-mail en cas de nouveauté (l'e-mail ne contient jamais le contenu).",
+      "security": "Sécurité",
+      "mfaOn": "La vérification en deux étapes est active sur votre compte.",
+      "changePassword": "Changer mon mot de passe",
+      "signOutAll": "Me déconnecter de tous les appareils",
+      "errors": {
+        "INVALID": "Veuillez vérifier le formulaire.",
+        "FAILED": "Les modifications n'ont pas pu être enregistrées."
+      }
     }
   },
   "admin": {

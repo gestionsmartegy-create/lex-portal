@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { setNonce } from "get-nonce";
 import { AlertDialog } from "radix-ui";
 import { Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -34,6 +33,7 @@ const ACTIVITY_EVENTS = ["pointerdown", "keydown", "scroll", "touchstart"] as co
  * - signal au serveur au plus une fois par minute ;
  * - à 28 min : fenêtre d'alerte avec compte à rebours de 2 min ; seul un clic la ferme ;
  * - à 30 min : déconnexion de cet appareil, journalisée, et des autres onglets.
+ * Le nonce CSP de la fenêtre Radix est fourni par <StyleNonce /> (même gabarit).
  */
 export function SessionTimeoutGuard({ locale, area, keepAlive, idleLogout, logout }: Props) {
   const t = useTranslations("auth.session");
@@ -89,15 +89,6 @@ export function SessionTimeoutGuard({ locale, area, keepAlive, idleLogout, logou
     channel.current?.postMessage({ type: "activity", at: now } satisfies ChannelMessage);
     void heartbeat();
   }, [heartbeat]);
-
-  useEffect(() => {
-    // La fenêtre Radix injecte un <style> (verrouillage du défilement) : on lui donne le nonce
-    // du DOCUMENT (celui de sa CSP), lu sur les scripts de Next.js. Le nonce de la requête
-    // courante ne convient pas : après une navigation côté client, la CSP reste celle du
-    // premier chargement. Aucun 'unsafe-inline' n'est nécessaire.
-    const nonce = document.querySelector<HTMLScriptElement>("script[nonce]")?.nonce;
-    if (nonce) setNonce(nonce);
-  }, []);
 
   useEffect(() => {
     const mountedAt = Date.now();

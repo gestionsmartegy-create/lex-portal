@@ -14,6 +14,15 @@ export type AuditAction =
   | "auth.mfa_reset"
   | "auth.password_reset_requested"
   | "auth.password_changed"
+  | "document.downloaded"
+  | "message.sent"
+  | "matter_access.granted"
+  | "matter_access.revoked"
+  | "invitation.revoked"
+  | "invitation.resent"
+  | "profile.suspended"
+  | "profile.reactivated"
+  | "profile.updated"
   | "invitation.sent"
   | "staff.provisioned";
 
