@@ -560,6 +560,24 @@ isOneToOne: false
         to: "events"
         isOneToOne: false
         isSetofReturn: true
+      } },
+"list_matter_access":
+{ Args: { "p_matter": string }; Returns: {
+              "access_level": Database["public"]['Enums']["access_level"],
+"granted_at": string,
+"granted_by": string | null,
+"id": string,
+"matter_id": string,
+"revoke_reason": string | null,
+"revoked_at": string | null,
+"revoked_by": string | null,
+"user_id": string
+            }[]
+                          SetofOptions: {
+        from: "*"
+        to: "matter_access"
+        isOneToOne: false
+        isSetofReturn: true
       } }
           }
           Enums: {

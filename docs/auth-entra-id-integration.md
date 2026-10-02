@@ -46,6 +46,12 @@
 - Expiration d'inactivité côté application : 30 min (à confirmer), avec un avertissement 2 min avant.
 - Côté serveur, utiliser `supabase.auth.getUser()` (validation auprès de Supabase), **jamais** `getSession()` seul, pour toute décision d'autorisation.
 
+## 5 bis. Contrôles en base (ADR 0009)
+
+- Les droits du personnel n'existent **que** pour une session Microsoft (`amr` = `oauth`, identité `azure`). Mot de passe, lien magique ou récupération ne donnent **aucun droit**, même avec un TOTP Supabase : le MFA du personnel est celui d'Entra ID (accès conditionnel).
+- Le personnel fictif local utilise `@lexcanadalaw.test`, seul domaine autorisé au mot de passe, et uniquement en local.
+- **À trancher en J3** : avec `enable_signup = false`, Supabase refuse aussi la création de compte par Microsoft. Proposition : le firm_admin pré-crée le compte du personnel, et la première connexion Microsoft s'y rattache.
+
 ## 6. Points à confirmer
 
 - Durée d'inactivité et durée maximale de session acceptées par le cabinet.

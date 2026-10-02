@@ -10,8 +10,8 @@
 |---|---|---|---|
 | client | John Doe | `john.doe@example.com` | `client_number` = `2026-0142`, MFA à enrôler au premier login |
 | client | Jane Roe (QVYON Technologies) | `jane.roe@example.com` | Membre de l'organisation fictive « QVYON Technologies » |
-| staff (simulé) | « Me Wilson Saintelmy » | `demo.staff@lexcanadalaw.com` | Compte **fictif** local (`provider = azure` simulé). Le vrai compte du personnel sera créé par Microsoft Entra ID (J3) |
-| firm_admin (simulé) | « Admin Démo » | `demo.admin@lexcanadalaw.com` | Compte **fictif** local. Le vrai firm_admin est à désigner par le cabinet (open-questions) |
+| staff (simulé) | « Me Wilson Saintelmy » | `demo.staff@lexcanadalaw.test` | Compte **fictif** local (`provider = azure` simulé). Le vrai compte du personnel sera créé par Microsoft Entra ID (J3) |
+| firm_admin (simulé) | « Admin Démo » | `demo.admin@lexcanadalaw.test` | Compte **fictif** local. Le vrai firm_admin est à désigner par le cabinet (open-questions) |
 
 Les mots de passe sont générés par `pnpm db:seed-passwords` (après `pnpm db:reset`) et écrits **uniquement** dans `supabase/seed.local.md`, un fichier ignoré par Git. Le script vérifie que chaque compte peut se connecter, sans jamais afficher les mots de passe. Données chargées : `supabase/seed.sql`.
 

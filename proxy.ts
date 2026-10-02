@@ -28,8 +28,11 @@ export default function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      // Tout sauf API, fichiers statiques, optimisation d'images et fichiers avec extension.
-      source: "/((?!api|_next/static|_next/image|_vercel|.*\\..*).*)",
+      // Tout, sauf une liste EXPLICITE de ressources statiques (ADR 0009, F4) : une page
+      // dont l'URL contient un point (« /en/x.y ») reçoit donc bien sa CSP.
+      // /api reçoit une CSP de repli stricte via next.config.ts.
+      source:
+        "/((?!api/|_next/static/|_next/image|_vercel/|brand/|favicon\\.ico$|icon\\.png$|apple-icon\\.png$|robots\\.txt$|sitemap\\.xml$).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

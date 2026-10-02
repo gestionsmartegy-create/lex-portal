@@ -13,7 +13,7 @@ select throws_ok(
   'P0001', null, 'T4 · matter_access réservé aux clients');
 
 -- T5 : le firm_admin voit tout
-select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1');
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'oauth');
 select is((select count(*) from public.matters), 2::bigint, 'T5 · firm_admin voit tous les dossiers');
 select tests.clear_authentication();
 
@@ -44,7 +44,7 @@ select throws_ok(
 select tests.clear_authentication();
 
 -- T22 / T24 : personnel de l'équipe
-select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1');
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oauth');
 select is((select count(*) from public.matters), 1::bigint, 'T22 · le personnel voit les dossiers de son équipe');
 select throws_ok(
   $$ insert into public.matter_access (matter_id, user_id) values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002') $$,
@@ -52,12 +52,12 @@ select throws_ok(
 select tests.clear_authentication();
 
 -- T25 : personnel hors équipe
-select tests.authenticate_as('00000000-0000-0000-0000-00000000000c', 'aal1');
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000c', 'aal1', 'oauth');
 select is((select count(*) from public.matters), 0::bigint, 'T25 · personnel hors équipe : aucun dossier');
 select tests.clear_authentication();
 
 -- T27 / T29 · security.md 2 et 7 : révocation immédiate, définitive, journalisée
-select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1');
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'oauth');
 select lives_ok(
   $$ update public.matter_access set revoked_at = now(), revoke_reason = 'fin de mandat'
      where user_id = '00000000-0000-0000-0000-000000000001' $$,

@@ -22,7 +22,19 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // API : jamais de rendu HTML — CSP de repli la plus stricte (ADR 0009, F4).
+      {
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+          },
+        ],
+      },
+    ];
   },
 };
 

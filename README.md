@@ -5,7 +5,7 @@
 Portail client sécurisé et bilingue (FR/EN) du cabinet **Lex Canada Law**, avec un espace d'administration pour le cabinet.
 Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, région Canada) + Clio Manage (région CA) + Microsoft Entra ID / SharePoint.
 
-> **État au 2026-10-01** : Phase 1. **J1 (socle)** et **J2 (base de données)** terminés sur `feat/j1-socle` puis `feat/j2-base-de-donnees` : Supabase local, 2 migrations, 60 tests pgTAP, types, données fictives. Prochain jalon : J3 (authentification).
+> **État au 2026-10-01** : Phase 1. **J1 (socle)** et **J2 (base de données)** terminés sur `feat/j1-socle` puis `feat/j2-base-de-donnees` : Supabase local, migrations, 113 tests pgTAP, types, données fictives (durcies en J2.1). Prochain jalon : J3 (authentification).
 
 ## Contenu du dépôt
 
@@ -17,7 +17,7 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `.claude/settings.json` | Interdit à Claude Code de lire les fichiers `.env*` et de pousser vers Supabase distant |
 | `supabase/migrations/` | **Migrations — font foi** (ADR 0007) |
 | `supabase/schema.sql` | Référence figée du **schéma de base de données v2.1**, exécutable (22 tables publiques, schémas `private` et `audit`, RLS complète : 47 politiques) |
-| `supabase/tests/database/` | **60 tests pgTAP bloquants** (RLS, rôles, révocation, audit, privilèges) |
+| `supabase/tests/database/` | **113 tests pgTAP bloquants** (RLS, rôles, révocation, audit, privilèges) |
 | `supabase/smoke/` | Test de fumée hors Supabase (32 scénarios) |
 | `docs/database.md` | Architecture de la base : rôles, ERD, dictionnaire, matrice RLS, stockage, rétention |
 | `docs/class-diagram.md` | Diagramme de classes v2.1 (Mermaid) : 58 classes, 15 énumérations |
@@ -31,7 +31,7 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `docs/auth-entra-id-integration.md` | Authentification client (MFA) et personnel (Microsoft) |
 | `docs/security.md`, `docs/privacy-and-data-residency.md` | Exigences de sécurité et de confidentialité |
 | `docs/open-questions.md` | **Décisions qui reviennent au cabinet**, à trancher avant les phases concernées |
-| `.github/workflows/ci.yml` | **CI** : application (lint, types, tests, build), base de données (60 tests pgTAP, dérive des types), recherche de secrets (gitleaks). Ne jamais fusionner si un contrôle est rouge (ADR 0008) |
+| `.github/workflows/ci.yml` | **CI** : application (lint, types, tests, build), base de données (tests pgTAP, dérive des types), recherche de secrets (gitleaks). Ne jamais fusionner si un contrôle est rouge (ADR 0008) |
 | `docs/decisions/` | ADR 0001 à 0008 (0004 SharePoint · 0005 DocuSign · 0006 socle J1 · 0007 base de données J2 · 0008 CI) |
 | `docs/reference/` | PDF du cabinet : mémorandum EA, schéma directeur, architecture verrouillée |
 | `docs/archive/` | Versions v1 remplacées (schéma, diagramme, modèle de données, cartographie des pages) |
@@ -51,7 +51,7 @@ pnpm dev           # http://localhost:3000 → /en ou /fr
 pnpm db:start            # 1er lancement : téléchargement des images (plusieurs minutes)
 pnpm db:reset            # migrations + données fictives
 pnpm db:seed-passwords   # mots de passe de test → supabase/seed.local.md (ignoré par Git)
-pnpm db:test             # 60 tests pgTAP — doivent tous passer
+pnpm db:test             # 113 tests pgTAP — doivent tous passer
 ```
 
 Studio local : http://127.0.0.1:54323 · e-mails locaux (Inbucket) : http://127.0.0.1:54324.

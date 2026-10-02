@@ -19,7 +19,7 @@ select throws_ok($$ select * from public.list_audit_events() $$, '42501', null,
   'T16 · un client ne peut pas lire l''audit');
 select tests.clear_authentication();
 
-select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1');
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'oauth');
 select ok((select count(*) from public.list_audit_events(50)) > 0, 'T17 · le firm_admin lit l''audit via la RPC');
 select tests.clear_authentication();
 

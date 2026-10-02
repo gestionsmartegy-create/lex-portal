@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -8,26 +8,34 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-// Polices de la maquette, auto-hébergées par next/font (aucun appel externe à l'exécution).
-const display = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  style: ["normal", "italic"],
+// Polices de la maquette, HÉBERGÉES DANS LE PROJET (app/fonts, licence SIL OFL 1.1) :
+// aucun appel à Google ni au build ni à l'exécution (ADR 0009). Polices variables, sous-ensemble latin.
+const display = localFont({
+  src: [
+    { path: "../fonts/playfair-display-latin.woff2", weight: "400 900", style: "normal" },
+    { path: "../fonts/playfair-display-italic-latin.woff2", weight: "400 900", style: "italic" },
+  ],
   variable: "--font-display-family",
   display: "swap",
+  fallback: ["Georgia", "serif"],
 });
-const body = DM_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+const body = localFont({
+  src: [
+    { path: "../fonts/dm-sans-latin.woff2", weight: "100 1000", style: "normal" },
+    { path: "../fonts/dm-sans-italic-latin.woff2", weight: "100 1000", style: "italic" },
+  ],
   variable: "--font-body",
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
-const accent = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+const accent = localFont({
+  src: [
+    { path: "../fonts/cormorant-garamond-latin.woff2", weight: "300 700", style: "normal" },
+    { path: "../fonts/cormorant-garamond-italic-latin.woff2", weight: "300 700", style: "italic" },
+  ],
   variable: "--font-accent-family",
   display: "swap",
+  fallback: ["Georgia", "serif"],
 });
 
 export function generateStaticParams() {
