@@ -33,6 +33,13 @@
       "title": "Page introuvable",
       "body": "Cette page n'existe pas ou vous n'y avez pas accès.",
       "back": "Retour à l'accueil"
+    },
+    "unexpected": {
+      "title": "Une erreur est survenue",
+      "body": "Une erreur inattendue s'est produite. Vos données ne sont pas touchées. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "back": "Retour à l'accueil",
+      "reference": "Référence : {digest}"
     }
   },
   "styleguide": {

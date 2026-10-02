@@ -12,6 +12,7 @@ import {
   signIn,
   testPassword,
   uniqueEmail,
+  waitForEmail,
 } from "./helpers";
 
 /**
@@ -200,5 +201,24 @@ describe("RPC serveur", () => {
     for (let i = 0; i < 3; i++)
       hits.push((await admin.rpc("rate_limit_hit", { p_key: key, p_max: 2, p_window_seconds: 60 })).data);
     expect(hits).toEqual([true, true, false]);
+  });
+});
+
+describe("alertes de sécurité (ADR 0011)", () => {
+  it("un changement de mot de passe envoie une alerte bilingue, sans lien ni donnée de dossier", async () => {
+    const email = uniqueEmail("alert");
+    const password = testPassword();
+    const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
+    if (error || !data.user) throw error;
+    createdUsers.push(data.user.id);
+
+    const client = await signIn(email, password);
+    const { error: updateError } = await client.auth.updateUser({ password: testPassword() });
+    expect(updateError).toBeNull();
+
+    const mail = await waitForEmail(email, "Your password was changed");
+    expect(mail.subject).toContain("Votre mot de passe a été modifié");
+    expect(mail.html).not.toMatch(/<a\s/i);
+    expect(mail.html).not.toMatch(/LC-\d{4}-\d{4}/);
   });
 });

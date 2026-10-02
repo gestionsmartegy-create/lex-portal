@@ -14,6 +14,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" }, // ADR 0011
   { key: "X-DNS-Prefetch-Control", value: "off" },
 ];
 
@@ -25,15 +26,15 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: securityHeaders },
       // API : jamais de rendu HTML — CSP de repli la plus stricte (ADR 0009, F4).
-      {
-        source: "/api/:path*",
+      ...["/api/:path*", "/.well-known/:path*"].map((source) => ({
+        source,
         headers: [
           {
             key: "Content-Security-Policy",
             value: "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
           },
         ],
-      },
+      })),
     ];
   },
 };

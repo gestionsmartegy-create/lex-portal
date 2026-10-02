@@ -4,6 +4,10 @@
  * car proxy.ts n'est jamais embarqué côté client.
  */
 
+/** Point de collecte des violations CSP (ADR 0011). */
+export const CSP_REPORT_PATH = "/api/security/csp-report";
+export const CSP_REPORT_GROUP = "csp";
+
 export function generateNonce(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
@@ -45,6 +49,9 @@ export function buildCsp({ nonce, isDev, supabaseUrl }: CspOptions): string {
     "object-src": ["'none'"],
     "worker-src": ["'self'", "blob:"],
     "manifest-src": ["'self'"],
+    // Rapports de violation (ADR 0011) : report-to (moderne) et report-uri (repli Firefox/Safari).
+    "report-to": [CSP_REPORT_GROUP],
+    "report-uri": [CSP_REPORT_PATH],
   };
 
   const policy = Object.entries(directives)
@@ -52,4 +59,22 @@ export function buildCsp({ nonce, isDev, supabaseUrl }: CspOptions): string {
     .join("; ");
 
   return isDev ? policy : `${policy}; upgrade-insecure-requests`;
+}
+
+/**
+ * Politique en observation seule (Content-Security-Policy-Report-Only, ADR 0011) :
+ * Trusted Types contre les XSS par injection DOM. Elle ne bloque rien, elle signale ;
+ * elle passera dans la politique bloquante une fois l'absence de violation constatée.
+ */
+export function buildReportOnlyCsp(): string {
+  return [
+    "require-trusted-types-for 'script'",
+    `report-to ${CSP_REPORT_GROUP}`,
+    `report-uri ${CSP_REPORT_PATH}`,
+  ].join("; ");
+}
+
+/** En-tête Reporting-Endpoints : l'API Reporting exige une URL absolue. */
+export function reportingEndpoints(origin: string): string {
+  return `${CSP_REPORT_GROUP}="${origin}${CSP_REPORT_PATH}"`;
 }

@@ -19,7 +19,7 @@ const swatches = [
   { name: "gold", value: "#B8962E", className: "bg-gold" },
   { name: "gold-light", value: "#D4AF5A", className: "bg-gold-light" },
   { name: "gold-pale", value: "#F5E9C8", className: "bg-gold-pale" },
-  { name: "gold-ink", value: "#8A6D1A", className: "bg-gold-ink" },
+  { name: "gold-ink", value: "#7F6416", className: "bg-gold-ink" },
   { name: "cream", value: "#FDF8EE", className: "bg-cream" },
   { name: "surface", value: "#F4F5F7", className: "bg-surface" },
   { name: "surface-alt", value: "#F8F9FB", className: "bg-surface-alt" },
@@ -125,7 +125,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
               >
                 {t("emailLabel")}
               </Label>
-              <a href="#" className="text-xs text-gold-ink hover:underline">
+              <a href="#" className="inline-flex min-h-6 items-center text-xs text-gold-ink hover:underline">
                 {t("linkSample")}
               </a>
             </div>

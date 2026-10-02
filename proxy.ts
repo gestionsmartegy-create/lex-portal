@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { SESSION_COOKIE_OPTIONS } from "@/server/db/cookie-options";
-import { buildCsp, generateNonce } from "@/server/security/csp";
+import { buildCsp, buildReportOnlyCsp, generateNonce, reportingEndpoints } from "@/server/security/csp";
 
 // Next.js 16 : « proxy » remplace « middleware » (node_modules/next/dist/docs/…/proxy.md).
 const handleI18nRouting = createIntlMiddleware(routing);
@@ -69,6 +69,8 @@ export default async function proxy(request: NextRequest) {
 
   for (const { name, value, options } of pending) response.cookies.set(name, value, options);
   response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("Content-Security-Policy-Report-Only", buildReportOnlyCsp());
+  response.headers.set("Reporting-Endpoints", reportingEndpoints(request.nextUrl.origin));
   // Pages authentifiées : jamais mises en cache par un intermédiaire.
   if (PROTECTED_CLIENT.test(path) || PROTECTED_STAFF.test(path))
     response.headers.set("Cache-Control", "no-store");
@@ -82,7 +84,7 @@ export const config = {
       // dont l'URL contient un point (« /en/x.y ») reçoit donc bien sa CSP.
       // /api reçoit une CSP de repli stricte via next.config.ts.
       source:
-        "/((?!api/|_next/static/|_next/image|_vercel/|brand/|favicon\\.ico$|icon\\.png$|apple-icon\\.png$|robots\\.txt$|sitemap\\.xml$).*)",
+        "/((?!api/|\\.well-known/|_next/static/|_next/image|_vercel/|brand/|favicon\\.ico$|icon\\.png$|apple-icon\\.png$|robots\\.txt$|sitemap\\.xml$).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

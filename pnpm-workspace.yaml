@@ -4,6 +4,10 @@ allowBuilds:
   "@swc/core": false
   sharp: false
   unrs-resolver: false
+# Délai minimal avant d'installer une nouvelle version publiée : 1 jour (valeur de pnpm 11,
+# rendue explicite, ADR 0011). Les mises à jour courantes passent par Dependabot (7 jours).
+# Exceptions ci-dessous : versions épinglées volontairement (ADR 0006/0007).
+minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@next/env@16.3.8"
   - "@next/eslint-plugin-next@16.3.8"

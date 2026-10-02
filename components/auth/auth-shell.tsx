@@ -17,7 +17,7 @@ export function AuthShell({ children, pathname }: { children: ReactNode; pathnam
           </h2>
           <p className="mt-6 text-[15px] leading-relaxed text-white/70">{t("auth.panel.body")}</p>
         </div>
-        <p className="text-xs text-white/40">{t("common.copyright", { year: new Date().getFullYear() })}</p>
+        <p className="text-xs text-white/60">{t("common.copyright", { year: new Date().getFullYear() })}</p>
       </aside>
       <main id="main" className="flex w-full flex-col bg-surface lg:w-1/2">
         <div className="flex justify-end p-6">

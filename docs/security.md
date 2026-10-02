@@ -57,7 +57,7 @@ Ces tests doivent être **automatisés** autant que possible (tests d'intégrati
 
 | # | Test automatisé | Statut |
 |---|---|---|
-| 1 | `supabase/tests/database/03_acces_dossiers.test.sql` (T7, T8) | ✅ base. Réponse 404 identique côté application : J3/J5 (e2e) |
+| 1 | `supabase/tests/database/03_acces_dossiers.test.sql` (T7, T8) | ✅ base. Réponse 404 identique côté application : e2e en J5 (`tests/e2e/`, ADR 0011) |
 | 2 | `03_acces_dossiers` (T29 : même session, accès coupé) | ✅ base |
 | 3 | URL de téléchargement transférée | ⏳ Phase 3 (téléchargement en flux par le serveur, pas d'URL réutilisable) |
 | 4 | Webhook falsifié | ⏳ Phase 2 (`private.webhook_events`) |
@@ -89,4 +89,14 @@ Ce document ne remplace pas un audit de sécurité indépendant. Il ne constitue
 - Les mécanismes Clio (rate limit, signature de webhook) sont confirmés par la documentation officielle.
 - Les mesures de sécurité applicatives (CSRF, CSP, RLS, cookies) sont des bonnes pratiques standards de l'écosystème Next.js/Supabase, à mettre en œuvre et auditer en Phase 1 — pas encore vérifiées sur un environnement réel.
 - Les scénarios de test du §2 sont dérivés de l'analyse de risque de ce projet et doivent être traduits en tests automatisés concrets par l'équipe de développement, pas seulement lus comme une check-list théorique.
+
+### Contrôles ajoutés en J3.1 (ADR 0011)
+| Contrôle | Test |
+|---|---|
+| Redirection ouverte après connexion (`next=//…`) | `tests/e2e/auth.spec.ts` |
+| Message d'erreur neutre (compte existant ou non) | `tests/e2e/auth.spec.ts` |
+| Aucune violation CSP, Trusted Types en observation | `tests/e2e/fixtures.ts` (toutes les pages visitées) |
+| Accessibilité WCAG 2.2 AA (axe, gravité grave ou critique) | `tests/e2e/auth.spec.ts` |
+| Alerte e-mail sur changement de mot de passe | `tests/integration/auth.test.ts` |
+| Rapport CSP : validation, URL réduite | `tests/unit/security-hardening.test.ts` |
 

@@ -5,7 +5,7 @@
 Portail client sécurisé et bilingue (FR/EN) du cabinet **Lex Canada Law**, avec un espace d'administration pour le cabinet.
 Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, région Canada) + Clio Manage (région CA) + Microsoft Entra ID / SharePoint.
 
-> **État au 2026-10-01** : Phase 1. **J1 (socle)**, **J2 (base de données)**, J2.1 (durcissement) fusionnés ; **J3 (authentification)** en revue. Avant : **J1** et **J2** terminés sur `feat/j1-socle` puis `feat/j2-base-de-donnees` : Supabase local, migrations, 113 tests pgTAP, types, données fictives (durcies en J2.1). Prochain jalon : J3 (authentification).
+> **État au 2026-10-01** : Phase 1. **J1 (socle)**, **J2 (base de données)**, J2.1 (durcissement) fusionnés ; **J3 (authentification)** et **J3.1 (durcissement, ADR 0011)** fusionnés. Avant : **J1** et **J2** terminés sur `feat/j1-socle` puis `feat/j2-base-de-donnees` : Supabase local, migrations, 113 tests pgTAP, types, données fictives (durcies en J2.1). Prochain jalon : J3 (authentification).
 
 ## Contenu du dépôt
 
@@ -31,7 +31,7 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `docs/auth-entra-id-integration.md` | Authentification client (MFA) et personnel (Microsoft) |
 | `docs/security.md`, `docs/privacy-and-data-residency.md` | Exigences de sécurité et de confidentialité |
 | `docs/open-questions.md` | **Décisions qui reviennent au cabinet**, à trancher avant les phases concernées |
-| `.github/workflows/ci.yml` | **CI** : application (lint, types, tests, build), base de données (tests pgTAP, dérive des types), recherche de secrets (gitleaks). Ne jamais fusionner si un contrôle est rouge (ADR 0008) |
+| `.github/workflows/ci.yml` | **CI** : application (audit des dépendances, lint, types, tests, build), base de données (pgTAP, intégration, e2e Playwright + axe, dérive des types), sécurité (gitleaks, Semgrep). Ne jamais fusionner si un contrôle est rouge (ADR 0008) |
 | `docs/decisions/` | ADR 0001 à 0008 (0004 SharePoint · 0005 DocuSign · 0006 socle J1 · 0007 base de données J2 · 0008 CI) |
 | `docs/reference/` | PDF du cabinet : mémorandum EA, schéma directeur, architecture verrouillée |
 | `docs/archive/` | Versions v1 remplacées (schéma, diagramme, modèle de données, cartographie des pages) |

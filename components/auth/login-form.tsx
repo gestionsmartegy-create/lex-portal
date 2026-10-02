@@ -42,7 +42,10 @@ export function LoginForm({
         required
         label={t("common.password")}
         aside={
-          <Link href="/forgot-password" className="text-xs text-gold-ink hover:underline">
+          <Link
+            href="/forgot-password"
+            className="inline-flex min-h-6 items-center text-xs text-gold-ink hover:underline"
+          >
             {t("login.forgot")}
           </Link>
         }

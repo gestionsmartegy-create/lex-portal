@@ -31,7 +31,7 @@ export default async function StaffLoginPage({ params }: PageProps<"/[locale]/st
         </section>
       ) : null}
       <p className="mt-8 text-center text-sm">
-        <Link href="/login" className="text-gold-ink hover:underline">
+        <Link href="/login" className="inline-flex min-h-6 items-center text-gold-ink hover:underline">
           {t("clientLink")}
         </Link>
       </p>

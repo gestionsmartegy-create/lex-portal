@@ -24,12 +24,18 @@ export default async function AdminHome({ params }: PageProps<"/[locale]/admin">
         {role === "firm_admin" ? (
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/admin/invitations" className="text-gold-ink hover:underline">
+              <Link
+                href="/admin/invitations"
+                className="inline-flex min-h-6 items-center text-gold-ink hover:underline"
+              >
                 {t("temp.invitations")} →
               </Link>
             </li>
             <li>
-              <Link href="/admin/staff" className="text-gold-ink hover:underline">
+              <Link
+                href="/admin/staff"
+                className="inline-flex min-h-6 items-center text-gold-ink hover:underline"
+              >
                 {t("temp.staff")} →
               </Link>
             </li>
