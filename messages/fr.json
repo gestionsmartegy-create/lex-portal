@@ -51,5 +51,141 @@
     "primary": "Accéder à mon portail",
     "outlineGold": "Prendre rendez-vous",
     "ghostWhite": "Connexion du personnel"
+  },
+  "auth": {
+    "panel": {
+      "title": "Votre portail client,",
+      "titleAccent": "toujours à portée de main.",
+      "body": "Consultez vos dossiers, échangez en toute sécurité avec votre équipe juridique, signez vos documents et suivez l'avancement de vos affaires — au même endroit."
+    },
+    "common": {
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submitting": "Veuillez patienter…",
+      "security": "Connexion chiffrée (TLS) · Authentification à deux facteurs",
+      "backToLogin": "Retour à la connexion",
+      "passwordHint": "Au moins 12 caractères, avec majuscules, minuscules, un chiffre et un symbole."
+    },
+    "login": {
+      "title": "Connectez-vous à votre portail",
+      "subtitle": "Saisissez vos identifiants pour accéder à votre espace client sécurisé.",
+      "forgot": "Mot de passe oublié ?",
+      "submit": "Accéder à mon portail",
+      "noAccount": "Pas encore de compte ?",
+      "book": "Prendre rendez-vous pour commencer",
+      "staffLink": "Personnel de Lex Canada ? Connexion avec Microsoft",
+      "signedOutAll": "Vous avez été déconnecté de tous vos appareils.",
+      "linkError": "Ce lien est invalide ou a expiré. Veuillez réessayer."
+    },
+    "mfa": {
+      "enrollTitle": "Sécurisez votre compte",
+      "enrollSubtitle": "L'authentification à deux facteurs est obligatoire. Scannez ce code QR avec une application d'authentification (Microsoft Authenticator, Google Authenticator, 1Password…), puis saisissez le code à 6 chiffres.",
+      "manualKey": "Impossible de scanner ? Saisissez cette clé :",
+      "verifyTitle": "Vérification en deux étapes",
+      "verifySubtitle": "Saisissez le code à 6 chiffres de votre application d'authentification.",
+      "code": "Code à 6 chiffres",
+      "submit": "Vérifier",
+      "qrAlt": "Code QR pour ajouter votre compte Lex Canada à une application d'authentification"
+    },
+    "forgot": {
+      "title": "Réinitialiser votre mot de passe",
+      "subtitle": "Saisissez votre adresse e-mail. Si un compte existe, vous recevrez un lien de réinitialisation.",
+      "submit": "Envoyer le lien",
+      "sent": "Si un compte existe pour cette adresse, un lien a été envoyé. Consultez votre boîte de réception."
+    },
+    "reset": {
+      "title": "Choisissez un nouveau mot de passe",
+      "submit": "Mettre à jour"
+    },
+    "invite": {
+      "title": "Activez votre espace client",
+      "subtitle": "Bienvenue{name}. Choisissez un mot de passe pour activer votre accès. Vous configurerez ensuite l'authentification à deux facteurs.",
+      "submit": "Activer mon compte",
+      "invalidTitle": "Invitation indisponible",
+      "invalidBody": "Ce lien d'invitation est invalide, a déjà été utilisé ou a expiré. Contactez votre avocat chez Lex Canada pour recevoir une nouvelle invitation."
+    },
+    "staff": {
+      "title": "Connexion du personnel",
+      "subtitle": "Réservé au personnel de Lex Canada Law (compte @lexcanadalaw.com).",
+      "microsoft": "Se connecter avec Microsoft",
+      "ssoPending": "La connexion Microsoft n'est pas encore configurée (en attente de la configuration Azure).",
+      "demoTitle": "Connexion de démonstration (développement local uniquement)",
+      "demoHint": "Comptes fictifs du personnel @lexcanadalaw.test uniquement.",
+      "demoSubmit": "Connexion de démonstration",
+      "clientLink": "Client ? Aller au portail client"
+    },
+    "logout": {
+      "signOut": "Se déconnecter",
+      "signOutAll": "Déconnecter tous les appareils"
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "Adresse e-mail ou mot de passe incorrect.",
+      "RATE_LIMITED": "Trop de tentatives. Patientez quelques minutes avant de réessayer.",
+      "STAFF_USE_MICROSOFT": "Le personnel de Lex Canada se connecte avec Microsoft.",
+      "CODE_INVALID": "Code invalide. Veuillez réessayer.",
+      "PASSWORD_WEAK": "Le mot de passe ne respecte pas les exigences.",
+      "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas.",
+      "INVITATION_INVALID": "Cette invitation est invalide ou a expiré.",
+      "UNEXPECTED": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "emails": {
+    "invitation": {
+      "subject": "Votre invitation au portail client Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Lex Canada Law vous invite à son portail client sécurisé. Utilisez le bouton ci-dessous pour activer votre accès.",
+      "cta": "Activer mon accès",
+      "expiry": "Ce lien est à usage unique et expire dans 72 heures.",
+      "ignore": "Si vous n'attendiez pas ce message, vous pouvez l'ignorer.",
+      "signature": "Lex Canada Law"
+    }
+  },
+  "portal": {
+    "temp": {
+      "greeting": "Bonjour {name}",
+      "greetingNoName": "Bonjour",
+      "matters": "{count, plural, =0 {Vous n'avez encore aucun dossier.} one {Vous avez # dossier dans votre portail.} other {Vous avez # dossiers dans votre portail.}}",
+      "comingSoon": "Le tableau de bord complet arrive au prochain jalon (J5)."
+    }
+  },
+  "admin": {
+    "temp": {
+      "title": "Espace cabinet",
+      "role": "Connecté en tant que {role}",
+      "comingSoon": "L'espace d'administration complet arrive au jalon J5.",
+      "invitations": "Inviter un client",
+      "staff": "Ajouter un membre du personnel"
+    },
+    "invitations": {
+      "title": "Inviter un client",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "language": "Langue",
+      "matters": "Dossiers",
+      "access": "Niveau d'accès",
+      "read": "Lecture seule",
+      "readWrite": "Lecture et écriture (messages, dépôts)",
+      "submit": "Envoyer l'invitation",
+      "sent": "Invitation envoyée."
+    },
+    "staff": {
+      "title": "Ajouter un membre du personnel",
+      "hint": "Crée le compte à l'avance. La personne se connecte ensuite avec Microsoft (@lexcanadalaw.com).",
+      "role": "Rôle",
+      "roleStaff": "Personnel",
+      "roleAdmin": "Administrateur du cabinet",
+      "submit": "Créer le compte",
+      "created": "Compte créé."
+    },
+    "errors": {
+      "INVALID": "Veuillez vérifier le formulaire.",
+      "DUPLICATE": "Une invitation est déjà en attente pour cette adresse.",
+      "EXISTS": "Un compte existe déjà pour cette adresse.",
+      "DOMAIN": "Les comptes du personnel doivent utiliser un domaine du cabinet.",
+      "RATE_LIMITED": "Trop de tentatives. Patientez.",
+      "FAILED": "Une erreur est survenue. Veuillez réessayer."
+    }
   }
 }

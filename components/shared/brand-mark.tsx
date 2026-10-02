@@ -23,7 +23,7 @@ export function BrandMark({ tone = "dark", size = "md", priority = false, classN
       src={tone === "light" ? logoWhite : logoDark}
       alt={t("brand")}
       priority={priority}
-      className={cn("w-auto", heights[size], className)}
+      className={cn("w-auto self-start object-contain", heights[size], className)}
     />
   );
 }
