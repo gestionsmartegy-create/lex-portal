@@ -67,6 +67,15 @@ export const provisionStaffSchema = z.object({
   locale: localeSchema,
 });
 
+/** Réinitialisation de la MFA d'un client par un firm_admin (ADR 0012). */
+export const mfaResetSchema = z.object({
+  email: emailSchema,
+  verification: z.enum(["callback_known_number", "in_person_id"]),
+  reason: z.enum(["lost_device", "new_device", "other"]),
+  confirmed: z.literal("on"),
+  locale: localeSchema,
+});
+
 /** Codes d'erreur internes, traduits dans l'interface (messages/*.json → auth.errors.*). */
 export type AuthErrorCode =
   | "INVALID_CREDENTIALS"

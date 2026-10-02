@@ -10,6 +10,8 @@ export type AuditAction =
   | "auth.mfa_failed"
   | "auth.logout"
   | "auth.logout_all"
+  | "auth.session_timeout"
+  | "auth.mfa_reset"
   | "auth.password_reset_requested"
   | "auth.password_changed"
   | "invitation.sent"

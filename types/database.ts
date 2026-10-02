@@ -593,6 +593,12 @@ isOneToOne: false
                            },
 "record_audit_event":
 { Args: { "p_action": string,"p_actor_id"?: string,"p_ip"?: unknown,"p_matter_id"?: string,"p_metadata"?: Json,"p_request_id"?: string,"p_resource_id"?: string,"p_resource_type": string,"p_user_agent"?: string }; Returns: number
+                           },
+"revoke_user_sessions":
+{ Args: { "p_user": string }; Returns: number
+                           },
+"touch_session":
+{ Args: Record<PropertyKey, never>; Returns: string
                            }
           }
           Enums: {

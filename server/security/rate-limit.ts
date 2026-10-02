@@ -12,6 +12,7 @@ export const RATE_LIMITS = {
   invitationAcceptByIp: { max: 10, windowSeconds: 60 * 60 },
   invitationCreateByUser: { max: 50, windowSeconds: 60 * 60 },
   cspReportByIp: { max: 60, windowSeconds: 60 },
+  mfaResetByUser: { max: 5, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /** Lecture SANS incrément (true = encore autorisé). Échec fermé. */

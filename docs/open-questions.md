@@ -73,7 +73,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Accès administrateur au projet Supabase « lex law » existant et région réelle ? | Sinon : nouveau projet en `ca-central-1` (ADR 0002) | Élevée |
 | Cadre réglementaire applicable : LPRPDE + règles de la Nova Scotia Barristers' Society (infonuagique) ; Loi 25 seulement pour les clients du Québec ? | Contenu de l'AIVP et des mentions de confidentialité | Élevée |
 | ~~Langue par défaut du portail~~ | ✅ **Anglais** (ADR 0006) ; détection du navigateur active | — |
-| ~~Couleur des liens en petit texte~~ | ✅ **`gold-ink #8A6D1A`** (ADR 0006), ajusté à **`#7F6416`** pour le contraste AA sur fond gris (ADR 0011) — **à valider** | — |
+| ~~Couleur des liens en petit texte~~ | ✅ **`gold-ink #8A6D1A`** (ADR 0006), ajusté à **`#7F6416`** pour le contraste AA sur fond gris (ADR 0011), validé le 2026-10-02 | — |
 | Domaine du portail (`portal.lexcanadalaw.com` ?) | URI de redirection OAuth de production (Clio, Entra), CSP, e-mails | Élevée |
 | Qui est le premier firm_admin ? | Personne ne peut inviter de client | Élevée |
 | Taille maximale des fichiers, formats acceptés | Paramètres d'interface (Phase 3) | Moyenne |
@@ -89,12 +89,12 @@ Toutes ces questions découlent directement des points marqués « à valider »
 
 | Question | Conséquence si non répondue | Priorité |
 |---|---|---|
-| **Durée des sessions** : déconnexion après combien de minutes d'inactivité, et durée maximale d'une session (proposition : 30 min et 12 h) ? | Sans réponse, une session reste ouverte indéfiniment sur un poste partagé. La fonction native de Supabase (`timebox`, `inactivity_timeout`) demande le plan Pro ; une garde applicative est possible en complément | **Critique** |
-| **Perte du téléphone (MFA)** : quelle procédure pour un client qui n'a plus son application d'authentification (vérification d'identité, par qui, délai) ? | Sans procédure, le client est bloqué, ou bien un « dépannage » non vérifié ouvre la porte à l'hameçonnage. Proposition : réinitialisation par un firm_admin après rappel au numéro connu, journalisée | **Critique** |
+| ~~Durée des sessions~~ | ✅ **30 min d'inactivité**, avertissement et compte à rebours de 2 min, 12 h au maximum (2026-10-02, ADR 0012) | — |
+| ~~Perte du téléphone (MFA)~~ | ✅ Procédure déléguée et définie le 2026-10-02 : réinitialisation par un firm_admin après rappel au numéro de Clio (ADR 0012, `docs/runbooks/mfa-reset.md`) | — |
 | **Outil de surveillance** (erreurs et alertes) : lequel, avec des données hébergées au Canada et les données personnelles retirées ? | Les rapports CSP et les anomalies de connexion restent dans les logs, sans alerte | Élevée |
-| **Plan Supabase Pro** : retenu ? | Il conditionne le refus des mots de passe déjà fuités (Have I Been Pwned), les durées de session natives, la restauration à un instant précis (PITR) et les Auth Hooks (ADR 0010, M1) | Élevée |
+| ~~Plan Supabase Pro~~ | ✅ **Oui, en production** (2026-10-02). À activer alors : mots de passe fuités, `timebox`, PITR, Auth Hooks (ADR 0010, M1) | — |
 | **Passkeys (WebAuthn)** : à proposer aux clients en plus du code TOTP ? | Les passkeys résistent à l'hameçonnage, contrairement au TOTP. La disponibilité dans Supabase reste à vérifier | Moyenne |
 | **CAPTCHA** sur la connexion et le mot de passe oublié : oui ou non, et quel fournisseur (Cloudflare Turnstile, hCaptcha) ? | La limitation de débit reste la seule protection contre les robots | Moyenne |
 | **Alerte « nouvelle connexion »** par e-mail : souhaitée ? | Elle demande de reconnaître les appareils (sinon un e-mail à chaque connexion) | Faible |
-| ~~Adresse de signalement des failles (security.txt)~~ | ✅ **admin@lexcanadalaw.com** (2026-10-02, ADR 0011). Elle tranche aussi l'orthographe du domaine (`lexcanadalaw.com`) pour l'administrateur Microsoft 365 ? **À confirmer** | — |
+| ~~Adresse de signalement des failles (security.txt)~~ | ✅ **admin@lexcanadalaw.com** (2026-10-02, ADR 0011). Domaine **`lexcanadalaw.com`** confirmé, aussi pour l'administrateur Microsoft 365 (2026-10-02) | — |
 

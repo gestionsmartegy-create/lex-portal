@@ -11,6 +11,7 @@ import { getRequestContext } from "@/server/security/request-context";
 import { checkRateLimit, hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { hashForKey } from "@/server/security/tokens";
 import { recordAudit } from "@/server/services/audit";
+import { TIMEOUT_REASON } from "@/lib/session-timeout";
 import { acceptInvitation } from "@/server/services/invitation";
 import {
   acceptInvitationSchema,
@@ -242,4 +243,34 @@ export async function logoutAction(formData: FormData): Promise<void> {
     });
   }
   redirect(everywhere ? `/${locale}/login?signedOut=all` : `/${locale}/login`);
+}
+
+// ---------------------------------------------------------------------------
+// Expiration de session (ADR 0012)
+// ---------------------------------------------------------------------------
+export type KeepAliveState = { status: "active" | "expired" };
+
+/** Signal d'activité du navigateur (au plus 1/min). La base décide si la session vit encore. */
+export async function keepSessionAliveAction(): Promise<KeepAliveState> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("touch_session");
+  return { status: !error && data === "active" ? "active" : "expired" };
+}
+
+/** Fin du compte à rebours dans le navigateur : déconnexion de CET appareil, journalisée. */
+export async function idleLogoutAction(formData: FormData): Promise<void> {
+  const locale = formData.get("locale") === "fr" ? "fr" : "en";
+  const admin = formData.get("area") === "admin";
+  const supabase = await createSupabaseServerClient();
+  const user = await getUser();
+  await supabase.auth.signOut({ scope: "local" });
+  if (user) {
+    await recordAudit({
+      action: "auth.session_timeout",
+      resourceType: "session",
+      actorId: user.id,
+      metadata: { trigger: "client" },
+    });
+  }
+  redirect(`/${locale}/${admin ? "staff/login" : "login"}?reason=${TIMEOUT_REASON}`);
 }

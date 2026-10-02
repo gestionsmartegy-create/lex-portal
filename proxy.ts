@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import type { Database } from "@/types/database";
 import { SESSION_COOKIE_OPTIONS } from "@/server/db/cookie-options";
 import { buildCsp, buildReportOnlyCsp, generateNonce, reportingEndpoints } from "@/server/security/csp";
 
@@ -29,10 +30,11 @@ export default async function proxy(request: NextRequest) {
 
   const pending: PendingCookie[] = [];
   let hasUser = false;
+  let sessionExpired = false;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (url && anon) {
-    const supabase = createServerClient(url, anon, {
+    const supabase = createServerClient<Database>(url, anon, {
       cookieOptions: SESSION_COOKIE_OPTIONS,
       cookies: {
         getAll: () => request.cookies.getAll(),
@@ -46,13 +48,27 @@ export default async function proxy(request: NextRequest) {
     });
     const { data } = await supabase.auth.getUser();
     hasUser = Boolean(data.user);
+    // Expiration après 30 min d'inactivité, décidée par la base (ADR 0012). Chaque page
+    // protégée (et chaque Server Action, qui y est postée) compte comme une activité.
+    const path = request.nextUrl.pathname;
+    if (hasUser && (PROTECTED_CLIENT.test(path) || PROTECTED_STAFF.test(path))) {
+      const { data: status, error } = await supabase.rpc("touch_session");
+      if (error) console.error(JSON.stringify({ event: "touch_session_failed", code: error.code }));
+      sessionExpired = error !== null || status !== "active"; // échec fermé
+    }
   }
 
   const path = request.nextUrl.pathname;
   const locale = path.startsWith("/fr") ? "fr" : "en";
   let response: NextResponse;
 
-  if (!hasUser && PROTECTED_CLIENT.test(path)) {
+  if (sessionExpired) {
+    // 303 : une Server Action (POST) est suivie en GET. La route déconnecte et journalise.
+    const target = new URL("/api/auth/session-expired", request.url);
+    target.searchParams.set("locale", locale);
+    if (PROTECTED_STAFF.test(path)) target.searchParams.set("area", "admin");
+    response = NextResponse.redirect(target, 303);
+  } else if (!hasUser && PROTECTED_CLIENT.test(path)) {
     const target = new URL(`/${locale}/login`, request.url);
     target.searchParams.set("next", path);
     response = NextResponse.redirect(target);
