@@ -95,8 +95,21 @@ export class ClioManageClient implements ClioManageGateway {
     if (!tokens) throw new ClioError("NOT_CONNECTED");
     if (tokens.expires_at && tokens.expires_at - 60_000 < this.now()) {
       if (!tokens.refresh_token) throw new ClioError("TOKEN_REVOKED");
-      tokens = await refreshTokens(tokens.refresh_token, this.fetchImpl);
-      await this.tokens.save(tokens);
+      try {
+        tokens = await refreshTokens(tokens.refresh_token, this.fetchImpl);
+        await this.tokens.save(tokens);
+      } catch (error) {
+        // Rafraîchissement concurrent (planificateur + bouton) : si un autre processus a déjà
+        // enregistré un jeton neuf, on l'utilise au lieu d'échouer (revue Phase 2, F5).
+        const latest = await this.tokens.get();
+        if (
+          latest &&
+          latest.access_token !== tokens.access_token &&
+          (!latest.expires_at || latest.expires_at > this.now())
+        )
+          return latest.access_token;
+        throw error;
+      }
     }
     return tokens.access_token;
   }

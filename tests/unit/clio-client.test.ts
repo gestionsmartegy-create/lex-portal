@@ -145,6 +145,21 @@ describe("ClioManageClient (ADR 0014)", () => {
     expect(new Headers(calls[1]!.init?.headers).get("authorization")).toBe("Bearer new-acc");
   });
 
+  it("rafraîchissement concurrent : un échec utilise le jeton neuf enregistré par l'autre processus", async () => {
+    const now = 1_800_000_000_000;
+    const store = new MemoryStore(token({ expires_at: now + 10_000 }));
+    const { impl, calls } = fakeFetch([
+      (u) => {
+        if (u.pathname !== "/oauth/token") return undefined;
+        store.tokens = { access_token: "other-acc", refresh_token: "other-ref", expires_at: now + 3_600_000 };
+        return new Response("", { status: 400 }); // refresh token déjà tourné par l'autre processus
+      },
+      () => json({ data: [] }),
+    ]);
+    await new ClioManageClient(store, impl, noSleep, () => now).listBillsForMatter(1);
+    expect(new Headers(calls.at(-1)!.init?.headers).get("authorization")).toBe("Bearer other-acc");
+  });
+
   it("débit borné : au-delà de 45 requêtes par minute, le client attend", async () => {
     let clock = 0;
     const waits: number[] = [];

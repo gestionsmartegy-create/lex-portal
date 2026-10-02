@@ -61,6 +61,13 @@ export function mapBill(b: ClioBill, matterId: string, today: string): Record<st
 
 async function upsertMatterWithBills(gateway: ClioManageGateway, m: ClioMatter) {
   const admin = createSupabaseServiceClient();
+  // Un dossier purgé (cycle de vie) ne revient jamais dans le cache (revue Phase 2, F4).
+  const { data: existing } = await admin
+    .from("matters")
+    .select("purged_at")
+    .eq("clio_matter_id", String(m.id))
+    .maybeSingle();
+  if (existing?.purged_at) return { ok: false as const, bills: 0 };
   const { data: row, error } = await admin
     .from("matters")
     .upsert(mapMatter(m, gateway.isMock), { onConflict: "clio_matter_id" })
@@ -108,17 +115,15 @@ export async function importClioContact(email: string, actorId: string) {
       .eq("email", email.toLowerCase())
       .maybeSingle();
     if (profile?.role === "client") {
-      await admin
-        .from("external_accounts")
-        .upsert(
-          {
-            user_id: profile.id,
-            provider: "clio_manage",
-            external_id: String(contact.id),
-            external_region: "ca",
-          },
-          { onConflict: "provider,external_id", ignoreDuplicates: true },
-        );
+      await admin.from("external_accounts").upsert(
+        {
+          user_id: profile.id,
+          provider: "clio_manage",
+          external_id: String(contact.id),
+          external_region: "ca",
+        },
+        { onConflict: "provider,external_id", ignoreDuplicates: true },
+      );
     }
     if (!gateway.isMock) await getClioTokenStore().report(true);
     await recordAudit({

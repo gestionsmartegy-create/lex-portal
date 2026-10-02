@@ -245,6 +245,7 @@ erDiagram
 - `private.integration_connections` : référence `vault_secret_id`, jamais de jeton.
 - RPC `integration_save_tokens`, `integration_read_tokens`, `integration_report` et `integration_disconnect` : service_role seulement, jetons dans **Supabase Vault**.
 - `integration_status_list()` : firm_admin, état sans jeton.
+- Messagerie (revue, ADR 0014) : colonnes insérables limitées ; `private.force_server_timestamps` impose les dates pour une session utilisateur.
 
 ## 5. Matrice d'accès RLS
 

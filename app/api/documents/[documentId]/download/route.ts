@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSessionRole } from "@/server/auth/session";
+import { getSessionRole, getUser } from "@/server/auth/session";
+import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { openDocumentForDownload } from "@/server/services/document";
 
 const notFound = () =>
@@ -12,6 +13,13 @@ const notFound = () =>
  */
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ documentId: string }> }) {
   if (!(await getSessionRole())) return notFound();
+  const user = await getUser();
+  // Revue J4/J5 (M2) : 120 téléchargements / 10 min par utilisateur.
+  if (!user || !(await hitRateLimit(`download:user:${user.id}`, RATE_LIMITS.documentDownloadByUser)))
+    return new NextResponse("Too many requests", {
+      status: 429,
+      headers: { "Cache-Control": "no-store", "Retry-After": "600" },
+    });
   const { documentId } = await params;
   let file: Awaited<ReturnType<typeof openDocumentForDownload>> = null;
   try {

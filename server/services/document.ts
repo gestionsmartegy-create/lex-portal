@@ -41,7 +41,10 @@ export async function listPendingRequests(matterId?: string) {
     .select("id, matter_id, title, description, due_date, status, matters(display_number)")
     .eq("status", "pending")
     .order("due_date", { ascending: true, nullsFirst: false });
-  if (matterId) query = query.eq("matter_id", matterId);
+  if (matterId) {
+    await assertMatterAccess(matterId);
+    query = query.eq("matter_id", matterId);
+  }
   const { data } = await query;
   return data ?? [];
 }
@@ -53,7 +56,10 @@ export async function listPendingSignatures(matterId?: string) {
     .select("id, matter_id, document_id, status, due_at, documents(display_name), matters(display_number)")
     .in("status", ["sent", "viewed"])
     .order("due_at", { ascending: true, nullsFirst: false });
-  if (matterId) query = query.eq("matter_id", matterId);
+  if (matterId) {
+    await assertMatterAccess(matterId);
+    query = query.eq("matter_id", matterId);
+  }
   const { data } = await query;
   return data ?? [];
 }

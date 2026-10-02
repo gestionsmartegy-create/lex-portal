@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { TIMEOUT_REASON } from "@/lib/session-timeout";
 import { createSupabaseServerClient } from "@/server/db/server-client";
+import { serverEnv } from "@/server/env";
 import { recordAudit } from "@/server/services/audit";
 
 /**
@@ -19,7 +20,10 @@ export async function GET(request: NextRequest) {
   if (user) {
     const { data: status } = await supabase.rpc("touch_session");
     if (status === "active")
-      return NextResponse.redirect(new URL(`/${locale}/${admin ? "admin" : "portal"}`, request.url), 303);
+      return NextResponse.redirect(
+        new URL(`/${locale}/${admin ? "admin" : "portal"}`, serverEnv().APP_BASE_URL),
+        303,
+      );
     await supabase.auth.signOut({ scope: "local" });
     await recordAudit({
       action: "auth.session_timeout",
@@ -28,7 +32,7 @@ export async function GET(request: NextRequest) {
       metadata: { trigger: "server" },
     });
   }
-  const target = new URL(`/${locale}/${admin ? "staff/login" : "login"}`, request.url);
+  const target = new URL(`/${locale}/${admin ? "staff/login" : "login"}`, serverEnv().APP_BASE_URL);
   target.searchParams.set("reason", TIMEOUT_REASON);
   return NextResponse.redirect(target, 303);
 }

@@ -327,7 +327,8 @@
         "TOO_LONG": "Le message est trop long (5 000 caractères au maximum).",
         "NOT_FOUND": "Cette conversation n'est pas disponible.",
         "FAILED": "Le message n'a pas pu être envoyé. Veuillez réessayer.",
-        "INVALID": "Veuillez vérifier le formulaire."
+        "INVALID": "Veuillez vérifier le formulaire.",
+        "RATE_LIMITED": "Trop de messages en peu de temps. Veuillez patienter quelques minutes."
       },
       "backToList": "Toutes les conversations",
       "emptyThread": "Aucun message dans cette conversation pour l'instant.",

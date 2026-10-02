@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionRole, getUser } from "@/server/auth/session";
+import { serverEnv } from "@/server/env";
 import { getClioTokenStore } from "@/server/providers";
 import { exchangeCode } from "@/server/providers/clio/oauth";
 import { decodeOAuthState, OAUTH_COOKIE, OAUTH_COOKIE_PATH, sameState } from "@/server/security/oauth-state";
@@ -14,7 +15,9 @@ export async function GET(request: NextRequest) {
   const saved = decodeOAuthState(request.cookies.get(OAUTH_COOKIE)?.value);
   const locale = saved?.locale ?? "en";
   const done = (notice: string) => {
-    const res = NextResponse.redirect(new URL(`/${locale}/admin/integrations?notice=${notice}`, request.url));
+    const res = NextResponse.redirect(
+      new URL(`/${locale}/admin/integrations?notice=${notice}`, serverEnv().APP_BASE_URL),
+    );
     res.cookies.set(OAUTH_COOKIE, "", { path: OAUTH_COOKIE_PATH, maxAge: 0 });
     return res;
   };

@@ -30,3 +30,16 @@
   - unitaires `clio-client.test.ts` : pagination, autre hôte ignoré, 429, 401, champs masqués, rafraîchissement, débit, correspondance des factures, état OAuth ;
   - intégration `clio-sync.test.ts` : Vault réel, import idempotent sans accès, brouillon exclu ;
   - e2e : la page Intégrations et l'import.
+
+## Addendum — revue de sécurité indépendante (2026-10-03, J4, J5 et Phase 2)
+Aucune faille critique ni élevée. Tous les constats sont corrigés.
+
+| Constat | Correction |
+|---|---|
+| **M1** Un client pouvait antidater un message ou créer un fil clos via l'API | Migration `20261003100000_messaging_integrity` : insertion limitée aux colonnes utiles (`messages`, `conversations`, `conversation_participants`). Trigger qui impose les dates pour une session utilisateur. Tests pgTAP `13`. |
+| **M2** Aucune limite sur l'envoi de messages ni sur les téléchargements | 30 messages par 10 min et 120 téléchargements par 10 min, par utilisateur (`RATE_LIMITS`). Au-delà, 429 avec `Retry-After`. |
+| F1 Échappement de l'.ics incomplet (`;`, retour chariot seul) ; URL abîmée | Échappement RFC 5545 corrigé ; `URL` réservée à `https://`, sans retour à la ligne ni échappement. Test de non-régression. |
+| F2 Certaines lectures liées à un dossier ne s'appuyaient que sur la RLS | `assertMatterAccess` appelé dès qu'un `matterId` est fourni (factures, rendez-vous, messages, demandes, signatures) et dans l'export .ics. |
+| F3 Redirections construites à partir de l'en-tête `Host` | Retour Clio et fin de session construits sur `APP_BASE_URL`. |
+| F4 Une réimportation remettait en cache un dossier purgé | Un dossier `purged_at` n'est jamais réimporté. |
+| F5 Rafraîchissement concurrent du jeton Clio | En cas d'échec, le coffre est relu et le jeton neuf enregistré par l'autre processus est utilisé. Test unitaire. |
