@@ -20,9 +20,11 @@ truncate table public.matters, public.organizations, public.notifications,
 create or replace function tests.authenticate_as(p_user uuid, p_aal text default 'aal2', p_method text default 'password')
 returns void language plpgsql as $$
 begin
+  -- app_metadata reprend auth.users.raw_app_meta_data, comme un vrai jeton Supabase.
   perform set_config('request.jwt.claims',
     json_build_object('sub', p_user, 'role', 'authenticated', 'aal', p_aal,
-                      'amr', json_build_array(json_build_object('method', p_method, 'timestamp', 0)))::text, true);
+                      'amr', json_build_array(json_build_object('method', p_method, 'timestamp', 0)),
+                      'app_metadata', coalesce((select u.raw_app_meta_data from auth.users u where u.id = p_user), '{}'::jsonb))::text, true);
   perform set_config('role', 'authenticated', true);
 end $$;
 

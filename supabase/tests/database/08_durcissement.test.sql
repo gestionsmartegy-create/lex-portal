@@ -3,7 +3,7 @@
 -- M2 action_url · M3 e-mail · F1/F2 colonnes · F3 auteurs · isolation financière.
 begin;
 \ir _fixture.psql
-select plan(40);
+select plan(49);
 
 -- Données complémentaires (serveur)
 insert into public.documents (id, matter_id, provider, display_name, scan_status, folder) values
@@ -38,9 +38,32 @@ select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oa
 select is((select count(*) from public.matters), 1::bigint, 'E1 · personnel connecté par Microsoft : droits de son équipe');
 select tests.clear_authentication();
 
+-- Contre-revue : « mot de passe oublié » + TOTP auto-enrôlé (aal2) ne doit RIEN donner.
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal2', 'password');
-select is((select count(*) from public.matters), 1::bigint, 'E1 · personnel avec MFA Supabase (aal2) : droits de son équipe');
+select is((select count(*) from public.matters), 0::bigint, 'E1 · personnel par mot de passe + MFA Supabase (aal2) : aucun droit');
 select tests.clear_authentication();
+
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal2', 'recovery');
+select throws_ok($$ select * from public.list_audit_events() $$, '42501', null,
+  'E1 · firm_admin via lien de récupération + aal2 : pas d''accès à l''audit');
+select tests.clear_authentication();
+
+-- OAuth d'un AUTRE fournisseur que Microsoft : aucun droit
+update auth.users set raw_app_meta_data = '{"provider": "google", "providers": ["google"]}'
+  where id = '00000000-0000-0000-0000-00000000000b';
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oauth');
+select is((select count(*) from public.matters), 0::bigint, 'E1 · OAuth non Microsoft : aucun droit');
+select tests.clear_authentication();
+-- Compte pré-créé (provider « email ») puis identité Microsoft liée : droits accordés
+update auth.users set raw_app_meta_data = '{"provider": "email", "providers": ["email", "azure"]}'
+  where id = '00000000-0000-0000-0000-00000000000b';
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oauth');
+select is((select count(*) from public.matters), 1::bigint, 'E1 · compte pré-créé + identité Microsoft liée : droits de son équipe');
+select tests.clear_authentication();
+update auth.users set raw_app_meta_data = '{"provider": "azure"}' where id = '00000000-0000-0000-0000-00000000000b';
+
+select throws_ok($$ update private.staff_email_domains set allow_password = true where domain = 'lexcanadalaw.com' $$,
+  '23514', null, 'E1 · le mot de passe ne peut jamais être autorisé pour le vrai domaine du cabinet');
 
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'password');
 select throws_ok($$ select * from public.list_audit_events() $$, '42501', null,
@@ -93,6 +116,13 @@ select is((select count(*) from public.conversations) + (select count(*) from pu
 select tests.clear_authentication();
 update public.profiles set status = 'active' where id = '00000000-0000-0000-0000-000000000001';
 
+update public.profiles set status = 'invited' where id = '00000000-0000-0000-0000-000000000002';
+select tests.authenticate_as('00000000-0000-0000-0000-000000000002', 'aal1');
+select is((select count(*) from public.profiles), 0::bigint,
+  'E2 · compte encore « invited » : aucun profil lisible (activation serveur avant MFA, J3)');
+select tests.clear_authentication();
+update public.profiles set status = 'active' where id = '00000000-0000-0000-0000-000000000002';
+
 -- ============================ M1 : moindre privilège ============================
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000c', 'aal1', 'oauth');
 select is((select count(*) from public.conversation_participants), 0::bigint, 'M1 · personnel hors équipe : aucun participant');
@@ -142,6 +172,10 @@ select throws_ok($$ select revoke_reason from public.matter_access $$, '42501', 
   'F1 · le client ne lit pas les motifs de révocation');
 select throws_ok($$ select clio_matter_id from public.matters $$, '42501', null, 'F2 · identifiant Clio illisible');
 select throws_ok($$ select clio_state from public.invoices $$, '42501', null, 'F2 · état Clio de la facture illisible');
+select throws_ok($$ select provider_reference from public.payments $$, '42501', null, 'F2 · référence de paiement illisible');
+select throws_ok($$ select clio_contact_id from public.organizations $$, '42501', null, 'F2 · contact Clio illisible');
+select throws_ok($$ select external_id from public.external_accounts $$, '42501', null, 'F2 · identifiant externe illisible');
+select throws_ok($$ select * from public.matters $$, '42501', null, 'Garde · « select * » refusé sur une table à colonnes restreintes');
 select throws_ok($$ select * from public.list_matter_access('10000000-0000-0000-0000-000000000002') $$, '42501', null,
   'F1 · un client ne peut pas lister l''historique des accès');
 -- Isolation financière et documentaire entre clients (Jane voit les siens, pas ceux de John)
