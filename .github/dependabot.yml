@@ -8,6 +8,9 @@ updates:
       day: monday
       timezone: America/Halifax
     open-pull-requests-limit: 5
+    # Délai de prudence : une version doit avoir 7 jours avant d'être proposée (ADR 0009, F6).
+    cooldown:
+      default-days: 7
     groups:
       dependencies:
         update-types: [minor, patch]
@@ -26,6 +29,8 @@ updates:
       interval: weekly
       day: monday
       timezone: America/Halifax
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ["*"]
