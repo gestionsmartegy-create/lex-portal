@@ -6,12 +6,15 @@ const integrationMode = z.enum(["mock", "live"]).default("mock");
 /**
  * Variables serveur, validées au premier accès. Les secrets (clé service_role,
  * secret cron) ne doivent JAMAIS être importés côté client (AGENTS.md §2.2).
- * En J1, aucune n'est obligatoire : elles le deviendront avec J2/J3.
  */
 const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  APP_BASE_URL: z.url().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+  APP_BASE_URL: z.url().default("http://localhost:3000"),
+  NEXT_PUBLIC_SUPABASE_URL: z.url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  SMTP_URL: z.string().min(1).optional(),
+  EMAIL_FROM: z.string().min(3).default("Lex Canada Law <no-reply@lexcanadalaw.test>"),
   CRON_SECRET: z.string().min(32).optional(),
   INTEGRATION_MODE_CLIO: integrationMode,
   INTEGRATION_MODE_SHAREPOINT: integrationMode,
