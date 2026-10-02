@@ -10,9 +10,9 @@ export default async function MfaResetPage({ params }: PageProps<"/[locale]/admi
   await requireStaff(locale, ["firm_admin"]);
   const t = await getTranslations("admin.mfaReset");
   return (
-    <main id="main" className="mx-auto min-h-screen max-w-xl bg-surface p-6 sm:p-10">
+    <div className="max-w-xl">
       <h1 className="mb-8 text-[28px] font-bold">{t("title")}</h1>
       <MfaResetForm action={resetClientMfaAction} locale={locale} />
-    </main>
+    </div>
   );
 }

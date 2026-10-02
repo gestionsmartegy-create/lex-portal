@@ -399,13 +399,6 @@
     }
   },
   "admin": {
-    "temp": {
-      "title": "Espace cabinet",
-      "role": "Connecté en tant que {role}",
-      "comingSoon": "L'espace d'administration complet arrive au jalon J5.",
-      "invitations": "Inviter un client",
-      "staff": "Ajouter un membre du personnel"
-    },
     "invitations": {
       "title": "Inviter un client",
       "firstName": "Prénom",
@@ -450,6 +443,113 @@
       "confirm": "J'ai vérifié l'identité du client selon la procédure.",
       "submit": "Réinitialiser la vérification en deux étapes",
       "done": "C'est fait. Le client a été déconnecté de tous ses appareils et a reçu un e-mail pour choisir un nouveau mot de passe."
+    },
+    "nav": {
+      "label": "Navigation de l'espace cabinet",
+      "workspace": "Espace cabinet",
+      "overview": "Accueil",
+      "clients": "Clients",
+      "invitations": "Invitations",
+      "matters": "Dossiers et accès",
+      "audit": "Journal d'audit",
+      "staff": "Personnel",
+      "security": "Sécurité",
+      "countLabel": "{count} nouveau(x)",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "roleStaff": "Personnel",
+      "roleAdmin": "Administrateur du cabinet"
+    },
+    "overview": {
+      "title": "Espace cabinet",
+      "subtitle": "Accès des clients, invitations et audit du portail client.",
+      "pendingInvitations": "Invitations en attente",
+      "activeClients": "Clients actifs",
+      "openMatters": "Dossiers ouverts",
+      "recentEvents": "Événements récents",
+      "noEvents": "Aucun événement pour l'instant.",
+      "quick": "Actions rapides",
+      "inviteClient": "Inviter un client",
+      "manageAccess": "Gérer l'accès aux dossiers",
+      "staffOnly": "Votre rôle donne accès en lecture aux dossiers de votre équipe."
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "Comptes clients du portail, leur statut et leurs dossiers.",
+      "name": "Nom",
+      "email": "E-mail",
+      "status": "Statut",
+      "matters": "Dossiers",
+      "lastSeen": "Dernière activité",
+      "actions": "Actions",
+      "none": "Aucun compte client pour l'instant.",
+      "suspend": "Suspendre",
+      "reactivate": "Réactiver",
+      "suspended": "Le compte a été suspendu et déconnecté de tous ses appareils.",
+      "reactivated": "Le compte a été réactivé.",
+      "statusLabels": {
+        "active": "Actif",
+        "invited": "Invité",
+        "suspended": "Suspendu",
+        "disabled": "Désactivé"
+      },
+      "never": "Jamais",
+      "resetMfa": "Réinitialiser la double vérification"
+    },
+    "invitationsList": {
+      "title": "Invitations",
+      "subtitle": "Invitez un client et suivez les invitations en attente.",
+      "list": "Invitations envoyées",
+      "none": "Aucune invitation pour l'instant.",
+      "expires": "Expire le {date}",
+      "resend": "Renvoyer",
+      "revoke": "Révoquer",
+      "resent": "Un nouveau lien d'invitation a été envoyé (l'ancien ne fonctionne plus).",
+      "revoked": "L'invitation a été révoquée.",
+      "statusLabels": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "revoked": "Révoquée",
+        "expired": "Expirée"
+      }
+    },
+    "matters": {
+      "title": "Dossiers et accès",
+      "subtitle": "Qui voit chaque dossier, et révocation immédiate.",
+      "none": "Aucun dossier.",
+      "manage": "Gérer les accès",
+      "team": "Équipe du cabinet",
+      "clientAccess": "Accès des clients",
+      "noAccess": "Aucun client n'a accès à ce dossier.",
+      "grant": "Donner accès",
+      "grantEmail": "E-mail du client (compte existant)",
+      "grantSubmit": "Donner accès",
+      "granted": "Accès accordé.",
+      "revoke": "Révoquer",
+      "revokeReason": "Motif de la révocation",
+      "revoked": "Accès révoqué : le client a perdu l'accès immédiatement.",
+      "revokedOn": "Révoqué le {date}",
+      "grantedOn": "Accordé le {date}",
+      "levelRead": "Lecture seule",
+      "levelWrite": "Lecture et réponse",
+      "back": "Tous les dossiers",
+      "errors": {
+        "NOT_ELIGIBLE": "Aucun compte client ne correspond à cette adresse. Envoyez plutôt une invitation.",
+        "DUPLICATE": "Ce client a déjà accès à ce dossier.",
+        "FAILED": "La modification n'a pas pu être enregistrée.",
+        "INVALID": "Veuillez vérifier le formulaire."
+      }
+    },
+    "audit": {
+      "title": "Journal d'audit",
+      "subtitle": "Chaque action sensible, de la plus récente à la plus ancienne.",
+      "when": "Date",
+      "action": "Action",
+      "actor": "Par",
+      "resource": "Ressource",
+      "none": "Aucun événement.",
+      "older": "Événements plus anciens",
+      "system": "Système"
     }
   }
 }

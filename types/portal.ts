@@ -57,3 +57,17 @@ export type ConversationSummary = {
   lastMessage: { body: string; sender_id: string; created_at: string } | null;
   unread: boolean;
 };
+
+/** Ligne d'audit renvoyée par public.list_audit_events (firm_admin). Jamais de contenu ni de jeton. */
+export type AuditEventRow = {
+  id: number;
+  occurred_at: string;
+  actor_id: string | null;
+  actor_role: string | null;
+  actor_email: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: string | null;
+  matter_id: string | null;
+  metadata: Record<string, unknown>;
+};

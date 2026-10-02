@@ -399,13 +399,6 @@
     }
   },
   "admin": {
-    "temp": {
-      "title": "Firm workspace",
-      "role": "Signed in as {role}",
-      "comingSoon": "The full admin workspace arrives in J5.",
-      "invitations": "Invite a client",
-      "staff": "Add a staff member"
-    },
     "invitations": {
       "title": "Invite a client",
       "firstName": "First name",
@@ -450,6 +443,113 @@
       "confirm": "I verified the client's identity according to the procedure.",
       "submit": "Reset two-step verification",
       "done": "Done. The client was signed out everywhere and received an email to choose a new password."
+    },
+    "nav": {
+      "label": "Firm workspace navigation",
+      "workspace": "Firm workspace",
+      "overview": "Overview",
+      "clients": "Clients",
+      "invitations": "Invitations",
+      "matters": "Matters & access",
+      "audit": "Audit log",
+      "staff": "Staff",
+      "security": "Security",
+      "countLabel": "{count} new",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "roleStaff": "Staff",
+      "roleAdmin": "Firm administrator"
+    },
+    "overview": {
+      "title": "Firm workspace",
+      "subtitle": "Client access, invitations and audit for the client portal.",
+      "pendingInvitations": "Pending invitations",
+      "activeClients": "Active clients",
+      "openMatters": "Open matters",
+      "recentEvents": "Recent events",
+      "noEvents": "No event yet.",
+      "quick": "Quick actions",
+      "inviteClient": "Invite a client",
+      "manageAccess": "Manage matter access",
+      "staffOnly": "Your role gives read access to the matters of your team."
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "Client accounts of the portal, their status and matters.",
+      "name": "Name",
+      "email": "Email",
+      "status": "Status",
+      "matters": "Matters",
+      "lastSeen": "Last activity",
+      "actions": "Actions",
+      "none": "No client account yet.",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate",
+      "suspended": "The account was suspended and signed out everywhere.",
+      "reactivated": "The account was reactivated.",
+      "statusLabels": {
+        "active": "Active",
+        "invited": "Invited",
+        "suspended": "Suspended",
+        "disabled": "Disabled"
+      },
+      "never": "Never",
+      "resetMfa": "Reset 2-step verification"
+    },
+    "invitationsList": {
+      "title": "Invitations",
+      "subtitle": "Invite a client and follow pending invitations.",
+      "list": "Invitations sent",
+      "none": "No invitation yet.",
+      "expires": "Expires {date}",
+      "resend": "Resend",
+      "revoke": "Revoke",
+      "resent": "A new invitation link was sent (the previous link no longer works).",
+      "revoked": "The invitation was revoked.",
+      "statusLabels": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "revoked": "Revoked",
+        "expired": "Expired"
+      }
+    },
+    "matters": {
+      "title": "Matters & access",
+      "subtitle": "Who can see each matter, and immediate revocation.",
+      "none": "No matter.",
+      "manage": "Manage access",
+      "team": "Firm team",
+      "clientAccess": "Client access",
+      "noAccess": "No client has access to this matter.",
+      "grant": "Grant access",
+      "grantEmail": "Client email (existing account)",
+      "grantSubmit": "Grant access",
+      "granted": "Access granted.",
+      "revoke": "Revoke",
+      "revokeReason": "Reason for revocation",
+      "revoked": "Access revoked: the client lost access immediately.",
+      "revokedOn": "Revoked {date}",
+      "grantedOn": "Granted {date}",
+      "levelRead": "Read only",
+      "levelWrite": "Read and reply",
+      "back": "All matters",
+      "errors": {
+        "NOT_ELIGIBLE": "No client account matches this address. Send an invitation instead.",
+        "DUPLICATE": "This client already has access to this matter.",
+        "FAILED": "The change could not be saved.",
+        "INVALID": "Please check the form."
+      }
+    },
+    "audit": {
+      "title": "Audit log",
+      "subtitle": "Every sensitive action, most recent first.",
+      "when": "Date",
+      "action": "Action",
+      "actor": "By",
+      "resource": "Resource",
+      "none": "No event.",
+      "older": "Older events",
+      "system": "System"
     }
   }
 }

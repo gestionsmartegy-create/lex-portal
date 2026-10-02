@@ -69,11 +69,14 @@ export function AccountMenu({
   name,
   locale,
   logout,
+  profileHref = "/portal/profile",
 }: {
   initials: string;
   name: string;
   locale: string;
   logout: (formData: FormData) => Promise<void>;
+  /** null : pas de lien profil (espace cabinet — profil géré dans Microsoft 365). */
+  profileHref?: string | null;
 }) {
   const t = useTranslations("portal.header");
   const tn = useTranslations("portal.nav");
@@ -93,12 +96,16 @@ export function AccountMenu({
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="truncate">{name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/portal/profile">
-            <UserRound aria-hidden /> {t("profile")}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {profileHref ? (
+          <>
+            <DropdownMenuItem asChild>
+              <Link href={profileHref}>
+                <UserRound aria-hidden /> {t("profile")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
         <form action={logout}>
           <input type="hidden" name="locale" value={locale} />
           <DropdownMenuItem asChild>

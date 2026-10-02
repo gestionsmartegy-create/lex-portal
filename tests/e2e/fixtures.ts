@@ -1,5 +1,6 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, expect, type BrowserContext, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { generate } from "otplib";
 import { DEMO_ADMIN, JOHN_MATTER, serviceClient, testPassword, uniqueEmail } from "../integration/helpers";
 
 export type TestClient = { email: string; password: string; id: string };
@@ -14,8 +15,7 @@ export const test = base.extend<{ client: TestClient; cspViolations: string[] }>
     async ({ page }, provide) => {
       // Une IP simulée par test (x-forwarded-for, lu à droite avec TRUSTED_PROXY_HOPS=1) :
       // chaque scénario a sa propre limite de débit, sans désactiver la protection.
-      const octet = () => Math.floor(Math.random() * 254) + 1;
-      await page.setExtraHTTPHeaders({ "x-forwarded-for": `198.51.100.${octet()}` });
+      await page.setExtraHTTPHeaders({ "x-forwarded-for": testIp() });
       const violations: string[] = [];
       page.on("console", (msg) => {
         if (msg.type() === "error" && /Content Security Policy|Trusted Type/i.test(msg.text()))
@@ -74,11 +74,74 @@ export async function expectAccessible(page: Page) {
 
 /** Connexion complète : mot de passe, enrôlement TOTP (clé affichée), arrivée sur le portail. */
 export async function signInWithMfa(page: Page, email: string, password: string) {
-  const { generate } = await import("otplib");
   await signInWithPassword(page, email, password);
   await page.waitForURL(/\/login\/mfa/);
   const secret = (await page.locator("code").innerText()).replace(/\s/g, "");
   await page.getByLabel("6-digit code").fill(await generate({ secret }));
   await page.getByRole("button", { name: "Verify" }).click();
   await page.waitForURL(/\/en\/portal$/);
+}
+
+/**
+ * Personnel de TEST (domaine *.test, mot de passe autorisé en local uniquement, ADR 0009) :
+ * le build de production n'affiche pas le formulaire de démonstration, donc la session est
+ * ouverte par @supabase/ssr lui-même (mêmes cookies que l'application), puis posée dans le
+ * navigateur. Compte créé par l'autorisation de pré-création, mot de passe généré, supprimé à la fin.
+ */
+export async function createStaffSession(
+  context: BrowserContext,
+  baseURL: string,
+  role: "staff" | "firm_admin",
+) {
+  const { createServerClient } = await import("@supabase/ssr");
+  const admin = serviceClient();
+  const email = uniqueEmail(`e2e-${role}`, "lexcanadalaw.test");
+  const password = testPassword();
+  await admin.rpc("authorize_staff_provisioning", { p_email: email, p_role: role, p_actor: DEMO_ADMIN });
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { first_name: "Morgan", last_name: "Test" },
+  });
+  if (error || !data.user) throw error ?? new Error("createUser staff");
+  await admin.from("profiles").update({ first_name: "Morgan", last_name: "Test" }).eq("id", data.user.id);
+
+  const jar: { name: string; value: string }[] = [];
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => jar,
+        setAll: (items) => {
+          for (const { name, value } of items) {
+            const i = jar.findIndex((c) => c.name === name);
+            if (i >= 0) jar.splice(i, 1);
+            if (value) jar.push({ name, value });
+          }
+        },
+      },
+    },
+  );
+  const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+  if (signInError) throw signInError;
+  const url = new URL(baseURL);
+  await context.addCookies(
+    jar.map((c) => ({
+      name: c.name,
+      value: c.value,
+      domain: url.hostname,
+      path: "/",
+      httpOnly: true,
+      sameSite: "Lax" as const,
+    })),
+  );
+  return { id: data.user.id, email, cleanup: () => admin.auth.admin.deleteUser(data.user!.id) };
+}
+
+/** IP de test (TEST-NET-3) aléatoire : chaque contexte a sa propre limite de débit. */
+export function testIp(): string {
+  const octet = () => Math.floor(Math.random() * 254) + 1;
+  return `203.0.113.${octet()}`;
 }

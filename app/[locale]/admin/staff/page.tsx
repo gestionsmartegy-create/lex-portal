@@ -9,9 +9,9 @@ export default async function StaffPage({ params }: PageProps<"/[locale]/admin/s
   await requireStaff(locale, ["firm_admin"]);
   const t = await getTranslations("admin.staff");
   return (
-    <main id="main" className="mx-auto min-h-screen max-w-xl bg-surface p-6 sm:p-10">
+    <div className="max-w-xl">
       <h1 className="mb-8 text-[28px] font-bold">{t("title")}</h1>
       <StaffProvisionForm action={provisionStaffAction} locale={locale} />
-    </main>
+    </div>
   );
 }

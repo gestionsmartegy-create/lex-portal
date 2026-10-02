@@ -5,8 +5,13 @@ import {
   FileText,
   FolderOpen,
   LayoutDashboard,
+  MailPlus,
   MessageSquare,
+  ScrollText,
+  ShieldAlert,
+  UserCog,
   UserRound,
+  Users,
 } from "lucide-react";
 
 /** Navigation du portail (ordre de la maquette, docs/design-system.md §5.3). */
@@ -22,3 +27,16 @@ export const PORTAL_NAV = [
 ] as const;
 
 export type PortalNavKey = (typeof PORTAL_NAV)[number]["key"];
+
+/** Navigation de l'espace cabinet. `adminOnly` : réservé au firm_admin (revérifié par chaque page). */
+export const ADMIN_NAV = [
+  { key: "overview", href: "/admin", icon: LayoutDashboard, exact: true },
+  { key: "clients", href: "/admin/clients", icon: Users, adminOnly: true },
+  { key: "invitations", href: "/admin/invitations", icon: MailPlus, adminOnly: true },
+  { key: "matters", href: "/admin/matters", icon: FolderOpen },
+  { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
+  { key: "staff", href: "/admin/staff", icon: UserCog, adminOnly: true },
+  { key: "security", href: "/admin/security/mfa-reset", icon: ShieldAlert, adminOnly: true },
+] as const;
+
+export type AdminNavKey = (typeof ADMIN_NAV)[number]["key"];
