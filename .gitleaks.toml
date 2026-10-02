@@ -1,0 +1,12 @@
+# Configuration gitleaks (ADR 0008) : règles par défaut + exceptions documentées.
+# N'ajouter une exception qu'après avoir vérifié qu'il ne s'agit PAS d'un secret.
+title = "lex-portal"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Faux positifs connus"
+paths = [
+  '''pnpm-lock\.yaml''',   # empreintes d'intégrité des paquets (sha512), pas des secrets
+]

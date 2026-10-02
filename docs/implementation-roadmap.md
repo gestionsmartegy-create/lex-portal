@@ -47,7 +47,7 @@
 
 ### 1.6 Qualité
 - [ ] Vitest (services, validation), Playwright (parcours : invitation, connexion + MFA, consultation d'un dossier, révocation pendant une session ouverte, tentative d'accès à un dossier d'autrui).
-- [ ] CI : lint, typecheck, tests unitaires, `supabase test db`, build, e2e. **Les tests RLS sont bloquants.**
+- [x] CI : lint, typecheck, tests unitaires, `supabase test db`, build, recherche de secrets — **avancée au 2026-10-01** (ADR 0008). Reste : ajouter les e2e en J6.
 - [ ] Accessibilité : axe sans violation critique ; navigation au clavier ; contrastes (voir la remarque sur l'or dans design-system.md).
 
 **Livrable :** démonstration en préproduction + rapport de fin de phase (format d'`AGENTS.md` §9).
