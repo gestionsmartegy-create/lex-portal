@@ -238,6 +238,8 @@ erDiagram
 
 ## 5. Matrice d'accès RLS
 
+> **Mise à jour J2.1 (ADR 0009)** : « C » suppose désormais un compte **actif + MFA** pour toutes les tables, y compris la messagerie générale et les notifications. « S » suppose une connexion **Microsoft** (ou `aal2`). Le personnel ne voit les participants, organisations et clients que des dossiers **actifs de son équipe**. Les colonnes internes (motifs et auteurs de révocation, identifiants SharePoint et Clio) ne sont plus lisibles par l'API utilisateur ; RPC `list_matter_access()` pour le firm_admin et l'équipe.
+
 Abréviations : **C** = client (accès actif + MFA), **S** = staff de l'équipe du dossier, **A** = firm_admin, **Srv** = serveur (service_role, contourne RLS).
 
 | Table | SELECT | INSERT | UPDATE | DELETE |
