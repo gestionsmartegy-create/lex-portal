@@ -15,7 +15,7 @@
 | `--gold` | `#B8962E` | Accent : liens, état « actif », icônes des cartes, focus des champs |
 | `--gold-light` | `#D4AF5A` | Survol des éléments dorés |
 | `--gold-pale` | `#F5E9C8` | Fond des alertes « action requise » |
-| `--gold-ink` | `#8A6D1A` | **Liens et petits textes dorés** (AA, ADR 0006) |
+| `--gold-ink` | `#7F6416` | **Liens et petits textes dorés** (AA sur blanc, `surface` et `gold-pale` ; ADR 0006, ajusté par ADR 0011) |
 | `--cream` | `#FDF8EE` | Fond d'encart doux |
 
 ### Neutres
@@ -67,7 +67,7 @@
 
 Badge : `inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[.06em] rounded-[2px]`.
 
-**Accessibilité (ADR 0006, décidé) :** le doré `#B8962E` sur blanc a un contraste ≈ 2,8:1. Il reste utilisé pour les icônes, bordures, focus et grands textes. **Les liens et textes dorés de moins de 18px utilisent `gold-ink #8A6D1A`** (≈ 4,9:1). `ink-subtle #8A8A9A` (≈ 3,4:1) est réservé aux textes ≥ 14px ; en dessous, utiliser `ink-muted`.
+**Accessibilité (ADR 0006, décidé) :** le doré `#B8962E` sur blanc a un contraste ≈ 2,8:1. Il reste utilisé pour les icônes, bordures, focus et grands textes. **Les liens et textes dorés de moins de 18px utilisent `gold-ink #7F6416`** (5,6:1 sur blanc, 5,15:1 sur `surface`, 4,65:1 sur `gold-pale` ; ADR 0011). `ink-subtle #8A8A9A` (≈ 3,4:1) est réservé aux textes ≥ 14px ; en dessous, utiliser `ink-muted`.
 
 ## 1 bis. Logo
 

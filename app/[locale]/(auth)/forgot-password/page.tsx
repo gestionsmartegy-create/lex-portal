@@ -14,7 +14,7 @@ export default async function ForgotPasswordPage({ params }: PageProps<"/[locale
       <p className="mt-2 mb-8 text-sm text-ink-muted">{t("forgot.subtitle")}</p>
       <ForgotPasswordForm action={forgotPasswordAction} locale={locale} />
       <p className="mt-6 text-center text-sm">
-        <Link href="/login" className="text-gold-ink hover:underline">
+        <Link href="/login" className="inline-flex min-h-6 items-center text-gold-ink hover:underline">
           {t("common.backToLogin")}
         </Link>
       </p>

@@ -30,12 +30,17 @@
 - [x] `pnpm db:types` → `types/database.ts` ; `types/domain.ts`.
 - [x] `supabase/seed.sql` d'après `docs/mock-data.md` ; `pnpm db:seed-passwords`.
 
-### 1.3 Authentification — ✅ J3 (2026-10-01, ADR 0010 ; en revue)
+### 1.3 Authentification — ✅ J3 (2026-10-01, ADR 0010)
 - [x] Client : connexion, MFA TOTP obligatoire (enrôlement à la 1re connexion), mot de passe oublié et réinitialisation, déconnexion, « déconnecter tous les appareils ».
 - [x] Invitation : création par un firm_admin, e-mail avec jeton à usage unique (72 h, haché en base), activation, création du mot de passe, enrôlement MFA, puis `matter_access` créé depuis `client_invitation_matters`.
 - [x] Personnel : « Se connecter avec Microsoft » (voir `auth-entra-id-integration.md`).
 - [x] Middleware : session, redirection MFA, garde par rôle ; le serveur revérifie ensuite (`requireRole`).
 - [x] Limitation de débit : connexion, réinitialisation, invitation (`private.rate_limit_buckets`).
+
+### 1.3 bis Durcissement — ✅ J3.1 (2026-10-02, ADR 0011)
+- [x] Alertes de sécurité par e-mail (Supabase Auth, bilingues), pages d'erreur, rapports CSP, Trusted Types en observation, CORP, security.txt.
+- [x] CI : `pnpm audit`, Semgrep CE ; e2e Playwright + axe (connexion, MFA, portail, en-têtes) avancés de J6.
+- [ ] Trusted Types en blocage : J6, quand tous les écrans seront couverts.
 
 ### 1.4 Portail client (données fictives)
 - [ ] `MockDocumentStore` qui reproduit les **sous-dossiers SharePoint** (shared / client_upload / signed / internal), pour que l'interface Documents soit définitive dès la Phase 1.
@@ -47,7 +52,7 @@
 
 ### 1.6 Qualité
 - [ ] Vitest (services, validation), Playwright (parcours : invitation, connexion + MFA, consultation d'un dossier, révocation pendant une session ouverte, tentative d'accès à un dossier d'autrui).
-- [x] CI : lint, typecheck, tests unitaires, `supabase test db`, build, recherche de secrets — **avancée au 2026-10-01** (ADR 0008). Reste : ajouter les e2e en J6.
+- [x] CI : lint, typecheck, tests unitaires, `supabase test db`, build, recherche de secrets — **avancée au 2026-10-01** (ADR 0008) ; audit des dépendances, Semgrep et premiers e2e le 2026-10-02 (ADR 0011). Reste : les e2e des écrans J5 en J6.
 - [ ] Accessibilité : axe sans violation critique ; navigation au clavier ; contrastes (voir la remarque sur l'or dans design-system.md).
 
 **Livrable :** démonstration en préproduction + rapport de fin de phase (format d'`AGENTS.md` §9).

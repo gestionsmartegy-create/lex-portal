@@ -43,3 +43,23 @@ export async function countMatters(client: SupabaseClient<Database>) {
   if (error) throw error;
   return data.length;
 }
+
+/** Mailpit local (port 54324) : e-mails reçus par une adresse de test. Jamais un vrai fournisseur. */
+const MAILPIT = "http://127.0.0.1:54324/api/v1";
+export async function waitForEmail(to: string, subjectIncludes: string, timeoutMs = 10_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const res = await fetch(`${MAILPIT}/search?query=${encodeURIComponent(`to:"${to}"`)}`);
+    const body = (await res.json()) as { messages: { ID: string; Subject: string }[] };
+    const hit = body.messages.find((m) => m.Subject.includes(subjectIncludes));
+    if (hit) {
+      const msg = (await (await fetch(`${MAILPIT}/message/${hit.ID}`)).json()) as {
+        HTML: string;
+        Text: string;
+      };
+      return { subject: hit.Subject, html: msg.HTML, text: msg.Text };
+    }
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  throw new Error("EMAIL_TIMEOUT");
+}

@@ -16,7 +16,7 @@
   --color-gold: #b8962e; /* icônes, bordures, focus, grands textes */
   --color-gold-light: #d4af5a;
   --color-gold-pale: #f5e9c8;
-  --color-gold-ink: #8a6d1a; /* liens et petits textes dorés — contraste 4,9:1 (AA) */
+  --color-gold-ink: #7f6416; /* liens et petits textes dorés — AA sur blanc 5,6:1, surface 5,2:1, gold-pale 4,7:1 (ADR 0011) */
   --color-cream: #fdf8ee;
 
   /* --- Neutres --- */

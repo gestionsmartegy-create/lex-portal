@@ -33,7 +33,7 @@ export default async function InvitationPage({ params }: PageProps<"/[locale]/in
           <h1 className="text-[28px] font-bold">{t("invite.invalidTitle")}</h1>
           <p className="mt-3 text-sm text-ink-muted">{t("invite.invalidBody")}</p>
           <p className="mt-8 text-sm">
-            <Link href="/login" className="text-gold-ink hover:underline">
+            <Link href="/login" className="inline-flex min-h-6 items-center text-gold-ink hover:underline">
               {t("common.backToLogin")}
             </Link>
           </p>

@@ -28,12 +28,15 @@ export default async function LoginPage({ params, searchParams }: PageProps<"/[l
           href={publicEnv.NEXT_PUBLIC_CLIO_BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-gold-ink hover:underline"
+          className="inline-flex min-h-6 items-center font-medium text-gold-ink hover:underline"
         >
           {t("login.book")} →
         </a>
         <p>
-          <Link href="/staff/login" className="text-xs text-ink-muted underline-offset-4 hover:underline">
+          <Link
+            href="/staff/login"
+            className="inline-flex min-h-6 items-center text-xs text-ink-muted underline-offset-4 hover:underline"
+          >
             {t("login.staffLink")}
           </Link>
         </p>

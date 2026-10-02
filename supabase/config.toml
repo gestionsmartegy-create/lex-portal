@@ -255,11 +255,38 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
-# Uncomment to customize notification email template
-# [auth.email.notification.password_changed]
-# enabled = true
-# subject = "Your password has been changed"
-# content_path = "./supabase/templates/password_changed_notification.html"
+
+# Alertes de sécurité envoyées par Supabase Auth lui-même (ADR 0011) : elles partent aussi
+# lors d'un appel direct à l'API Auth. Gabarits bilingues, sans donnée de dossier ni lien.
+[auth.email.notification.password_changed]
+enabled = true
+subject = "Lex Canada Law — Your password was changed / Votre mot de passe a été modifié"
+content_path = "./supabase/templates/password_changed_notification.html"
+
+[auth.email.notification.email_changed]
+enabled = true
+subject = "Lex Canada Law — Your email address was changed / Votre adresse e-mail a été modifiée"
+content_path = "./supabase/templates/email_changed_notification.html"
+
+[auth.email.notification.mfa_factor_enrolled]
+enabled = true
+subject = "Lex Canada Law — A two-step verification method was added / Une méthode de vérification en deux étapes a été ajoutée"
+content_path = "./supabase/templates/mfa_factor_enrolled_notification.html"
+
+[auth.email.notification.mfa_factor_unenrolled]
+enabled = true
+subject = "Lex Canada Law — A two-step verification method was removed / Une méthode de vérification en deux étapes a été retirée"
+content_path = "./supabase/templates/mfa_factor_unenrolled_notification.html"
+
+[auth.email.notification.identity_linked]
+enabled = true
+subject = "Lex Canada Law — A sign-in method was linked to your account / Une méthode de connexion a été liée à votre compte"
+content_path = "./supabase/templates/identity_linked_notification.html"
+
+[auth.email.notification.identity_unlinked]
+enabled = true
+subject = "Lex Canada Law — A sign-in method was removed from your account / Une méthode de connexion a été retirée de votre compte"
+content_path = "./supabase/templates/identity_unlinked_notification.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

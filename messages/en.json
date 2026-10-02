@@ -33,6 +33,13 @@
       "title": "Page not found",
       "body": "This page does not exist or you do not have access to it.",
       "back": "Back to home"
+    },
+    "unexpected": {
+      "title": "Something went wrong",
+      "body": "An unexpected error occurred. Your data has not been affected. Please try again.",
+      "retry": "Try again",
+      "back": "Back to home",
+      "reference": "Reference: {digest}"
     }
   },
   "styleguide": {

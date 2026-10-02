@@ -32,6 +32,8 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Dépendances de production vulnérables (gravité haute ou critique) : bloquant (ADR 0011).
+      - run: pnpm audit --prod --audit-level=high
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm typecheck
@@ -39,9 +41,9 @@ jobs:
       - run: pnpm build
 
   database:
-    name: Base de données (tests pgTAP, dérive des types)
+    name: Base de données (tests pgTAP, intégration, e2e, dérive des types)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
@@ -52,12 +54,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Services strictement nécessaires : Postgres, Auth (crée auth.*), PostgREST, Kong, postgres-meta (types).
       # Sortie redirigée : elle contient les clés de démonstration locales.
+      # Mailpit (e-mails locaux) est démarré : test des alertes de sécurité (ADR 0011).
       - name: Démarrer Supabase local (migrations + seed)
-        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor > /dev/null
+        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,studio,edge-runtime,logflare,vector,supavisor > /dev/null
       - name: Tests pgTAP (bloquants)
         run: pnpm db:test
       - name: Tests d'intégration (vraies sessions Auth, ADR 0010)
         run: pnpm test:integration
+      # e2e (ADR 0011) : build de production + Chromium, contre ce même Supabase local.
+      - name: Installer Chromium (Playwright)
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Tests de bout en bout et accessibilité (Playwright + axe)
+        run: pnpm test:e2e
       - name: Types générés à jour
         run: |
           pnpm db:types
@@ -68,11 +76,13 @@ jobs:
         run: pnpm exec supabase stop --no-backup > /dev/null 2>&1 || true
 
   secrets:
-    name: Recherche de secrets (gitleaks, tout l'historique)
+    name: Sécurité (secrets, analyse de code)
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       GITLEAKS_VERSION: 8.30.1
+      # Version épinglée, publiée depuis plus de 7 jours (même délai que Dependabot).
+      SEMGREP_VERSION: 1.178.0
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -87,3 +97,14 @@ jobs:
           tar -xzf "$file" gitleaks
       - name: Analyse
         run: ./gitleaks git --config .gitleaks.toml --redact --no-banner --verbose .
+      # Analyse statique (ADR 0011) : Semgrep CE exécuté dans le runner, SANS envoi du code
+      # ni télémétrie. CodeQL exige GitHub Advanced Security pour un dépôt privé (compte gratuit).
+      - name: Installer Semgrep
+        run: |
+          python3 -m venv .semgrep
+          .semgrep/bin/pip install --quiet --no-cache-dir "semgrep==${SEMGREP_VERSION}"
+      - name: Analyse de code (bloquante sur les erreurs)
+        run: |
+          .semgrep/bin/semgrep scan --metrics=off --error --severity ERROR \
+            --config p/typescript --config p/react --config p/nextjs --config p/secrets \
+            --exclude .semgrep --exclude node_modules

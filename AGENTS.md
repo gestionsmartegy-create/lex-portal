@@ -112,7 +112,7 @@ pnpm install
 pnpm dev                     # http://localhost:3000
 pnpm lint && pnpm typecheck               # next typegen + tsc
 pnpm test                    # Vitest
-pnpm test:e2e                # Playwright
+pnpm test:e2e                # Playwright + axe, build de production contre Supabase local (ADR 0011)
 pnpm db:start                # Supabase local (Docker via OrbStack ; CLI épinglée dans le projet, ADR 0007)
 pnpm db:reset                # migrations + seed (données fictives, sans mot de passe)
 pnpm db:seed-passwords       # mots de passe locaux → supabase/seed.local.md (jamais affichés)
@@ -184,7 +184,7 @@ Une tâche est terminée quand `pnpm lint`, `pnpm typecheck`, `pnpm test`, `supa
 ## 10. Git et décisions
 
 - Branches : `feat/…`, `fix/…`, `chore/…`, `docs/…`. Pas de commit direct sur `main`.
-- **Ne jamais fusionner une demande de fusion dont un contrôle de CI (`app`, `database`, `secrets`) est rouge ou en cours.** `main` n'est pas protégée techniquement (compte GitHub gratuit, ADR 0008) : cette règle la remplace.
+- **Ne jamais fusionner une demande de fusion dont un contrôle de CI (`app`, `database`, `secrets` = secrets et analyse de code) est rouge ou en cours.** `main` n'est pas protégée techniquement (compte GitHub gratuit, ADR 0008) : cette règle la remplace.
 - Commits [Conventional Commits](https://www.conventionalcommits.org/fr/) : `feat(portal): carte des dossiers récents`.
 - Une décision technique significative = un **ADR** `docs/decisions/NNNN-titre.md` (Contexte · Décision · Conséquences).
 - Ne jamais committer `.env*` (sauf `.env.example`), `supabase/seed.local.md`, `.tmp/`, des captures contenant des données réelles.
