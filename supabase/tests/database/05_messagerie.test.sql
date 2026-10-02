@@ -2,7 +2,7 @@
 -- Scénarios : T14, T15, T20, T21.
 begin;
 \ir _fixture.psql
-select plan(7);
+select plan(8);
 
 select tests.authenticate_as('00000000-0000-0000-0000-000000000001', 'aal2');
 select lives_ok(
@@ -25,6 +25,14 @@ select throws_ok(
   $$ insert into public.conversations (matter_id, scope, created_by) values ('10000000-0000-0000-0000-000000000002', 'matter', auth.uid()) $$,
   '42501', null, 'T20 · un accès read ne peut pas ouvrir de fil');
 select is((select count(*) from public.conversations), 0::bigint, 'T21 · Jane ne voit pas le fil de John');
+select tests.clear_authentication();
+
+-- T21 bis : même ajoutée comme participante, Jane ne lit rien d'un dossier qui n'est pas le sien
+insert into public.conversation_participants (conversation_id, user_id)
+  values ('20000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002');
+select tests.authenticate_as('00000000-0000-0000-0000-000000000002', 'aal2');
+select is((select count(*) from public.conversations) + (select count(*) from public.messages), 0::bigint,
+  'T21 bis · participante d''un fil d''un dossier inaccessible : rien de lisible');
 select tests.clear_authentication();
 
 -- Fil fermé : plus d'écriture

@@ -15,11 +15,14 @@ truncate table public.matters, public.organizations, public.notifications,
                public.client_invitations restart identity cascade;
 
 -- Simule une session : rôle Postgres + claims JWT lus par auth.uid()/auth.jwt().
-create or replace function tests.authenticate_as(p_user uuid, p_aal text default 'aal2')
+-- p_method : méthode de connexion du claim amr (« oauth » = Microsoft Entra ID,
+-- « password » = mot de passe). Le personnel réel se connecte par « oauth ».
+create or replace function tests.authenticate_as(p_user uuid, p_aal text default 'aal2', p_method text default 'password')
 returns void language plpgsql as $$
 begin
   perform set_config('request.jwt.claims',
-    json_build_object('sub', p_user, 'role', 'authenticated', 'aal', p_aal)::text, true);
+    json_build_object('sub', p_user, 'role', 'authenticated', 'aal', p_aal,
+                      'amr', json_build_array(json_build_object('method', p_method, 'timestamp', 0)))::text, true);
   perform set_config('role', 'authenticated', true);
 end $$;
 

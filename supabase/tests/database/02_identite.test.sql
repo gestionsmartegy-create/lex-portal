@@ -2,7 +2,7 @@
 -- Scénarios : T1, T2, T12, T13, T26 · security.md 8 et 9.
 begin;
 \ir _fixture.psql
-select plan(10);
+select plan(11);
 
 -- T1 : rôles attribués à la création
 select is((select role::text || '/' || status::text from public.profiles where email = 'wilson@lexcanadalaw.com'),
@@ -22,7 +22,9 @@ select throws_ok(
   $$ update public.profiles set role = 'staff' where email = 'intrus@gmail.com' $$,
   'P0001', null, 'T2 · rôle staff refusé pour un domaine non autorisé');
 
--- T26 · security.md 9 : compte suspendu = aucun accès, même en aal2
+-- T26 · security.md 9 : compte suspendu = aucun accès, même en aal2, MÊME AVEC un accès octroyé
+insert into public.matter_access (matter_id, user_id)
+  values ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000d');
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000d', 'aal2');
 select is((select count(*) from public.matters), 0::bigint, 'T26 · security.md 9 · compte hors domaine : aucun dossier');
 select tests.clear_authentication();
@@ -37,6 +39,14 @@ select lives_ok(
   'T13 · un client peut modifier son prénom');
 select is((select first_name from public.profiles where id = auth.uid()), 'John', 'T13 · modification enregistrée');
 select tests.clear_authentication();
+
+-- T12 bis : la garde guard_profile elle-même (indépendamment des droits par colonne)
+select set_config('request.jwt.claims', '{"role": "authenticated", "sub": "00000000-0000-0000-0000-000000000001"}', true);
+select throws_ok(
+  $$ update public.profiles set status = 'suspended' where id = '00000000-0000-0000-0000-000000000001' $$,
+  'P0001', 'Modification du rôle, du statut ou de l''e-mail réservée au serveur',
+  'T12 bis · guard_profile refuse un changement de statut en session utilisateur');
+select set_config('request.jwt.claims', '', true);
 
 select * from finish();
 rollback;
