@@ -16,12 +16,12 @@ const SEED_USERS = [
   { id: "a0000000-0000-4000-8000-000000000002", email: "jane.roe@example.com", role: "client" },
   {
     id: "a0000000-0000-4000-8000-0000000000b1",
-    email: "demo.staff@lexcanadalaw.com",
+    email: "demo.staff@lexcanadalaw.test",
     role: "staff (simulé)",
   },
   {
     id: "a0000000-0000-4000-8000-0000000000a1",
-    email: "demo.admin@lexcanadalaw.com",
+    email: "demo.admin@lexcanadalaw.test",
     role: "firm_admin (simulé)",
   },
 ] as const;

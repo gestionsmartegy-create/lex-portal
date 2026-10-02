@@ -5,9 +5,16 @@
 -- * Tous les dossiers sont is_mock = true ; clients en @example.com.
 -- * AUCUN mot de passe ici : `pnpm db:seed-passwords` les génère et les écrit
 --   uniquement dans supabase/seed.local.md (ignoré par Git).
--- * Personnel simulé : comptes demo.* (provider azure simulé) — aucune adresse réelle.
+-- * Personnel simulé : demo.*@lexcanadalaw.test (domaine de test, ADR 0009) —
+--   jamais le vrai domaine du cabinet, aucune adresse réelle.
 -- * Dates relatives à now() pour que le tableau de bord reste cohérent.
 -- ============================================================================
+
+-- --------------------------------------------------------------------------
+-- Domaine de test du personnel fictif : autorisé au mot de passe EN LOCAL
+-- uniquement (en production, seul lexcanadalaw.com existe, sans mot de passe).
+-- --------------------------------------------------------------------------
+insert into private.staff_email_domains (domain, allow_password) values ('lexcanadalaw.test', true);
 
 -- --------------------------------------------------------------------------
 -- Comptes (auth.users + auth.identities). Les jetons texte vides évitent les
@@ -17,8 +24,8 @@ with seed_users (id, email, provider, first_name, last_name) as (
   values
     ('a0000000-0000-4000-8000-000000000001'::uuid, 'john.doe@example.com',        'email', 'John',   'Doe'),
     ('a0000000-0000-4000-8000-000000000002'::uuid, 'jane.roe@example.com',        'email', 'Jane',   'Roe'),
-    ('a0000000-0000-4000-8000-0000000000b1'::uuid, 'demo.staff@lexcanadalaw.com', 'azure', 'Wilson', 'Saintelmy'),
-    ('a0000000-0000-4000-8000-0000000000a1'::uuid, 'demo.admin@lexcanadalaw.com', 'azure', 'Admin',  'Démo')
+    ('a0000000-0000-4000-8000-0000000000b1'::uuid, 'demo.staff@lexcanadalaw.test', 'azure', 'Wilson', 'Saintelmy'),
+    ('a0000000-0000-4000-8000-0000000000a1'::uuid, 'demo.admin@lexcanadalaw.test', 'azure', 'Admin',  'Démo')
 )
 insert into auth.users (
   instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -43,8 +50,8 @@ where u.id::text like 'a0000000-%';
 -- Profils créés par le trigger handle_new_user : on complète (rôle du serveur).
 update public.profiles set status = 'active', client_number = '2026-0142' where email = 'john.doe@example.com';
 update public.profiles set status = 'active', client_number = '2026-0098' where email = 'jane.roe@example.com';
-update public.profiles set title = 'Me' where email = 'demo.staff@lexcanadalaw.com';
-update public.profiles set role = 'firm_admin' where email = 'demo.admin@lexcanadalaw.com';
+update public.profiles set title = 'Me' where email = 'demo.staff@lexcanadalaw.test';
+update public.profiles set role = 'firm_admin' where email = 'demo.admin@lexcanadalaw.test';
 
 -- --------------------------------------------------------------------------
 -- Organisation cliente
