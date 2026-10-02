@@ -85,7 +85,7 @@ lex-portal/
 │  ├─ unit/                      Vitest
 │  └─ e2e/                       Playwright
 ├─ docs/ · diagrams/
-├─ middleware.ts                 session, locale, redirections login/MFA (nom selon la version de Next.js)
+├─ proxy.ts                      nonce CSP, locale, puis session et redirections login/MFA (Next.js 16 : ex-middleware.ts)
 └─ .env.example
 ```
 
@@ -98,9 +98,9 @@ Règles de placement :
 
 | Domaine | Choix |
 |---|---|
-| Framework | Next.js (version stable courante, App Router, React Server Components), TypeScript `strict` |
+| Framework | **Next.js 16** (App Router, React Server Components), **TypeScript 6.0** `strict` + `noUncheckedIndexedAccess` (pas la 7.0, ADR 0006), **Node 24 LTS** |
 | UI | Tailwind CSS v4, shadcn/ui, lucide-react, react-hook-form + Zod |
-| i18n | next-intl, routes `/[locale]` (`fr`, `en`) |
+| i18n | next-intl 4, routes `/[locale]` (`en` par défaut, `fr`), détection du navigateur |
 | Données / Auth | Supabase (PostgreSQL + RLS, Auth + MFA TOTP, Storage), `@supabase/ssr`, région **ca-central-1** |
 | Tests | Vitest, Playwright, pgTAP (`supabase test db`), axe (accessibilité) |
 | Paquets | pnpm |
@@ -109,7 +109,7 @@ Règles de placement :
 ```bash
 pnpm install
 pnpm dev                     # http://localhost:3000
-pnpm lint && pnpm typecheck
+pnpm lint && pnpm typecheck               # next typegen + tsc
 pnpm test                    # Vitest
 pnpm test:e2e                # Playwright
 supabase start               # Supabase local (Docker)

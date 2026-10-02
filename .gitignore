@@ -22,3 +22,10 @@ next-env.d.ts
 .tmp/
 *.log
 .vercel/
+
+# Next.js / outils (ajouts J1)
+/.pnp
+.pnp.*
+*.pem
+npm-debug.log*
+.pnpm-debug.log*

@@ -3,8 +3,7 @@
 Portail client sécurisé et bilingue (FR/EN) du cabinet **Lex Canada Law**, avec un espace d'administration pour le cabinet.
 Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, région Canada) + Clio Manage (région CA) + Microsoft Entra ID / SharePoint.
 
-> **État au 2026-10-01** : cadrage terminé (Phase 0, puis reconstruction : ADR 0002). Aucun code applicatif encore.
-> Prochaine étape : Phase 1, lancée par le prompt de `CLAUDE_CODE_PROMPT.md`.
+> **État au 2026-10-01** : Phase 1, jalon **J1 (socle) terminé** sur la branche `feat/j1-socle` : Next.js 16, design system, FR/EN, CSP. Prochain jalon : J2 (base de données, **Docker requis**).
 
 ## Contenu du dépôt
 
@@ -31,6 +30,17 @@ Pile prévue : Next.js (App Router) + Supabase (PostgreSQL + RLS, Auth + MFA, r�
 | `docs/decisions/` | ADR 0001 à 0005 (0004 : SharePoint, dépôt officiel · 0005 : DocuSign) |
 | `docs/reference/` | PDF du cabinet : mémorandum EA, schéma directeur, architecture verrouillée |
 | `docs/archive/` | Versions v1 remplacées (schéma, diagramme, modèle de données, cartographie des pages) |
+
+## Démarrage local
+
+```bash
+nvm use            # Node 24 (fichier .nvmrc)
+pnpm install
+cp .env.example .env.local   # facultatif en J1
+pnpm dev           # http://localhost:3000 → /en ou /fr
+```
+
+Vérifications : `pnpm lint && pnpm typecheck && pnpm test && pnpm build`. Guide visuel du design system : http://localhost:3000/en/styleguide (développement uniquement).
 
 ## Démarrer avec Claude Code
 

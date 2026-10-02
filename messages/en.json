@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "title": "Client Portal — Lex Canada Law",
+    "description": "Secure client portal of Lex Canada Law."
+  },
+  "common": {
+    "brand": "Lex Canada Law",
+    "clientPortal": "Client Portal",
+    "barristers": "Barristers & Solicitors · Avocats & Notaires",
+    "demoData": "Demo data",
+    "skipToContent": "Skip to main content",
+    "language": "Language",
+    "switchTo": "Français",
+    "copyright": "© {year} Lex Canada Law. All rights reserved. Strictly confidential."
+  },
+  "home": {
+    "eyebrow": "Client Portal",
+    "title": "Your legal matters,",
+    "titleAccent": "always at hand.",
+    "body": "Access your case files, communicate securely with your legal team, sign documents, and track the progress of your matters — all in one place.",
+    "status": "The portal is being prepared. Sign-in will be available soon.",
+    "ctaBooking": "Book a consultation",
+    "security": "Encrypted connection (TLS) · Two-factor authentication"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "completed": "Completed",
+    "urgent": "Action required"
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "body": "This page does not exist or you do not have access to it.",
+      "back": "Back to home"
+    }
+  },
+  "styleguide": {
+    "title": "Style guide",
+    "intro": "Development only — design tokens from docs/design-system.md.",
+    "colors": "Colours",
+    "typography": "Typography",
+    "buttons": "Buttons",
+    "badges": "Badges",
+    "fields": "Fields",
+    "displaySample": "Sign in to your portal",
+    "bodySample": "Enter your credentials to access your secure client space.",
+    "accentSample": "always at hand.",
+    "emailLabel": "Email address",
+    "linkSample": "Forgot password?",
+    "primary": "Access my portal",
+    "outlineGold": "Book a consultation",
+    "ghostWhite": "Staff sign-in"
+  }
+}
