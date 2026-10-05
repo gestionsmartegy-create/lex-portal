@@ -14,3 +14,11 @@ Les règles du projet sont dans AGENTS.md, qui fait autorité pour tous les agen
 - **Ne jamais saisir** de mot de passe, de clé ou de jeton réel. Les comptes de test sont générés par le seed.
 - Quand une règle d'AGENTS.md empêche de terminer une tâche, s'arrêter et l'expliquer. Ne jamais contourner la règle.
 - Répondre en **français** ; le code et les identifiants restent en anglais.
+
+## Flux guidé du développeur (skills)
+
+Toute demande de code d'un développeur passe par le flux `/developper`, appelé par `/ajouter`, `/modifier`, `/corriger`, `/traduire` et `/nouvelle-page` : reformuler et attendre un « oui », annoncer le plan, construire, **QA** (agent `qa-fonctionnel`), **revue de sécurité** (agent `revue-securite`), `/sauvegarder`, `/deployer` sur le **serveur de test uniquement**, puis la section « Comment tester ». En phase de test (`PHASE=test` dans `scripts/garde-fous.sh`), le développeur intègre lui-même dans `main` via `/envoyer-pour-verification`, à condition que la CI soit verte. Autres skills : `/statut`, `/demarrer`, `/qa`, `/securite [dependance <paquet>]`, `/annuler`, `/envoyer-pour-verification`.
+
+- Les garde-fous (`scripts/garde-fous.sh`, hook dans `.claude/settings.json`) refusent tout ce qui touche `main`, l'historique, les secrets, la sécurité (`proxy.ts`, `server/security/`, `server/auth/`, `server/db/`), les migrations existantes, le déploiement hors serveur de test et la suppression de données. Si une action est refusée : l'expliquer en une phrase, proposer le bon chemin (souvent `/envoyer-pour-verification`), ne jamais contourner.
+- `node scripts/audit-routes.mts --changed` vérifie que chaque route, page protégée et Server Action touchée revérifie la session ; les routes publiques par conception sont listées dans le script.
+- Guide complet : `docs/runbooks/flux-developpeur.md`.
