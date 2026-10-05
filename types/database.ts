@@ -576,6 +576,9 @@ isOneToOne: false
               "connected_at": string,"last_error": string,"last_sync_at": string,"provider": string,"region": string,"status": string
             }[]
                            },
+"join_conversation":
+{ Args: { "p_conversation": string }; Returns: boolean
+                           },
 "list_audit_events":
 { Args: { "p_before"?: string,"p_limit"?: number,"p_matter_id"?: string }; Returns: unknown[]
                           SetofOptions: {
@@ -602,6 +605,11 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"matter_permissions":
+{ Args: { "p_matter": string }; Returns: {
+              "can_read": boolean,"can_write": boolean
+            }[]
+                           },
 "rate_limit_check":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
                            },

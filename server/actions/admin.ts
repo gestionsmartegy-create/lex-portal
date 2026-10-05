@@ -16,6 +16,12 @@ import {
 } from "@/server/services/admin";
 import { getClioTokenStore } from "@/server/providers";
 import { recordAudit } from "@/server/services/audit";
+import {
+  closeConversation,
+  messageBodySchema,
+  sendMessage,
+  startConversationAsStaff,
+} from "@/server/services/messaging";
 import { resetClientMfa } from "@/server/services/mfa-reset";
 import { importClioContact, syncLinkedMatters } from "@/server/services/sync";
 import { provisionStaff } from "@/server/services/staff";
@@ -188,4 +194,56 @@ export async function disconnectClioAction(formData: FormData): Promise<void> {
     actorId: user.id,
   });
   redirect(`/${locale}/admin/integrations?notice=disconnected`);
+}
+
+// ---------------------------------------------------------------------------
+// Messagerie du cabinet (J7, ADR 0017) — personnel de l'équipe et firm_admin
+// ---------------------------------------------------------------------------
+const staffReplySchema = z.object({
+  conversationId: z.uuid(),
+  body: messageBodySchema,
+  locale: localeSchema,
+});
+
+export async function staffSendMessageAction(_prev: unknown, formData: FormData): Promise<AdminActionState> {
+  const parsed = staffReplySchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "INVALID" };
+  const { user } = await requireStaff(parsed.data.locale);
+  if (!(await hitRateLimit(`message:user:${user.id}`, RATE_LIMITS.messageSendByUser)))
+    return { error: "RATE_LIMITED" };
+  const result = await sendMessage(parsed.data.conversationId, parsed.data.body);
+  if (!result.ok) return { error: "FAILED" };
+  revalidatePath(`/${parsed.data.locale}/admin/messages/${parsed.data.conversationId}`);
+  return { ok: true };
+}
+
+const staffStartSchema = z.object({
+  matterId: z.uuid(),
+  subject: z.string().trim().min(1).max(200),
+  body: messageBodySchema,
+  locale: localeSchema,
+});
+
+export async function staffStartConversationAction(
+  _prev: unknown,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const parsed = staffStartSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "INVALID" };
+  const { user } = await requireStaff(parsed.data.locale);
+  if (!(await hitRateLimit(`message:user:${user.id}`, RATE_LIMITS.messageSendByUser)))
+    return { error: "RATE_LIMITED" };
+  const result = await startConversationAsStaff(parsed.data.matterId, parsed.data.subject, parsed.data.body);
+  if (!result.ok) return { error: "FAILED" };
+  redirect(`/${parsed.data.locale}/admin/messages/${result.conversationId}`);
+}
+
+export async function closeConversationAction(formData: FormData): Promise<void> {
+  const parsed = idForm.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  await requireStaff(parsed.data.locale);
+  const result = await closeConversation(parsed.data.id);
+  redirect(
+    `/${parsed.data.locale}/admin/messages/${parsed.data.id}?notice=${result.ok ? "closed" : "failed"}`,
+  );
 }

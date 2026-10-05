@@ -9,12 +9,20 @@ const uuid = z.uuid();
 
 export type MatterAccessResult = { matterId: string; userId: string; accessLevel: AccessLevel };
 
+/** Droits EFFECTIFS sur un dossier pour la session courante (RPC matter_permissions,
+ * mêmes règles que la RLS : client actif + MFA, ou personnel de l'équipe / firm_admin). */
+async function matterPermissions(matterId: string): Promise<{ canRead: boolean; canWrite: boolean }> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.rpc("matter_permissions", { p_matter: matterId }).maybeSingle();
+  return { canRead: data?.can_read === true, canWrite: data?.can_write === true };
+}
+
 /**
  * Vérification d'accès à un dossier (AGENTS.md §2.4), AVANT toute lecture ou tout
  * appel externe. La RLS revérifie derrière. Un dossier inexistant, non autorisé ou
  * mal formé donne la MÊME réponse : 404 (AGENTS.md §2.9).
- *  - « read » : le dossier est lisible avec la session de l'utilisateur ;
- *  - « read_write » : accès client actif de niveau read_write (non révoqué).
+ *  - « read » : le dossier est lisible pour la session (client ou personnel) ;
+ *  - « read_write » : écriture permise (client read_write, équipe du dossier, firm_admin).
  */
 export async function assertMatterAccess(
   matterId: string,
@@ -23,35 +31,15 @@ export async function assertMatterAccess(
   if (!uuid.safeParse(matterId).success) notFound();
   const user = await getUser();
   if (!user) notFound();
-  const supabase = await createSupabaseServerClient();
-
-  const { data: matter } = await supabase.from("matters").select("id").eq("id", matterId).maybeSingle();
-  if (!matter) notFound();
-
-  const { data: access } = await supabase
-    .from("matter_access")
-    .select("access_level")
-    .eq("matter_id", matterId)
-    .eq("user_id", user.id)
-    .is("revoked_at", null)
-    .maybeSingle();
-  const accessLevel: AccessLevel = access?.access_level ?? "read";
-  if (level === "read_write" && accessLevel !== "read_write") notFound();
-  return { matterId, userId: user.id, accessLevel };
+  const { canRead, canWrite } = await matterPermissions(matterId);
+  if (!canRead) notFound();
+  if (level === "read_write" && !canWrite) notFound();
+  return { matterId, userId: user.id, accessLevel: canWrite ? "read_write" : "read" };
 }
 
 /** Variante sans exception, pour masquer une action (ex. bouton « Répondre »). */
 export async function canWriteMatter(matterId: string): Promise<boolean> {
   if (!uuid.safeParse(matterId).success) return false;
-  const user = await getUser();
-  if (!user) return false;
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("matter_access")
-    .select("access_level")
-    .eq("matter_id", matterId)
-    .eq("user_id", user.id)
-    .is("revoked_at", null)
-    .maybeSingle();
-  return data?.access_level === "read_write";
+  if (!(await getUser())) return false;
+  return (await matterPermissions(matterId)).canWrite;
 }
