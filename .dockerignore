@@ -1,0 +1,19 @@
+# Jamais de secret ni d'artefact local dans le contexte de build (AGENTS.md §2.1).
+.env*
+!.env.example
+supabase/seed.local.md
+supabase/.temp
+supabase/.branches
+node_modules
+.next
+.git
+.github
+test-results
+playwright-report
+coverage
+.tmp
+.claude
+docs
+diagrams
+deploy
+*.log

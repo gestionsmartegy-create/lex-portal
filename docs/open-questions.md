@@ -107,4 +107,5 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Fournisseur d'e-mails de production~~ | ✅ **SMTP Microsoft 365** (boîte du cabinet) | — |
 | ~~Coffre-fort des jetons OAuth : Supabase Vault ou Azure Key Vault ?~~ | ✅ **Supabase Vault** | — |
 | Domaine de préproduction (`portal-preprod.lexcanadalaw.com` ?) puis de production | Adresses de retour OAuth (Clio, Entra), Site URL Supabase | Élevée |
+| Hébergement de **production** : Vercel (ADR 0013) ou le VPS Hostinger, qui sert déjà de serveur de test (ADR 0016) ? | Sécurité d'exploitation (mises à jour, sauvegardes, surveillance) à la charge du cabinet si VPS | Élevée |
 

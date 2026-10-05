@@ -6,6 +6,7 @@ import { TIMEOUT_REASON } from "@/lib/session-timeout";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { staffDemoLoginAction, staffMicrosoftAction } from "@/server/actions/auth";
+import { staffDemoLoginEnabled } from "@/server/auth/demo-login";
 
 export default async function StaffLoginPage({ params, searchParams }: PageProps<"/[locale]/staff/login">) {
   const { locale } = await params;
@@ -14,7 +15,7 @@ export default async function StaffLoginPage({ params, searchParams }: PageProps
   const t = await getTranslations("auth.staff");
   const tSession = await getTranslations("auth.session");
   const ssoEnabled = process.env.NEXT_PUBLIC_STAFF_SSO_ENABLED === "true";
-  const isDev = process.env.NODE_ENV === "development";
+  const isDev = staffDemoLoginEnabled(); // développement ou serveur de test (ADR 0016)
 
   return (
     <AuthShell pathname="/staff/login">
