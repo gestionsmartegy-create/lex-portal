@@ -195,14 +195,12 @@ test.describe("espace cabinet", () => {
     client,
   }) => {
     const admin = serviceClient();
-    await admin
-      .from("matter_access")
-      .insert({
-        matter_id: LEASE,
-        user_id: client.id,
-        access_level: "read_write",
-        granted_by: "a0000000-0000-4000-8000-0000000000a1",
-      });
+    await admin.from("matter_access").insert({
+      matter_id: LEASE,
+      user_id: client.id,
+      access_level: "read_write",
+      granted_by: "a0000000-0000-4000-8000-0000000000a1",
+    });
     await signInWithMfa(page, client.email, client.password);
     await page.goto(`/en/portal/matters/${LEASE}?tab=messages`);
     await page.getByLabel("Subject").fill("Question from e2e");

@@ -71,15 +71,13 @@ describe("messagerie du cabinet (J7)", () => {
     // 1. Le client ouvre un fil et écrit.
     // Identifiant généré par l'application, insertion sans retour (correctif B6/C7).
     const conv = { id: crypto.randomUUID() };
-    const { error: convError } = await sam.client
-      .from("conversations")
-      .insert({
-        id: conv.id,
-        matter_id: JOHN_MATTER,
-        scope: "matter",
-        subject: "Question J7",
-        created_by: sam.id,
-      });
+    const { error: convError } = await sam.client.from("conversations").insert({
+      id: conv.id,
+      matter_id: JOHN_MATTER,
+      scope: "matter",
+      subject: "Question J7",
+      created_by: sam.id,
+    });
     expect(convError).toBeNull();
     const { error: msgError } = await sam.client
       .from("messages")
