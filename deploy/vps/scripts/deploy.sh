@@ -31,4 +31,15 @@ ssh "$HOST" 'set -e; cd /opt/lexlaw; set -a; . ./.env; set +a
   mv /etc/caddy/sites/lexlaw.caddy.new /etc/caddy/sites/lexlaw.caddy
   if caddy validate --config /etc/caddy/Caddyfile >/dev/null 2>&1; then systemctl reload caddy; else
     rm -f /etc/caddy/sites/lexlaw.caddy; echo "Caddy : configuration invalide, site retiré"; exit 1; fi'
+echo "6/6 contrôle de fumée (l'API de la base répond vraiment)"
+ssh "$HOST" 'set -e; cd /opt/lexlaw; set -a; . ./.env; set +a
+  for _ in $(seq 1 20); do
+    out=$(docker compose --env-file .env exec -T gateway wget -qO- \
+      --header "apikey: $SERVICE_ROLE_KEY" --header "Authorization: Bearer $SERVICE_ROLE_KEY" \
+      --header "Content-Type: application/json" --post-data "{\"p_key\":\"smoke\",\"p_max\":1000,\"p_window_seconds\":60}" \
+      http://rest:3000/rpc/rate_limit_check 2>/dev/null || true)
+    [ "$out" = "true" ] && { echo "API : OK"; exit 0; }
+    sleep 3
+  done
+  echo "API : ÉCHEC — voir docker compose logs rest"; exit 1'
 echo "déployé : https://lexlaw.2-24-110-184.sslip.io"
