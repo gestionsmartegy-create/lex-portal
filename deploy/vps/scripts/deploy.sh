@@ -21,7 +21,8 @@ echo "3/5 services Supabase et migrations"
 ssh "$HOST" 'cd /opt/lexlaw && docker compose --env-file .env up -d db auth rest gateway mailpit && ./scripts/migrate.sh'
 
 echo "4/5 build et démarrage de l'application (plusieurs minutes avec 1 processeur)"
-ssh "$HOST" 'cd /opt/lexlaw && docker compose --env-file .env build app && docker compose --env-file .env up -d app'
+DEPLOYMENT_ID="$(git rev-parse --short HEAD)"
+ssh "$HOST" "cd /opt/lexlaw && DEPLOYMENT_ID=$DEPLOYMENT_ID docker compose --env-file .env build app && DEPLOYMENT_ID=$DEPLOYMENT_ID docker compose --env-file .env up -d app"
 
 echo "5/5 site Caddy (validation avant rechargement à chaud)"
 ssh "$HOST" 'set -e; cd /opt/lexlaw; set -a; . ./.env; set +a

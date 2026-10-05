@@ -93,6 +93,7 @@ services:
         NEXT_PUBLIC_SUPABASE_URL: http://gateway:8000
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
         NEXT_PUBLIC_STAFF_SSO_ENABLED: "false"
+        NEXT_DEPLOYMENT_ID: ${DEPLOYMENT_ID:-local}
     restart: unless-stopped
     depends_on: [gateway, mailpit]
     environment:
