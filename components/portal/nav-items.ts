@@ -34,6 +34,7 @@ export const ADMIN_NAV = [
   { key: "overview", href: "/admin", icon: LayoutDashboard, exact: true },
   { key: "clients", href: "/admin/clients", icon: Users, adminOnly: true },
   { key: "invitations", href: "/admin/invitations", icon: MailPlus, adminOnly: true },
+  { key: "messages", href: "/admin/messages", icon: MessageSquare },
   { key: "matters", href: "/admin/matters", icon: FolderOpen },
   { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
   { key: "integrations", href: "/admin/integrations", icon: PlugZap, adminOnly: true },

@@ -7,6 +7,7 @@ import { StyleNonce } from "@/components/shared/style-nonce";
 import { initials } from "@/lib/format";
 import { idleLogoutAction, keepSessionAliveAction, logoutAction } from "@/server/actions/auth";
 import { requireStaff } from "@/server/auth/session";
+import { countStaffUnread } from "@/server/services/messaging";
 
 // Espace cabinet (J5) : garde du personnel (rôle EFFECTIF : session Microsoft, ou *.test en local),
 // gabarit commun au portail, expiration après 30 min d'inactivité (ADR 0012).
@@ -19,7 +20,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
   const shellProps = {
     area: "admin" as const,
     isFirmAdmin: role === "firm_admin",
-    counts: {},
+    counts: { messages: await countStaffUnread() },
     user: {
       name,
       initials: initials(profile.first_name, profile.last_name, profile.email[0]?.toUpperCase()),
