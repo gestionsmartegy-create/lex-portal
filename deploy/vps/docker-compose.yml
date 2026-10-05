@@ -21,6 +21,7 @@ services:
     volumes:
       - ./db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
       - ./db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
+      - ./db/auth-owner.sql:/docker-entrypoint-initdb.d/init-scripts/99-zz-auth-owner.sql:ro
       - db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]

@@ -16,7 +16,8 @@ psql_db() { $DC exec -T -e PGPASSWORD="$POSTGRES_PASSWORD" db psql -h localhost 
 
 echo "attente de la base et de Supabase Auth…"
 for _ in $(seq 1 90); do
-  if psql_db -tAc "select to_regclass('auth.users') is not null and to_regclass('auth.mfa_factors') is not null" 2>/dev/null | grep -q t; then break; fi
+  # Auth a fini SES migrations quand auth.jwt() et les tables MFA/sessions existent.
+  if psql_db -tAc "select to_regprocedure('auth.jwt()') is not null and to_regclass('auth.mfa_factors') is not null and to_regclass('auth.sessions') is not null" 2>/dev/null | grep -q t; then break; fi
   sleep 2
 done
 
