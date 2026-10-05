@@ -1,0 +1,34 @@
+name: User story
+description: Un besoin d'un utilisateur, avec ses critères d'acceptation et sa recette.
+title: "[ID] En tant que …, je veux …"
+labels: ["user-story"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      description: "**En tant que** <rôle>, **je veux** <besoin>, **afin de** <bénéfice>."
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Critères d'acceptation
+      description: Un résultat observable par ligne, en cases à cocher.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Vérification automatique
+      description: Fichiers de test qui couvrent la story (à remplir par le développeur ou le testeur).
+  - type: textarea
+    id: recette
+    attributes:
+      label: Recette manuelle
+      description: Étapes à suivre sur le serveur de test, avec le résultat attendu.
+      value: |
+        1. Ouvrir https://lexlaw.2-24-110-184.sslip.io/fr/…
+        2. … → **attendu :** …
