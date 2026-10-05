@@ -27,6 +27,9 @@ const schema = z
     // Clio Manage, région CA (Phase 2, ADR 0014) : requis seulement si INTEGRATION_MODE_CLIO=live.
     CLIO_CLIENT_ID: z.string().min(1).optional(),
     CLIO_CLIENT_SECRET: z.string().min(1).optional(),
+    // Serveur de TEST uniquement (ADR 0016) : autorise la connexion de démonstration du personnel
+    // (*.test, mot de passe). Jamais en production : le domaine *.test n'y existe pas en base.
+    STAFF_DEMO_LOGIN: z.enum(["enabled", "disabled"]).default("disabled"),
     TRUSTED_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
   })
   .refine((e) => e.INTEGRATION_MODE_CLIO !== "live" || Boolean(e.CLIO_CLIENT_ID && e.CLIO_CLIENT_SECRET), {

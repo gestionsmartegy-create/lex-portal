@@ -86,6 +86,8 @@ describe("SMTP (ADR 0013)", () => {
       "requireTLS=true",
     );
     expect(smtpTransportUrl("smtp://127.0.0.1:54325")).not.toContain("requireTLS");
+    expect(smtpTransportUrl("smtp://mailpit:1025")).not.toContain("requireTLS"); // service Docker interne
+    expect(smtpTransportUrl("smtp://smtp.office365.com:587")).toContain("requireTLS=true");
     expect(smtpTransportUrl("smtps://u:p@smtp.example.com:465")).not.toContain("requireTLS");
   });
 });

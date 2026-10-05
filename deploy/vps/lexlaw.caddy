@@ -1,0 +1,30 @@
+# Serveur de TEST du portail Lex Canada (ADR 0016). Importé par /etc/caddy/Caddyfile
+# (`import /etc/caddy/sites/*.caddy`). N'affecte aucun autre site.
+lexlaw.2-24-110-184.sslip.io {
+	encode zstd gzip
+
+	# Liens de réinitialisation du mot de passe envoyés par Supabase Auth (GET uniquement).
+	@verify {
+		method GET
+		path /auth/v1/verify
+	}
+	handle @verify {
+		reverse_proxy 127.0.0.1:54021
+	}
+
+	# Boîte d'e-mails de TEST (aucun e-mail réel), protégée par mot de passe.
+	handle /_mail* {
+		basic_auth {
+			lex __MAIL_HASH__
+		}
+		reverse_proxy 127.0.0.1:54025
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:3100
+	}
+
+	log {
+		output discard
+	}
+}

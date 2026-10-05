@@ -1,0 +1,116 @@
+# Serveur de TEST du portail (ADR 0016) — VPS, derrière le Caddy de l'hôte.
+# RÈGLE : aucun port publié sur 0.0.0.0 (Docker contourne ufw). Seuls trois ports sont publiés,
+# et UNIQUEMENT sur 127.0.0.1, pour le Caddy de l'hôte. La base n'est jamais publiée.
+# Les secrets viennent de /opt/lexlaw/.env (chmod 600, généré par scripts/init-secrets.sh).
+name: lexlaw
+
+services:
+  db:
+    image: supabase/postgres:17.11.0.002
+    restart: unless-stopped
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf", "-c", "log_min_messages=fatal"]
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: "5432"
+      POSTGRES_PORT: "5432"
+      PGDATABASE: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: "900"
+    volumes:
+      - ./db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+      - ./db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  auth:
+    image: supabase/gotrue:v2.197.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: [./auth.env]
+    environment:
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      API_EXTERNAL_URL: ${SITE_URL}/auth/v1
+      GOTRUE_JWT_ISSUER: ${SITE_URL}/auth/v1
+      GOTRUE_SITE_URL: ${SITE_URL}
+      GOTRUE_URI_ALLOW_LIST: ${SITE_URL}/en/**,${SITE_URL}/fr/**,${SITE_URL}/api/auth/callback
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: ${SITE_URL}/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${SITE_URL}/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_INVITE: ${SITE_URL}/auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: ${SITE_URL}/auth/v1/verify
+
+  rest:
+    image: postgrest/postgrest:v16.4
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,graphql_public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: "900"
+
+  # Passerelle interne (rôle de Kong) : /auth/v1 → auth, /rest/v1 → rest, /email → gabarits.
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [auth, rest]
+    volumes:
+      - ./gateway.Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./templates:/templates:ro
+    ports:
+      - "127.0.0.1:54021:8000" # pour la seule route publique /auth/v1/verify (Caddy de l'hôte)
+
+  mailpit:
+    image: axllent/mailpit:v1.31.3
+    restart: unless-stopped
+    environment:
+      MP_WEBROOT: /_mail
+      MP_MAX_MESSAGES: "500"
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+    ports:
+      - "127.0.0.1:54025:8025" # interface web, derrière basic_auth dans le Caddy de l'hôte
+
+  app:
+    image: lexlaw-app:latest
+    build:
+      context: ./src
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: http://gateway:8000
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+        NEXT_PUBLIC_STAFF_SSO_ENABLED: "false"
+    restart: unless-stopped
+    depends_on: [gateway, mailpit]
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: http://gateway:8000
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      APP_BASE_URL: ${SITE_URL}
+      CRON_SECRET: ${CRON_SECRET}
+      SMTP_URL: smtp://mailpit:1025
+      EMAIL_FROM: Lex Canada Law (test) <no-reply@lexcanadalaw.test>
+      STAFF_DEMO_LOGIN: enabled
+      TRUSTED_PROXY_HOPS: "1"
+      INTEGRATION_MODE_CLIO: mock
+      INTEGRATION_MODE_SHAREPOINT: mock
+      INTEGRATION_MODE_SIGNATURE: mock
+      INTEGRATION_MODE_PAYMENTS: mock
+      INTEGRATION_MODE_MALWARE: mock
+    ports:
+      - "127.0.0.1:3100:3000"
+
+volumes:
+  db-data:
