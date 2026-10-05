@@ -9,13 +9,7 @@ import { Link } from "@/i18n/navigation";
  * Erreur inattendue d'une page (ADR 0011) : jamais le message technique (AGENTS.md §5),
  * seulement l'empreinte `digest` que Next.js relie au log serveur.
  */
-export default function ErrorPage({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function ErrorPage({ error }: { error: Error & { digest?: string }; reset: () => void }) {
   const t = useTranslations("errors.unexpected");
   return (
     <main
@@ -29,7 +23,9 @@ export default function ErrorPage({
         <p className="mt-2 font-mono text-xs text-ink-muted">{t("reference", { digest: error.digest })}</p>
       ) : null}
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Button variant="primary" size="brand" onClick={reset}>
+        {/* Rechargement complet : récupère aussi la dernière version déployée (un onglet ouvert
+            avant un déploiement envoie des actions que le serveur ne connaît plus). */}
+        <Button variant="primary" size="brand" onClick={() => window.location.reload()}>
           {t("retry")}
         </Button>
         <Button asChild variant="outline-gold" size="brand">
