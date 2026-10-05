@@ -16,6 +16,7 @@ export type AuditAction =
   | "auth.password_changed"
   | "document.downloaded"
   | "message.sent"
+  | "conversation.closed"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"
