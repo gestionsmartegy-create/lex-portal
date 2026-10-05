@@ -324,6 +324,7 @@
       "you": "You",
       "firm": "Lex Canada Law",
       "composeLabel": "Your message",
+      "bodyLabel": "Your message",
       "send": "Send",
       "sending": "Sending…",
       "readOnly": "Your access to this matter is read only: you cannot reply here. Contact your lawyer if needed.",
@@ -411,7 +412,7 @@
     },
     "notificationsText": {
       "newMessageTitle": "New message",
-      "newMessageBody": "Lex Canada Law wrote to you about matter {number}."
+      "newMessageBody": "New message about matter {number}."
     }
   },
   "admin": {
@@ -627,7 +628,6 @@
       "matter": "Matter",
       "chooseMatter": "Choose a matter",
       "subject": "Subject",
-      "body": "Message",
       "send": "Send",
       "start": "Send the message",
       "close": "Close the conversation",
@@ -638,6 +638,7 @@
       "firm": "Lex Canada Law",
       "you": "You",
       "composeLabel": "Your reply",
+      "bodyLabel": "Message",
       "errors": {
         "INVALID": "Please check the form.",
         "RATE_LIMITED": "Too many messages in a short time. Please wait.",

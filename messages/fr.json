@@ -324,6 +324,7 @@
       "you": "Vous",
       "firm": "Lex Canada Law",
       "composeLabel": "Votre message",
+      "bodyLabel": "Votre message",
       "send": "Envoyer",
       "sending": "Envoi…",
       "readOnly": "Votre accès à ce dossier est en lecture seule : vous ne pouvez pas répondre ici. Contactez votre avocat au besoin.",
@@ -411,7 +412,7 @@
     },
     "notificationsText": {
       "newMessageTitle": "Nouveau message",
-      "newMessageBody": "Lex Canada Law vous a écrit au sujet du dossier {number}."
+      "newMessageBody": "Nouveau message au sujet du dossier {number}."
     }
   },
   "admin": {
@@ -627,7 +628,6 @@
       "matter": "Dossier",
       "chooseMatter": "Choisir un dossier",
       "subject": "Objet",
-      "body": "Message",
       "send": "Envoyer",
       "start": "Envoyer le message",
       "close": "Clore la conversation",
@@ -638,6 +638,7 @@
       "firm": "Lex Canada Law",
       "you": "Vous",
       "composeLabel": "Votre réponse",
+      "bodyLabel": "Message",
       "errors": {
         "INVALID": "Veuillez vérifier le formulaire.",
         "RATE_LIMITED": "Trop de messages en peu de temps. Veuillez patienter.",

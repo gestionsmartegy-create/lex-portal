@@ -4,7 +4,7 @@ import "server-only";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { getUser } from "@/server/auth/session";
+import { getUser, requireClientSession } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { recordAudit } from "@/server/services/audit";
@@ -19,6 +19,7 @@ import { localeSchema } from "@/server/validation/auth";
 /**
  * Server Actions du portail client (AGENTS.md §3) : entrée validée par Zod,
  * utilisateur revérifié, accès au dossier vérifié dans le service, RLS derrière.
+ * Les actions de messagerie exigent une session CLIENT (le personnel passe par server/actions/admin.ts).
  */
 export type PortalActionState = { error?: string; ok?: boolean };
 
@@ -36,6 +37,7 @@ export async function sendMessageAction(_prev: unknown, formData: FormData): Pro
     const code = parsed.error.issues.find((i) => i.path[0] === "body")?.message;
     return { error: code === "EMPTY" || code === "TOO_LONG" ? code : "INVALID" };
   }
+  await requireClientSession(parsed.data.locale);
   if (!(await withinMessageLimit())) return { error: "RATE_LIMITED" };
   const result = await sendMessage(parsed.data.conversationId, parsed.data.body);
   if (!result.ok) return { error: result.code };
@@ -59,6 +61,7 @@ export async function startConversationAction(
     const code = parsed.error.issues[0]?.message;
     return { error: code === "EMPTY" || code === "TOO_LONG" ? code : "INVALID" };
   }
+  await requireClientSession(parsed.data.locale);
   if (!(await withinMessageLimit())) return { error: "RATE_LIMITED" };
   const result = await startConversation(parsed.data.matterId, parsed.data.subject, parsed.data.body);
   if (!result.ok) return { error: result.code };

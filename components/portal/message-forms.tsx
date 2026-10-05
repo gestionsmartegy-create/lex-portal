@@ -7,7 +7,7 @@ import { FormAlert } from "@/components/auth/form-parts";
 import { Button } from "@/components/ui/button";
 
 type Action = (prev: unknown, formData: FormData) => Promise<{ error?: string; ok?: boolean }>;
-/** Textes : portail client ou espace cabinet (mêmes clés : composeLabel, send, sending, subject, start, matter, chooseMatter, errors.*). */
+/** Textes : portail client ou espace cabinet (mêmes clés : composeLabel, bodyLabel, send, sending, subject, start, matter, chooseMatter, errors.*). */
 type Namespace = "portal.messages" | "admin.messages";
 
 const fieldClass =
@@ -108,7 +108,7 @@ export function NewConversationForm({
       </div>
       <div className="space-y-2">
         <label htmlFor="conversation-body" className={labelClass}>
-          {t("composeLabel")}
+          {t("bodyLabel")}
         </label>
         <textarea
           id="conversation-body"

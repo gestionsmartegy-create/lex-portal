@@ -234,14 +234,38 @@ export async function countStaffUnread(): Promise<number> {
 }
 
 /**
- * Ouvrir un fil côté cabinet : le membre de l'équipe le REJOINT (RPC join_conversation,
- * réservée à l'équipe du dossier et au firm_admin) puis le lit. Refus = null (404).
+ * Ouvrir un fil côté cabinet. Ordre imposé (AGENTS.md §2.4) : retrouver le dossier du fil,
+ * contrôler l'accès au dossier, PUIS rejoindre le fil (RPC join_conversation, réservée à l'équipe
+ * du dossier et au firm_admin) et le lire. Une nouvelle inscription est journalisée
+ * (`conversation.joined`) : elle donne accès à tous les messages du fil. Refus = null (404).
  */
 export async function openConversationAsStaff(conversationId: string) {
-  if (!uuid.safeParse(conversationId).success) return null;
+  const user = await getUser();
+  if (!user || !uuid.safeParse(conversationId).success) return null;
   const supabase = await createSupabaseServerClient();
+  const { data: conversation } = await supabase
+    .from("conversations")
+    .select("id, matter_id")
+    .eq("id", conversationId)
+    .maybeSingle();
+  if (!conversation?.matter_id) return null;
+  await assertMatterAccess(conversation.matter_id);
+  const { data: already } = await supabase
+    .from("conversation_participants")
+    .select("user_id")
+    .eq("conversation_id", conversationId)
+    .eq("user_id", user.id)
+    .maybeSingle();
   const { data: joined } = await supabase.rpc("join_conversation", { p_conversation: conversationId });
   if (joined !== true) return null;
+  if (!already)
+    await recordAudit({
+      action: "conversation.joined",
+      resourceType: "conversation",
+      resourceId: conversationId,
+      matterId: conversation.matter_id,
+      actorId: user.id,
+    });
   const data = await getConversation(conversationId);
   if (data) await markConversationRead(conversationId);
   return data;
@@ -273,11 +297,21 @@ export async function startConversationAsStaff(matterId: string, subject: string
   return sent.ok ? { ok: true as const, conversationId: conversation.id } : sent;
 }
 
-/** Clore un fil (personnel de l'équipe ou firm_admin, RLS conversations_staff_update). */
+/**
+ * Clore un fil : accès en écriture au dossier vérifié AVANT la modification (AGENTS.md §2.4) ;
+ * la RLS (conversations_staff_update : équipe du dossier ou firm_admin) revérifie.
+ */
 export async function closeConversation(conversationId: string) {
   const user = await getUser();
   if (!user || !uuid.safeParse(conversationId).success) return { ok: false as const };
   const supabase = await createSupabaseServerClient();
+  const { data: conversation } = await supabase
+    .from("conversations")
+    .select("matter_id")
+    .eq("id", conversationId)
+    .maybeSingle();
+  if (!conversation?.matter_id) return { ok: false as const };
+  await assertMatterAccess(conversation.matter_id, "read_write");
   const { data, error } = await supabase
     .from("conversations")
     .update({ closed_at: new Date().toISOString() })
