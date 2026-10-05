@@ -1,6 +1,6 @@
 # Flux de travail du développeur avec Claude Code
 
-> Pour le développeur qui rejoint le projet. Tout se fait depuis Claude Code, en français, avec des commandes `/…` (skills). Elles encadrent chaque étape : comprendre, construire, vérifier, sécuriser, mettre en ligne sur le serveur de test, transmettre. Le responsable technique relit et fusionne.
+> Pour le développeur qui rejoint le projet. Tout se fait depuis Claude Code, **en français, en parlant normalement** : « je veux ajouter une page qui… », « ça plante quand… ». Claude reconnaît la demande et applique le bon skill ; les commandes `/…` ci-dessous sont des raccourcis équivalents. Elles encadrent chaque étape : comprendre, construire, vérifier, sécuriser, mettre en ligne sur le serveur de test, transmettre. Le responsable technique relit et fusionne.
 
 ## 1. Une journée type
 
