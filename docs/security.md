@@ -86,6 +86,13 @@ Structure (`01_structure`) : RLS sur toutes les tables de `public`, aucune table
 |---|---|---|---|
 | `braces <= 3.0.3` (via `eslint-config-next` et `shadcn`, développement uniquement) | GHSA-vfj7-8cjw-p6xm, déni de service par motif glob très imbriqué, « élevée » | Aucune version corrigée publiée (3.0.3 est la dernière, suivi : micromatch/braces#70). Le paquet n'entre pas dans le serveur de production (`pnpm audit --prod` propre) et les motifs viennent de notre configuration, jamais d'un visiteur. L'alerte n'est **pas** masquée (`ignoreGhsas`) : elle disparaîtra d'elle-même à la sortie d'une version corrigée. | 2026-11-05, ou dès la sortie de `braces` 3.0.4 |
 
+## 3 ter. Recherche globale du client : texte recherché dans les URL (à trancher avant la production)
+
+La recherche (`/portal/search?q=`, docs/page-map.md) passe le texte dans l'URL, et ses filtres `ilike` partent vers PostgREST dans l'URL de la requête.
+- **Déjà protégé** : le texte n'est jamais journalisé par l'application ; `Referrer-Policy: strict-origin-when-cross-origin` (aucun envoi vers d'autres sites) ; `next` de la page de connexion sans `?q=` ; `Cache-Control: no-store` ; sur le serveur de test, Caddy ne garde aucun journal d'accès.
+- **Reste** : l'historique du navigateur (poste partagé) et, sur Supabase hébergé, les journaux de l'API qui conservent les URL complètes pendant la rétention du plan.
+- **Option pour la production** : une fonction `search_portal(q)` en `security invoker` appelée par RPC (texte dans le corps de la requête), avec un index `pg_trgm` sur `messages.body`. Décision du responsable technique.
+
 ## 4. Limites de ce document
 
 Ce document ne remplace pas un audit de sécurité indépendant. Il ne constitue pas non plus un avis juridique sur la conformité réglementaire (voir `docs/privacy-and-data-residency.md`). Une revue de sécurité par un tiers est recommandée avant toute mise en production avec de vraies données clients.

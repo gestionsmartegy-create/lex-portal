@@ -1,9 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Search } from "lucide-react";
 import { AccountMenu, NotificationsMenu } from "@/components/portal/header-menus";
+import { SearchForm } from "@/components/portal/search-form";
 import { PortalMobileMenu, PortalSidebar } from "@/components/portal/sidebar-nav";
 import { LocaleSwitcher } from "@/components/shared/locale-switcher";
 import { SessionTimeoutGuard } from "@/components/shared/session-timeout-guard";
 import { StyleNonce } from "@/components/shared/style-nonce";
+import { Link } from "@/i18n/navigation";
 import { formatRelative, initials } from "@/lib/format";
 import { idleLogoutAction, keepSessionAliveAction, logoutAction } from "@/server/actions/auth";
 import { requireClientSession } from "@/server/auth/session";
@@ -16,11 +19,12 @@ export default async function PortalLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params;
   setRequestLocale(locale);
   const { profile } = await requireClientSession(locale, `/${locale}/portal`);
-  const [counts, notifications, t, tNav] = await Promise.all([
+  const [counts, notifications, t, tNav, tSearch] = await Promise.all([
     getDashboardCounts(),
     listNotifications(5),
     getTranslations("common"),
     getTranslations("portal.nav"),
+    getTranslations("portal.search"),
   ]);
 
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.email;
@@ -50,8 +54,18 @@ export default async function PortalLayout({ children, params }: LayoutProps<"/[
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-gray-100 bg-white px-4 sm:px-8">
           <PortalMobileMenu {...shellProps} />
-          <div className="flex-1" />
+          {/* Recherche globale : champ dès 640 px, icône vers la page de recherche en dessous. */}
+          <div className="flex min-w-0 flex-1 justify-end sm:justify-start">
+            <SearchForm locale={locale} id="header-search" className="hidden w-full max-w-sm sm:block" />
+          </div>
           <div className="flex items-center gap-1 sm:gap-3">
+            <Link
+              href="/portal/search"
+              aria-label={tSearch("open")}
+              className="flex size-11 items-center justify-center rounded-[2px] text-marine hover:bg-surface focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none sm:hidden"
+            >
+              <Search aria-hidden className="size-5" />
+            </Link>
             <LocaleSwitcher />
             <NotificationsMenu
               unread={counts.unreadNotifications}
