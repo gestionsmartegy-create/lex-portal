@@ -177,6 +177,16 @@
       "expiry": "Ce lien est à usage unique et expire dans 1 heure.",
       "warning": "Si vous n'avez rien demandé, contactez immédiatement le cabinet par téléphone, au numéro que vous connaissez déjà.",
       "signature": "Lex Canada Law"
+    },
+    "newMessage": {
+      "subject": "Vous avez un nouveau message — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Un nouveau message vous attend dans votre portail sécurisé de Lex Canada Law. Pour votre confidentialité, son contenu n'est disponible que dans le portail.",
+      "bodyStaff": "Un client a écrit un nouveau message dans le portail client. Son contenu n'est disponible que dans le portail.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
     }
   },
   "portal": {
@@ -332,7 +342,8 @@
       },
       "backToList": "Toutes les conversations",
       "emptyThread": "Aucun message dans cette conversation pour l'instant.",
-      "participant": "Participant"
+      "participant": "Participant",
+      "chooseMatter": "Choisir un dossier"
     },
     "billing": {
       "title": "Facturation",
@@ -397,6 +408,10 @@
         "INVALID": "Veuillez vérifier le formulaire.",
         "FAILED": "Les modifications n'ont pas pu être enregistrées."
       }
+    },
+    "notificationsText": {
+      "newMessageTitle": "Nouveau message",
+      "newMessageBody": "Lex Canada Law vous a écrit au sujet du dossier {number}."
     }
   },
   "admin": {
@@ -460,7 +475,8 @@
       "closeMenu": "Fermer le menu",
       "roleStaff": "Personnel",
       "roleAdmin": "Administrateur du cabinet",
-      "integrations": "Intégrations"
+      "integrations": "Intégrations",
+      "messages": "Messages"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -592,6 +608,42 @@
         "INVALID_RESPONSE": "Clio a renvoyé une réponse inattendue.",
         "FAILED": "L'opération a échoué."
       }
+    },
+    "messages": {
+      "title": "Messages",
+      "subtitle": "Échanges sécurisés avec les clients de vos dossiers.",
+      "filters": {
+        "label": "Filtrer les conversations",
+        "unread": "Non lus",
+        "all": "Tous"
+      },
+      "none": "Aucune conversation.",
+      "noneUnread": "Aucune conversation non lue.",
+      "unread": "Non lu",
+      "closedBadge": "Clos",
+      "clients": "Clients : {names}",
+      "noClient": "Aucun client pour l'instant",
+      "newTitle": "Nouveau message à un client",
+      "matter": "Dossier",
+      "chooseMatter": "Choisir un dossier",
+      "subject": "Objet",
+      "body": "Message",
+      "send": "Envoyer",
+      "start": "Envoyer le message",
+      "close": "Clore la conversation",
+      "closed": "Cette conversation est close : plus personne ne peut y écrire.",
+      "closedNotice": "La conversation a été close.",
+      "back": "Toutes les conversations",
+      "client": "Client",
+      "firm": "Lex Canada Law",
+      "you": "Vous",
+      "composeLabel": "Votre réponse",
+      "errors": {
+        "INVALID": "Veuillez vérifier le formulaire.",
+        "RATE_LIMITED": "Trop de messages en peu de temps. Veuillez patienter.",
+        "FAILED": "Le message n'a pas pu être envoyé."
+      },
+      "sending": "Envoi…"
     }
   }
 }

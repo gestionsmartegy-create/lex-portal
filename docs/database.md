@@ -247,6 +247,11 @@ erDiagram
 - `integration_status_list()` : firm_admin, état sans jeton.
 - Messagerie (revue, ADR 0014) : colonnes insérables limitées ; `private.force_server_timestamps` impose les dates pour une session utilisateur.
 
+### 4.5 Messagerie du cabinet (J7, ADR 0017)
+- `public.matter_permissions(uuid)` (`authenticated`, security invoker) : `can_read` et `can_write` effectifs pour la session.
+- `public.join_conversation(uuid)` (`authenticated`, security definer) : seuls l'équipe du dossier et le firm_admin s'inscrivent comme participants.
+- `conversations` : `id` insérable (l'application génère l'identifiant, voir le bogue #49).
+
 ## 5. Matrice d'accès RLS
 
 > **Mise à jour J2.1 (ADR 0009)** : « C » suppose désormais un compte **actif + MFA** pour toutes les tables, y compris la messagerie générale et les notifications. « S » suppose une connexion **Microsoft** (ou `aal2`). Le personnel ne voit les participants, organisations et clients que des dossiers **actifs de son équipe**. Les colonnes internes (motifs et auteurs de révocation, identifiants SharePoint et Clio) ne sont plus lisibles par l'API utilisateur ; RPC `list_matter_access()` pour le firm_admin et l'équipe.

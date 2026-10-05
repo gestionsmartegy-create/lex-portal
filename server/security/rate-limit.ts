@@ -14,6 +14,8 @@ export const RATE_LIMITS = {
   cspReportByIp: { max: 60, windowSeconds: 60 },
   mfaResetByUser: { max: 5, windowSeconds: 60 * 60 },
   messageSendByUser: { max: 30, windowSeconds: 10 * 60 },
+  // Avis de nouveau message : au plus 1 e-mail par fil et par destinataire toutes les 15 min (J7).
+  messageEmailPerConversation: { max: 1, windowSeconds: 15 * 60 },
   documentDownloadByUser: { max: 120, windowSeconds: 10 * 60 },
 } as const satisfies Record<string, RateLimitRule>;
 

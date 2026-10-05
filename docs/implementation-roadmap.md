@@ -46,6 +46,9 @@
 - [x] Déconnexion après 30 min d'inactivité, imposée par la base ; avertissement avec compte à rebours ; 12 h au maximum ; JWT de 15 min.
 - [x] Procédure « téléphone perdu » : page client, réinitialisation par un firm_admin, guide pour le cabinet (`docs/runbooks/mfa-reset.md`).
 
+### 1.3 quater Messagerie du cabinet — ✅ J7 (2026-10-06, ADR 0017)
+- [x] Messages côté cabinet (lire, répondre, nouveau fil, clore), avis dans le portail et par e-mail sans contenu, correctif de création de fil (#49).
+
 ### 1.4 Portail client (données fictives)
 - [ ] `MockDocumentStore` qui reproduit les **sous-dossiers SharePoint** (shared / client_upload / signed / internal), pour que l'interface Documents soit définitive dès la Phase 1.
 - [ ] Gabarit (barre latérale, en-tête, tiroir mobile), puis toutes les pages de `page-map.md` §2 marquées Phase 1.

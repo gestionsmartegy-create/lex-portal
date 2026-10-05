@@ -1,10 +1,12 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type { ConversationSummary } from "@/types/portal";
 import { z } from "zod";
-import { getUser } from "@/server/auth/session";
+import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { assertMatterAccess } from "@/server/services/access-control";
 import { recordAudit } from "@/server/services/audit";
+import { notifyNewMessage } from "@/server/services/message-notifier";
 
 /** Fils visibles (RLS : participant + dossier autorisé), du plus récent au plus ancien. */
 export async function listConversations(opts: { matterId?: string; limit?: number } = {}) {
@@ -121,6 +123,13 @@ export async function sendMessage(conversationId: string, body: string) {
     .single();
   if (error || !message) return { ok: false as const, code: "FAILED" as const };
   await markConversationRead(conversationId);
+  const role = await getSessionRole();
+  await notifyNewMessage({
+    conversationId,
+    matterId: conversation.matter_id,
+    senderId: user.id,
+    senderIsClient: role === "client",
+  });
   await recordAudit({
     action: "message.sent",
     resourceType: "message",
@@ -137,12 +146,152 @@ export async function startConversation(matterId: string, subject: string, body:
   if (!user) return { ok: false as const, code: "NOT_FOUND" as const };
   await assertMatterAccess(matterId, "read_write");
   const supabase = await createSupabaseServerClient();
-  const { data: conversation, error } = await supabase
+  // Identifiant généré ici, insertion sans retour : la RLS ne voit le fil qu'après l'inscription
+  // de son auteur comme participant (trigger), voir la migration 20261006120000.
+  const conversation = { id: randomUUID() };
+  const { error } = await supabase
     .from("conversations")
-    .insert({ matter_id: matterId, scope: "matter", subject, created_by: user.id })
-    .select("id")
-    .single();
-  if (error || !conversation) return { ok: false as const, code: "FAILED" as const };
+    .insert({ id: conversation.id, matter_id: matterId, scope: "matter", subject, created_by: user.id });
+  if (error) return { ok: false as const, code: "FAILED" as const };
   const sent = await sendMessage(conversation.id, body);
   return sent.ok ? { ok: true as const, conversationId: conversation.id } : sent;
+}
+
+// ---------------------------------------------------------------------------
+// Côté cabinet (J7, ADR 0017)
+// ---------------------------------------------------------------------------
+export type StaffConversation = {
+  id: string;
+  subject: string | null;
+  matter_id: string | null;
+  last_message_at: string | null;
+  closed_at: string | null;
+  matter: { display_number: string | null; title: string } | null;
+  clients: string[];
+  unread: boolean;
+};
+
+/**
+ * Fils des dossiers visibles par le membre du cabinet (RLS : équipe du dossier ou firm_admin).
+ * Non lu = un message plus récent que ma dernière lecture (ou fil jamais ouvert).
+ */
+export async function listStaffConversations(
+  opts: { unreadOnly?: boolean } = {},
+): Promise<StaffConversation[]> {
+  const user = await getUser();
+  if (!user) return [];
+  const supabase = await createSupabaseServerClient();
+  const { data: conversations } = await supabase
+    .from("conversations")
+    .select("id, subject, matter_id, last_message_at, closed_at, matters(display_number, title)")
+    .not("matter_id", "is", null)
+    .order("last_message_at", { ascending: false, nullsFirst: false })
+    .limit(200);
+  if (!conversations?.length) return [];
+  const ids = conversations.map((c) => c.id);
+  const { data: participants } = await supabase
+    .from("conversation_participants")
+    .select("conversation_id, user_id, last_read_at, profiles(first_name, last_name, role)")
+    .in("conversation_id", ids);
+
+  const rows = conversations.map((c): StaffConversation => {
+    const mine = (participants ?? []).find((p) => p.conversation_id === c.id && p.user_id === user.id);
+    const clients = (participants ?? [])
+      .filter((p) => p.conversation_id === c.id)
+      .map(
+        (p) =>
+          p.profiles as unknown as {
+            first_name: string | null;
+            last_name: string | null;
+            role: string;
+          } | null,
+      )
+      .filter(
+        (p): p is { first_name: string | null; last_name: string | null; role: string } =>
+          p?.role === "client",
+      )
+      .map((p) => [p.first_name, p.last_name].filter(Boolean).join(" "))
+      .filter(Boolean);
+    const unread = Boolean(
+      c.last_message_at && (!mine?.last_read_at || new Date(mine.last_read_at) < new Date(c.last_message_at)),
+    );
+    return {
+      id: c.id,
+      subject: c.subject,
+      matter_id: c.matter_id,
+      last_message_at: c.last_message_at,
+      closed_at: c.closed_at,
+      matter: c.matters as StaffConversation["matter"],
+      clients,
+      unread,
+    };
+  });
+  return opts.unreadOnly ? rows.filter((r) => r.unread) : rows;
+}
+
+export async function countStaffUnread(): Promise<number> {
+  return (await listStaffConversations({ unreadOnly: true })).length;
+}
+
+/**
+ * Ouvrir un fil côté cabinet : le membre de l'équipe le REJOINT (RPC join_conversation,
+ * réservée à l'équipe du dossier et au firm_admin) puis le lit. Refus = null (404).
+ */
+export async function openConversationAsStaff(conversationId: string) {
+  if (!uuid.safeParse(conversationId).success) return null;
+  const supabase = await createSupabaseServerClient();
+  const { data: joined } = await supabase.rpc("join_conversation", { p_conversation: conversationId });
+  if (joined !== true) return null;
+  const data = await getConversation(conversationId);
+  if (data) await markConversationRead(conversationId);
+  return data;
+}
+
+/** Nouveau fil ouvert par le cabinet : l'auteur + tous les clients ayant un accès actif au dossier. */
+export async function startConversationAsStaff(matterId: string, subject: string, body: string) {
+  const user = await getUser();
+  if (!user) return { ok: false as const, code: "NOT_FOUND" as const };
+  await assertMatterAccess(matterId, "read_write");
+  const supabase = await createSupabaseServerClient();
+  const conversation = { id: randomUUID() }; // voir startConversation
+  const { error } = await supabase
+    .from("conversations")
+    .insert({ id: conversation.id, matter_id: matterId, scope: "matter", subject, created_by: user.id });
+  if (error) return { ok: false as const, code: "FAILED" as const };
+  const { data: clients } = await supabase
+    .from("matter_access")
+    .select("user_id")
+    .eq("matter_id", matterId)
+    .is("revoked_at", null);
+  if (clients?.length) {
+    const { error: participantsError } = await supabase
+      .from("conversation_participants")
+      .insert(clients.map((c) => ({ conversation_id: conversation.id, user_id: c.user_id })));
+    if (participantsError) return { ok: false as const, code: "FAILED" as const };
+  }
+  const sent = await sendMessage(conversation.id, body);
+  return sent.ok ? { ok: true as const, conversationId: conversation.id } : sent;
+}
+
+/** Clore un fil (personnel de l'équipe ou firm_admin, RLS conversations_staff_update). */
+export async function closeConversation(conversationId: string) {
+  const user = await getUser();
+  if (!user || !uuid.safeParse(conversationId).success) return { ok: false as const };
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("conversations")
+    .update({ closed_at: new Date().toISOString() })
+    .eq("id", conversationId)
+    .is("closed_at", null)
+    .select("id, matter_id")
+    .maybeSingle();
+  if (error || !data) return { ok: false as const };
+  await recordAudit({
+    action: "conversation.closed",
+    resourceType: "conversation",
+    resourceId: data.id,
+    matterId: data.matter_id,
+    actorId: user.id,
+  });
+  return { ok: true as const };
 }
