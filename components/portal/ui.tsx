@@ -93,7 +93,9 @@ export function StatCard({
         <Icon aria-hidden className="size-5" />
       </span>
       <span className="min-w-0">
-        <span className="block font-display text-[28px] leading-none font-bold text-marine">{value}</span>
+        <span className="block font-display text-[clamp(22px,2.2vw,28px)] leading-none font-bold whitespace-nowrap text-marine tabular-nums">
+          {value}
+        </span>
         <span className="mt-1 block text-xs text-ink-muted">{label}</span>
       </span>
     </Link>

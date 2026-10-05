@@ -8,16 +8,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-// Polices de la maquette, HÉBERGÉES DANS LE PROJET (app/fonts, licence SIL OFL 1.1) :
-// aucun appel à Google ni au build ni à l'exécution (ADR 0009). Polices variables, sous-ensemble latin.
+// Polices du site lexcanadalaw.com (décision du responsable, 2026-10-03, ADR 0015) :
+// Libre Franklin pour les titres, DM Sans pour le texte. HÉBERGÉES DANS LE PROJET
+// (app/fonts, licence SIL OFL 1.1) : aucun appel à Google ni au build ni à l'exécution
+// (ADR 0009). Polices variables, sous-ensemble latin.
 const display = localFont({
   src: [
-    { path: "../fonts/playfair-display-latin.woff2", weight: "400 900", style: "normal" },
-    { path: "../fonts/playfair-display-italic-latin.woff2", weight: "400 900", style: "italic" },
+    { path: "../fonts/libre-franklin-latin.woff2", weight: "100 900", style: "normal" },
+    { path: "../fonts/libre-franklin-italic-latin.woff2", weight: "100 900", style: "italic" },
   ],
   variable: "--font-display-family",
   display: "swap",
-  fallback: ["Georgia", "serif"],
+  fallback: ["Helvetica Neue", "Arial", "sans-serif"],
 });
 const body = localFont({
   src: [
@@ -27,15 +29,6 @@ const body = localFont({
   variable: "--font-body",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
-});
-const accent = localFont({
-  src: [
-    { path: "../fonts/cormorant-garamond-latin.woff2", weight: "300 700", style: "normal" },
-    { path: "../fonts/cormorant-garamond-italic-latin.woff2", weight: "300 700", style: "italic" },
-  ],
-  variable: "--font-accent-family",
-  display: "swap",
-  fallback: ["Georgia", "serif"],
 });
 
 export function generateStaticParams() {
@@ -61,7 +54,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${display.variable} ${body.variable} ${accent.variable} h-full`}>
+    <html lang={locale} className={`${display.variable} ${body.variable} h-full`}>
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           <TooltipProvider>{children}</TooltipProvider>

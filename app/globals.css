@@ -34,7 +34,8 @@
   /* --- Typographie (variables posées par next/font dans app/[locale]/layout.tsx) --- */
   --font-sans: var(--font-body);
   --font-display: var(--font-display-family);
-  --font-accent: var(--font-accent-family);
+  /* Accent (slogan, mise en avant) : Libre Franklin italique, comme le site (ADR 0015). */
+  --font-accent: var(--font-display-family);
   --font-heading: var(--font-display-family);
 
   /* --- Mouvement --- */
@@ -127,6 +128,10 @@
   h2,
   h3 {
     @apply font-display text-marine;
+  }
+  /* Grands titres serrés comme sur lexcanadalaw.com (-0,025 em). */
+  h1 {
+    letter-spacing: -0.025em;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {

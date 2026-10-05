@@ -81,19 +81,21 @@ Composant : `components/shared/brand-mark.tsx` (`tone="light" | "dark"`, `size="
 
 ## 2. Typographie
 
-Google Fonts, chargées avec `next/font/google` (auto-hébergées, aucun appel externe à l'exécution, compatible avec une CSP stricte).
+**Polices du site lexcanadalaw.com** (décision du responsable, 2026-10-03, ADR 0015 ; elles remplacent Playfair Display et Cormorant Garamond de la maquette Manus). Fichiers hébergés dans `app/fonts` (licence SIL OFL 1.1), chargés par `next/font/local` : aucun appel externe, compatible avec une CSP stricte (ADR 0009).
 
 | Rôle | Police | Graisses | Variable |
 |---|---|---|---|
-| Titres | **Playfair Display** | 400, 600, 700, 800 (+ italiques) | `--font-display` |
+| Titres | **Libre Franklin** | 600, 700, 800 (+ italique 700) | `--font-display` |
 | Texte | **DM Sans** | 300, 400, 500, 600 | `--font-body` |
-| Accent éditorial (citations, slogan) | **Cormorant Garamond** | 400, 500, 600 (+ italiques) | `--font-accent` |
+| Accent (slogan, mot mis en avant) | **Libre Franklin italique**, en doré | 700 | `--font-accent` |
+
+Relevé sur lexcanadalaw.com : grand titre en 800 avec `letter-spacing: -0.025em`, mot mis en avant en italique 700 doré, sous-titres en 700, texte en DM Sans 300 ou 400, boutons en DM Sans 500 majuscules.
 
 | Élément | Police | Taille | Graisse | Couleur | Autres |
 |---|---|---|---|---|---|
-| Titre de page (« Sign in to your portal ») | Playfair | 28px | 700 | marine | — |
-| Titre de carte (« Invoices », « Recent Matters ») | Playfair | 18px | 600 | marine | — |
-| Valeur d'un indicateur | Playfair | 28px | 700 | marine | — |
+| Titre de page (« Sign in to your portal ») | Libre Franklin | 28px | 700 | marine | `letter-spacing: -0.025em` |
+| Titre de carte (« Invoices », « Recent Matters ») | Libre Franklin | 18px | 600 | marine | — |
+| Valeur d'un indicateur | Libre Franklin | 28px | 700 | marine | — |
 | Texte courant | DM Sans | 14–16px | 400 | `#4A4A5A` | — |
 | Sous-titre / aide | DM Sans | 14px | 400 | `#8A8A9A` | — |
 | Libellé de champ | DM Sans | 12px | 600 | marine | MAJUSCULES, `letter-spacing: .05em` |
