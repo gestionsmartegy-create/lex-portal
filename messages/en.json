@@ -118,7 +118,7 @@
       "subtitle": "Reserved for Lex Canada Law staff (@lexcanadalaw.com account).",
       "microsoft": "Sign in with Microsoft",
       "ssoPending": "Microsoft sign-in is not configured yet (pending Azure setup).",
-      "demoTitle": "Demo sign-in (local development only)",
+      "demoTitle": "Demo sign-in (development and test environments only)",
       "demoHint": "Fictitious staff accounts @lexcanadalaw.test only.",
       "demoSubmit": "Demo sign-in",
       "clientLink": "Client? Go to the client portal"

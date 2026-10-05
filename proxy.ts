@@ -86,11 +86,22 @@ export default async function proxy(request: NextRequest) {
   for (const { name, value, options } of pending) response.cookies.set(name, value, options);
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("Content-Security-Policy-Report-Only", buildReportOnlyCsp());
-  response.headers.set("Reporting-Endpoints", reportingEndpoints(request.nextUrl.origin));
+  // Derrière un proxy (VPS, ADR 0016), l'origine vue par le serveur est interne : on annonce
+  // l'adresse publique de l'application quand elle est connue.
+  response.headers.set("Reporting-Endpoints", reportingEndpoints(publicOrigin(request)));
   // Pages authentifiées : jamais mises en cache par un intermédiaire.
   if (PROTECTED_CLIENT.test(path) || PROTECTED_STAFF.test(path))
     response.headers.set("Cache-Control", "no-store");
   return response;
+}
+
+/** Origine publique : APP_BASE_URL (variable serveur lue à l'exécution), sinon celle de la requête. */
+function publicOrigin(request: NextRequest): string {
+  try {
+    return process.env.APP_BASE_URL ? new URL(process.env.APP_BASE_URL).origin : request.nextUrl.origin;
+  } catch {
+    return request.nextUrl.origin;
+  }
 }
 
 export const config = {

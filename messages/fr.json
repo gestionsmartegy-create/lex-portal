@@ -118,7 +118,7 @@
       "subtitle": "Réservé au personnel de Lex Canada Law (compte @lexcanadalaw.com).",
       "microsoft": "Se connecter avec Microsoft",
       "ssoPending": "La connexion Microsoft n'est pas encore configurée (en attente de la configuration Azure).",
-      "demoTitle": "Connexion de démonstration (développement local uniquement)",
+      "demoTitle": "Connexion de démonstration (environnements de développement et de test uniquement)",
       "demoHint": "Comptes fictifs du personnel @lexcanadalaw.test uniquement.",
       "demoSubmit": "Connexion de démonstration",
       "clientLink": "Client ? Aller au portail client"

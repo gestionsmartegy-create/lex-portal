@@ -10,6 +10,7 @@ import { serverEnv } from "@/server/env";
 import { getRequestContext } from "@/server/security/request-context";
 import { checkRateLimit, hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { hashForKey } from "@/server/security/tokens";
+import { staffDemoLoginEnabled } from "@/server/auth/demo-login";
 import { recordAudit } from "@/server/services/audit";
 import { TIMEOUT_REASON } from "@/lib/session-timeout";
 import { acceptInvitation } from "@/server/services/invitation";
@@ -204,9 +205,9 @@ export async function staffMicrosoftAction(formData: FormData): Promise<void> {
   redirect(data.url);
 }
 
-/** Formulaire de démonstration : DÉVELOPPEMENT uniquement, comptes *.test uniquement. */
+/** Formulaire de démonstration : développement ou serveur de test (ADR 0016), comptes *.test uniquement. */
 export async function staffDemoLoginAction(_prev: unknown, formData: FormData): Promise<ActionState> {
-  if (serverEnv().NODE_ENV !== "development") return { error: "UNEXPECTED" };
+  if (!staffDemoLoginEnabled()) return { error: "UNEXPECTED" };
   const parsed = loginSchema.safeParse(fields(formData));
   if (!parsed.success || !isDemoStaffEmail(parsed.data.email)) return { error: "INVALID_CREDENTIALS" };
   if (!(await hitRateLimit(await ipKey("login"), RATE_LIMITS.loginByIp))) return { error: "RATE_LIMITED" };

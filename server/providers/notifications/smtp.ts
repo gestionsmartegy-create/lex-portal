@@ -10,7 +10,9 @@ import type { EmailSender, OutgoingEmail } from "./email-sender";
 /** Hors local, impose STARTTLS sur smtp:// (smtps:// est chiffré d'emblée). */
 export function smtpTransportUrl(smtpUrl: string): string {
   const url = new URL(smtpUrl);
-  const local = ["127.0.0.1", "localhost"].includes(url.hostname);
+  // Local : boucle locale, ou nom de service Docker sans point (réseau interne, jamais routé
+  // sur Internet — ex. « mailpit » sur le serveur de test, ADR 0016).
+  const local = ["127.0.0.1", "localhost"].includes(url.hostname) || /^[a-z0-9-]+$/i.test(url.hostname);
   if (!local && url.protocol === "smtp:") url.searchParams.set("requireTLS", "true");
   return url.toString();
 }
