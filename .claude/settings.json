@@ -1,5 +1,53 @@
 {
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/rappel-flux.sh\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/garde-fous.sh\""
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
+    "allow": [
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm format:check:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm audit:*)",
+      "Bash(pnpm db:test:*)",
+      "Bash(pnpm db:types:*)",
+      "Bash(pnpm exec supabase status:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(node scripts/audit-routes.mts:*)",
+      "Bash(deploy/vps/scripts/deploy.sh)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh auth status:*)",
+      "Bash(curl -s -o /dev/null -w:*)",
+      "Bash(curl -sI https://lexlaw.2-24-110-184.sslip.io:*)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.local)",
@@ -10,7 +58,8 @@
       "Read(./supabase/.temp/**)",
       "Bash(supabase db push:*)",
       "Bash(supabase link:*)",
-      "Bash(git push --force:*)"
+      "Bash(git push --force:*)",
+      "Bash(vercel:*)"
     ]
   }
 }
