@@ -1,0 +1,42 @@
+name: Bogue
+description: Quelque chose ne fonctionne pas comme prévu.
+title: "Bogue : <effet visible en une phrase>"
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: gravite
+    attributes:
+      label: Gravité
+      options:
+        - Bloquant (fuite ou perte de données, application inutilisable)
+        - Majeur (une fonctionnalité promise ne marche pas)
+        - Mineur (défaut avec contournement simple)
+        - Cosmétique (apparence, libellé)
+    validations:
+      required: true
+  - type: input
+    id: story
+    attributes:
+      label: Story concernée
+      placeholder: "#18"
+  - type: textarea
+    id: etapes
+    attributes:
+      label: Étapes pour reproduire
+      value: |
+        1.
+    validations:
+      required: true
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Résultat attendu
+    validations:
+      required: true
+  - type: textarea
+    id: obtenu
+    attributes:
+      label: Résultat obtenu
+      description: Joindre une capture d'écran si possible. Ne jamais y mettre de mot de passe ni de vraie donnée client.
+    validations:
+      required: true
