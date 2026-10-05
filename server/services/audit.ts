@@ -17,6 +17,7 @@ export type AuditAction =
   | "document.downloaded"
   | "message.sent"
   | "conversation.closed"
+  | "conversation.joined"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"

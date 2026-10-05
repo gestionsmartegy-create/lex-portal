@@ -131,6 +131,57 @@ describe("messagerie du cabinet (J7)", () => {
     expect(found.messages.filter((m) => m.Subject.includes("new message")).length).toBe(1);
   });
 
+  it("accès retiré : un client révoqué et un membre sorti de l'équipe ne reçoivent plus aucun avis", async () => {
+    const writer = await makeClient();
+    const removedClient = await makeClient();
+    const keptStaff = await makeStaff(true);
+    const removedStaff = await makeStaff(true);
+
+    // Fil où tous sont participants.
+    const conv = { id: crypto.randomUUID() };
+    await admin.from("conversations").insert({
+      id: conv.id,
+      matter_id: JOHN_MATTER,
+      scope: "matter",
+      subject: "Révocation J7",
+      created_by: writer.id,
+    });
+    await admin.from("conversation_participants").upsert(
+      [writer, removedClient, keptStaff, removedStaff].map((p) => ({
+        conversation_id: conv.id,
+        user_id: p.id,
+      })),
+      { onConflict: "conversation_id,user_id", ignoreDuplicates: true },
+    );
+
+    // Le cabinet retire l'accès du client et sort un membre de l'équipe ; ils restent participants.
+    await admin
+      .from("matter_access")
+      .update({ revoked_at: new Date().toISOString(), revoked_by: DEMO_ADMIN })
+      .eq("matter_id", JOHN_MATTER)
+      .eq("user_id", removedClient.id);
+    await admin.from("matter_team").delete().eq("matter_id", JOHN_MATTER).eq("user_id", removedStaff.id);
+
+    await notifyNewMessage({
+      conversationId: conv.id,
+      matterId: JOHN_MATTER,
+      senderId: writer.id,
+      senderIsClient: true,
+    });
+
+    // Témoin : le membre resté dans l'équipe est bien averti (les envois ont donc eu lieu).
+    await waitForEmail(keptStaff.email, "new message");
+    const { data: notes } = await admin.from("notifications").select("id").eq("user_id", removedClient.id);
+    expect(notes).toEqual([]);
+    for (const email of [removedClient.email, removedStaff.email]) {
+      const res = await fetch(
+        `http://127.0.0.1:54324/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}`,
+      );
+      const found = (await res.json()) as { messages: { Subject: string }[] };
+      expect(found.messages.filter((m) => m.Subject.includes("new message"))).toEqual([]);
+    }
+  });
+
   it("personnel hors équipe : ne peut ni rejoindre ni lire", async () => {
     const outsider = await makeStaff(false);
     const { data: conv } = await admin

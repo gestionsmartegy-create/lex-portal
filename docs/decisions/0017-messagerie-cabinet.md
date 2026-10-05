@@ -20,3 +20,12 @@
   - pgTAP `14_messagerie_cabinet` ;
   - intégration `staff-messaging.test.ts` (lecture et réponse de l'équipe, notification, e-mail sans contenu, limite de 15 min, hors équipe refusé, lecture seule) ;
   - e2e : le parcours cabinet → client avec axe, et la régression du bogue #49.
+
+## Correctifs de la revue de sécurité (2026-10-04)
+- **Avis revérifiés à chaque envoi** : être participant d'un fil ne suffit plus. Un client n'est averti (notification et e-mail) que s'il a encore un accès **non révoqué** au dossier ; un membre du personnel, que s'il est encore dans l'équipe du dossier, ou firm_admin. Un fil sans dossier n'envoie aucun avis. Test d'intégration « accès retiré ».
+- **Ordre du contrôle d'accès** : ouvrir un fil côté cabinet lit d'abord son dossier, appelle `assertMatterAccess`, puis rejoint le fil. Clore un fil exige `assertMatterAccess(…, "read_write")` avant la modification.
+- **Audit** : une nouvelle inscription à un fil est journalisée `conversation.joined`.
+- **Portail** : les actions d'envoi du portail exigent une session client (`requireClientSession`).
+- **Texte neutre** : la notification dit « Nouveau message au sujet du dossier … », car l'auteur peut être un autre client.
+- **pgTAP** : un membre de l'équipe connecté par mot de passe n'a aucun droit et ne peut pas rejoindre ; le firm_admin peut lire, écrire et rejoindre hors équipe.
+- **Reporté** : la création d'un fil par le cabinet n'est pas faite en une seule opération ; si une étape échoue, un fil vide peut rester (sans risque d'accès).

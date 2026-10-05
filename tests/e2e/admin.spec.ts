@@ -163,7 +163,7 @@ test.describe("espace cabinet", () => {
         .getByLabel("Matter")
         .selectOption({ label: "LC-2026-0142 — Permanent Residency Application" });
       await page.getByLabel("Subject").fill(subject);
-      await page.getByLabel("Your reply").fill("Please review the updated form.");
+      await page.getByLabel("Message", { exact: true }).fill("Please review the updated form.");
       await page.getByRole("button", { name: "Send the message" }).click();
       await expect(page.getByRole("heading", { level: 1, name: subject })).toBeVisible();
       await expectAccessible(page);

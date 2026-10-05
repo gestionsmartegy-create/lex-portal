@@ -22,6 +22,9 @@ type Recipient = {
  *  - clients participants (sauf l'auteur) : notification dans le portail + e-mail si leur
  *    préférence l'autorise, au plus 1 e-mail par fil et par destinataire toutes les 15 min ;
  *  - si l'auteur est un client : e-mail d'avis à l'équipe du dossier (même limite).
+ * Destinataires revérifiés à chaque envoi (revue de sécurité J7) : être participant du fil ne
+ * suffit pas. Un client doit avoir encore un accès NON révoqué au dossier ; un membre du personnel
+ * doit être encore dans l'équipe du dossier, ou firm_admin. Une révocation coupe donc les avis.
  * Un échec d'envoi n'annule jamais le message : il est journalisé (identifiants seulement).
  */
 export async function notifyNewMessage(input: {
@@ -32,18 +35,19 @@ export async function notifyNewMessage(input: {
 }) {
   try {
     const admin = createSupabaseServiceClient();
-    const [{ data: participants }, { data: team }, { data: matter }] = await Promise.all([
+    // Un fil sans dossier n'a aucune règle d'accès à revérifier : personne n'est averti.
+    if (!input.matterId) return;
+    const [{ data: participants }, { data: team }, { data: access }, { data: matter }] = await Promise.all([
       admin.from("conversation_participants").select("user_id").eq("conversation_id", input.conversationId),
-      input.matterId && input.senderIsClient
-        ? admin.from("matter_team").select("user_id").eq("matter_id", input.matterId)
-        : Promise.resolve({ data: [] as { user_id: string }[] }),
-      input.matterId
-        ? admin.from("matters").select("display_number").eq("id", input.matterId).maybeSingle()
-        : Promise.resolve({ data: null }),
+      admin.from("matter_team").select("user_id").eq("matter_id", input.matterId),
+      admin.from("matter_access").select("user_id").eq("matter_id", input.matterId).is("revoked_at", null),
+      admin.from("matters").select("display_number").eq("id", input.matterId).maybeSingle(),
     ]);
-    const ids = [...new Set([...(participants ?? []), ...(team ?? [])].map((p) => p.user_id))].filter(
-      (id) => id !== input.senderId,
-    );
+    const onTeam = new Set((team ?? []).map((m) => m.user_id));
+    const hasAccess = new Set((access ?? []).map((a) => a.user_id));
+    // L'équipe n'est ajoutée aux destinataires que lorsqu'un client écrit.
+    const candidates = [...(participants ?? []), ...(input.senderIsClient ? (team ?? []) : [])];
+    const ids = [...new Set(candidates.map((p) => p.user_id))].filter((id) => id !== input.senderId);
     if (!ids.length) return;
 
     const [{ data: people }, { data: prefs }] = await Promise.all([
@@ -57,6 +61,10 @@ export async function notifyNewMessage(input: {
       if (person.status !== "active") continue;
       const locale = person.preferred_language === "fr" ? "fr" : "en";
       const isClient = person.role === "client";
+      const stillAllowed = isClient
+        ? hasAccess.has(person.id)
+        : person.role === "firm_admin" || (person.role === "staff" && onTeam.has(person.id));
+      if (!stillAllowed) continue;
       // Le personnel n'est averti que lorsqu'un CLIENT écrit (pas des réponses de ses collègues).
       if (!isClient && !input.senderIsClient) continue;
 
