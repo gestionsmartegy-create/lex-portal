@@ -19,7 +19,7 @@ import { localeSchema } from "@/server/validation/auth";
 /**
  * Server Actions du portail client (AGENTS.md §3) : entrée validée par Zod,
  * utilisateur revérifié, accès au dossier vérifié dans le service, RLS derrière.
- * Les actions de messagerie exigent une session CLIENT (le personnel passe par server/actions/admin.ts).
+ * Toutes ces actions exigent une session CLIENT (le personnel passe par server/actions/admin.ts).
  */
 export type PortalActionState = { error?: string; ok?: boolean };
 
@@ -71,12 +71,14 @@ export async function startConversationAction(
 export async function markNotificationReadAction(formData: FormData): Promise<void> {
   const id = z.uuid().safeParse(formData.get("id"));
   const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  await requireClientSession(locale);
   if (id.success) await markNotificationRead(id.data);
   revalidatePath(`/${locale}/portal`, "layout");
 }
 
 export async function markAllNotificationsReadAction(formData: FormData): Promise<void> {
   const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  await requireClientSession(locale);
   await markAllNotificationsRead();
   revalidatePath(`/${locale}/portal`, "layout");
 }
@@ -99,8 +101,7 @@ const profileSchema = z.object({
 export async function updateProfileAction(_prev: unknown, formData: FormData): Promise<PortalActionState> {
   const parsed = profileSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) return { error: "INVALID" };
-  const user = await getUser();
-  if (!user) return { error: "FAILED" };
+  const { user } = await requireClientSession(parsed.data.locale);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("profiles")

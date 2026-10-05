@@ -80,6 +80,12 @@ Structure (`01_structure`) : RLS sur toutes les tables de `public`, aucune table
 - Procédure formelle de réponse aux incidents (qui contacter, délais de notification aux clients).
 - Fréquence et modalités exactes des audits de sécurité externes avant/après mise en production.
 
+## 3 bis. Exceptions de dépendances acceptées temporairement
+
+| Paquet | Alerte | Pourquoi c'est accepté | Revoir le |
+|---|---|---|---|
+| `braces <= 3.0.3` (via `eslint-config-next` et `shadcn`, développement uniquement) | GHSA-vfj7-8cjw-p6xm, déni de service par motif glob très imbriqué, « élevée » | Aucune version corrigée publiée (3.0.3 est la dernière, suivi : micromatch/braces#70). Le paquet n'entre pas dans le serveur de production (`pnpm audit --prod` propre) et les motifs viennent de notre configuration, jamais d'un visiteur. L'alerte n'est **pas** masquée (`ignoreGhsas`) : elle disparaîtra d'elle-même à la sortie d'une version corrigée. | 2026-11-05, ou dès la sortie de `braces` 3.0.4 |
+
 ## 4. Limites de ce document
 
 Ce document ne remplace pas un audit de sécurité indépendant. Il ne constitue pas non plus un avis juridique sur la conformité réglementaire (voir `docs/privacy-and-data-residency.md`). Une revue de sécurité par un tiers est recommandée avant toute mise en production avec de vraies données clients.

@@ -25,13 +25,16 @@ export async function countUnreadNotifications(): Promise<number> {
   return count ?? 0;
 }
 
+/** Une notification de l'utilisateur lui-même (filtre explicite ; la RLS revérifie). */
 export async function markNotificationRead(id: string) {
-  if (!z.uuid().safeParse(id).success) return;
+  const user = await getUser();
+  if (!user || !z.uuid().safeParse(id).success) return;
   const supabase = await createSupabaseServerClient();
   await supabase
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
     .eq("id", id)
+    .eq("user_id", user.id)
     .is("read_at", null);
 }
 
