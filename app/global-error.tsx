@@ -8,13 +8,7 @@ import fr from "@/messages/fr.json";
  * disponibles, d'où un rendu minimal, bilingue, lu directement dans messages/*.json.
  * Jamais le message technique : seulement l'empreinte `digest`.
  */
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function GlobalError({ error }: { error: Error & { digest?: string }; reset: () => void }) {
   const ref = error.digest ?? "—";
   return (
     <html lang="en">
@@ -34,7 +28,7 @@ export default function GlobalError({
           ))}
           <button
             type="button"
-            onClick={reset}
+            onClick={() => window.location.reload()}
             style={{
               background: "#0d1b3e",
               color: "#fff",

@@ -17,6 +17,10 @@ ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ARG NEXT_PUBLIC_STAFF_SSO_ENABLED=false
 ARG NEXT_PUBLIC_CLIO_BOOKING_URL
+# Identifiant de version (commit) : Next.js recharge un onglet resté sur une ancienne version
+# au lieu d'échouer (« Failed to find Server Action »), voir la doc « Version Skew ».
+ARG NEXT_DEPLOYMENT_ID
+ENV NEXT_DEPLOYMENT_ID=$NEXT_DEPLOYMENT_ID
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
