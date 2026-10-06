@@ -15,10 +15,18 @@
 | 6 | Données | **Fictives seulement** : migrations du dépôt, puis le seed de démonstration (`supabase/seed.sql`). Les mots de passe des comptes fictifs sont générés sur le serveur et écrits dans `/opt/lexlaw/ACCES.md` (`chmod 600`), que le responsable lit lui-même. Réinitialisation : `migrate.sh --reset`. |
 | 7 | Connexion de démonstration du personnel | Ouverte sur ce serveur par **`STAFF_DEMO_LOGIN=enabled`** (variable serveur, jamais `NEXT_PUBLIC_`). **Double verrou** : l'action n'accepte que des adresses `*.test`, et la base n'accorde des droits par mot de passe qu'aux domaines `allow_password`, que seul le seed de démonstration crée. En production, la variable est absente et le domaine `*.test` n'existe pas. |
 | 8 | E-mails | Mailpit intercepte **tous** les e-mails : aucun n'est réellement envoyé. Sa boîte est consultable sur `/_mail`, derrière `basic_auth` (utilisateur `lex`, mot de passe dans `ACCES.md`). Le garde-fou STARTTLS (ADR 0013) considère un nom de service Docker sans point comme interne. |
-| 9 | Intégrations | Toutes en `mock`, dont Clio (faux Clio). Pas de synchronisation planifiée. |
+| 9 | Intégrations | Toutes en `mock`. Clio : faux Clio par défaut, ou **compte Clio de test** (révision du 2026-10-06 ci-dessous). Pas de synchronisation planifiée. |
 | 10 | Déploiement | `deploy/vps/scripts/deploy.sh`, depuis le poste du développeur : `git archive | ssh`. Le serveur n'a aucun accès à GitHub. |
 
 ## Conséquences
 - L'hébergement de **production** reste à confirmer : Vercel (ADR 0013) ou VPS. Voir `docs/open-questions.md`.
 - Le serveur n'a qu'un processeur : le build prend plusieurs minutes. La pile occupe environ 1,2 Go de mémoire.
 - Pas de sauvegarde : le serveur ne contient que des données fictives.
+
+## Révision du 2026-10-06 — Clio de test
+Décision du responsable du projet (point 9) : le serveur peut se connecter à un **compte Clio de test** (compte développeur, dossiers fictifs uniquement), pour démontrer la vraie connexion OAuth, l'import et la synchronisation.
+- **Jamais le Clio réel du cabinet** sur ce serveur : pas de sauvegarde, adresse temporaire, connexion de démonstration du personnel (points 6 et 7). Le vrai Clio attend la préproduction (`docs/runbooks/preprod-deploy.md`, étape 5).
+- Application Clio en **lecture** ; adresse de retour `https://lexlaw.2-24-110-184.sslip.io/api/integrations/clio/callback`.
+- Identifiants saisis **par le responsable, sur le serveur**, dans `/opt/lexlaw/clio.env` (`chmod 600` : `INTEGRATION_MODE_CLIO=live`, `CLIO_CLIENT_ID`, `CLIO_CLIENT_SECRET`), lu par `docker-compose.yml` (`env_file`, facultatif). Sans ce fichier, Clio reste en `mock`. Ils ne sont jamais dans le dépôt, le chat ni un journal.
+- Le jeton OAuth obtenu au clic « Connecter Clio » est conservé chiffré dans Vault (ADR 0014). Retour en démonstration : supprimer `clio.env`, puis redéployer.
+- Pas de synchronisation planifiée : import et synchronisation à la demande depuis `/admin/integrations`.

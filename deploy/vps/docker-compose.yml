@@ -107,11 +107,16 @@ services:
       EMAIL_FROM: Lex Canada Law (test) <no-reply@lexcanadalaw.test>
       STAFF_DEMO_LOGIN: enabled
       TRUSTED_PROXY_HOPS: "1"
-      INTEGRATION_MODE_CLIO: mock
       INTEGRATION_MODE_SHAREPOINT: mock
       INTEGRATION_MODE_SIGNATURE: mock
       INTEGRATION_MODE_PAYMENTS: mock
       INTEGRATION_MODE_MALWARE: mock
+    # Clio : mode démonstration par défaut. Un compte Clio de TEST peut être branché (ADR 0016,
+    # révision du 2026-10-06) via /opt/lexlaw/clio.env, écrit par le responsable sur le serveur
+    # (chmod 600, jamais dans le dépôt) : INTEGRATION_MODE_CLIO, CLIO_CLIENT_ID, CLIO_CLIENT_SECRET.
+    env_file:
+      - path: ./clio.env
+        required: false
     ports:
       - "127.0.0.1:3100:3000"
 
