@@ -57,7 +57,10 @@ export async function createInvitationAction(_prev: unknown, formData: FormData)
     },
     user.id,
   );
-  return result.ok ? { ok: true } : { error: result.code === "DUPLICATE" ? "DUPLICATE" : "FAILED" };
+  if (!result.ok) return { error: result.code === "DUPLICATE" ? "DUPLICATE" : "FAILED" };
+  // La liste « Invitations envoyées » de la même page doit montrer la nouvelle invitation.
+  revalidatePath(`/${parsed.data.locale}/admin/invitations`);
+  return { ok: true };
 }
 
 /** Pré-création d'un compte du personnel (firm_admin). */

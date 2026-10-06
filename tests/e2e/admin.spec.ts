@@ -89,8 +89,9 @@ test.describe("espace cabinet", () => {
       const mail = await waitForEmail(email, "invitation");
       expect(mail.html).toContain("/invite/");
 
-      await page.reload();
+      // Sans rechargement : la liste « Invitations envoyées » montre aussitôt la nouvelle invitation.
       const row = page.getByRole("listitem").filter({ hasText: email });
+      await expect(row).toBeVisible();
       await row.getByRole("button", { name: "Revoke" }).click();
       await expect(page.getByText("The invitation was revoked.")).toBeVisible();
     } finally {
