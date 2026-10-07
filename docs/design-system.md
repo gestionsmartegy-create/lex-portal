@@ -108,7 +108,8 @@ Relevé sur lexcanadalaw.com : grand titre en 800 avec `letter-spacing: -0.025em
 | Token | Valeur |
 |---|---|
 | Rayon : cartes | `4px` |
-| Rayon : champs, badges, boutons | `2px` (boutons principaux à angle droit, `0`) |
+| Rayon : champs, badges | `2px` |
+| Rayon : boutons (`primary`, `outline-gold`, `ghost-white`) | `8px` — choix du responsable du 2026-10-06, s'écarte des angles droits du site public |
 | Bordure de carte | `1px solid gray-100`, **sans ombre** au repos |
 | Survol de carte (`card-hover`) | transformation et ombre en `.32s cubic-bezier(.23,1,.32,1)` |
 | Courbe d'animation | `--ease-premium: cubic-bezier(.23,1,.32,1)` |
@@ -127,6 +128,13 @@ Le style est sobre : peu d'ombres, des coins presque droits et des bordures fine
 .btn-outline-gold { color: var(--gold); border: 1px solid var(--gold); background: transparent; /* idem */ }
 .btn-ghost-white  { color: #fff; border: 1px solid rgb(255 255 255 / .4); background: transparent; /* idem */ }
 ```
+
+**Révision du 2026-10-06** (choix du responsable) : coins arrondis `8px` et fonds **translucides**, avec un léger flou d'arrière-plan.
+- `primary` : fond `marine` à 85 %, bordure `marine` à 70 %, sans ombre ; **plein** au survol.
+- Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`), y compris `sm` et `xs`.
+- `outline-gold` : fond `gold` à 10 % (au lieu de transparent), bordure `gold` à 70 %, texte `gold-ink` ; doré plein au survol.
+- `ghost-white` : fond blanc à 10 %, 20 % au survol.
+- Contraste AA conservé : texte blanc sur marine à 85 % (> 9:1), `gold-ink` sur doré à 10 % (≈ `gold-pale`, 4,7:1), contrôlés par axe dans les tests e2e.
 
 Les icônes viennent de **lucide-react**, en 14–18px. Une flèche `→` suit les CTA principaux (« ACCESS MY PORTAL → »).
 
