@@ -129,12 +129,13 @@ Le style est sobre : peu d'ombres, des coins presque droits et des bordures fine
 .btn-ghost-white  { color: #fff; border: 1px solid rgb(255 255 255 / .4); background: transparent; /* idem */ }
 ```
 
-**Révision du 2026-10-06** (choix du responsable) : coins arrondis `8px` et fonds **translucides**, avec un léger flou d'arrière-plan.
-- `primary` : fond `marine` à 85 %, bordure `marine` à 70 %, sans ombre ; **plein** au survol.
-- Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`), y compris `sm` et `xs`.
-- `outline-gold` : fond `gold` à 10 % (au lieu de transparent), bordure `gold` à 70 %, texte `gold-ink` ; doré plein au survol.
-- `ghost-white` : fond blanc à 10 %, 20 % au survol.
-- Contraste AA conservé : texte blanc sur marine à 85 % (> 9:1), `gold-ink` sur doré à 10 % (≈ `gold-pale`, 4,7:1), contrôlés par axe dans les tests e2e.
+**Titres (2026-10-07)** : mêmes épaisseurs que lexcanadalaw.com — titre de page en Libre Franklin 800, titres de section en Libre Franklin 700.
+
+**Révision du 2026-10-07** (choix du responsable : « de vraies couleurs ») : coins arrondis `8px`, **couleurs pleines** reprises de la feuille de style de lexcanadalaw.com, en sRGB (profil du web), **sans transparence ni flou**.
+- `primary` : fond et bordure `marine` (#0D1B3E), texte blanc ; `marine-light` (#162347) au survol. Contraste 16,9:1 (15,4:1 au survol).
+- `outline-gold` : fond et bordure `gold` (#B8962E), **texte `marine`** (un texte blanc sur ce doré n'atteindrait que 2,9:1) ; `gold-light` (#D4AF5A) au survol. Contraste 6:1, et 8,1:1 au survol.
+- `ghost-white` (fonds sombres) : bordure et texte blancs ; au survol, fond blanc et texte `marine`.
+- Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`).
 
 Les icônes viennent de **lucide-react**, en 14–18px. Une flèche `→` suit les CTA principaux (« ACCESS MY PORTAL → »).
 

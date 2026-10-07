@@ -52,7 +52,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-semibold text-marine">{t("colors")}</CardTitle>
+            <CardTitle className="font-display text-lg font-bold text-marine">{t("colors")}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {swatches.map((s) => (
@@ -69,7 +69,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-semibold text-marine">
+            <CardTitle className="font-display text-lg font-bold text-marine">
               {t("typography")}
             </CardTitle>
           </CardHeader>
@@ -83,7 +83,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-semibold text-marine">{t("buttons")}</CardTitle>
+            <CardTitle className="font-display text-lg font-bold text-marine">{t("buttons")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-4">
             <Button variant="primary" size="brand">
@@ -102,7 +102,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-semibold text-marine">{t("badges")}</CardTitle>
+            <CardTitle className="font-display text-lg font-bold text-marine">{t("badges")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
             <StatusBadge tone="active" />
@@ -115,7 +115,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-semibold text-marine">{t("fields")}</CardTitle>
+            <CardTitle className="font-display text-lg font-bold text-marine">{t("fields")}</CardTitle>
           </CardHeader>
           <CardContent className="max-w-md space-y-2">
             <div className="flex items-center justify-between">
