@@ -412,7 +412,9 @@
     },
     "notificationsText": {
       "newMessageTitle": "New message",
-      "newMessageBody": "New message about matter {number}."
+      "newMessageBody": "New message about matter {number}.",
+      "stepCompletedTitle": "Step completed",
+      "stepCompletedBody": "A step of matter {number} is complete. See the progress."
     }
   },
   "admin": {
@@ -557,7 +559,8 @@
         "DUPLICATE": "This client already has access to this matter.",
         "FAILED": "The change could not be saved.",
         "INVALID": "Please check the form."
-      }
+      },
+      "tracking": "Tracking"
     },
     "audit": {
       "title": "Audit log",
@@ -645,6 +648,56 @@
         "FAILED": "The message could not be sent."
       },
       "sending": "Sending…"
+    },
+    "tracking": {
+      "back": "All matters",
+      "steps": "Steps shown to the client",
+      "noSteps": "No step yet. Add the first one below: the client sees it right away.",
+      "progress": "Progress",
+      "completedOn": "Completed on {date}",
+      "markDone": "Mark as done",
+      "reopen": "Reopen",
+      "up": "Move up",
+      "down": "Move down",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "stepTitle": "Step title",
+      "stepDescription": "Description for the client (optional)",
+      "addStep": "Add a step",
+      "addSubmit": "Add the step",
+      "team": "Firm team",
+      "teamHelp": "Team members can read and answer the client's messages and update the steps.",
+      "noTeam": "Nobody is assigned to this matter yet.",
+      "teamReadOnly": "Only the firm administrator can change the team.",
+      "member": "Staff member",
+      "chooseMember": "Choose a staff member",
+      "role": "Role",
+      "addMember": "Add to the team",
+      "remove": "Remove",
+      "roles": {
+        "responsible": "Responsible",
+        "originating": "Originating",
+        "collaborator": "Collaborator",
+        "assistant": "Assistant"
+      },
+      "notices": {
+        "added": "Step added.",
+        "updated": "Step updated.",
+        "completed": "Step marked as done: the client has been notified.",
+        "reopened": "Step reopened.",
+        "moved": "Order updated.",
+        "deleted": "Step deleted.",
+        "teamAdded": "Team member added.",
+        "teamRemoved": "Team member removed: access to this matter is cut immediately.",
+        "duplicate": "This person is already on the team.",
+        "failed": "The change could not be saved.",
+        "invalid": "Please check the form (a step needs a title)."
+      },
+      "upLabel": "Move up: {title}",
+      "downLabel": "Move down: {title}",
+      "deleteLabel": "Delete: {title}",
+      "removeLabel": "Remove: {name}"
     }
   }
 }

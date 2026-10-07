@@ -412,7 +412,9 @@
     },
     "notificationsText": {
       "newMessageTitle": "Nouveau message",
-      "newMessageBody": "Nouveau message au sujet du dossier {number}."
+      "newMessageBody": "Nouveau message au sujet du dossier {number}.",
+      "stepCompletedTitle": "Étape terminée",
+      "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement."
     }
   },
   "admin": {
@@ -557,7 +559,8 @@
         "DUPLICATE": "Ce client a déjà accès à ce dossier.",
         "FAILED": "La modification n'a pas pu être enregistrée.",
         "INVALID": "Veuillez vérifier le formulaire."
-      }
+      },
+      "tracking": "Suivi du dossier"
     },
     "audit": {
       "title": "Journal d'audit",
@@ -645,6 +648,56 @@
         "FAILED": "Le message n'a pas pu être envoyé."
       },
       "sending": "Envoi…"
+    },
+    "tracking": {
+      "back": "Tous les dossiers",
+      "steps": "Étapes visibles par le client",
+      "noSteps": "Aucune étape pour l'instant. Ajoutez la première ci-dessous : le client la voit aussitôt.",
+      "progress": "Avancement",
+      "completedOn": "Terminée le {date}",
+      "markDone": "Marquer terminée",
+      "reopen": "Rouvrir",
+      "up": "Monter",
+      "down": "Descendre",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "stepTitle": "Titre de l'étape",
+      "stepDescription": "Description pour le client (facultative)",
+      "addStep": "Ajouter une étape",
+      "addSubmit": "Ajouter l'étape",
+      "team": "Équipe du cabinet",
+      "teamHelp": "Les membres de l'équipe peuvent lire les messages du client, y répondre et mettre à jour les étapes.",
+      "noTeam": "Personne n'est encore affecté à ce dossier.",
+      "teamReadOnly": "Seul l'administrateur du cabinet peut modifier l'équipe.",
+      "member": "Membre du personnel",
+      "chooseMember": "Choisissez un membre du personnel",
+      "role": "Rôle",
+      "addMember": "Ajouter à l'équipe",
+      "remove": "Retirer",
+      "roles": {
+        "responsible": "Responsable",
+        "originating": "Avocat d'origine",
+        "collaborator": "Collaborateur",
+        "assistant": "Adjoint"
+      },
+      "notices": {
+        "added": "Étape ajoutée.",
+        "updated": "Étape modifiée.",
+        "completed": "Étape terminée : le client a été averti.",
+        "reopened": "Étape rouverte.",
+        "moved": "Ordre mis à jour.",
+        "deleted": "Étape supprimée.",
+        "teamAdded": "Membre ajouté à l'équipe.",
+        "teamRemoved": "Membre retiré : son accès au dossier est coupé immédiatement.",
+        "duplicate": "Cette personne fait déjà partie de l'équipe.",
+        "failed": "La modification n'a pas pu être enregistrée.",
+        "invalid": "Veuillez vérifier le formulaire (une étape doit avoir un titre)."
+      },
+      "upLabel": "Monter : {title}",
+      "downLabel": "Descendre : {title}",
+      "deleteLabel": "Supprimer : {title}",
+      "removeLabel": "Retirer : {name}"
     }
   }
 }

@@ -610,6 +610,9 @@ isOneToOne: false
               "can_read": boolean,"can_write": boolean
             }[]
                            },
+"move_timeline_step":
+{ Args: { "p_direction": number,"p_step": string }; Returns: boolean
+                           },
 "rate_limit_check":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
                            },

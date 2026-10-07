@@ -318,3 +318,9 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 6. Créer le premier firm_admin manuellement, puis l'inscrire dans un ADR :
    `update public.profiles set role = 'firm_admin' where email = '<admin>@lexcanadalaw.com';` (avec service_role).
 7. Dans Supabase Auth : **désactiver les inscriptions publiques**, activer le MFA TOTP, configurer le fournisseur Azure avec l'URL du tenant (single-tenant).
+
+## Suivi du dossier (ADR 0018, migration `20261007120000_matter_tracking.sql`)
+- `matter_timeline_steps` : suppression ouverte à l'équipe du dossier et au firm_admin (`timeline_staff_delete`).
+- `matters.progress_percent` : calculé par le trigger `matter_timeline_progress` (part des étapes terminées, NULL sans étape).
+- Audit des étapes par le trigger `matter_timeline_audit` (identifiants seulement).
+- `public.move_timeline_step(p_step uuid, p_direction integer)` : security invoker, `EXECUTE` pour `authenticated` seulement.
