@@ -30,7 +30,7 @@ export default async function MatterPage({
   const tab: Tab = TABS.find((x) => x === sp.tab) ?? "overview";
 
   // Accès vérifié en premier (assertMatterAccess) : 404 identique si absent ou non autorisé.
-  const { matter, timeline, accessLevel } = await getMatterDetail(matterId);
+  const { matter, timeline, fields, accessLevel } = await getMatterDetail(matterId, locale);
   const t = await getTranslations("portal");
   const base = `/portal/matters/${matterId}`;
 
@@ -68,9 +68,27 @@ export default async function MatterPage({
               ))}
           </dl>
         </SectionCard>
-        <SectionCard title={t("matter.tabs.timeline")}>
-          <Timeline steps={timeline} locale={locale} t={t} compact />
-        </SectionCard>
+        <div className="space-y-6">
+          <SectionCard title={t("matter.tabs.timeline")}>
+            <Timeline steps={timeline} locale={locale} t={t} compact />
+          </SectionCard>
+          {fields.length > 0 ? (
+            <SectionCard title={t("matter.details")}>
+              <dl className="space-y-3 text-sm">
+                {fields.map((f) => (
+                  <div key={f.label}>
+                    <dt className="text-xs text-ink-muted">{f.label}</dt>
+                    <dd className="font-medium break-words text-marine">
+                      {f.kind === "date" && /^\d{4}-\d{2}-\d{2}$/.test(f.value)
+                        ? formatCalendarDate(f.value, locale)
+                        : f.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </SectionCard>
+          ) : null}
+        </div>
       </div>
     );
   } else if (tab === "timeline") {

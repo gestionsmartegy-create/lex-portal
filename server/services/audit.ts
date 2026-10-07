@@ -18,6 +18,8 @@ export type AuditAction =
   | "message.sent"
   | "conversation.closed"
   | "conversation.joined"
+  | "matter.type_set"
+  | "matter.fields_updated"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"

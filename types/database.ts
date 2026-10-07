@@ -137,13 +137,13 @@ isOneToOne: false
                   ]
                 },"document_requests": {
                   Row: {
-                    "created_at": string,"description": string | null,"due_date": string | null,"fulfilled_at": string | null,"fulfilled_document_id": string | null,"id": string,"matter_id": string,"requested_by": string | null,"requested_from": string,"status": Database["public"]['Enums']["request_status"],"title": string,"updated_at": string
+                    "created_at": string,"description": string | null,"description_en": string | null,"due_date": string | null,"fulfilled_at": string | null,"fulfilled_document_id": string | null,"id": string,"matter_id": string,"requested_by": string | null,"requested_from": string,"status": Database["public"]['Enums']["request_status"],"title": string,"title_en": string | null,"updated_at": string
                   }
                   Insert: {
-                    "created_at"?: string,"description"?: string | null,"due_date"?: string | null,"fulfilled_at"?: string | null,"fulfilled_document_id"?: string | null,"id"?: string,"matter_id": string,"requested_by"?: string | null,"requested_from": string,"status"?: Database["public"]['Enums']["request_status"],"title": string,"updated_at"?: string
+                    "created_at"?: string,"description"?: string | null,"description_en"?: string | null,"due_date"?: string | null,"fulfilled_at"?: string | null,"fulfilled_document_id"?: string | null,"id"?: string,"matter_id": string,"requested_by"?: string | null,"requested_from": string,"status"?: Database["public"]['Enums']["request_status"],"title": string,"title_en"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "created_at"?: string,"description"?: string | null,"due_date"?: string | null,"fulfilled_at"?: string | null,"fulfilled_document_id"?: string | null,"id"?: string,"matter_id"?: string,"requested_by"?: string | null,"requested_from"?: string,"status"?: Database["public"]['Enums']["request_status"],"title"?: string,"updated_at"?: string
+                    "created_at"?: string,"description"?: string | null,"description_en"?: string | null,"due_date"?: string | null,"fulfilled_at"?: string | null,"fulfilled_document_id"?: string | null,"id"?: string,"matter_id"?: string,"requested_by"?: string | null,"requested_from"?: string,"status"?: Database["public"]['Enums']["request_status"],"title"?: string,"title_en"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -272,6 +272,37 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"matter_field_values": {
+                  Row: {
+                    "field_id": string,"matter_id": string,"updated_at": string,"updated_by": string | null,"value": string
+                  }
+                  Insert: {
+                    "field_id": string,"matter_id": string,"updated_at"?: string,"updated_by"?: string | null,"value": string
+                  }
+                  Update: {
+                    "field_id"?: string,"matter_id"?: string,"updated_at"?: string,"updated_by"?: string | null,"value"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_field_values_field_id_fkey"
+      columns: ["field_id"]
+isOneToOne: false
+      referencedRelation: "matter_type_fields"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_field_values_matter_id_fkey"
+      columns: ["matter_id"]
+isOneToOne: false
+      referencedRelation: "matters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_field_values_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"matter_team": {
                   Row: {
                     "created_at": string,"matter_id": string,"role": Database["public"]['Enums']["team_role"],"user_id": string
@@ -299,13 +330,13 @@ isOneToOne: false
                   ]
                 },"matter_timeline_steps": {
                   Row: {
-                    "completed_at": string | null,"created_at": string,"description": string | null,"id": string,"is_completed": boolean,"matter_id": string,"position": number,"title": string,"updated_at": string
+                    "completed_at": string | null,"created_at": string,"description": string | null,"description_en": string | null,"id": string,"is_completed": boolean,"matter_id": string,"position": number,"title": string,"title_en": string | null,"updated_at": string
                   }
                   Insert: {
-                    "completed_at"?: string | null,"created_at"?: string,"description"?: string | null,"id"?: string,"is_completed"?: boolean,"matter_id": string,"position": number,"title": string,"updated_at"?: string
+                    "completed_at"?: string | null,"created_at"?: string,"description"?: string | null,"description_en"?: string | null,"id"?: string,"is_completed"?: boolean,"matter_id": string,"position": number,"title": string,"title_en"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "completed_at"?: string | null,"created_at"?: string,"description"?: string | null,"id"?: string,"is_completed"?: boolean,"matter_id"?: string,"position"?: number,"title"?: string,"updated_at"?: string
+                    "completed_at"?: string | null,"created_at"?: string,"description"?: string | null,"description_en"?: string | null,"id"?: string,"is_completed"?: boolean,"matter_id"?: string,"position"?: number,"title"?: string,"title_en"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -316,18 +347,94 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"matters": {
+                },"matter_type_documents": {
                   Row: {
-                    "clio_matter_id": string | null,"closed_at": string | null,"created_at": string,"description": string | null,"display_number": string | null,"id": string,"is_mock": boolean,"last_synced_at": string | null,"opened_at": string | null,"practice_area": string | null,"progress_percent": number | null,"purged_at": string | null,"responsible_name": string | null,"responsible_staff_id": string | null,"status": Database["public"]['Enums']["matter_status"],"title": string,"updated_at": string
+                    "created_at": string,"description_en": string | null,"description_fr": string | null,"id": string,"matter_type_id": string,"position": number,"title_en": string,"title_fr": string,"updated_at": string
                   }
                   Insert: {
-                    "clio_matter_id"?: string | null,"closed_at"?: string | null,"created_at"?: string,"description"?: string | null,"display_number"?: string | null,"id"?: string,"is_mock"?: boolean,"last_synced_at"?: string | null,"opened_at"?: string | null,"practice_area"?: string | null,"progress_percent"?: number | null,"purged_at"?: string | null,"responsible_name"?: string | null,"responsible_staff_id"?: string | null,"status"?: Database["public"]['Enums']["matter_status"],"title": string,"updated_at"?: string
+                    "created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"id"?: string,"matter_type_id": string,"position": number,"title_en": string,"title_fr": string,"updated_at"?: string
                   }
                   Update: {
-                    "clio_matter_id"?: string | null,"closed_at"?: string | null,"created_at"?: string,"description"?: string | null,"display_number"?: string | null,"id"?: string,"is_mock"?: boolean,"last_synced_at"?: string | null,"opened_at"?: string | null,"practice_area"?: string | null,"progress_percent"?: number | null,"purged_at"?: string | null,"responsible_name"?: string | null,"responsible_staff_id"?: string | null,"status"?: Database["public"]['Enums']["matter_status"],"title"?: string,"updated_at"?: string
+                    "created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"id"?: string,"matter_type_id"?: string,"position"?: number,"title_en"?: string,"title_fr"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
+      foreignKeyName: "matter_type_documents_matter_type_id_fkey"
+      columns: ["matter_type_id"]
+isOneToOne: false
+      referencedRelation: "matter_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"matter_type_fields": {
+                  Row: {
+                    "created_at": string,"id": string,"kind": string,"label_en": string,"label_fr": string,"matter_type_id": string,"position": number,"updated_at": string,"visible_to_client": boolean
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"kind"?: string,"label_en": string,"label_fr": string,"matter_type_id": string,"position": number,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"kind"?: string,"label_en"?: string,"label_fr"?: string,"matter_type_id"?: string,"position"?: number,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_type_fields_matter_type_id_fkey"
+      columns: ["matter_type_id"]
+isOneToOne: false
+      referencedRelation: "matter_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"matter_type_steps": {
+                  Row: {
+                    "created_at": string,"description_en": string | null,"description_fr": string | null,"id": string,"matter_type_id": string,"position": number,"title_en": string,"title_fr": string,"updated_at": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"id"?: string,"matter_type_id": string,"position": number,"title_en": string,"title_fr": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"id"?: string,"matter_type_id"?: string,"position"?: number,"title_en"?: string,"title_fr"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_type_steps_matter_type_id_fkey"
+      columns: ["matter_type_id"]
+isOneToOne: false
+      referencedRelation: "matter_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"matter_types": {
+                  Row: {
+                    "code": string,"created_at": string,"id": string,"is_active": boolean,"name_en": string,"name_fr": string,"position": number,"practice_group": string,"updated_at": string
+                  }
+                  Insert: {
+                    "code": string,"created_at"?: string,"id"?: string,"is_active"?: boolean,"name_en": string,"name_fr": string,"position"?: number,"practice_group": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "code"?: string,"created_at"?: string,"id"?: string,"is_active"?: boolean,"name_en"?: string,"name_fr"?: string,"position"?: number,"practice_group"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"matters": {
+                  Row: {
+                    "clio_matter_id": string | null,"closed_at": string | null,"created_at": string,"description": string | null,"display_number": string | null,"id": string,"is_mock": boolean,"last_synced_at": string | null,"matter_type_id": string | null,"opened_at": string | null,"practice_area": string | null,"progress_percent": number | null,"purged_at": string | null,"responsible_name": string | null,"responsible_staff_id": string | null,"status": Database["public"]['Enums']["matter_status"],"title": string,"updated_at": string
+                  }
+                  Insert: {
+                    "clio_matter_id"?: string | null,"closed_at"?: string | null,"created_at"?: string,"description"?: string | null,"display_number"?: string | null,"id"?: string,"is_mock"?: boolean,"last_synced_at"?: string | null,"matter_type_id"?: string | null,"opened_at"?: string | null,"practice_area"?: string | null,"progress_percent"?: number | null,"purged_at"?: string | null,"responsible_name"?: string | null,"responsible_staff_id"?: string | null,"status"?: Database["public"]['Enums']["matter_status"],"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "clio_matter_id"?: string | null,"closed_at"?: string | null,"created_at"?: string,"description"?: string | null,"display_number"?: string | null,"id"?: string,"is_mock"?: boolean,"last_synced_at"?: string | null,"matter_type_id"?: string | null,"opened_at"?: string | null,"practice_area"?: string | null,"progress_percent"?: number | null,"purged_at"?: string | null,"responsible_name"?: string | null,"responsible_staff_id"?: string | null,"status"?: Database["public"]['Enums']["matter_status"],"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matters_matter_type_id_fkey"
+      columns: ["matter_type_id"]
+isOneToOne: false
+      referencedRelation: "matter_types"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "matters_responsible_staff_id_fkey"
       columns: ["responsible_staff_id"]
 isOneToOne: false

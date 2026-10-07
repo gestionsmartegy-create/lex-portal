@@ -287,7 +287,8 @@
       "timelineEmpty": "Aucune étape pour l'instant.",
       "stepDone": "Terminée le {date}",
       "stepPending": "À venir",
-      "newMessage": "Écrire au cabinet"
+      "newMessage": "Écrire au cabinet",
+      "details": "Informations du dossier"
     },
     "documents": {
       "title": "Documents",
@@ -414,7 +415,9 @@
       "newMessageTitle": "Nouveau message",
       "newMessageBody": "Nouveau message au sujet du dossier {number}.",
       "stepCompletedTitle": "Étape terminée",
-      "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement."
+      "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement.",
+      "documentRequestedTitle": "Document demandé",
+      "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}."
     },
     "search": {
       "label": "Rechercher dans le portail",
@@ -497,7 +500,8 @@
       "roleStaff": "Personnel",
       "roleAdmin": "Administrateur du cabinet",
       "integrations": "Intégrations",
-      "messages": "Messages"
+      "messages": "Messages",
+      "templates": "Modèles de dossiers"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -710,12 +714,125 @@
         "teamRemoved": "Membre retiré : son accès au dossier est coupé immédiatement.",
         "duplicate": "Cette personne fait déjà partie de l'équipe.",
         "failed": "La modification n'a pas pu être enregistrée.",
-        "invalid": "Veuillez vérifier le formulaire (une étape doit avoir un titre)."
+        "invalid": "Veuillez vérifier le formulaire (un titre ou un document est requis ; dates et nombres valides).",
+        "typeSet": "Type de dossier enregistré.",
+        "templateApplied": "Étapes du modèle ajoutées.",
+        "templateEmpty": "Toutes les étapes du modèle figurent déjà dans le dossier.",
+        "fieldsSaved": "Informations du dossier enregistrées.",
+        "requestCreated": "Document demandé : le client a été averti.",
+        "requestUpdated": "Demande mise à jour."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
       "deleteLabel": "Supprimer : {title}",
-      "removeLabel": "Retirer : {name}"
+      "removeLabel": "Retirer : {name}",
+      "templateStep": "Étape du modèle",
+      "customStep": "Autre (étape libre)",
+      "customStepTitle": "Titre de l'étape libre (si « Autre »)",
+      "matterType": "Type de dossier",
+      "noType": "Aucun type",
+      "saveType": "Enregistrer le type",
+      "applyHelp": "{count, plural, one {# étape type} other {# étapes types}} pour ce type. Les étapes déjà présentes dans le dossier sont ignorées.",
+      "applyTemplate": "Ajouter les étapes du modèle",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "fields": "Informations du dossier",
+      "fieldVisible": "Visible par le client",
+      "fieldInternal": "Interne au cabinet",
+      "saveFields": "Enregistrer les informations",
+      "requests": "Documents demandés au client",
+      "requestsHelp": "Le client est averti dans le portail. En attendant le dépôt en ligne, il transmet le document par message ou par courriel ; marquez-le reçu ici.",
+      "noRequests": "Aucun document demandé pour l'instant.",
+      "noClientForRequest": "Aucun client n'a encore accès à ce dossier : donnez-lui l'accès avant de demander des documents.",
+      "requestClient": "Client",
+      "templateDocument": "Document du modèle",
+      "customDocument": "Autre (document libre)",
+      "customDocumentTitle": "Document libre (si « Autre »)",
+      "requestTitle": "Document demandé",
+      "requestDescription": "Précision pour le client (facultative)",
+      "requestDue": "Date limite (facultative)",
+      "requestSubmit": "Demander le document",
+      "dueOn": "Avant le {date}",
+      "requestStatus": {
+        "pending": "En attente",
+        "overdue": "En retard",
+        "fulfilled": "Reçu",
+        "cancelled": "Annulé"
+      },
+      "requestAction": {
+        "fulfilled": "Marquer reçu",
+        "fulfilledLabel": "Marquer reçu : {title}",
+        "cancelled": "Annuler",
+        "cancelledLabel": "Annuler : {title}",
+        "pending": "Remettre en attente",
+        "pendingLabel": "Remettre en attente : {title}"
+      }
+    },
+    "templates": {
+      "title": "Modèles de dossiers",
+      "subtitle": "Types de dossier, étapes types, documents à demander et informations du dossier, par domaine de pratique.",
+      "draftNote": "Première version à valider par le cabinet. Les modifications valent pour la suite ; les étapes déjà ajoutées à un dossier ne changent pas.",
+      "back": "Tous les modèles",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "inactive": "Inactif",
+      "edit": "Modifier",
+      "editLabel": "Modifier : {name}",
+      "newType": "Nouveau type de dossier",
+      "group": "Groupe de pratique",
+      "nameFr": "Nom (français)",
+      "nameEn": "Nom (anglais)",
+      "create": "Créer le type",
+      "typeSettings": "Type de dossier",
+      "active": "Proposé au choix du type d'un dossier",
+      "save": "Enregistrer",
+      "sections": {
+        "steps": "Étapes types",
+        "documents": "Documents à demander",
+        "fields": "Informations du dossier (champs)"
+      },
+      "sectionsHelp": {
+        "steps": "Étapes que le cabinet peut ajouter à un dossier de ce type. Le client les voit dans sa langue.",
+        "documents": "Documents que l'avocat peut demander au client en un clic.",
+        "fields": "Informations remplies pour chaque dossier, visibles par le client ou internes au cabinet."
+      },
+      "empty": "Rien pour l'instant.",
+      "labelFr": "Titre (français)",
+      "labelEn": "Titre (anglais)",
+      "descFr": "Description (français, facultative)",
+      "descEn": "Description (anglais, facultative)",
+      "fieldKind": "Type de valeur",
+      "kinds": {
+        "text": "Texte",
+        "date": "Date",
+        "number": "Nombre"
+      },
+      "visibleToClient": "Visible par le client",
+      "internal": "Interne",
+      "remove": "Retirer",
+      "removeLabel": "Retirer : {title}",
+      "upLabel": "Monter : {title}",
+      "downLabel": "Descendre : {title}",
+      "add": {
+        "steps": "Ajouter l'étape",
+        "documents": "Ajouter le document",
+        "fields": "Ajouter le champ"
+      },
+      "notices": {
+        "created": "Type de dossier créé : ajoutez ses étapes, documents et champs.",
+        "saved": "Modifications enregistrées.",
+        "added": "Élément ajouté.",
+        "removed": "Élément retiré.",
+        "moved": "Ordre mis à jour.",
+        "failed": "La modification n'a pas pu être enregistrée.",
+        "invalid": "Veuillez vérifier le formulaire."
+      }
     }
   }
 }

@@ -34,11 +34,14 @@ export async function listDocuments(
   return (data ?? []) as unknown as DocumentRow[];
 }
 
-export async function listPendingRequests(matterId?: string) {
+/** Pièces demandées en attente, dans la langue du client quand la demande vient d'un modèle. */
+export async function listPendingRequests(matterId?: string, locale = "en") {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("document_requests")
-    .select("id, matter_id, title, description, due_date, status, matters(display_number)")
+    .select(
+      "id, matter_id, title, title_en, description, description_en, due_date, status, matters(display_number)",
+    )
     .eq("status", "pending")
     .order("due_date", { ascending: true, nullsFirst: false });
   if (matterId) {
@@ -46,7 +49,12 @@ export async function listPendingRequests(matterId?: string) {
     query = query.eq("matter_id", matterId);
   }
   const { data } = await query;
-  return data ?? [];
+  const en = locale === "en";
+  return (data ?? []).map(({ title_en, description_en, ...r }) => ({
+    ...r,
+    title: en && title_en ? title_en : r.title,
+    description: en && title_en ? description_en : r.description,
+  }));
 }
 
 export async function listPendingSignatures(matterId?: string) {
