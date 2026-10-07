@@ -113,7 +113,17 @@ export default async function MatterAccessPage({
               </ul>
             ) : null}
           </SectionCard>
-          <SectionCard title={t("team")}>
+          <SectionCard
+            title={t("team")}
+            action={
+              <Link
+                href={`/admin/matters/${matter.id}/tracking`}
+                className="inline-flex min-h-6 items-center text-sm text-gold-ink hover:underline"
+              >
+                {t("tracking")} →
+              </Link>
+            }
+          >
             <ul className="space-y-2 text-sm">
               {team.map((m) => (
                 <li key={m.user_id} className="flex justify-between gap-3">

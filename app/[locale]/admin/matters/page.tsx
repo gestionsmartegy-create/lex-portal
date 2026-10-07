@@ -27,18 +27,23 @@ export default async function AdminMattersPage({ params }: PageProps<"/[locale]/
           <ul className="divide-y divide-gray-100">
             {matters.map((m) => (
               <li key={m.id} className="flex flex-wrap items-center gap-3 py-3">
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-60">
                   <p className="font-medium text-marine">{m.title}</p>
                   <p className="text-xs text-ink-muted">
                     {[m.display_number, m.practice_area, m.responsible_name].filter(Boolean).join(" · ")}
                   </p>
                 </div>
-                <MatterStatusBadge status={m.status} />
-                {role === "firm_admin" ? (
+                <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+                  <MatterStatusBadge status={m.status} />
                   <Button asChild variant="outline-gold" size="sm">
-                    <Link href={`/admin/matters/${m.id}/access`}>{t("manage")}</Link>
+                    <Link href={`/admin/matters/${m.id}/tracking`}>{t("tracking")}</Link>
                   </Button>
-                ) : null}
+                  {role === "firm_admin" ? (
+                    <Button asChild variant="outline-gold" size="sm">
+                      <Link href={`/admin/matters/${m.id}/access`}>{t("manage")}</Link>
+                    </Button>
+                  ) : null}
+                </div>
               </li>
             ))}
           </ul>
