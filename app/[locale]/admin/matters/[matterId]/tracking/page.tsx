@@ -7,10 +7,16 @@ import { PageHeader, ProgressBar, SectionCard } from "@/components/portal/ui";
 import { DemoDataBadge } from "@/components/shared/demo-data-badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { formatDate } from "@/lib/format";
+import { formatCalendarDate, formatDate } from "@/lib/format";
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
-  addStepAction,
+  addStepFromListAction,
   addTeamMemberAction,
+  applyTemplateAction,
+  createRequestAction,
+  requestStatusAction,
+  saveFieldsAction,
+  setMatterTypeAction,
   deleteStepAction,
   moveStepAction,
   removeTeamMemberAction,
@@ -19,6 +25,7 @@ import {
 } from "@/server/actions/tracking";
 import { requireStaff } from "@/server/auth/session";
 import { getMatterTracking } from "@/server/services/matter-tracking";
+import { pick, practiceGroups } from "@/server/services/matter-templates";
 
 const NOTICES = [
   "added",
@@ -29,6 +36,12 @@ const NOTICES = [
   "deleted",
   "teamAdded",
   "teamRemoved",
+  "typeSet",
+  "templateApplied",
+  "templateEmpty",
+  "fieldsSaved",
+  "requestCreated",
+  "requestUpdated",
   "duplicate",
   "invalid",
   "failed",
@@ -55,7 +68,9 @@ export default async function MatterTrackingPage({
   const data = await getMatterTracking(matterId);
   if (!data) notFound();
   const t = await getTranslations("admin.tracking");
-  const { matter, steps, team, available, canManageTeam } = data;
+  const { matter, steps, team, available, canManageTeam, types, template, fieldValues, requests, clients } =
+    data;
+  const today = new Date().toISOString().slice(0, 10);
   const notice = NOTICES.find((n) => n === sp.notice);
   const hidden = (
     <>
@@ -110,8 +125,12 @@ export default async function MatterTrackingPage({
                         <Circle aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-marine">{s.title}</p>
-                        {s.description ? <p className="text-sm text-ink-muted">{s.description}</p> : null}
+                        <p className="font-medium text-marine">{pick(locale, s.title, s.title_en)}</p>
+                        {pick(locale, s.description ?? "", s.title_en ? s.description_en : null) ? (
+                          <p className="text-sm text-ink-muted">
+                            {pick(locale, s.description ?? "", s.title_en ? s.description_en : null)}
+                          </p>
+                        ) : null}
                         {s.is_completed && s.completed_at ? (
                           <p className="text-xs text-ink-muted">
                             {t("completedOn", { date: formatDate(s.completed_at, locale) })}
@@ -138,7 +157,7 @@ export default async function MatterTrackingPage({
                           size="icon"
                           className="size-9"
                           disabled={i === 0}
-                          aria-label={t("upLabel", { title: s.title })}
+                          aria-label={t("upLabel", { title: pick(locale, s.title, s.title_en) })}
                         >
                           <ArrowUp aria-hidden />
                         </Button>
@@ -153,7 +172,7 @@ export default async function MatterTrackingPage({
                           size="icon"
                           className="size-9"
                           disabled={i === steps.length - 1}
-                          aria-label={t("downLabel", { title: s.title })}
+                          aria-label={t("downLabel", { title: pick(locale, s.title, s.title_en) })}
                         >
                           <ArrowDown aria-hidden />
                         </Button>
@@ -166,7 +185,7 @@ export default async function MatterTrackingPage({
                           variant="ghost"
                           size="sm"
                           className="h-9 text-destructive"
-                          aria-label={t("deleteLabel", { title: s.title })}
+                          aria-label={t("deleteLabel", { title: pick(locale, s.title, s.title_en) })}
                         >
                           {t("delete")}
                         </Button>
@@ -217,19 +236,33 @@ export default async function MatterTrackingPage({
           </SectionCard>
 
           <SectionCard title={t("addStep")}>
-            <form action={addStepAction} className="space-y-4">
+            <form action={addStepFromListAction} className="space-y-4">
               {hidden}
+              {template && template.steps.length > 0 ? (
+                <div className="space-y-1">
+                  <label htmlFor="new-step-template" className={labelClass}>
+                    {t("templateStep")}
+                  </label>
+                  <select
+                    id="new-step-template"
+                    name="templateStepId"
+                    defaultValue=""
+                    className={`${fieldClass} h-11`}
+                  >
+                    <option value="">{t("customStep")}</option>
+                    {template.steps.map((ts) => (
+                      <option key={ts.id} value={ts.id}>
+                        {pick(locale, ts.title_fr, ts.title_en)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
               <div className="space-y-1">
                 <label htmlFor="new-step-title" className={labelClass}>
-                  {t("stepTitle")}
+                  {template && template.steps.length > 0 ? t("customStepTitle") : t("stepTitle")}
                 </label>
-                <input
-                  id="new-step-title"
-                  name="title"
-                  required
-                  maxLength={200}
-                  className={`${fieldClass} h-11`}
-                />
+                <input id="new-step-title" name="title" maxLength={200} className={`${fieldClass} h-11`} />
               </div>
               <div className="space-y-1">
                 <label htmlFor="new-step-description" className={labelClass}>
@@ -248,89 +281,301 @@ export default async function MatterTrackingPage({
               </Button>
             </form>
           </SectionCard>
-        </div>
 
-        <SectionCard title={t("team")} className="lg:col-span-2">
-          <p className="mb-4 text-sm text-ink-muted">{t("teamHelp")}</p>
-          {team.length === 0 ? (
-            <p className="text-sm text-ink-muted">{t("noTeam")}</p>
-          ) : (
-            <ul className="divide-y divide-gray-100">
-              {team.map((m) => (
-                <li key={m.user_id} className="flex flex-wrap items-center gap-3 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium break-all text-marine">{personName(m.person)}</p>
-                    <p className="text-xs text-ink-muted">{t(`roles.${m.role}`)}</p>
-                  </div>
-                  {canManageTeam ? (
-                    <form action={removeTeamMemberAction}>
-                      {hidden}
-                      <input type="hidden" name="userId" value={m.user_id} />
-                      <Button
-                        type="submit"
-                        variant="outline-gold"
-                        size="sm"
-                        aria-label={t("removeLabel", { name: personName(m.person) })}
-                      >
-                        {t("remove")}
-                      </Button>
-                    </form>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-          {canManageTeam ? (
-            available.length > 0 ? (
-              <form action={addTeamMemberAction} className="mt-6 space-y-4 border-t border-gray-100 pt-6">
+          <SectionCard title={t("requests")}>
+            <p className="mb-4 text-sm text-ink-muted">{t("requestsHelp")}</p>
+            {requests.length === 0 ? (
+              <p className="text-sm text-ink-muted">{t("noRequests")}</p>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {requests.map((r) => {
+                  const overdue = r.status === "pending" && r.due_date !== null && r.due_date < today;
+                  const shown = overdue ? "overdue" : r.status;
+                  return (
+                    <li key={r.id} className="space-y-2 py-4">
+                      <div className="flex flex-wrap items-start gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-marine">{pick(locale, r.title, r.title_en)}</p>
+                          {pick(locale, r.description ?? "", r.title_en ? r.description_en : null) ? (
+                            <p className="text-sm text-ink-muted">
+                              {pick(locale, r.description ?? "", r.title_en ? r.description_en : null)}
+                            </p>
+                          ) : null}
+                          <p className="text-xs break-all text-ink-muted">
+                            {[
+                              personName(r.person),
+                              r.due_date
+                                ? t("dueOn", { date: formatCalendarDate(r.due_date, locale) })
+                                : null,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </p>
+                        </div>
+                        <StatusBadge
+                          tone={
+                            shown === "fulfilled"
+                              ? "completed"
+                              : shown === "overdue"
+                                ? "urgent"
+                                : shown === "cancelled"
+                                  ? "pending"
+                                  : "active"
+                          }
+                          label={t(`requestStatus.${shown}`)}
+                        />
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(r.status === "pending"
+                          ? (["fulfilled", "cancelled"] as const)
+                          : (["pending"] as const)
+                        ).map((next) => (
+                          <form key={next} action={requestStatusAction}>
+                            {hidden}
+                            <input type="hidden" name="requestId" value={r.id} />
+                            <input type="hidden" name="status" value={next} />
+                            <Button
+                              type="submit"
+                              variant={next === "fulfilled" ? "primary" : "outline-gold"}
+                              size="sm"
+                              aria-label={t(`requestAction.${next}Label`, {
+                                title: pick(locale, r.title, r.title_en),
+                              })}
+                            >
+                              {t(`requestAction.${next}`)}
+                            </Button>
+                          </form>
+                        ))}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {clients.length === 0 ? (
+              <p className="mt-4 text-xs text-ink-muted">{t("noClientForRequest")}</p>
+            ) : (
+              <form action={createRequestAction} className="mt-6 space-y-4 border-t border-gray-100 pt-6">
                 {hidden}
                 <div className="space-y-1">
-                  <label htmlFor="team-member" className={labelClass}>
-                    {t("member")}
+                  <label htmlFor="request-client" className={labelClass}>
+                    {t("requestClient")}
                   </label>
-                  <select
-                    id="team-member"
-                    name="userId"
-                    required
-                    defaultValue=""
-                    className={`${fieldClass} h-11`}
-                  >
-                    <option value="" disabled>
-                      {t("chooseMember")}
-                    </option>
-                    {available.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {personName(p)}
+                  <select id="request-client" name="clientId" required className={`${fieldClass} h-11`}>
+                    {clients.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {personName(c.person)}
                       </option>
                     ))}
                   </select>
+                </div>
+                {template && template.documents.length > 0 ? (
+                  <div className="space-y-1">
+                    <label htmlFor="request-template" className={labelClass}>
+                      {t("templateDocument")}
+                    </label>
+                    <select
+                      id="request-template"
+                      name="templateDocumentId"
+                      defaultValue=""
+                      className={`${fieldClass} h-11`}
+                    >
+                      <option value="">{t("customDocument")}</option>
+                      {template.documents.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {pick(locale, d.title_fr, d.title_en)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : null}
+                <div className="space-y-1">
+                  <label htmlFor="request-title" className={labelClass}>
+                    {template && template.documents.length > 0 ? t("customDocumentTitle") : t("requestTitle")}
+                  </label>
+                  <input id="request-title" name="title" maxLength={200} className={`${fieldClass} h-11`} />
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="team-role" className={labelClass}>
-                    {t("role")}
+                  <label htmlFor="request-description" className={labelClass}>
+                    {t("requestDescription")}
                   </label>
-                  <select
-                    id="team-role"
-                    name="role"
-                    defaultValue="collaborator"
-                    className={`${fieldClass} h-11`}
-                  >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>
-                        {t(`roles.${r}`)}
-                      </option>
-                    ))}
-                  </select>
+                  <textarea
+                    id="request-description"
+                    name="description"
+                    rows={2}
+                    maxLength={1000}
+                    className={`${fieldClass} py-2`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label htmlFor="request-due" className={labelClass}>
+                    {t("requestDue")}
+                  </label>
+                  <input id="request-due" name="dueDate" type="date" className={`${fieldClass} h-11`} />
                 </div>
                 <Button type="submit" variant="primary" size="brand">
-                  {t("addMember")}
+                  {t("requestSubmit")}
                 </Button>
               </form>
-            ) : null
-          ) : (
-            <p className="mt-4 text-xs text-ink-muted">{t("teamReadOnly")}</p>
-          )}
-        </SectionCard>
+            )}
+          </SectionCard>
+        </div>
+
+        <div className="space-y-6 lg:col-span-2">
+          <SectionCard title={t("matterType")}>
+            <form action={setMatterTypeAction} className="space-y-3">
+              {hidden}
+              <label htmlFor="matter-type" className={labelClass}>
+                {t("matterType")}
+              </label>
+              <select
+                id="matter-type"
+                name="typeId"
+                defaultValue={matter.matter_type_id ?? ""}
+                className={`${fieldClass} h-11`}
+              >
+                <option value="">{t("noType")}</option>
+                {practiceGroups.map((g) => (
+                  <optgroup key={g} label={t(`groups.${g}`)}>
+                    {types
+                      .filter((ty) => ty.practice_group === g)
+                      .map((ty) => (
+                        <option key={ty.id} value={ty.id}>
+                          {pick(locale, ty.name_fr, ty.name_en)}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
+              <Button type="submit" variant="outline-gold" size="sm">
+                {t("saveType")}
+              </Button>
+            </form>
+            {template && template.steps.length > 0 ? (
+              <form action={applyTemplateAction} className="mt-4 border-t border-gray-100 pt-4">
+                {hidden}
+                <p className="mb-3 text-sm text-ink-muted">
+                  {t("applyHelp", { count: template.steps.length })}
+                </p>
+                <Button type="submit" variant="primary" size="sm">
+                  {t("applyTemplate")}
+                </Button>
+              </form>
+            ) : null}
+          </SectionCard>
+
+          {template && template.fields.length > 0 ? (
+            <SectionCard title={t("fields")}>
+              <form action={saveFieldsAction} className="space-y-4">
+                {hidden}
+                {template.fields.map((f) => (
+                  <div key={f.id} className="space-y-1">
+                    <label htmlFor={`field-${f.id}`} className={labelClass}>
+                      {pick(locale, f.label_fr, f.label_en)}
+                    </label>
+                    <input
+                      id={`field-${f.id}`}
+                      name={`field:${f.id}`}
+                      type={f.kind === "date" ? "date" : f.kind === "number" ? "number" : "text"}
+                      maxLength={500}
+                      defaultValue={fieldValues[f.id] ?? ""}
+                      aria-describedby={`field-${f.id}-help`}
+                      className={`${fieldClass} h-11`}
+                    />
+                    <p id={`field-${f.id}-help`} className="text-xs text-ink-muted">
+                      {f.visible_to_client ? t("fieldVisible") : t("fieldInternal")}
+                    </p>
+                  </div>
+                ))}
+                <Button type="submit" variant="primary" size="sm">
+                  {t("saveFields")}
+                </Button>
+              </form>
+            </SectionCard>
+          ) : null}
+
+          <SectionCard title={t("team")}>
+            <p className="mb-4 text-sm text-ink-muted">{t("teamHelp")}</p>
+            {team.length === 0 ? (
+              <p className="text-sm text-ink-muted">{t("noTeam")}</p>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {team.map((m) => (
+                  <li key={m.user_id} className="flex flex-wrap items-center gap-3 py-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium break-all text-marine">{personName(m.person)}</p>
+                      <p className="text-xs text-ink-muted">{t(`roles.${m.role}`)}</p>
+                    </div>
+                    {canManageTeam ? (
+                      <form action={removeTeamMemberAction}>
+                        {hidden}
+                        <input type="hidden" name="userId" value={m.user_id} />
+                        <Button
+                          type="submit"
+                          variant="outline-gold"
+                          size="sm"
+                          aria-label={t("removeLabel", { name: personName(m.person) })}
+                        >
+                          {t("remove")}
+                        </Button>
+                      </form>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {canManageTeam ? (
+              available.length > 0 ? (
+                <form action={addTeamMemberAction} className="mt-6 space-y-4 border-t border-gray-100 pt-6">
+                  {hidden}
+                  <div className="space-y-1">
+                    <label htmlFor="team-member" className={labelClass}>
+                      {t("member")}
+                    </label>
+                    <select
+                      id="team-member"
+                      name="userId"
+                      required
+                      defaultValue=""
+                      className={`${fieldClass} h-11`}
+                    >
+                      <option value="" disabled>
+                        {t("chooseMember")}
+                      </option>
+                      {available.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {personName(p)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label htmlFor="team-role" className={labelClass}>
+                      {t("role")}
+                    </label>
+                    <select
+                      id="team-role"
+                      name="role"
+                      defaultValue="collaborator"
+                      className={`${fieldClass} h-11`}
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r} value={r}>
+                          {t(`roles.${r}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <Button type="submit" variant="primary" size="brand">
+                    {t("addMember")}
+                  </Button>
+                </form>
+              ) : null
+            ) : (
+              <p className="mt-4 text-xs text-ink-muted">{t("teamReadOnly")}</p>
+            )}
+          </SectionCard>
+        </div>
       </div>
     </>
   );

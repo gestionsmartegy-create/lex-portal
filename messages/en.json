@@ -287,7 +287,8 @@
       "timelineEmpty": "No milestones yet.",
       "stepDone": "Completed {date}",
       "stepPending": "Upcoming",
-      "newMessage": "Write to the firm"
+      "newMessage": "Write to the firm",
+      "details": "Matter details"
     },
     "documents": {
       "title": "Documents",
@@ -414,7 +415,9 @@
       "newMessageTitle": "New message",
       "newMessageBody": "New message about matter {number}.",
       "stepCompletedTitle": "Step completed",
-      "stepCompletedBody": "A step of matter {number} is complete. See the progress."
+      "stepCompletedBody": "A step of matter {number} is complete. See the progress.",
+      "documentRequestedTitle": "Document requested",
+      "documentRequestedBody": "The firm is asking you for a document for matter {number}."
     }
   },
   "admin": {
@@ -479,7 +482,8 @@
       "roleStaff": "Staff",
       "roleAdmin": "Firm administrator",
       "integrations": "Integrations",
-      "messages": "Messages"
+      "messages": "Messages",
+      "templates": "Matter templates"
     },
     "overview": {
       "title": "Firm workspace",
@@ -692,12 +696,125 @@
         "teamRemoved": "Team member removed: access to this matter is cut immediately.",
         "duplicate": "This person is already on the team.",
         "failed": "The change could not be saved.",
-        "invalid": "Please check the form (a step needs a title)."
+        "invalid": "Please check the form (a title or a document is required, dates and numbers must be valid).",
+        "typeSet": "Matter type saved.",
+        "templateApplied": "Template steps added.",
+        "templateEmpty": "All template steps are already in this matter.",
+        "fieldsSaved": "Matter details saved.",
+        "requestCreated": "Document requested: the client has been notified.",
+        "requestUpdated": "Request updated."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
       "deleteLabel": "Delete: {title}",
-      "removeLabel": "Remove: {name}"
+      "removeLabel": "Remove: {name}",
+      "templateStep": "Step from the template",
+      "customStep": "Other (custom step)",
+      "customStepTitle": "Custom step title (if “Other”)",
+      "matterType": "Matter type",
+      "noType": "No type",
+      "saveType": "Save the type",
+      "applyHelp": "{count, plural, one {# template step} other {# template steps}} for this type. Steps already in the matter are skipped.",
+      "applyTemplate": "Add the template steps",
+      "groups": {
+        "legal": "Legal practices",
+        "business": "Business & financial",
+        "advisory": "Strategic advisory"
+      },
+      "fields": "Matter details",
+      "fieldVisible": "Visible to the client",
+      "fieldInternal": "Internal to the firm",
+      "saveFields": "Save the details",
+      "requests": "Documents requested from the client",
+      "requestsHelp": "The client is notified in the portal. Until online upload is available, the client sends the document by message or email; mark it as received here.",
+      "noRequests": "No document requested yet.",
+      "noClientForRequest": "No client has access to this matter yet: grant access before requesting documents.",
+      "requestClient": "Client",
+      "templateDocument": "Document from the template",
+      "customDocument": "Other (custom document)",
+      "customDocumentTitle": "Custom document (if “Other”)",
+      "requestTitle": "Document requested",
+      "requestDescription": "Details for the client (optional)",
+      "requestDue": "Due date (optional)",
+      "requestSubmit": "Request the document",
+      "dueOn": "Due {date}",
+      "requestStatus": {
+        "pending": "Pending",
+        "overdue": "Overdue",
+        "fulfilled": "Received",
+        "cancelled": "Cancelled"
+      },
+      "requestAction": {
+        "fulfilled": "Mark received",
+        "fulfilledLabel": "Mark received: {title}",
+        "cancelled": "Cancel",
+        "cancelledLabel": "Cancel: {title}",
+        "pending": "Reopen",
+        "pendingLabel": "Reopen: {title}"
+      }
+    },
+    "templates": {
+      "title": "Matter templates",
+      "subtitle": "Matter types, template steps, documents to request and matter details, by practice area.",
+      "draftNote": "First version to be validated by the firm. Changes apply to future use; steps already added to a matter are not modified.",
+      "back": "All templates",
+      "groups": {
+        "legal": "Legal practices",
+        "business": "Business & financial",
+        "advisory": "Strategic advisory"
+      },
+      "inactive": "Inactive",
+      "edit": "Edit",
+      "editLabel": "Edit: {name}",
+      "newType": "New matter type",
+      "group": "Practice group",
+      "nameFr": "Name (French)",
+      "nameEn": "Name (English)",
+      "create": "Create the type",
+      "typeSettings": "Matter type",
+      "active": "Offered when choosing a matter type",
+      "save": "Save",
+      "sections": {
+        "steps": "Template steps",
+        "documents": "Documents to request",
+        "fields": "Matter details (fields)"
+      },
+      "sectionsHelp": {
+        "steps": "Steps the firm can add to a matter of this type. The client sees them in their language.",
+        "documents": "Documents the lawyer can request from the client in one click.",
+        "fields": "Information filled in for each matter, visible to the client or internal to the firm."
+      },
+      "empty": "Nothing yet.",
+      "labelFr": "Title (French)",
+      "labelEn": "Title (English)",
+      "descFr": "Description (French, optional)",
+      "descEn": "Description (English, optional)",
+      "fieldKind": "Type of value",
+      "kinds": {
+        "text": "Text",
+        "date": "Date",
+        "number": "Number"
+      },
+      "visibleToClient": "Visible to the client",
+      "internal": "Internal",
+      "remove": "Remove",
+      "removeLabel": "Remove: {title}",
+      "upLabel": "Move up: {title}",
+      "downLabel": "Move down: {title}",
+      "add": {
+        "steps": "Add the step",
+        "documents": "Add the document",
+        "fields": "Add the field"
+      },
+      "notices": {
+        "created": "Matter type created: add its steps, documents and fields.",
+        "saved": "Changes saved.",
+        "added": "Item added.",
+        "removed": "Item removed.",
+        "moved": "Order updated.",
+        "failed": "The change could not be saved.",
+        "invalid": "Please check the form."
+      }
     }
   }
 }

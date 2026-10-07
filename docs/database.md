@@ -324,3 +324,10 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - `matters.progress_percent` : calculé par le trigger `matter_timeline_progress` (part des étapes terminées, NULL sans étape).
 - Audit des étapes par le trigger `matter_timeline_audit` (identifiants seulement).
 - `public.move_timeline_step(p_step uuid, p_direction integer)` : security invoker, `EXECUTE` pour `authenticated` seulement.
+
+## Modèles de dossiers (ADR 0019, migrations `20261007130000` et `20261007130100`)
+- `matter_types`, `matter_type_steps`, `matter_type_documents`, `matter_type_fields` : lecture par le personnel, écriture par le firm_admin. Les libellés des champs visibles sont lisibles par le client d'un dossier de ce type.
+- `matters.matter_type_id` (lisible par l'API ; choisi par l'équipe).
+- `matter_field_values` (matter_id, field_id, value ≤ 500) : écriture par l'équipe ou le firm_admin ; lecture client limitée aux champs visibles ; trigger « champ du même type ».
+- `matter_timeline_steps.title_en`, `description_en` ; `document_requests.title_en`, `description_en`.
+- `document_requests` : triggers `document_requests_guard` (destinataire avec accès actif ; auteur, statut et date imposés) et `document_requests_audit`.
