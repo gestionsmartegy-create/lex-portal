@@ -582,7 +582,8 @@
         "FAILED": "La modification n'a pas pu être enregistrée.",
         "INVALID": "Veuillez vérifier le formulaire."
       },
-      "tracking": "Suivi du dossier"
+      "tracking": "Suivi du dossier",
+      "open": "Ouvrir le dossier"
     },
     "audit": {
       "title": "Journal d'audit",
@@ -720,7 +721,11 @@
         "templateEmpty": "Toutes les étapes du modèle figurent déjà dans le dossier.",
         "fieldsSaved": "Informations du dossier enregistrées.",
         "requestCreated": "Document demandé : le client a été averti.",
-        "requestUpdated": "Demande mise à jour."
+        "requestUpdated": "Demande mise à jour.",
+        "deliverableAdded": "Livrable ajouté.",
+        "deliverableUpdated": "Livrable mis à jour.",
+        "deliverableRemoved": "Livrable retiré.",
+        "documentLinked": "Document lié : la demande est marquée reçue."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -769,7 +774,11 @@
         "cancelledLabel": "Annuler : {title}",
         "pending": "Remettre en attente",
         "pendingLabel": "Remettre en attente : {title}"
-      }
+      },
+      "linkedDocument": "Document reçu : {name}",
+      "document": "document",
+      "linkDocument": "Document reçu (déjà dans le dossier)",
+      "linkSubmit": "Lier et marquer reçu"
     },
     "templates": {
       "title": "Modèles de dossiers",
@@ -833,6 +842,73 @@
         "failed": "La modification n'a pas pu être enregistrée.",
         "invalid": "Veuillez vérifier le formulaire."
       }
+    },
+    "workspace": {
+      "tabsLabel": "Sections du dossier",
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "steps": "Étapes et livrables",
+        "documents": "Documents",
+        "team": "Équipe et accès",
+        "details": "Informations du dossier"
+      },
+      "kpi": {
+        "requests": "Documents en attente",
+        "overdue": "{count} en retard",
+        "unread": "Conversations non lues",
+        "balance": "Solde dû",
+        "nextAppointment": "Prochain rendez-vous",
+        "deliverables": "Livrables en cours",
+        "lastActivity": "Dernière activité",
+        "idle": "Aucune activité depuis {count} jours"
+      },
+      "nextSteps": "Prochaines étapes",
+      "noNextSteps": "Toutes les étapes sont terminées.",
+      "upcomingDeliverables": "Livrables à venir",
+      "noDeliverables": "Aucun livrable pour l'instant.",
+      "overdueRequests": "Demandes de documents en retard",
+      "noOverdue": "Aucune demande en retard.",
+      "recentMessages": "Conversations récentes",
+      "noMessages": "Aucune conversation pour l'instant.",
+      "conversation": "Conversation",
+      "invoices": "Factures",
+      "noInvoices": "Aucune facture pour ce dossier.",
+      "invoiceStatus": {
+        "due": "À payer",
+        "overdue": "En retard",
+        "paid": "Payée",
+        "void": "Annulée"
+      },
+      "deliverables": "Livrables",
+      "deliverablesHelp": "Ce que le cabinet remet au client : avis, demande déposée, contrat… Visible par le client, sauf s'il est marqué interne.",
+      "deliverableStatus": {
+        "planned": "Prévu",
+        "in_progress": "En cours",
+        "delivered": "Remis",
+        "cancelled": "Annulé"
+      },
+      "dueOn": "Pour le {date}",
+      "visibleToClient": "Visible par le client",
+      "internal": "Interne",
+      "statusLabel": "État de {title}",
+      "updateStatus": "Mettre à jour",
+      "remove": "Retirer",
+      "removeLabel": "Retirer : {title}",
+      "deliverableTitle": "Livrable",
+      "deliverableDescription": "Description (facultative)",
+      "deliverableDue": "Date prévue (facultative)",
+      "deliverableOwner": "Responsable",
+      "noOwner": "Non attribué",
+      "addDeliverable": "Ajouter le livrable",
+      "matterDocuments": "Documents du dossier",
+      "noDocuments": "Aucun document dans ce dossier pour l'instant.",
+      "folders": {
+        "shared": "Partagé",
+        "client_upload": "Déposé par le client",
+        "signed": "Signé",
+        "internal": "Interne"
+      },
+      "accessReadOnly": "Seul l'administrateur du cabinet peut donner ou retirer l'accès d'un client."
     }
   }
 }

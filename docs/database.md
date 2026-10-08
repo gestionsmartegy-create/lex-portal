@@ -331,3 +331,13 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - `matter_field_values` (matter_id, field_id, value ≤ 500) : écriture par l'équipe ou le firm_admin ; lecture client limitée aux champs visibles ; trigger « champ du même type ».
 - `matter_timeline_steps.title_en`, `description_en` ; `document_requests.title_en`, `description_en`.
 - `document_requests` : triggers `document_requests_guard` (destinataire avec accès actif ; auteur, statut et date imposés) et `document_requests_audit`.
+
+## Espace « Dossier » (ADR 0020, migrations `20261008120000` et `20261008120100`)
+- `matter_deliverables` (titre, description, date prévue, état `planned` / `in_progress` / `delivered` / `cancelled`, responsable du personnel, `visible_to_client`, `delivered_at`) :
+  - RLS : écriture par l'équipe du dossier ou le firm_admin ; lecture client limitée aux livrables visibles d'un dossier lisible ;
+  - trigger `matter_deliverables_guard` : responsable du personnel, dossier et auteur figés, date de remise posée par la base ;
+  - audit `matter_deliverable.*`, identifiants seulement.
+- `document_requests.fulfilled_document_id` : trigger `document_requests_document` (création et modification).
+  - Aucun document lié à la création.
+  - Ensuite, seulement un document **du même dossier et non interne**, et la demande passe à « reçue ».
+  - Il s'exécute avant `document_requests_guard`.

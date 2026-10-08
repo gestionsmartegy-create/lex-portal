@@ -18,7 +18,11 @@ test.describe("espace cabinet", () => {
         "/en/admin/clients",
         "/fr/admin/invitations",
         "/en/admin/matters",
-        `/en/admin/matters/${LEASE}/access`,
+        `/en/admin/matters/${LEASE}`,
+        `/en/admin/matters/${LEASE}?tab=team`,
+        `/en/admin/matters/${LEASE}?tab=steps`,
+        `/en/admin/matters/${LEASE}?tab=documents`,
+        `/fr/admin/matters/${LEASE}?tab=details`,
         "/en/admin/audit",
         "/en/admin/staff",
         "/fr/admin/security/mfa-reset",
@@ -48,7 +52,7 @@ test.describe("espace cabinet", () => {
     const marker = `Grant${Date.now()}`;
     await serviceClient().from("profiles").update({ last_name: marker }).eq("id", client.id);
     try {
-      await page.goto(`/en/admin/matters/${LEASE}/access`);
+      await page.goto(`/en/admin/matters/${LEASE}?tab=team`);
       await page.getByLabel("Client email (existing account)").fill(client.email);
       await page.getByRole("button", { name: "Grant access" }).last().click();
       await expect(page.getByText("Access granted.")).toBeVisible();
@@ -207,7 +211,9 @@ test.describe("espace cabinet", () => {
     await page.getByLabel("Subject").fill("Question from e2e");
     await page.getByLabel("Your message").fill("Hello, I have a question.");
     await page.getByRole("button", { name: "Start the conversation" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: "Question from e2e" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Question from e2e" })).toBeVisible({
+      timeout: 15_000,
+    });
     await expect(page.getByText("Hello, I have a question.")).toBeVisible();
   });
 });

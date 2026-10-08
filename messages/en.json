@@ -582,7 +582,8 @@
         "FAILED": "The change could not be saved.",
         "INVALID": "Please check the form."
       },
-      "tracking": "Tracking"
+      "tracking": "Tracking",
+      "open": "Open the matter"
     },
     "audit": {
       "title": "Audit log",
@@ -720,7 +721,11 @@
         "templateEmpty": "All template steps are already in this matter.",
         "fieldsSaved": "Matter details saved.",
         "requestCreated": "Document requested: the client has been notified.",
-        "requestUpdated": "Request updated."
+        "requestUpdated": "Request updated.",
+        "deliverableAdded": "Deliverable added.",
+        "deliverableUpdated": "Deliverable updated.",
+        "deliverableRemoved": "Deliverable removed.",
+        "documentLinked": "Document linked: the request is marked received."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
@@ -769,7 +774,11 @@
         "cancelledLabel": "Cancel: {title}",
         "pending": "Reopen",
         "pendingLabel": "Reopen: {title}"
-      }
+      },
+      "linkedDocument": "Received document: {name}",
+      "document": "document",
+      "linkDocument": "Document received (already in the matter)",
+      "linkSubmit": "Link and mark received"
     },
     "templates": {
       "title": "Matter templates",
@@ -833,6 +842,73 @@
         "failed": "The change could not be saved.",
         "invalid": "Please check the form."
       }
+    },
+    "workspace": {
+      "tabsLabel": "Matter sections",
+      "tabs": {
+        "overview": "Overview",
+        "steps": "Steps & deliverables",
+        "documents": "Documents",
+        "team": "Team & access",
+        "details": "Matter details"
+      },
+      "kpi": {
+        "requests": "Documents pending",
+        "overdue": "{count} overdue",
+        "unread": "Unread conversations",
+        "balance": "Balance due",
+        "nextAppointment": "Next appointment",
+        "deliverables": "Open deliverables",
+        "lastActivity": "Last activity",
+        "idle": "No activity for {count} days"
+      },
+      "nextSteps": "Next steps",
+      "noNextSteps": "All steps are complete.",
+      "upcomingDeliverables": "Upcoming deliverables",
+      "noDeliverables": "No deliverable yet.",
+      "overdueRequests": "Overdue document requests",
+      "noOverdue": "No overdue request.",
+      "recentMessages": "Recent conversations",
+      "noMessages": "No conversation yet.",
+      "conversation": "Conversation",
+      "invoices": "Invoices",
+      "noInvoices": "No invoice for this matter.",
+      "invoiceStatus": {
+        "due": "Due",
+        "overdue": "Overdue",
+        "paid": "Paid",
+        "void": "Void"
+      },
+      "deliverables": "Deliverables",
+      "deliverablesHelp": "What the firm delivers to the client: opinion, filed application, contract… Visible to the client unless marked internal.",
+      "deliverableStatus": {
+        "planned": "Planned",
+        "in_progress": "In progress",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "dueOn": "Due {date}",
+      "visibleToClient": "Visible to the client",
+      "internal": "Internal",
+      "statusLabel": "Status of {title}",
+      "updateStatus": "Update",
+      "remove": "Remove",
+      "removeLabel": "Remove: {title}",
+      "deliverableTitle": "Deliverable",
+      "deliverableDescription": "Description (optional)",
+      "deliverableDue": "Due date (optional)",
+      "deliverableOwner": "Responsible",
+      "noOwner": "Not assigned",
+      "addDeliverable": "Add the deliverable",
+      "matterDocuments": "Matter documents",
+      "noDocuments": "No document in this matter yet.",
+      "folders": {
+        "shared": "Shared",
+        "client_upload": "From the client",
+        "signed": "Signed",
+        "internal": "Internal"
+      },
+      "accessReadOnly": "Only the firm administrator can grant or revoke client access."
     }
   }
 }

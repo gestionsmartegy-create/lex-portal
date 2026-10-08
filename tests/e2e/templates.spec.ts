@@ -44,7 +44,7 @@ test.describe("modèles de dossiers", () => {
       granted_by: staff.id,
     });
     try {
-      await page.goto(`/en/admin/matters/${MATTER}/tracking`);
+      await page.goto(`/en/admin/matters/${MATTER}?tab=details`);
       await page
         .getByLabel("Matter type")
         .selectOption({ label: "Immigration — Permanent Residence (Express Entry, PNP)" });
@@ -53,12 +53,15 @@ test.describe("modèles de dossiers", () => {
 
       await page.getByRole("button", { name: "Add the template steps" }).click();
       await expect(page.getByText("Template steps added.")).toBeVisible({ timeout: 15_000 });
+      await page.goto(`/en/admin/matters/${MATTER}?tab=steps`);
       await expect(page.getByRole("listitem").filter({ hasText: "Invitation to apply" })).toBeVisible();
+      await page.goto(`/en/admin/matters/${MATTER}?tab=details`);
 
       await page.getByLabel("Unique client identifier (UCI)").fill("UCI-E2E-42");
       await page.getByRole("button", { name: "Save the details" }).click();
       await expect(page.getByText("Matter details saved.")).toBeVisible({ timeout: 15_000 });
 
+      await page.goto(`/en/admin/matters/${MATTER}?tab=documents`);
       await page
         .getByLabel("Document from the template")
         .selectOption({ label: "Valid passport (all pages)" });

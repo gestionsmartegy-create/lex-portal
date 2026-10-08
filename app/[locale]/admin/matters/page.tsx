@@ -11,7 +11,7 @@ import { listAdminMatters } from "@/server/services/admin";
 export default async function AdminMattersPage({ params }: PageProps<"/[locale]/admin/matters">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { role } = await requireStaff(locale);
+  await requireStaff(locale);
   const [t, matters] = await Promise.all([getTranslations("admin.matters"), listAdminMatters()]);
   return (
     <>
@@ -36,13 +36,8 @@ export default async function AdminMattersPage({ params }: PageProps<"/[locale]/
                 <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                   <MatterStatusBadge status={m.status} />
                   <Button asChild variant="outline-gold" size="sm">
-                    <Link href={`/admin/matters/${m.id}/tracking`}>{t("tracking")}</Link>
+                    <Link href={`/admin/matters/${m.id}`}>{t("open")}</Link>
                   </Button>
-                  {role === "firm_admin" ? (
-                    <Button asChild variant="outline-gold" size="sm">
-                      <Link href={`/admin/matters/${m.id}/access`}>{t("manage")}</Link>
-                    </Button>
-                  ) : null}
                 </div>
               </li>
             ))}

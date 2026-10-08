@@ -272,6 +272,37 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"matter_deliverables": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"delivered_at": string | null,"description": string | null,"due_date": string | null,"id": string,"matter_id": string,"owner_id": string | null,"status": string,"title": string,"updated_at": string,"visible_to_client": boolean
+                  }
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"delivered_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"matter_id": string,"owner_id"?: string | null,"status"?: string,"title": string,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"delivered_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"matter_id"?: string,"owner_id"?: string | null,"status"?: string,"title"?: string,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_deliverables_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_deliverables_matter_id_fkey"
+      columns: ["matter_id"]
+isOneToOne: false
+      referencedRelation: "matters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_deliverables_owner_id_fkey"
+      columns: ["owner_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"matter_field_values": {
                   Row: {
                     "field_id": string,"matter_id": string,"updated_at": string,"updated_by": string | null,"value": string

@@ -144,7 +144,7 @@ export async function grantMatterAccessAction(_prev: unknown, formData: FormData
   await requireStaff(parsed.data.locale, ["firm_admin"]);
   const result = await grantMatterAccess(parsed.data.matterId, parsed.data.email, parsed.data.accessLevel);
   if (!result.ok) return { error: result.code };
-  revalidatePath(`/${parsed.data.locale}/admin/matters/${parsed.data.matterId}/access`);
+  revalidatePath(`/${parsed.data.locale}/admin/matters/${parsed.data.matterId}`);
   return { ok: true };
 }
 
@@ -156,7 +156,7 @@ export async function revokeMatterAccessAction(formData: FormData): Promise<void
   await requireStaff(parsed.data.locale, ["firm_admin"]);
   const result = await revokeMatterAccess(parsed.data.id, parsed.data.reason);
   redirect(
-    `/${parsed.data.locale}/admin/matters/${parsed.data.matterId}/access?notice=${result.ok ? "revoked" : "failed"}`,
+    `/${parsed.data.locale}/admin/matters/${parsed.data.matterId}?tab=team&notice=${result.ok ? "revoked" : "failed"}`,
   );
 }
 
