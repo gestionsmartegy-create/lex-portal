@@ -287,7 +287,8 @@
       "timelineEmpty": "Aucune étape pour l'instant.",
       "stepDone": "Terminée le {date}",
       "stepPending": "À venir",
-      "newMessage": "Écrire au cabinet"
+      "newMessage": "Écrire au cabinet",
+      "details": "Informations du dossier"
     },
     "documents": {
       "title": "Documents",
@@ -412,7 +413,11 @@
     },
     "notificationsText": {
       "newMessageTitle": "Nouveau message",
-      "newMessageBody": "Nouveau message au sujet du dossier {number}."
+      "newMessageBody": "Nouveau message au sujet du dossier {number}.",
+      "stepCompletedTitle": "Étape terminée",
+      "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement.",
+      "documentRequestedTitle": "Document demandé",
+      "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}."
     }
   },
   "admin": {
@@ -477,7 +482,9 @@
       "roleStaff": "Personnel",
       "roleAdmin": "Administrateur du cabinet",
       "integrations": "Intégrations",
-      "messages": "Messages"
+      "messages": "Messages",
+      "templates": "Modèles de dossiers",
+      "requests": "Demandes de documents"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -557,7 +564,30 @@
         "DUPLICATE": "Ce client a déjà accès à ce dossier.",
         "FAILED": "La modification n'a pas pu être enregistrée.",
         "INVALID": "Veuillez vérifier le formulaire."
-      }
+      },
+      "tracking": "Suivi du dossier",
+      "open": "Ouvrir le dossier",
+      "openNew": "Mettre en place un dossier",
+      "filters": {
+        "q": "Recherche (titre ou numéro)",
+        "tag": "Étiquette",
+        "type": "Type de dossier",
+        "lawyer": "Avocat",
+        "status": "Statut",
+        "alert": "Alerte",
+        "all": "Tous",
+        "overdue": "Documents en retard",
+        "idle": "Inactifs (14 jours)",
+        "apply": "Filtrer",
+        "reset": "Réinitialiser",
+        "count": "{count, plural, =0 {Aucun dossier} one {# dossier} other {# dossiers}}",
+        "none": "Aucun dossier ne correspond à ces filtres.",
+        "truncated": "seuls les {limit} plus récents sont analysés ; affinez les filtres"
+      },
+      "progress": "Avancement",
+      "overdueCount": "{count} en retard",
+      "pendingCount": "{count} document(s) en attente",
+      "lastActivity": "Activité {when}"
     },
     "audit": {
       "title": "Journal d'audit",
@@ -645,6 +675,370 @@
         "FAILED": "Le message n'a pas pu être envoyé."
       },
       "sending": "Envoi…"
+    },
+    "tracking": {
+      "back": "Tous les dossiers",
+      "steps": "Étapes visibles par le client",
+      "noSteps": "Aucune étape pour l'instant. Ajoutez la première ci-dessous : le client la voit aussitôt.",
+      "progress": "Avancement",
+      "completedOn": "Terminée le {date}",
+      "markDone": "Marquer terminée",
+      "reopen": "Rouvrir",
+      "up": "Monter",
+      "down": "Descendre",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "stepTitle": "Titre de l'étape",
+      "stepDescription": "Description pour le client (facultative)",
+      "addStep": "Ajouter une étape",
+      "addSubmit": "Ajouter l'étape",
+      "team": "Équipe du cabinet",
+      "teamHelp": "Les membres de l'équipe peuvent lire les messages du client, y répondre et mettre à jour les étapes.",
+      "noTeam": "Personne n'est encore affecté à ce dossier.",
+      "teamReadOnly": "Seul l'administrateur du cabinet peut modifier l'équipe.",
+      "member": "Membre du personnel",
+      "chooseMember": "Choisissez un membre du personnel",
+      "role": "Rôle",
+      "addMember": "Ajouter à l'équipe",
+      "remove": "Retirer",
+      "roles": {
+        "responsible": "Responsable",
+        "originating": "Avocat d'origine",
+        "collaborator": "Collaborateur",
+        "assistant": "Adjoint"
+      },
+      "notices": {
+        "added": "Étape ajoutée.",
+        "updated": "Étape modifiée.",
+        "completed": "Étape terminée : le client a été averti.",
+        "reopened": "Étape rouverte.",
+        "moved": "Ordre mis à jour.",
+        "deleted": "Étape supprimée.",
+        "teamAdded": "Membre ajouté à l'équipe.",
+        "teamRemoved": "Membre retiré : son accès au dossier est coupé immédiatement.",
+        "duplicate": "Cette personne fait déjà partie de l'équipe.",
+        "failed": "La modification n'a pas pu être enregistrée.",
+        "invalid": "Veuillez vérifier le formulaire (un titre ou un document est requis ; dates et nombres valides).",
+        "typeSet": "Type de dossier enregistré.",
+        "templateApplied": "Étapes du modèle ajoutées.",
+        "templateEmpty": "Toutes les étapes du modèle figurent déjà dans le dossier.",
+        "fieldsSaved": "Informations du dossier enregistrées.",
+        "requestCreated": "Document demandé : le client a été averti.",
+        "requestUpdated": "Demande mise à jour.",
+        "deliverableAdded": "Livrable ajouté.",
+        "deliverableUpdated": "Livrable mis à jour.",
+        "deliverableRemoved": "Livrable retiré.",
+        "documentLinked": "Document lié : la demande est marquée reçue.",
+        "tagsSaved": "Étiquettes enregistrées."
+      },
+      "upLabel": "Monter : {title}",
+      "downLabel": "Descendre : {title}",
+      "deleteLabel": "Supprimer : {title}",
+      "removeLabel": "Retirer : {name}",
+      "templateStep": "Étape du modèle",
+      "customStep": "Autre (étape libre)",
+      "customStepTitle": "Titre de l'étape libre (si « Autre »)",
+      "matterType": "Type de dossier",
+      "noType": "Aucun type",
+      "saveType": "Enregistrer le type",
+      "applyHelp": "{count, plural, one {# étape type} other {# étapes types}} pour ce type. Les étapes déjà présentes dans le dossier sont ignorées.",
+      "applyTemplate": "Ajouter les étapes du modèle",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "fields": "Informations du dossier",
+      "fieldVisible": "Visible par le client",
+      "fieldInternal": "Interne au cabinet",
+      "saveFields": "Enregistrer les informations",
+      "requests": "Documents demandés au client",
+      "requestsHelp": "Le client est averti dans le portail. En attendant le dépôt en ligne, il transmet le document par message ou par courriel ; marquez-le reçu ici.",
+      "noRequests": "Aucun document demandé pour l'instant.",
+      "noClientForRequest": "Aucun client n'a encore accès à ce dossier : donnez-lui l'accès avant de demander des documents.",
+      "requestClient": "Client",
+      "templateDocument": "Document du modèle",
+      "customDocument": "Autre (document libre)",
+      "customDocumentTitle": "Document libre (si « Autre »)",
+      "requestTitle": "Document demandé",
+      "requestDescription": "Précision pour le client (facultative)",
+      "requestDue": "Date limite (facultative)",
+      "requestSubmit": "Demander le document",
+      "dueOn": "Avant le {date}",
+      "requestStatus": {
+        "pending": "En attente",
+        "overdue": "En retard",
+        "fulfilled": "Reçu",
+        "cancelled": "Annulé"
+      },
+      "requestAction": {
+        "fulfilled": "Marquer reçu",
+        "fulfilledLabel": "Marquer reçu : {title}",
+        "cancelled": "Annuler",
+        "cancelledLabel": "Annuler : {title}",
+        "pending": "Remettre en attente",
+        "pendingLabel": "Remettre en attente : {title}"
+      },
+      "linkedDocument": "Document reçu : {name}",
+      "document": "document",
+      "linkDocument": "Document reçu (déjà dans le dossier)",
+      "linkSubmit": "Lier et marquer reçu"
+    },
+    "templates": {
+      "title": "Modèles de dossiers",
+      "subtitle": "Types de dossier, étapes types, documents à demander et informations du dossier, par domaine de pratique.",
+      "draftNote": "Première version à valider par le cabinet. Les modifications valent pour la suite ; les étapes déjà ajoutées à un dossier ne changent pas.",
+      "back": "Tous les modèles",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "inactive": "Inactif",
+      "edit": "Modifier",
+      "editLabel": "Modifier : {name}",
+      "newType": "Nouveau type de dossier",
+      "group": "Groupe de pratique",
+      "nameFr": "Nom (français)",
+      "nameEn": "Nom (anglais)",
+      "create": "Créer le type",
+      "typeSettings": "Type de dossier",
+      "active": "Proposé au choix du type d'un dossier",
+      "save": "Enregistrer",
+      "sections": {
+        "steps": "Étapes types",
+        "documents": "Documents à demander",
+        "fields": "Informations du dossier (champs)"
+      },
+      "sectionsHelp": {
+        "steps": "Étapes que le cabinet peut ajouter à un dossier de ce type. Le client les voit dans sa langue.",
+        "documents": "Documents que l'avocat peut demander au client en un clic.",
+        "fields": "Informations remplies pour chaque dossier, visibles par le client ou internes au cabinet."
+      },
+      "empty": "Rien pour l'instant.",
+      "labelFr": "Titre (français)",
+      "labelEn": "Titre (anglais)",
+      "descFr": "Description (français, facultative)",
+      "descEn": "Description (anglais, facultative)",
+      "fieldKind": "Type de valeur",
+      "kinds": {
+        "text": "Texte",
+        "date": "Date",
+        "number": "Nombre"
+      },
+      "visibleToClient": "Visible par le client",
+      "internal": "Interne",
+      "remove": "Retirer",
+      "removeLabel": "Retirer : {title}",
+      "upLabel": "Monter : {title}",
+      "downLabel": "Descendre : {title}",
+      "add": {
+        "steps": "Ajouter l'étape",
+        "documents": "Ajouter le document",
+        "fields": "Ajouter le champ"
+      },
+      "notices": {
+        "created": "Type de dossier créé : ajoutez ses étapes, documents et champs.",
+        "saved": "Modifications enregistrées.",
+        "added": "Élément ajouté.",
+        "removed": "Élément retiré.",
+        "moved": "Ordre mis à jour.",
+        "failed": "La modification n'a pas pu être enregistrée.",
+        "invalid": "Veuillez vérifier le formulaire.",
+        "tagSaved": "Étiquette enregistrée."
+      },
+      "tags": {
+        "title": "Étiquettes",
+        "help": "Étiquettes en couleur pour suivre le portefeuille (urgent, en attente d'IRCC…). Internes par défaut ; une étiquette marquée visible est montrée au client.",
+        "visible": "Visible par le client",
+        "internal": "Interne",
+        "active": "Active",
+        "color": "Couleur",
+        "create": "Créer l'étiquette",
+        "colors": {
+          "marine": "Marine",
+          "gold": "Or",
+          "red": "Rouge",
+          "orange": "Orange",
+          "green": "Vert",
+          "blue": "Bleu",
+          "purple": "Violet",
+          "gray": "Gris"
+        }
+      }
+    },
+    "workspace": {
+      "tabsLabel": "Sections du dossier",
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "steps": "Étapes et livrables",
+        "documents": "Documents",
+        "team": "Équipe et accès",
+        "details": "Informations du dossier"
+      },
+      "kpi": {
+        "requests": "Documents en attente",
+        "overdue": "{count} en retard",
+        "unread": "Conversations non lues",
+        "balance": "Solde dû",
+        "nextAppointment": "Prochain rendez-vous",
+        "deliverables": "Livrables en cours",
+        "lastActivity": "Dernière activité",
+        "idle": "Aucune activité depuis {count} jours"
+      },
+      "nextSteps": "Prochaines étapes",
+      "noNextSteps": "Toutes les étapes sont terminées.",
+      "upcomingDeliverables": "Livrables à venir",
+      "noDeliverables": "Aucun livrable pour l'instant.",
+      "overdueRequests": "Demandes de documents en retard",
+      "noOverdue": "Aucune demande en retard.",
+      "recentMessages": "Conversations récentes",
+      "noMessages": "Aucune conversation pour l'instant.",
+      "conversation": "Conversation",
+      "invoices": "Factures",
+      "noInvoices": "Aucune facture pour ce dossier.",
+      "invoiceStatus": {
+        "due": "À payer",
+        "overdue": "En retard",
+        "paid": "Payée",
+        "void": "Annulée"
+      },
+      "deliverables": "Livrables",
+      "deliverablesHelp": "Ce que le cabinet remet au client : avis, demande déposée, contrat… Visible par le client, sauf s'il est marqué interne.",
+      "deliverableStatus": {
+        "planned": "Prévu",
+        "in_progress": "En cours",
+        "delivered": "Remis",
+        "cancelled": "Annulé"
+      },
+      "dueOn": "Pour le {date}",
+      "visibleToClient": "Visible par le client",
+      "internal": "Interne",
+      "statusLabel": "État de {title}",
+      "updateStatus": "Mettre à jour",
+      "remove": "Retirer",
+      "removeLabel": "Retirer : {title}",
+      "deliverableTitle": "Livrable",
+      "deliverableDescription": "Description (facultative)",
+      "deliverableDue": "Date prévue (facultative)",
+      "deliverableOwner": "Responsable",
+      "noOwner": "Non attribué",
+      "addDeliverable": "Ajouter le livrable",
+      "matterDocuments": "Documents du dossier",
+      "noDocuments": "Aucun document dans ce dossier pour l'instant.",
+      "folders": {
+        "shared": "Partagé",
+        "client_upload": "Déposé par le client",
+        "signed": "Signé",
+        "internal": "Interne"
+      },
+      "accessReadOnly": "Seul l'administrateur du cabinet peut donner ou retirer l'accès d'un client.",
+      "opened": "Dossier mis en place : tout est en place.",
+      "openedPartial": "Dossier mis en place, mais certains éléments n'ont pas pu être appliqués : {items}. Vérifiez les onglets ci-dessous.",
+      "parts": {
+        "steps": "étapes",
+        "team": "équipe",
+        "access": "accès du client",
+        "requests": "demandes de documents",
+        "deliverables": "livrables"
+      },
+      "tags": "Étiquettes",
+      "tagVisible": "(visible par le client)",
+      "saveTags": "Enregistrer les étiquettes"
+    },
+    "opening": {
+      "title": "Mettre en place un dossier",
+      "subtitle": "Configurez en une fois un dossier importé de Clio : type, étapes, équipe, client, documents et livrables.",
+      "back": "Tous les dossiers",
+      "step1": "1. Dossier et type",
+      "matter": "Dossier (venu de Clio)",
+      "chooseMatter": "Choisissez un dossier",
+      "configured": "(déjà configuré)",
+      "type": "Type de dossier",
+      "chooseType": "Choisissez un type",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "clioFirst": "Le dossier doit d'abord exister dans Clio (registre officiel), puis être importé depuis Intégrations.",
+      "continue": "Continuer",
+      "step2": "2. Étapes",
+      "applySteps": "Ajouter les {count} étapes du modèle",
+      "step3": "3. Équipe",
+      "responsible": "Avocat responsable",
+      "none": "Aucun",
+      "collaborators": "Collaborateurs",
+      "step4": "4. Client et accès",
+      "client": "Client (compte existant)",
+      "noClient": "Aucun client pour l'instant",
+      "inviteHint": "Nouveau client ?",
+      "inviteLink": "Envoyer une invitation",
+      "accessLevel": "Niveau d'accès",
+      "levelRead": "Lecture seule",
+      "levelWrite": "Lecture et réponse",
+      "step5": "5. Documents à demander",
+      "documentsHelp": "Les documents cochés sont demandés au client tout de suite (un client doit être choisi).",
+      "noDocuments": "Aucun document type pour ce type.",
+      "documentsDue": "Date limite de ces documents (facultative)",
+      "step6": "6. Premiers livrables",
+      "deliverablesHelp": "Ce que le cabinet remettra ; vous pourrez en ajouter ensuite.",
+      "deliverable": "Livrable {n}",
+      "deliverableDue": "Date prévue",
+      "submit": "Mettre en place le dossier",
+      "notices": {
+        "invalid": "Veuillez vérifier le formulaire.",
+        "failed": "Le dossier n'a pas pu être mis en place."
+      }
+    },
+    "requests": {
+      "title": "Demandes de documents",
+      "subtitle": "Tous les documents demandés aux clients, sur l'ensemble de vos dossiers.",
+      "bulkCreate": "Demander à plusieurs dossiers",
+      "bulkSubtitle": "Envoyer la même demande aux clients de plusieurs dossiers en une fois.",
+      "back": "Toutes les demandes",
+      "none": "Aucune demande de document.",
+      "openMatter": "Ouvrir le dossier",
+      "filters": {
+        "q": "Recherche (document ou dossier)",
+        "status": "Statut",
+        "tag": "Étiquette du dossier",
+        "type": "Type de dossier",
+        "all": "Tous",
+        "apply": "Filtrer",
+        "count": "{count, plural, =0 {Aucune demande} one {# demande} other {# demandes}}"
+      },
+      "status": {
+        "pending": "En attente",
+        "overdue": "En retard",
+        "fulfilled": "Reçu",
+        "cancelled": "Annulé"
+      },
+      "bulkLabel": "Pour les demandes cochées",
+      "bulkApply": "Appliquer",
+      "actions": {
+        "remind": "Relancer le client",
+        "fulfilled": "Marquer reçu",
+        "cancelled": "Annuler",
+        "created": "Demandes créées"
+      },
+      "select": "Sélectionner : {title}",
+      "dueOn": "Avant le {date}",
+      "step1": "1. Choisir les dossiers",
+      "step2": "2. Dossiers concernés ({count})",
+      "step3": "3. Document demandé",
+      "noMatter": "Aucun dossier ouvert ne correspond à ces filtres.",
+      "requestTitle": "Document demandé",
+      "requestDescription": "Précision pour le client (facultative)",
+      "requestDue": "Date limite (facultative)",
+      "bulkHelp": "Une demande est créée pour chaque client ayant un accès actif à chaque dossier coché, et chaque client est averti dans le portail.",
+      "bulkSubmit": "Envoyer les demandes",
+      "notices": {
+        "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
+        "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
+        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
+      }
     }
   }
 }
