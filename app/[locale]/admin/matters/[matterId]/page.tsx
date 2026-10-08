@@ -173,8 +173,23 @@ export default async function MatterWorkspacePage({
   const isAdmin = role === "firm_admin";
   const today = new Date().toISOString().slice(0, 10);
   const notice = NOTICES.find((n) => n === sp.notice);
+  const PARTS = ["steps", "team", "access", "requests", "deliverables"] as const;
+  const partial =
+    typeof sp.partial === "string"
+      ? sp.partial
+          .split(",")
+          .filter((x): x is (typeof PARTS)[number] => (PARTS as readonly string[]).includes(x))
+      : [];
   const accessNotice =
-    sp.notice === "revoked" ? tm("revoked") : sp.notice === "granted" ? tm("granted") : undefined;
+    sp.notice === "revoked"
+      ? tm("revoked")
+      : sp.notice === "granted"
+        ? tm("granted")
+        : sp.notice === "opened"
+          ? partial.length
+            ? tw("openedPartial", { items: partial.map((x) => tw(`parts.${x}`)).join(", ") })
+            : tw("opened")
+          : undefined;
   const active = access.filter((a) => !a.revoked_at);
   const revoked = access.filter((a) => a.revoked_at);
   const hidden = (
@@ -224,7 +239,7 @@ export default async function MatterWorkspacePage({
       />
       <Notice
         message={notice ? t(`notices.${notice}`) : accessNotice}
-        error={notice === "failed" || notice === "duplicate" || notice === "invalid"}
+        error={notice === "failed" || notice === "duplicate" || notice === "invalid" || partial.length > 0}
       />
       {matter.progress_percent !== null ? (
         <div className="mb-6 max-w-xl">

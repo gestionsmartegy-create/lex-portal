@@ -565,7 +565,8 @@
         "INVALID": "Veuillez vérifier le formulaire."
       },
       "tracking": "Suivi du dossier",
-      "open": "Ouvrir le dossier"
+      "open": "Ouvrir le dossier",
+      "openNew": "Mettre en place un dossier"
     },
     "audit": {
       "title": "Journal d'audit",
@@ -890,7 +891,61 @@
         "signed": "Signé",
         "internal": "Interne"
       },
-      "accessReadOnly": "Seul l'administrateur du cabinet peut donner ou retirer l'accès d'un client."
+      "accessReadOnly": "Seul l'administrateur du cabinet peut donner ou retirer l'accès d'un client.",
+      "opened": "Dossier mis en place : tout est en place.",
+      "openedPartial": "Dossier mis en place, mais certains éléments n'ont pas pu être appliqués : {items}. Vérifiez les onglets ci-dessous.",
+      "parts": {
+        "steps": "étapes",
+        "team": "équipe",
+        "access": "accès du client",
+        "requests": "demandes de documents",
+        "deliverables": "livrables"
+      }
+    },
+    "opening": {
+      "title": "Mettre en place un dossier",
+      "subtitle": "Configurez en une fois un dossier importé de Clio : type, étapes, équipe, client, documents et livrables.",
+      "back": "Tous les dossiers",
+      "step1": "1. Dossier et type",
+      "matter": "Dossier (venu de Clio)",
+      "chooseMatter": "Choisissez un dossier",
+      "configured": "(déjà configuré)",
+      "type": "Type de dossier",
+      "chooseType": "Choisissez un type",
+      "groups": {
+        "legal": "Pratiques juridiques",
+        "business": "Affaires et finance",
+        "advisory": "Conseil stratégique"
+      },
+      "clioFirst": "Le dossier doit d'abord exister dans Clio (registre officiel), puis être importé depuis Intégrations.",
+      "continue": "Continuer",
+      "step2": "2. Étapes",
+      "applySteps": "Ajouter les {count} étapes du modèle",
+      "step3": "3. Équipe",
+      "responsible": "Avocat responsable",
+      "none": "Aucun",
+      "collaborators": "Collaborateurs",
+      "step4": "4. Client et accès",
+      "client": "Client (compte existant)",
+      "noClient": "Aucun client pour l'instant",
+      "inviteHint": "Nouveau client ?",
+      "inviteLink": "Envoyer une invitation",
+      "accessLevel": "Niveau d'accès",
+      "levelRead": "Lecture seule",
+      "levelWrite": "Lecture et réponse",
+      "step5": "5. Documents à demander",
+      "documentsHelp": "Les documents cochés sont demandés au client tout de suite (un client doit être choisi).",
+      "noDocuments": "Aucun document type pour ce type.",
+      "documentsDue": "Date limite de ces documents (facultative)",
+      "step6": "6. Premiers livrables",
+      "deliverablesHelp": "Ce que le cabinet remettra ; vous pourrez en ajouter ensuite.",
+      "deliverable": "Livrable {n}",
+      "deliverableDue": "Date prévue",
+      "submit": "Mettre en place le dossier",
+      "notices": {
+        "invalid": "Veuillez vérifier le formulaire.",
+        "failed": "Le dossier n'a pas pu être mis en place."
+      }
     }
   }
 }

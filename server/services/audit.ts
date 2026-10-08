@@ -20,6 +20,7 @@ export type AuditAction =
   | "conversation.joined"
   | "matter.type_set"
   | "matter.fields_updated"
+  | "matter.opened"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"

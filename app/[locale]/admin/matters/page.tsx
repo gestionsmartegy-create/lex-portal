@@ -11,14 +11,23 @@ import { listAdminMatters } from "@/server/services/admin";
 export default async function AdminMattersPage({ params }: PageProps<"/[locale]/admin/matters">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  await requireStaff(locale);
+  const { role } = await requireStaff(locale);
   const [t, matters] = await Promise.all([getTranslations("admin.matters"), listAdminMatters()]);
   return (
     <>
       <PageHeader
         title={t("title")}
         subtitle={t("subtitle")}
-        actions={matters.some((m) => m.is_mock) ? <DemoDataBadge /> : null}
+        actions={
+          <>
+            {matters.some((m) => m.is_mock) ? <DemoDataBadge /> : null}
+            {role === "firm_admin" ? (
+              <Button asChild variant="primary" size="sm">
+                <Link href="/admin/matters/new">{t("openNew")}</Link>
+              </Button>
+            ) : null}
+          </>
+        }
       />
       <SectionCard>
         {matters.length === 0 ? (

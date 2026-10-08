@@ -18,3 +18,13 @@
   - les livrables affichés dans le portail client ;
   - les étiquettes et le Kanban (phase 2).
 - **Tests** : pgTAP `17_espace_dossier` (16 cas) ; e2e « espace Dossier unifié » (vue d'ensemble, livrable, document lié, axe).
+
+## Assistant d'ouverture d'un dossier (2026-10-08)
+- **`/admin/matters/new`**, réservé au firm_admin.
+  1. On choisit un dossier venu de Clio (registre officiel) et son type.
+  2. Un seul écran règle le reste : étapes du modèle, avocat responsable et collaborateurs, client existant et niveau d'accès, documents types à demander (avec date limite), et jusqu'à 3 premiers livrables.
+- **Application** : un seul bouton enchaîne les services existants (`setMatterType`, `applyTemplateSteps`, `addTeamMember`, `grantMatterAccess`, `createDocumentRequest`, `addDeliverable`). Chacun revérifie l'accès et passe par la RLS : rien n'est contourné.
+- **Échec partiel** : si un élément échoue, le dossier s'ouvre quand même et l'espace du dossier dit précisément quoi vérifier. Le message s'appuie sur une liste fermée d'éléments.
+- **Audit** : `matter.opened` (type et éléments en échec, identifiants seulement).
+- **Test** : e2e `opening.spec.ts`, sur bureau et mobile, avec axe.
+- **Après revue** : l'audit `matter.opened` porte l'auteur ; seuls les documents du type choisi sont demandés ; un dossier fermé ne peut pas être mis en place ; libellé « Mettre en place un dossier » (distinct de « Ouvrir le dossier »).
