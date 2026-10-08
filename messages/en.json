@@ -501,7 +501,8 @@
       "roleAdmin": "Firm administrator",
       "integrations": "Integrations",
       "messages": "Messages",
-      "templates": "Matter templates"
+      "templates": "Matter templates",
+      "requests": "Document requests"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1007,6 +1008,54 @@
       "notices": {
         "invalid": "Please check the form.",
         "failed": "The matter could not be set up."
+      }
+    },
+    "requests": {
+      "title": "Document requests",
+      "subtitle": "Every document requested from clients, across your matters.",
+      "bulkCreate": "Request from several matters",
+      "bulkSubtitle": "Send the same request to the clients of several matters at once.",
+      "back": "All requests",
+      "none": "No document request.",
+      "openMatter": "Open the matter",
+      "filters": {
+        "q": "Search (document or matter)",
+        "status": "Status",
+        "tag": "Matter tag",
+        "type": "Matter type",
+        "all": "All",
+        "apply": "Filter",
+        "count": "{count, plural, =0 {No request} one {# request} other {# requests}}"
+      },
+      "status": {
+        "pending": "Pending",
+        "overdue": "Overdue",
+        "fulfilled": "Received",
+        "cancelled": "Cancelled"
+      },
+      "bulkLabel": "For the checked requests",
+      "bulkApply": "Apply",
+      "actions": {
+        "remind": "Remind the client",
+        "fulfilled": "Mark received",
+        "cancelled": "Cancel",
+        "created": "Requests created"
+      },
+      "select": "Select: {title}",
+      "dueOn": "Due {date}",
+      "step1": "1. Choose the matters",
+      "step2": "2. Matters concerned ({count})",
+      "step3": "3. Document requested",
+      "noMatter": "No open matter matches these filters.",
+      "requestTitle": "Document requested",
+      "requestDescription": "Details for the client (optional)",
+      "requestDue": "Due date (optional)",
+      "bulkHelp": "One request is created for each client with active access to each checked matter, and each client is notified in the portal.",
+      "bulkSubmit": "Send the requests",
+      "notices": {
+        "invalid": "Please check the form (at least one item must be checked).",
+        "report": "{action}: {done} done, {skipped} skipped, {failed} failed.",
+        "tooMany": "Too many batch sends in the last hour. Please try again later."
       }
     }
   }

@@ -501,7 +501,8 @@
       "roleAdmin": "Administrateur du cabinet",
       "integrations": "Intégrations",
       "messages": "Messages",
-      "templates": "Modèles de dossiers"
+      "templates": "Modèles de dossiers",
+      "requests": "Demandes de documents"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1007,6 +1008,54 @@
       "notices": {
         "invalid": "Veuillez vérifier le formulaire.",
         "failed": "Le dossier n'a pas pu être mis en place."
+      }
+    },
+    "requests": {
+      "title": "Demandes de documents",
+      "subtitle": "Tous les documents demandés aux clients, sur l'ensemble de vos dossiers.",
+      "bulkCreate": "Demander à plusieurs dossiers",
+      "bulkSubtitle": "Envoyer la même demande aux clients de plusieurs dossiers en une fois.",
+      "back": "Toutes les demandes",
+      "none": "Aucune demande de document.",
+      "openMatter": "Ouvrir le dossier",
+      "filters": {
+        "q": "Recherche (document ou dossier)",
+        "status": "Statut",
+        "tag": "Étiquette du dossier",
+        "type": "Type de dossier",
+        "all": "Tous",
+        "apply": "Filtrer",
+        "count": "{count, plural, =0 {Aucune demande} one {# demande} other {# demandes}}"
+      },
+      "status": {
+        "pending": "En attente",
+        "overdue": "En retard",
+        "fulfilled": "Reçu",
+        "cancelled": "Annulé"
+      },
+      "bulkLabel": "Pour les demandes cochées",
+      "bulkApply": "Appliquer",
+      "actions": {
+        "remind": "Relancer le client",
+        "fulfilled": "Marquer reçu",
+        "cancelled": "Annuler",
+        "created": "Demandes créées"
+      },
+      "select": "Sélectionner : {title}",
+      "dueOn": "Avant le {date}",
+      "step1": "1. Choisir les dossiers",
+      "step2": "2. Dossiers concernés ({count})",
+      "step3": "3. Document demandé",
+      "noMatter": "Aucun dossier ouvert ne correspond à ces filtres.",
+      "requestTitle": "Document demandé",
+      "requestDescription": "Précision pour le client (facultative)",
+      "requestDue": "Date limite (facultative)",
+      "bulkHelp": "Une demande est créée pour chaque client ayant un accès actif à chaque dossier coché, et chaque client est averti dans le portail.",
+      "bulkSubmit": "Envoyer les demandes",
+      "notices": {
+        "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
+        "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
+        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
       }
     }
   }
