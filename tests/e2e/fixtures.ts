@@ -58,6 +58,10 @@ export async function signInWithPassword(page: Page, email: string, password: st
 
 /** Aucune violation d'accessibilité grave ou critique (WCAG 2.2 AA). */
 export async function expectAccessible(page: Page) {
+  // L'audit porte sur l'état au repos : un bouton resté survolé après un clic n'est pas représentatif.
+  await page.mouse.move(0, 0);
+  // Laisse finir la transition de couleur des boutons (200 ms) avant de mesurer les contrastes.
+  await page.waitForTimeout(300);
   const { violations } = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze();

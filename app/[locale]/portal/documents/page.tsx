@@ -27,7 +27,7 @@ export default async function DocumentsPage({
   const [t, documents, requests, signatures] = await Promise.all([
     getTranslations("portal.documents"),
     listDocuments({ tab }),
-    listPendingRequests(),
+    listPendingRequests(undefined, locale),
     listPendingSignatures(),
   ]);
 

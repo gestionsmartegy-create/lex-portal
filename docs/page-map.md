@@ -35,7 +35,7 @@ graph TD
     A0["/[locale]/admin"]
     A1["/admin/clients"]
     A2["/admin/invitations"]
-    A3["/admin/matters (+ /[matterId]/access)"]
+    A3["/admin/matters (+ /[matterId]/access, /[matterId]/tracking)"]
     A4["/admin/audit"]
     A5["/admin/sync"]
     A6["/admin/integrations"]
@@ -86,7 +86,12 @@ graph TD
 | `/[locale]/admin` | Staff, firm_admin | Vue d'ensemble : invitations en attente, erreurs de synchronisation, derniers événements | Plusieurs | 1 |
 | `/admin/clients` | firm_admin (staff en lecture : ses clients) | Liste, statut, suspension, dossiers associés | `profiles`, `matter_access` | 1 |
 | `/admin/invitations` | firm_admin | Créer une invitation (contact Clio + dossiers + niveau d'accès), renvoyer, révoquer | `client_invitations*` | 1 |
-| `/admin/matters`, `/[matterId]/access` | firm_admin (staff : ses dossiers) | Équipe, accès clients, **révocation immédiate**, chronologie, documents, **lien « Ouvrir dans SharePoint »** (personnel seulement), état du dossier SharePoint | `matters`, `matter_team`, `matter_access` | 1 |
+| `/admin/matters` (filtres : recherche, étiquette, type, avocat, statut, alerte — ADR 0021), `/[matterId]/access` | firm_admin (staff : ses dossiers) | Équipe, accès clients, **révocation immédiate**, chronologie, documents, **lien « Ouvrir dans SharePoint »** (personnel seulement), état du dossier SharePoint | `matters`, `matter_team`, `matter_access` | 1 |
+| `/admin/matters/[matterId]` (onglets) | équipe du dossier, firm_admin | **Espace Dossier** (ADR 0020) : vue d'ensemble, étapes et livrables, documents, équipe et accès, informations. `/tracking` et `/access` y redirigent. | `matters`, `matter_timeline_steps`, `matter_deliverables`, `document_requests`, `matter_team`, `matter_access` | 1 |
+| `/admin/matters/new` | firm_admin | **Assistant d'ouverture** d'un dossier venu de Clio | idem | 1 |
+| `/admin/requests`, `/admin/requests/new` | personnel | **Demandes de documents** sur tous les dossiers : filtres, actions groupées (relancer, reçu, annuler), envoi groupé à plusieurs dossiers (ADR 0022) | `document_requests`, `matter_access`, `matter_tag_links` | 1 |
+| `/admin/matters/[matterId]/tracking` | équipe du dossier, firm_admin | **Suivi du dossier** (ADR 0018, 0019 : type, étapes du modèle, informations du dossier, **documents demandés au client**) : étapes visibles par le client (ajouter, terminer, réordonner, modifier, supprimer), avancement calculé, **équipe du dossier** (ajout et retrait : firm_admin) | `matter_timeline_steps`, `matter_team` | 1 |
+| `/admin/templates`, `/[typeId]` | firm_admin | **Modèles de dossiers** (ADR 0019) : types de dossier par groupe de pratique, étapes types, documents à demander, informations du dossier (champs visibles ou internes), bilingues | `matter_types`, `matter_type_steps`, `matter_type_documents`, `matter_type_fields` | 1 |
 | `/admin/audit` | firm_admin | Journal filtrable (dossier, acteur, action, période), export CSV | `list_audit_events()` | 1 |
 | `/admin/sync` | firm_admin | État des jobs, erreurs, relance manuelle, fraîcheur par ressource | `private.sync_jobs` (via serveur) | 2 |
 | `/admin/integrations` | firm_admin | Connexion Clio (OAuth), Graph, fournisseurs (affiche uniquement le statut et les scopes, jamais de secret) | `private.integration_connections` (via serveur) | 2 |

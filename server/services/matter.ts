@@ -35,18 +35,55 @@ export async function listMatters(filter: MatterFilter = "all"): Promise<MatterS
   return (data ?? []) as MatterSummary[];
 }
 
-export async function getMatterDetail(matterId: string) {
+/**
+ * Détail d'un dossier pour le client. Étapes affichées dans sa langue quand elles viennent d'un
+ * modèle (title_en) ; informations du dossier : la RLS ne renvoie que les champs visibles (ADR 0019).
+ */
+export async function getMatterDetail(matterId: string, locale = "en") {
   const access = await assertMatterAccess(matterId);
   const supabase = await createSupabaseServerClient();
-  const [{ data: matter }, { data: steps }] = await Promise.all([
+  const [{ data: matter }, { data: steps }, { data: values }, { data: tagLinks }] = await Promise.all([
     supabase.from("matters").select(MATTER_COLUMNS).eq("id", matterId).single(),
     supabase
       .from("matter_timeline_steps")
-      .select("id, position, title, description, is_completed, completed_at")
+      .select("id, position, title, title_en, description, description_en, is_completed, completed_at")
       .eq("matter_id", matterId)
       .order("position"),
+    supabase
+      .from("matter_field_values")
+      .select("value, matter_type_fields(label_fr, label_en, kind, position)")
+      .eq("matter_id", matterId),
+    // Étiquettes : la RLS ne renvoie que celles marquées visibles par le client (ADR 0021).
+    supabase
+      .from("matter_tag_links")
+      .select("matter_tags(name_fr, name_en, color)")
+      .eq("matter_id", matterId),
   ]);
-  return { matter: matter as MatterSummary, timeline: steps ?? [], accessLevel: access.accessLevel };
+  const en = locale === "en";
+  const timeline = (steps ?? []).map(({ title_en, description_en, ...s }) => ({
+    ...s,
+    title: en && title_en ? title_en : s.title,
+    description: en && title_en ? description_en : s.description,
+  }));
+  const fields = (values ?? [])
+    .map((v) => {
+      const f = v.matter_type_fields as unknown as {
+        label_fr: string;
+        label_en: string;
+        kind: "text" | "date" | "number";
+        position: number;
+      } | null;
+      return f
+        ? { label: en ? f.label_en : f.label_fr, kind: f.kind, position: f.position, value: v.value }
+        : null;
+    })
+    .filter((f): f is NonNullable<typeof f> => f !== null)
+    .sort((a, b) => a.position - b.position);
+  const tags = (tagLinks ?? [])
+    .map((l) => l.matter_tags as unknown as { name_fr: string; name_en: string; color: string } | null)
+    .filter((tg): tg is { name_fr: string; name_en: string; color: string } => tg !== null)
+    .map((tg) => ({ label: en ? tg.name_en : tg.name_fr, color: tg.color }));
+  return { matter: matter as MatterSummary, timeline, fields, tags, accessLevel: access.accessLevel };
 }
 
 /** Un dossier « demande une action » : signature en attente ou pièce demandée. */

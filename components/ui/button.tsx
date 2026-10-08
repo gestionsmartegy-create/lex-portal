@@ -18,13 +18,13 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        // --- Variantes Lex Canada (docs/design-system.md §4) ---
+        // --- Variantes Lex Canada (docs/design-system.md §4) : coins arrondis 8px, couleurs pleines du site (sRGB) ---
         primary:
-          "rounded-none border-marine bg-marine font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:bg-marine-light",
+          "rounded-[8px] border-marine bg-marine font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:border-marine-light hover:bg-marine-light",
         "outline-gold":
-          "rounded-none border-gold bg-transparent font-medium tracking-[0.08em] text-gold-ink uppercase transition-all duration-200 ease-premium hover:bg-gold hover:text-white",
+          "rounded-[8px] border-gold bg-gold font-semibold tracking-[0.08em] text-marine uppercase transition-all duration-200 ease-premium hover:border-gold-light hover:bg-gold-light",
         "ghost-white":
-          "rounded-none border-white/40 bg-transparent font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:bg-white/10",
+          "rounded-[8px] border-white bg-transparent font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:bg-white hover:text-marine",
       },
       size: {
         default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
@@ -40,6 +40,9 @@ const buttonVariants = cva(
         brand: "h-11 gap-2 px-7 text-[13px]",
       },
     },
+    // Les tailles xs/sm/icon-* imposent leur propre rayon : les variantes Lex Canada gardent 8px
+    // quelle que soit la taille (classes appliquées après celles des tailles).
+    compoundVariants: [{ variant: ["primary", "outline-gold", "ghost-white"], className: "rounded-[8px]" }],
     defaultVariants: {
       variant: "default",
       size: "default",

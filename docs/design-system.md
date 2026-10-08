@@ -108,7 +108,8 @@ Relevé sur lexcanadalaw.com : grand titre en 800 avec `letter-spacing: -0.025em
 | Token | Valeur |
 |---|---|
 | Rayon : cartes | `4px` |
-| Rayon : champs, badges, boutons | `2px` (boutons principaux à angle droit, `0`) |
+| Rayon : champs, badges | `2px` |
+| Rayon : boutons (`primary`, `outline-gold`, `ghost-white`) | `8px` — choix du responsable du 2026-10-06, s'écarte des angles droits du site public |
 | Bordure de carte | `1px solid gray-100`, **sans ombre** au repos |
 | Survol de carte (`card-hover`) | transformation et ombre en `.32s cubic-bezier(.23,1,.32,1)` |
 | Courbe d'animation | `--ease-premium: cubic-bezier(.23,1,.32,1)` |
@@ -127,6 +128,14 @@ Le style est sobre : peu d'ombres, des coins presque droits et des bordures fine
 .btn-outline-gold { color: var(--gold); border: 1px solid var(--gold); background: transparent; /* idem */ }
 .btn-ghost-white  { color: #fff; border: 1px solid rgb(255 255 255 / .4); background: transparent; /* idem */ }
 ```
+
+**Titres (2026-10-07)** : mêmes épaisseurs que lexcanadalaw.com — titre de page en Libre Franklin 800, titres de section en Libre Franklin 700.
+
+**Révision du 2026-10-07** (choix du responsable : « de vraies couleurs ») : coins arrondis `8px`, **couleurs pleines** reprises de la feuille de style de lexcanadalaw.com, en sRGB (profil du web), **sans transparence ni flou**.
+- `primary` : fond et bordure `marine` (#0D1B3E), texte blanc ; `marine-light` (#162347) au survol. Contraste 16,9:1 (15,4:1 au survol).
+- `outline-gold` : fond et bordure `gold` (#B8962E), **texte `marine`** (un texte blanc sur ce doré n'atteindrait que 2,9:1) ; `gold-light` (#D4AF5A) au survol. Contraste 6:1, et 8,1:1 au survol.
+- `ghost-white` (fonds sombres) : bordure et texte blancs ; au survol, fond blanc et texte `marine`.
+- Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`).
 
 Les icônes viennent de **lucide-react**, en 14–18px. Une flèche `→` suit les CTA principaux (« ACCESS MY PORTAL → »).
 
@@ -242,3 +251,8 @@ La maquette liste Clio, Microsoft 365 (« … & SharePoint »), LexisNexis, West
 - Écran **retiré** du portail client (information interne) ; réutilisable dans `/admin/integrations` (statut réel des connexions).
 - ⚠️ La maquette cite **Adobe Sign**, alors que le mémorandum cite **DocuSign** : question ajoutée à `open-questions.md`.
 - Le texte « Platform Vision » **répond en partie** à la question « pourquoi pas Clio for Clients » : le cabinet veut un portail à sa marque qui masque Clio. À faire confirmer par écrit.
+
+## Étiquettes de dossiers (ADR 0021)
+Palette fermée de 8 couleurs (`components/shared/tag-chip.tsx`), toujours un **texte foncé sur un fond clair**, contraste AA vérifié par axe :
+`marine` (tokens marine), `gold` (gold-pale / gold-ink), `red`, `orange`, `green`, `blue`, `purple` (nuances 50 et 800 de Tailwind) et `gray` (100 / 700).
+Forme : pastille arrondie, texte de 12 px en 500. Ces couleurs ne servent qu'aux étiquettes ; elles ne remplacent pas les couleurs de statut.

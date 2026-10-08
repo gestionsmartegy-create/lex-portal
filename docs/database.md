@@ -318,3 +318,30 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 6. Créer le premier firm_admin manuellement, puis l'inscrire dans un ADR :
    `update public.profiles set role = 'firm_admin' where email = '<admin>@lexcanadalaw.com';` (avec service_role).
 7. Dans Supabase Auth : **désactiver les inscriptions publiques**, activer le MFA TOTP, configurer le fournisseur Azure avec l'URL du tenant (single-tenant).
+
+## Suivi du dossier (ADR 0018, migration `20261007120000_matter_tracking.sql`)
+- `matter_timeline_steps` : suppression ouverte à l'équipe du dossier et au firm_admin (`timeline_staff_delete`).
+- `matters.progress_percent` : calculé par le trigger `matter_timeline_progress` (part des étapes terminées, NULL sans étape).
+- Audit des étapes par le trigger `matter_timeline_audit` (identifiants seulement).
+- `public.move_timeline_step(p_step uuid, p_direction integer)` : security invoker, `EXECUTE` pour `authenticated` seulement.
+
+## Modèles de dossiers (ADR 0019, migrations `20261007130000` et `20261007130100`)
+- `matter_types`, `matter_type_steps`, `matter_type_documents`, `matter_type_fields` : lecture par le personnel, écriture par le firm_admin. Les libellés des champs visibles sont lisibles par le client d'un dossier de ce type.
+- `matters.matter_type_id` (lisible par l'API ; choisi par l'équipe).
+- `matter_field_values` (matter_id, field_id, value ≤ 500) : écriture par l'équipe ou le firm_admin ; lecture client limitée aux champs visibles ; trigger « champ du même type ».
+- `matter_timeline_steps.title_en`, `description_en` ; `document_requests.title_en`, `description_en`.
+- `document_requests` : triggers `document_requests_guard` (destinataire avec accès actif ; auteur, statut et date imposés) et `document_requests_audit`.
+
+## Espace « Dossier » (ADR 0020, migrations `20261008120000` et `20261008120100`)
+- `matter_deliverables` (titre, description, date prévue, état `planned` / `in_progress` / `delivered` / `cancelled`, responsable du personnel, `visible_to_client`, `delivered_at`) :
+  - RLS : écriture par l'équipe du dossier ou le firm_admin ; lecture client limitée aux livrables visibles d'un dossier lisible ;
+  - trigger `matter_deliverables_guard` : responsable du personnel, dossier et auteur figés, date de remise posée par la base ;
+  - audit `matter_deliverable.*`, identifiants seulement.
+- `document_requests.fulfilled_document_id` : trigger `document_requests_document` (création et modification).
+  - Aucun document lié à la création.
+  - Ensuite, seulement un document **du même dossier et non interne**, et la demande passe à « reçue ».
+  - Il s'exécute avant `document_requests_guard`.
+
+## Étiquettes (ADR 0021, migration `20261008130000`)
+- `matter_tags` : lecture par le personnel, écriture par le firm_admin ; le client lit les étiquettes visibles posées sur ses dossiers (`private.client_sees_tag`).
+- `matter_tag_links` (matter_id, tag_id) : pose et retrait par l'équipe ou le firm_admin ; le client ne lit que les liens d'étiquettes visibles (`private.tag_is_visible`). Auteur imposé, audit `matter_tag.*`.
