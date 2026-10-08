@@ -334,6 +334,50 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"matter_tag_links": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"matter_id": string,"tag_id": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"matter_id": string,"tag_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"matter_id"?: string,"tag_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_tag_links_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_tag_links_matter_id_fkey"
+      columns: ["matter_id"]
+isOneToOne: false
+      referencedRelation: "matters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "matter_tag_links_tag_id_fkey"
+      columns: ["tag_id"]
+isOneToOne: false
+      referencedRelation: "matter_tags"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"matter_tags": {
+                  Row: {
+                    "color": string,"created_at": string,"id": string,"is_active": boolean,"name_en": string,"name_fr": string,"position": number,"updated_at": string,"visible_to_client": boolean
+                  }
+                  Insert: {
+                    "color"?: string,"created_at"?: string,"id"?: string,"is_active"?: boolean,"name_en": string,"name_fr": string,"position"?: number,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Update: {
+                    "color"?: string,"created_at"?: string,"id"?: string,"is_active"?: boolean,"name_en"?: string,"name_fr"?: string,"position"?: number,"updated_at"?: string,"visible_to_client"?: boolean
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"matter_team": {
                   Row: {
                     "created_at": string,"matter_id": string,"role": Database["public"]['Enums']["team_role"],"user_id": string

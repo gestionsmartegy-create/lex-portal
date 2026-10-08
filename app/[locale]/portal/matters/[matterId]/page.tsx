@@ -5,6 +5,7 @@ import { Freshness, MatterStatusBadge } from "@/components/portal/matter-parts";
 import { NewConversationForm } from "@/components/portal/message-forms";
 import { TabLinks } from "@/components/portal/tab-links";
 import { EmptyState, PageHeader, ProgressBar, SectionCard } from "@/components/portal/ui";
+import { TagChip, type TagTone } from "@/components/shared/tag-chip";
 import { DemoDataBadge } from "@/components/shared/demo-data-badge";
 import { Link } from "@/i18n/navigation";
 import { formatCalendarDate, formatDate } from "@/lib/format";
@@ -30,7 +31,7 @@ export default async function MatterPage({
   const tab: Tab = TABS.find((x) => x === sp.tab) ?? "overview";
 
   // Accès vérifié en premier (assertMatterAccess) : 404 identique si absent ou non autorisé.
-  const { matter, timeline, fields, accessLevel } = await getMatterDetail(matterId, locale);
+  const { matter, timeline, fields, tags, accessLevel } = await getMatterDetail(matterId, locale);
   const t = await getTranslations("portal");
   const base = `/portal/matters/${matterId}`;
 
@@ -155,6 +156,13 @@ export default async function MatterPage({
           </>
         }
       />
+      {tags.length ? (
+        <p className="-mt-4 mb-4 flex flex-wrap gap-1.5">
+          {tags.map((tg, i) => (
+            <TagChip key={`${tg.label}-${i}`} label={tg.label} color={tg.color as TagTone} />
+          ))}
+        </p>
+      ) : null}
       <TabLinks
         label={t("matter.tabsLabel")}
         items={TABS.map((x) => ({

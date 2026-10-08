@@ -242,3 +242,8 @@ La maquette liste Clio, Microsoft 365 (« … & SharePoint »), LexisNexis, West
 - Écran **retiré** du portail client (information interne) ; réutilisable dans `/admin/integrations` (statut réel des connexions).
 - ⚠️ La maquette cite **Adobe Sign**, alors que le mémorandum cite **DocuSign** : question ajoutée à `open-questions.md`.
 - Le texte « Platform Vision » **répond en partie** à la question « pourquoi pas Clio for Clients » : le cabinet veut un portail à sa marque qui masque Clio. À faire confirmer par écrit.
+
+## Étiquettes de dossiers (ADR 0021)
+Palette fermée de 8 couleurs (`components/shared/tag-chip.tsx`), toujours un **texte foncé sur un fond clair**, contraste AA vérifié par axe :
+`marine` (tokens marine), `gold` (gold-pale / gold-ink), `red`, `orange`, `green`, `blue`, `purple` (nuances 50 et 800 de Tailwind) et `gray` (100 / 700).
+Forme : pastille arrondie, texte de 12 px en 500. Ces couleurs ne servent qu'aux étiquettes ; elles ne remplacent pas les couleurs de statut.

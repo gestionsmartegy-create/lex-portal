@@ -566,7 +566,27 @@
       },
       "tracking": "Tracking",
       "open": "Open the matter",
-      "openNew": "Set up a matter"
+      "openNew": "Set up a matter",
+      "filters": {
+        "q": "Search (title or number)",
+        "tag": "Tag",
+        "type": "Matter type",
+        "lawyer": "Lawyer",
+        "status": "Status",
+        "alert": "Alert",
+        "all": "All",
+        "overdue": "Overdue documents",
+        "idle": "Inactive (14 days)",
+        "apply": "Filter",
+        "reset": "Reset",
+        "count": "{count, plural, =0 {No matter} one {# matter} other {# matters}}",
+        "none": "No matter matches these filters.",
+        "truncated": "showing the {limit} most recent; refine the filters"
+      },
+      "progress": "Progress",
+      "overdueCount": "{count} overdue",
+      "pendingCount": "{count} document(s) pending",
+      "lastActivity": "Activity {when}"
     },
     "audit": {
       "title": "Audit log",
@@ -708,7 +728,8 @@
         "deliverableAdded": "Deliverable added.",
         "deliverableUpdated": "Deliverable updated.",
         "deliverableRemoved": "Deliverable removed.",
-        "documentLinked": "Document linked: the request is marked received."
+        "documentLinked": "Document linked: the request is marked received.",
+        "tagsSaved": "Tags saved."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
@@ -823,7 +844,27 @@
         "removed": "Item removed.",
         "moved": "Order updated.",
         "failed": "The change could not be saved.",
-        "invalid": "Please check the form."
+        "invalid": "Please check the form.",
+        "tagSaved": "Tag saved."
+      },
+      "tags": {
+        "title": "Tags",
+        "help": "Colored tags to follow the portfolio (urgent, awaiting IRCC…). Internal by default; a tag marked visible is shown to the client.",
+        "visible": "Visible to the client",
+        "internal": "Internal",
+        "active": "Active",
+        "color": "Color",
+        "create": "Create the tag",
+        "colors": {
+          "marine": "Navy",
+          "gold": "Gold",
+          "red": "Red",
+          "orange": "Orange",
+          "green": "Green",
+          "blue": "Blue",
+          "purple": "Purple",
+          "gray": "Gray"
+        }
       }
     },
     "workspace": {
@@ -900,7 +941,10 @@
         "access": "client access",
         "requests": "document requests",
         "deliverables": "deliverables"
-      }
+      },
+      "tags": "Tags",
+      "tagVisible": "(visible to the client)",
+      "saveTags": "Save the tags"
     },
     "opening": {
       "title": "Set up a matter",

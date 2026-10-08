@@ -30,6 +30,7 @@ import {
   removeDeliverable,
   setDeliverableStatus,
 } from "@/server/services/matter-workspace";
+import { setMatterTags } from "@/server/services/matter-tags";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -62,7 +63,8 @@ type Notice =
   | "deliverableAdded"
   | "deliverableUpdated"
   | "deliverableRemoved"
-  | "documentLinked";
+  | "documentLinked"
+  | "tagsSaved";
 
 type Tab = (typeof workspaceTabs)[number];
 
@@ -313,4 +315,18 @@ export async function linkRequestDocumentAction(formData: FormData): Promise<voi
   await requireStaff(parsed.data.locale);
   const r = await linkRequestDocument(parsed.data.requestId, parsed.data.documentId);
   back(parsed.data.locale, parsed.data.matterId, r.ok ? "documentLinked" : "failed", parsed.data.tab);
+}
+
+/** Étiquettes d'un dossier : les cases cochées arrivent sous le même nom (getAll). */
+export async function setMatterTagsAction(formData: FormData): Promise<void> {
+  const raw = { ...Object.fromEntries(formData), tagIds: formData.getAll("tagIds") };
+  const parsed = base.extend({ tagIds: z.array(z.uuid()).max(30) }).safeParse(raw);
+  if (!parsed.success) {
+    const ctx = base.safeParse(raw);
+    if (ctx.success) back(ctx.data.locale, ctx.data.matterId, "invalid", ctx.data.tab);
+    return;
+  }
+  await requireStaff(parsed.data.locale);
+  const r = await setMatterTags(parsed.data.matterId, parsed.data.tagIds);
+  back(parsed.data.locale, parsed.data.matterId, r.ok ? "tagsSaved" : "failed", parsed.data.tab);
 }

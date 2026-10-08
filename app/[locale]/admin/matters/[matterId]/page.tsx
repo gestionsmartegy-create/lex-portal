@@ -20,6 +20,7 @@ import type { LucideIcon } from "lucide-react";
 import { PageHeader, ProgressBar, SectionCard } from "@/components/portal/ui";
 import { DemoDataBadge } from "@/components/shared/demo-data-badge";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { TagChip } from "@/components/shared/tag-chip";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { formatCalendarDate, formatDate, formatDateTime, formatMoney, formatRelative } from "@/lib/format";
@@ -38,6 +39,7 @@ import {
   removeTeamMemberAction,
   requestStatusAction,
   saveFieldsAction,
+  setMatterTagsAction,
   setMatterTypeAction,
   toggleStepAction,
   updateStepAction,
@@ -45,6 +47,7 @@ import {
 import { requireStaff } from "@/server/auth/session";
 import { pick, practiceGroups } from "@/server/services/matter-templates";
 import { deliverableStatuses, getMatterWorkspace } from "@/server/services/matter-workspace";
+import { getMatterTagIds, listTags } from "@/server/services/matter-tags";
 
 const TABS = ["overview", "steps", "documents", "team", "details"] as const;
 type Tab = (typeof TABS)[number];
@@ -67,6 +70,7 @@ const NOTICES = [
   "deliverableUpdated",
   "deliverableRemoved",
   "documentLinked",
+  "tagsSaved",
   "duplicate",
   "invalid",
   "failed",
@@ -145,11 +149,14 @@ export default async function MatterWorkspacePage({
   const sp = await searchParams;
   const data = await getMatterWorkspace(matterId);
   if (!data) notFound();
-  const [t, tm, tw] = await Promise.all([
+  const [t, tm, tw, allTags, tagIds] = await Promise.all([
     getTranslations("admin.tracking"),
     getTranslations("admin.matters"),
     getTranslations("admin.workspace"),
+    listTags(),
+    getMatterTagIds(matterId),
   ]);
+  const matterTags = allTags.filter((tg) => tagIds.includes(tg.id));
   const {
     matter,
     steps,
@@ -241,6 +248,13 @@ export default async function MatterWorkspacePage({
         message={notice ? t(`notices.${notice}`) : accessNotice}
         error={notice === "failed" || notice === "duplicate" || notice === "invalid" || partial.length > 0}
       />
+      {matterTags.length ? (
+        <p className="-mt-4 mb-4 flex flex-wrap gap-1.5">
+          {matterTags.map((tg) => (
+            <TagChip key={tg.id} label={pick(locale, tg.name_fr, tg.name_en)} color={tg.color} />
+          ))}
+        </p>
+      ) : null}
       {matter.progress_percent !== null ? (
         <div className="mb-6 max-w-xl">
           <ProgressBar value={matter.progress_percent} label={t("progress")} />
@@ -1115,6 +1129,39 @@ export default async function MatterWorkspacePage({
 
       {tab === "details" ? (
         <div className="grid gap-6 lg:grid-cols-2">
+          <SectionCard title={tw("tags")}>
+            <form action={setMatterTagsAction} className="space-y-3">
+              {hidden}
+              <fieldset className="flex flex-wrap gap-x-5 gap-y-2">
+                <legend className="sr-only">{tw("tags")}</legend>
+                {allTags
+                  .filter((tg) => tg.is_active || tagIds.includes(tg.id))
+                  .map((tg) => (
+                    <label
+                      key={tg.id}
+                      htmlFor={`tag-${tg.id}`}
+                      className="flex min-h-8 items-center gap-2 text-sm"
+                    >
+                      <input
+                        id={`tag-${tg.id}`}
+                        type="checkbox"
+                        name="tagIds"
+                        value={tg.id}
+                        defaultChecked={tagIds.includes(tg.id)}
+                        className="size-4 accent-marine"
+                      />
+                      <TagChip label={pick(locale, tg.name_fr, tg.name_en)} color={tg.color} />
+                      {tg.visible_to_client ? (
+                        <span className="text-xs text-ink-muted">{tw("tagVisible")}</span>
+                      ) : null}
+                    </label>
+                  ))}
+              </fieldset>
+              <Button type="submit" variant="outline-gold" size="sm">
+                {tw("saveTags")}
+              </Button>
+            </form>
+          </SectionCard>
           <SectionCard title={t("matterType")}>
             <form action={setMatterTypeAction} className="space-y-3">
               {hidden}
