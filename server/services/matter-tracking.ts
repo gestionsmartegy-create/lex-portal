@@ -33,7 +33,7 @@ const fail = (code: "NOT_FOUND" | "FAILED" | "DUPLICATE" = "FAILED"): Result => 
  * Accès en écriture au dossier ET rôle du personnel. assertMatterAccess(…, "read_write") accepte
  * aussi un client en lecture et réponse : ce service est réservé au cabinet (revue J7-bis).
  */
-async function assertStaffMatterAccess(matterId: string) {
+export async function assertStaffMatterAccess(matterId: string) {
   await assertMatterAccess(matterId, "read_write");
   const role = await getSessionRole();
   return role === "staff" || role === "firm_admin";
@@ -513,7 +513,7 @@ export async function setDocumentRequestStatus(
 }
 
 /** Avis « document demandé » au client (service_role : notifications, AGENTS.md §6). */
-async function notifyDocumentRequested(matterId: string, clientId: string) {
+export async function notifyDocumentRequested(matterId: string, clientId: string) {
   try {
     const admin = createSupabaseServiceClient();
     const [{ data: person }, { data: matter }] = await Promise.all([
