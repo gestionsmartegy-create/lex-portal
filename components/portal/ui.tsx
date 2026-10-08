@@ -18,7 +18,7 @@ export function PageHeader({
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-[28px] leading-tight font-bold text-marine">{title}</h1>
+        <h1 className="text-[28px] leading-tight font-extrabold text-marine">{title}</h1>
         {subtitle ? <p className="mt-1 text-sm text-ink-muted">{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-3">{actions}</div> : null}
@@ -44,7 +44,7 @@ export function SectionCard({
     <section className={cn("rounded-[4px] border border-gray-100 bg-white", className)}>
       {title ? (
         <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6">
-          <Heading className="font-display text-lg font-semibold text-marine">{title}</Heading>
+          <Heading className="font-display text-lg font-bold text-marine">{title}</Heading>
           {action}
         </div>
       ) : null}
