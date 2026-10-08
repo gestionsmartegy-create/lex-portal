@@ -93,7 +93,7 @@ export async function getMatterTracking(matterId: string) {
     supabase
       .from("document_requests")
       .select(
-        "id, title, title_en, description, description_en, due_date, status, created_at, requested_from",
+        "id, title, title_en, description, description_en, due_date, status, created_at, requested_from, fulfilled_document_id",
       )
       .eq("matter_id", matterId)
       .order("created_at", { ascending: false }),
@@ -482,7 +482,11 @@ export async function createDocumentRequest(
     due_date: input.dueDate,
     ...row,
   });
-  if (error) return fail();
+  if (error) {
+    // Trace serveur (code seulement) : un échec ne passe plus inaperçu (plan, phase 1).
+    console.error(JSON.stringify({ event: "document_request_failed", code: error.code }));
+    return fail();
+  }
   await notifyDocumentRequested(matterId, input.clientId);
   return { ok: true };
 }
