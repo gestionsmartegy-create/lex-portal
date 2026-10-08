@@ -18,6 +18,7 @@ import {
   updateTemplateItem,
   type TemplateItemInput,
 } from "@/server/services/matter-templates";
+import { createTag, tagColors, updateTag } from "@/server/services/matter-tags";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -135,4 +136,46 @@ export async function moveItemAction(formData: FormData): Promise<void> {
     parsed.data.direction === "up" ? -1 : 1,
   );
   toType(parsed.data.locale, parsed.data.typeId, r.ok ? "moved" : "failed");
+}
+
+// ---------------------------------------------------------------------------
+// Étiquettes (ADR 0021) : firm_admin seulement ; retour sur la page des modèles.
+// ---------------------------------------------------------------------------
+const tagShape = {
+  locale: localeSchema,
+  nameFr: z.string().trim().min(1).max(60),
+  nameEn: z.string().trim().min(1).max(60),
+  color: z.enum(tagColors),
+  visible: z.literal("on").optional(),
+};
+
+export async function createTagAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  const parsed = z.object(tagShape).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) redirect(`/${locale}/admin/templates?notice=invalid`);
+  await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const r = await createTag({
+    nameFr: parsed.data.nameFr,
+    nameEn: parsed.data.nameEn,
+    color: parsed.data.color,
+    visible: parsed.data.visible === "on",
+  });
+  redirect(`/${parsed.data.locale}/admin/templates?notice=${r.ok ? "tagSaved" : "failed"}`);
+}
+
+export async function updateTagAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  const parsed = z
+    .object({ ...tagShape, tagId: z.uuid(), active: z.literal("on").optional() })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) redirect(`/${locale}/admin/templates?notice=invalid`);
+  await requireStaff(parsed.data.locale, ["firm_admin"]);
+  const r = await updateTag(parsed.data.tagId, {
+    nameFr: parsed.data.nameFr,
+    nameEn: parsed.data.nameEn,
+    color: parsed.data.color,
+    visible: parsed.data.visible === "on",
+    active: parsed.data.active === "on",
+  });
+  redirect(`/${parsed.data.locale}/admin/templates?notice=${r.ok ? "tagSaved" : "failed"}`);
 }

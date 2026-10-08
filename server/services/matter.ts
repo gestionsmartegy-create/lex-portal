@@ -42,7 +42,7 @@ export async function listMatters(filter: MatterFilter = "all"): Promise<MatterS
 export async function getMatterDetail(matterId: string, locale = "en") {
   const access = await assertMatterAccess(matterId);
   const supabase = await createSupabaseServerClient();
-  const [{ data: matter }, { data: steps }, { data: values }] = await Promise.all([
+  const [{ data: matter }, { data: steps }, { data: values }, { data: tagLinks }] = await Promise.all([
     supabase.from("matters").select(MATTER_COLUMNS).eq("id", matterId).single(),
     supabase
       .from("matter_timeline_steps")
@@ -52,6 +52,11 @@ export async function getMatterDetail(matterId: string, locale = "en") {
     supabase
       .from("matter_field_values")
       .select("value, matter_type_fields(label_fr, label_en, kind, position)")
+      .eq("matter_id", matterId),
+    // Étiquettes : la RLS ne renvoie que celles marquées visibles par le client (ADR 0021).
+    supabase
+      .from("matter_tag_links")
+      .select("matter_tags(name_fr, name_en, color)")
       .eq("matter_id", matterId),
   ]);
   const en = locale === "en";
@@ -74,7 +79,11 @@ export async function getMatterDetail(matterId: string, locale = "en") {
     })
     .filter((f): f is NonNullable<typeof f> => f !== null)
     .sort((a, b) => a.position - b.position);
-  return { matter: matter as MatterSummary, timeline, fields, accessLevel: access.accessLevel };
+  const tags = (tagLinks ?? [])
+    .map((l) => l.matter_tags as unknown as { name_fr: string; name_en: string; color: string } | null)
+    .filter((tg): tg is { name_fr: string; name_en: string; color: string } => tg !== null)
+    .map((tg) => ({ label: en ? tg.name_en : tg.name_fr, color: tg.color }));
+  return { matter: matter as MatterSummary, timeline, fields, tags, accessLevel: access.accessLevel };
 }
 
 /** Un dossier « demande une action » : signature en attente ou pièce demandée. */

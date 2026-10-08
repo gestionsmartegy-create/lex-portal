@@ -584,7 +584,27 @@
       },
       "tracking": "Suivi du dossier",
       "open": "Ouvrir le dossier",
-      "openNew": "Mettre en place un dossier"
+      "openNew": "Mettre en place un dossier",
+      "filters": {
+        "q": "Recherche (titre ou numéro)",
+        "tag": "Étiquette",
+        "type": "Type de dossier",
+        "lawyer": "Avocat",
+        "status": "Statut",
+        "alert": "Alerte",
+        "all": "Tous",
+        "overdue": "Documents en retard",
+        "idle": "Inactifs (14 jours)",
+        "apply": "Filtrer",
+        "reset": "Réinitialiser",
+        "count": "{count, plural, =0 {Aucun dossier} one {# dossier} other {# dossiers}}",
+        "none": "Aucun dossier ne correspond à ces filtres.",
+        "truncated": "seuls les {limit} plus récents sont analysés ; affinez les filtres"
+      },
+      "progress": "Avancement",
+      "overdueCount": "{count} en retard",
+      "pendingCount": "{count} document(s) en attente",
+      "lastActivity": "Activité {when}"
     },
     "audit": {
       "title": "Journal d'audit",
@@ -726,7 +746,8 @@
         "deliverableAdded": "Livrable ajouté.",
         "deliverableUpdated": "Livrable mis à jour.",
         "deliverableRemoved": "Livrable retiré.",
-        "documentLinked": "Document lié : la demande est marquée reçue."
+        "documentLinked": "Document lié : la demande est marquée reçue.",
+        "tagsSaved": "Étiquettes enregistrées."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -841,7 +862,27 @@
         "removed": "Élément retiré.",
         "moved": "Ordre mis à jour.",
         "failed": "La modification n'a pas pu être enregistrée.",
-        "invalid": "Veuillez vérifier le formulaire."
+        "invalid": "Veuillez vérifier le formulaire.",
+        "tagSaved": "Étiquette enregistrée."
+      },
+      "tags": {
+        "title": "Étiquettes",
+        "help": "Étiquettes en couleur pour suivre le portefeuille (urgent, en attente d'IRCC…). Internes par défaut ; une étiquette marquée visible est montrée au client.",
+        "visible": "Visible par le client",
+        "internal": "Interne",
+        "active": "Active",
+        "color": "Couleur",
+        "create": "Créer l'étiquette",
+        "colors": {
+          "marine": "Marine",
+          "gold": "Or",
+          "red": "Rouge",
+          "orange": "Orange",
+          "green": "Vert",
+          "blue": "Bleu",
+          "purple": "Violet",
+          "gray": "Gris"
+        }
       }
     },
     "workspace": {
@@ -918,7 +959,10 @@
         "access": "accès du client",
         "requests": "demandes de documents",
         "deliverables": "livrables"
-      }
+      },
+      "tags": "Étiquettes",
+      "tagVisible": "(visible par le client)",
+      "saveTags": "Enregistrer les étiquettes"
     },
     "opening": {
       "title": "Mettre en place un dossier",

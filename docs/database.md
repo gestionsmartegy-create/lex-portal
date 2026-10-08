@@ -341,3 +341,7 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
   - Aucun document lié à la création.
   - Ensuite, seulement un document **du même dossier et non interne**, et la demande passe à « reçue ».
   - Il s'exécute avant `document_requests_guard`.
+
+## Étiquettes (ADR 0021, migration `20261008130000`)
+- `matter_tags` : lecture par le personnel, écriture par le firm_admin ; le client lit les étiquettes visibles posées sur ses dossiers (`private.client_sees_tag`).
+- `matter_tag_links` (matter_id, tag_id) : pose et retrait par l'équipe ou le firm_admin ; le client ne lit que les liens d'étiquettes visibles (`private.tag_is_visible`). Auteur imposé, audit `matter_tag.*`.
