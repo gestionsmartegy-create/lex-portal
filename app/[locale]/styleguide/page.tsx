@@ -69,9 +69,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">
-              {t("typography")}
-            </CardTitle>
+            <CardTitle className="font-display text-lg font-bold text-marine">{t("typography")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="font-display text-[28px] font-bold text-marine">{t("displaySample")}</p>

@@ -168,6 +168,7 @@ function todayHalifax() {
 
 export async function listPortfolio(
   filters: MatterFilters,
+  opts: { oldestFirst?: boolean } = {},
 ): Promise<{ rows: PortfolioRow[]; truncated: boolean }> {
   if (!(await getUser())) return { rows: [], truncated: false };
   const supabase = await createSupabaseServerClient();
@@ -176,8 +177,10 @@ export async function listPortfolio(
     .select(
       "id, display_number, title, status, progress_percent, matter_type_id, responsible_name, is_mock, updated_at",
     )
-    .order("updated_at", { ascending: false })
+    // Les plus anciens d'abord pour chercher les dossiers inactifs (sinon, les plus récents).
+    .order("updated_at", { ascending: Boolean(opts.oldestFirst) })
     .limit(PORTFOLIO_LIMIT);
+  if (filters.alert === "idle") query = query.neq("status", "closed");
   if (filters.status) query = query.eq("status", filters.status);
   if (filters.type) query = query.eq("matter_type_id", filters.type);
   const { data: matters } = await query;
