@@ -345,3 +345,6 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 ## Étiquettes (ADR 0021, migration `20261008130000`)
 - `matter_tags` : lecture par le personnel, écriture par le firm_admin ; le client lit les étiquettes visibles posées sur ses dossiers (`private.client_sees_tag`).
 - `matter_tag_links` (matter_id, tag_id) : pose et retrait par l'équipe ou le firm_admin ; le client ne lit que les liens d'étiquettes visibles (`private.tag_is_visible`). Auteur imposé, audit `matter_tag.*`.
+
+## Vues enregistrées (ADR 0023, migration `20261009120000_saved_views.sql`)
+- `matter_saved_views` (owner_id, name, query) : filtres du portefeuille enregistrés sous un nom, **personnels**. RLS : lecture, création et suppression par le seul propriétaire, s'il fait partie du personnel. Le propriétaire est imposé par défaut (`auth.uid()`). La requête est limitée à 500 caractères du jeu d'URL, et le serveur la remet sous forme canonique. Au plus 20 vues par personne : limite vérifiée par le service et garantie par le trigger `private.guard_saved_views_limit` (migration `20261009120100`).

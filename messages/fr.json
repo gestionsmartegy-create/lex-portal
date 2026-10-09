@@ -497,7 +497,21 @@
       "quick": "Actions rapides",
       "inviteClient": "Inviter un client",
       "manageAccess": "Gérer l'accès aux dossiers",
-      "staffOnly": "Votre rôle donne accès en lecture aux dossiers de votre équipe."
+      "staffOnly": "Votre rôle donne accès en lecture aux dossiers de votre équipe.",
+      "watch": {
+        "title": "À surveiller",
+        "none": "Rien à surveiller : aucun retard, aucune échéance proche, aucun dossier inactif.",
+        "groups": {
+          "overdueRequests": "Demandes de documents en retard ({count})",
+          "lateDeliverables": "Livrables en retard ({count})",
+          "soonRequests": "Documents attendus dans les 7 jours ({count})",
+          "soonDeliverables": "Livrables prévus dans les 7 jours ({count})",
+          "idleMatters": "Sans activité depuis 14 jours ({count})"
+        },
+        "dueOn": "Avant le {date}",
+        "lastActivity": "Dernière activité {when}",
+        "seeAll": "Tout voir ({count})"
+      }
     },
     "clients": {
       "title": "Clients",
@@ -587,7 +601,36 @@
       "progress": "Avancement",
       "overdueCount": "{count} en retard",
       "pendingCount": "{count} document(s) en attente",
-      "lastActivity": "Activité {when}"
+      "lastActivity": "Activité {when}",
+      "mode": {
+        "label": "Affichage",
+        "list": "Liste",
+        "board": "Tableau par étape"
+      },
+      "board": {
+        "label": "Dossiers par étape",
+        "chooseType": "Choisissez un type de dossier dans les filtres pour voir ses dossiers par étape (une colonne par étape de son modèle).",
+        "notStarted": "Pas encore d'étapes",
+        "other": "Autre étape",
+        "done": "Toutes les étapes terminées",
+        "empty": "Aucun dossier à cette étape."
+      },
+      "views": {
+        "title": "Vues enregistrées",
+        "none": "Aucune vue enregistrée. Réglez les filtres, puis enregistrez-les sous un nom.",
+        "name": "Nom de cette vue",
+        "save": "Enregistrer cette vue",
+        "remove": "Retirer la vue {name}"
+      },
+      "notices": {
+        "viewSaved": "Vue enregistrée.",
+        "viewRemoved": "Vue retirée.",
+        "viewDuplicate": "Vous avez déjà une vue portant ce nom.",
+        "viewLimit": "Vous pouvez enregistrer jusqu'à 20 vues. Retirez-en une d'abord.",
+        "viewInvalid": "Veuillez donner un nom à la vue.",
+        "viewFailed": "La vue n'a pas pu être enregistrée.",
+        "viewRemoveFailed": "La vue n'a pas pu être retirée."
+      }
     },
     "audit": {
       "title": "Journal d'audit",
