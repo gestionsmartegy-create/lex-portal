@@ -418,6 +418,24 @@
       "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement.",
       "documentRequestedTitle": "Document demandé",
       "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}."
+    },
+    "search": {
+      "label": "Rechercher dans le portail",
+      "placeholder": "Rechercher dossiers, documents, messages…",
+      "open": "Rechercher",
+      "title": "Recherche",
+      "subtitle": "Trouvez un dossier, un document ou un message.",
+      "resultsFor": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}} pour « {query} »",
+      "hint": "Saisissez au moins 2 caractères pour rechercher dans vos dossiers, documents et messages.",
+      "tooShort": "Saisissez au moins 2 caractères.",
+      "rateLimited": "Trop de recherches en peu de temps. Veuillez patienter quelques minutes.",
+      "none": "Aucun élément ne correspond à votre recherche.",
+      "noSubject": "Conversation",
+      "groups": {
+        "matters": "Dossiers",
+        "documents": "Documents",
+        "messages": "Messages"
+      }
     }
   },
   "admin": {

@@ -418,6 +418,24 @@
       "stepCompletedBody": "A step of matter {number} is complete. See the progress.",
       "documentRequestedTitle": "Document requested",
       "documentRequestedBody": "The firm is asking you for a document for matter {number}."
+    },
+    "search": {
+      "label": "Search the portal",
+      "placeholder": "Search matters, documents, messages…",
+      "open": "Search",
+      "title": "Search",
+      "subtitle": "Find a matter, a document or a message.",
+      "resultsFor": "{count, plural, =0 {No result} one {# result} other {# results}} for “{query}”",
+      "hint": "Type at least 2 characters to search your matters, documents and messages.",
+      "tooShort": "Type at least 2 characters.",
+      "rateLimited": "Too many searches in a short time. Please wait a few minutes.",
+      "none": "Nothing matches your search.",
+      "noSubject": "Conversation",
+      "groups": {
+        "matters": "Matters",
+        "documents": "Documents",
+        "messages": "Messages"
+      }
     }
   },
   "admin": {
