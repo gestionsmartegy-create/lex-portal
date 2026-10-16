@@ -10,6 +10,7 @@ import {
   saveCourt,
   saveOffice,
   setActive,
+  setCalendarViewer,
   setMatterOffice,
   setStaffOffices,
   timezones,
@@ -110,4 +111,16 @@ export async function matterOfficeAction(formData: FormData): Promise<void> {
   redirect(
     `/${locale}/admin/matters/${parsed.data.matterId}?tab=details&notice=${r.ok ? "officeSaved" : "failed"}`,
   );
+}
+
+/** Adjoint·e : voit toutes les dates de cour du cabinet (firm_admin seulement). */
+export async function calendarViewerAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  await requireStaff(locale, ["firm_admin"]);
+  const parsed = z
+    .object({ userId: z.uuid(), enabled: z.enum(["true", "false"]) })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) toOffices(locale, "invalid");
+  const r = await setCalendarViewer(parsed.data.userId, parsed.data.enabled === "true");
+  toOffices(locale, r.ok ? "saved" : "failed");
 }

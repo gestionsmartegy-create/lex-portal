@@ -98,20 +98,15 @@ export default async function CourtCalendarPage({
 
   const chip = (i: CalendarItem, compact: boolean) => {
     const court = i.courtId ? courtById.get(i.courtId) : undefined;
-    return (
-      <Link
-        key={i.id}
-        href={`/admin/matters/${i.matterId}?tab=court`}
-        className={`block rounded-[2px] border px-2 py-1 text-xs hover:underline ${
-          i.conflict
-            ? "border-red-300 bg-red-50 text-red-900"
-            : i.status === "scheduled"
-              ? "border-gold/50 bg-gold-pale text-marine"
-              : "border-gray-200 bg-white text-marine"
-        }`}
-      >
+    const tone = i.conflict
+      ? "border-red-300 bg-red-50 text-red-900"
+      : i.status === "scheduled"
+        ? "border-gold/50 bg-gold-pale text-marine"
+        : "border-gray-200 bg-white text-marine";
+    const body = (
+      <>
         <span className="font-semibold">{i.allDay ? t("allDay") : timeOf(i, locale)}</span>{" "}
-        {tCourt(`kinds.${i.kind}`)} · {i.matterNumber ?? i.matterTitle}
+        {tCourt(`kinds.${i.kind}`)} · {i.matterNumber || i.matterTitle || t("unnamedMatter")}
         {!compact && court ? (
           <span className="block text-ink-muted">{pick(locale, court.name_fr, court.name_en)}</span>
         ) : null}
@@ -122,7 +117,22 @@ export default async function CourtCalendarPage({
             {t("conflict")}
           </span>
         ) : null}
+        {!i.onTeam ? <span className="block text-ink-muted">{t("otherTeam")}</span> : null}
+      </>
+    );
+    // Hors de ses équipes (adjoint·e désigné·e) : lecture seule, le dossier ne s'ouvre pas.
+    return i.onTeam ? (
+      <Link
+        key={i.id}
+        href={`/admin/matters/${i.matterId}?tab=court`}
+        className={`block rounded-[2px] border px-2 py-1 text-xs hover:underline ${tone}`}
+      >
+        {body}
       </Link>
+    ) : (
+      <div key={i.id} className={`block rounded-[2px] border px-2 py-1 text-xs ${tone}`}>
+        {body}
+      </div>
     );
   };
 

@@ -1196,6 +1196,13 @@
         "duplicate": "This name is already used.",
         "failed": "The change could not be saved.",
         "invalid": "Please check the form (a provincial court needs a time zone)."
+      },
+      "viewers": {
+        "title": "Court calendar: assistants",
+        "help": "Assistants see every court date of the firm in the court calendar (read only outside their teams: no internal notes, no virtual link, no access to the matter).",
+        "on": "Sees the whole firm",
+        "add": "Give access to the whole firm",
+        "remove": "Remove access"
       }
     },
     "court": {
@@ -1309,7 +1316,9 @@
       "open": "Open the court calendar",
       "noneNext14": "No court date in the next 14 days.",
       "upcomingCount": "{count, plural, one {# court date} other {# court dates}}",
-      "alertsCount": "To check: {conflicts} conflict(s), {toConfirm} to be confirmed"
+      "alertsCount": "To check: {conflicts} conflict(s), {toConfirm} to be confirmed",
+      "otherTeam": "Other team (read only)",
+      "unnamedMatter": "Matter"
     }
   }
 }

@@ -226,3 +226,22 @@ export async function primaryOfficeOf(userId: string): Promise<string | null> {
     .maybeSingle();
   return data?.office_id ?? null;
 }
+
+/** Adjoint·e·s désigné·e·s : voient toutes les dates de cour du cabinet (ADR 0027). */
+export async function listCalendarViewers(): Promise<string[]> {
+  if (!(await isStaff())) return [];
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("court_calendar_viewers").select("user_id");
+  return (data ?? []).map((v) => v.user_id);
+}
+
+export async function setCalendarViewer(userId: string, enabled: boolean): Promise<Result> {
+  if (!(await isAdmin()) || !uuid.safeParse(userId).success) return fail("NOT_FOUND");
+  const supabase = await createSupabaseServerClient();
+  const { error } = enabled
+    ? await supabase
+        .from("court_calendar_viewers")
+        .upsert({ user_id: userId }, { onConflict: "user_id", ignoreDuplicates: true })
+    : await supabase.from("court_calendar_viewers").delete().eq("user_id", userId);
+  return error ? fail() : { ok: true };
+}

@@ -79,6 +79,32 @@ test("bureaux : création, archivage, personnel, bureau d'un dossier et filtre d
       )
       .toEqual([{ office_id: halifax!.id, is_primary: true }]);
 
+    // Adjoint·e : accès à tout le calendrier de cour, puis retrait.
+    const viewerRow = page
+      .locator("li", { has: page.getByRole("button", { name: /whole firm : |Remove access : / }) })
+      .filter({ has: page.locator(`input[name="userId"][value="${staff.id}"]`) });
+    await viewerRow.getByRole("button", { name: /Give access to the whole firm/ }).click();
+    await expect(page.getByText("Saved.", { exact: true })).toBeVisible({ timeout: 15_000 });
+    await expect
+      .poll(
+        async () =>
+          (await admin.from("court_calendar_viewers").select("user_id").eq("user_id", staff.id)).data?.length,
+        { timeout: 15_000 },
+      )
+      .toBe(1);
+    await page
+      .locator("li")
+      .filter({ has: page.locator(`input[name="userId"][value="${staff.id}"]`) })
+      .getByRole("button", { name: /Remove access/ })
+      .click();
+    await expect
+      .poll(
+        async () =>
+          (await admin.from("court_calendar_viewers").select("user_id").eq("user_id", staff.id)).data?.length,
+        { timeout: 15_000 },
+      )
+      .toBe(0);
+
     // Bureau du dossier, puis filtre du portefeuille.
     await page.goto(`/en/admin/matters/${matter!.id}?tab=details`);
     await page.getByLabel("Office", { exact: true }).selectOption(halifax!.id);
