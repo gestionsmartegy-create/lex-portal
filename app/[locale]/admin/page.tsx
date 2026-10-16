@@ -1,5 +1,6 @@
 import { FolderOpen, MailPlus, Users } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CourtWatchPanel } from "./_components/court-watch-panel";
 import { WatchlistPanel } from "./_components/watchlist-panel";
 import { EmptyState, PageHeader, SectionCard, StatCard } from "@/components/portal/ui";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { formatRelative } from "@/lib/format";
 import { requireStaff } from "@/server/auth/session";
 import { getAdminOverview, listAuditEvents } from "@/server/services/admin";
+import { getCourtWatch } from "@/server/services/court-calendar";
 import { getWatchlist } from "@/server/services/matter-board";
 
 export default async function AdminHome({ params }: PageProps<"/[locale]/admin">) {
@@ -14,10 +16,11 @@ export default async function AdminHome({ params }: PageProps<"/[locale]/admin">
   setRequestLocale(locale);
   const { role } = await requireStaff(locale);
   const isAdmin = role === "firm_admin";
-  const [t, overview, watch, events] = await Promise.all([
+  const [t, overview, watch, court, events] = await Promise.all([
     getTranslations("admin.overview"),
     getAdminOverview(),
     getWatchlist(),
+    getCourtWatch(),
     isAdmin ? listAuditEvents({ limit: 8 }) : Promise.resolve([]),
   ]);
 
@@ -51,6 +54,7 @@ export default async function AdminHome({ params }: PageProps<"/[locale]/admin">
           href="/admin/matters"
         />
       </div>
+      {court ? <CourtWatchPanel data={court} locale={locale} /> : null}
       {watch ? <WatchlistPanel data={watch} locale={locale} /> : null}
       {isAdmin ? (
         <div className="grid gap-6 lg:grid-cols-3">

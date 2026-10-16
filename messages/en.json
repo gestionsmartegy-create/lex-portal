@@ -503,7 +503,8 @@
       "messages": "Messages",
       "templates": "Matter templates",
       "requests": "Document requests",
-      "offices": "Offices & courts"
+      "offices": "Offices & courts",
+      "courtCalendar": "Court calendar"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1268,6 +1269,47 @@
         "instructions": "Instructions for the client",
         "visible": "Show this date to the client"
       }
+    },
+    "courtCalendar": {
+      "title": "Court calendar",
+      "subtitleFirm": "Every court date of the firm, all offices.",
+      "subtitleTeams": "The court dates of your teams' matters.",
+      "viewLabel": "Display",
+      "periodLabel": "Period",
+      "views": {
+        "month": "Month",
+        "week": "Week",
+        "list": "List"
+      },
+      "previous": "Previous period",
+      "next": "Next period",
+      "today": "Today",
+      "gridLabel": "Court dates by day",
+      "allDay": "All day",
+      "toConfirm": "To be confirmed",
+      "conflict": "Schedule conflict",
+      "none": "No court date in this period.",
+      "count": "{count, plural, =0 {No court date} one {# court date} other {# court dates}}",
+      "truncated": "only the first 500 are shown; narrow the filters",
+      "help": "Times are shown in each court's time zone. A conflict means a lawyer present at two dates that overlap, or with less than one hour between two different courts. Court dates are entered in each matter's \"Court\" tab.",
+      "filters": {
+        "office": "Office",
+        "lawyer": "Lawyer present",
+        "court": "Court",
+        "kind": "Type",
+        "status": "Status",
+        "all": "All",
+        "active": "Upcoming and held",
+        "toConfirm": "To be confirmed only",
+        "allStatuses": "All (incl. adjourned and cancelled)",
+        "mine": "My matters only",
+        "apply": "Filter"
+      },
+      "next14": "Court dates in the next 14 days",
+      "open": "Open the court calendar",
+      "noneNext14": "No court date in the next 14 days.",
+      "upcomingCount": "{count, plural, one {# court date} other {# court dates}}",
+      "alertsCount": "To check: {conflicts} conflict(s), {toConfirm} to be confirmed"
     }
   }
 }
