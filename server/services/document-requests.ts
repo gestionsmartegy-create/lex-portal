@@ -20,6 +20,7 @@ const uuid = z.uuid();
 export const requestFiltersSchema = z.object({
   status: z.enum(["pending", "overdue", "fulfilled", "cancelled"]).optional().catch(undefined),
   tag: z.uuid().optional().catch(undefined),
+  office: z.uuid().optional().catch(undefined),
   q: z.string().trim().max(100).optional().catch(undefined),
 });
 export type RequestFilters = z.infer<typeof requestFiltersSchema>;
@@ -55,13 +56,14 @@ export async function listAllRequests(filters: RequestFilters): Promise<GlobalRe
   let query = supabase
     .from("document_requests")
     .select(
-      "id, matter_id, title, title_en, due_date, status, created_at, requested_from, matters(display_number, title)",
+      "id, matter_id, title, title_en, due_date, status, created_at, requested_from, matters!inner(display_number, title, office_id)",
     )
     .order("created_at", { ascending: false })
     .limit(LIMIT);
   if (filters.status === "fulfilled" || filters.status === "cancelled")
     query = query.eq("status", filters.status);
   if (filters.status === "pending" || filters.status === "overdue") query = query.eq("status", "pending");
+  if (filters.office) query = query.eq("matters.office_id", filters.office);
   const { data } = await query;
   let rows = data ?? [];
   if (filters.tag) {

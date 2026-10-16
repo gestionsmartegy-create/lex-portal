@@ -19,6 +19,7 @@ import {
 } from "@/server/services/matter-board";
 import { listPortfolio, listTags, matterFiltersSchema } from "@/server/services/matter-tags";
 import { listMatterTypes, pick } from "@/server/services/matter-templates";
+import { listOffices } from "@/server/services/offices";
 
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
@@ -51,18 +52,20 @@ export default async function AdminMattersPage({
     tag: sp.tag || undefined,
     type: sp.type || undefined,
     lawyer: sp.lawyer || undefined,
+    office: sp.office || undefined,
     status: sp.status || undefined,
     alert: sp.alert || undefined,
   });
   const mode = viewModeSchema.parse(sp.view);
   const supabase = await createSupabaseServerClient();
-  const [t, portfolio, board, views, tags, types, { data: staff }] = await Promise.all([
+  const [t, portfolio, board, views, tags, types, offices, { data: staff }] = await Promise.all([
     getTranslations("admin.matters"),
     mode === "list" ? listPortfolio(filters) : Promise.resolve({ rows: [], truncated: false }),
     mode === "board" && filters.type ? getMatterBoard(filters.type, filters) : Promise.resolve(null),
     listSavedViews(),
     listTags(),
     listMatterTypes(),
+    listOffices(),
     supabase
       .from("profiles")
       .select("id, first_name, last_name, email")
@@ -123,7 +126,9 @@ export default async function AdminMattersPage({
       </nav>
 
       <SectionCard className="mb-6">
+        {/* key : les listes de choix se remettent à jour quand on ouvre une vue enregistrée. */}
         <form
+          key={currentQuery}
           method="get"
           action={`/${locale}/admin/matters`}
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
@@ -170,6 +175,19 @@ export default async function AdminMattersPage({
               {(staff ?? []).map((p) => (
                 <option key={p.id} value={p.id}>
                   {person(p)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="f-office" className={labelClass}>
+              {t("filters.office")}
+            </label>
+            <select id="f-office" name="office" defaultValue={filters.office ?? ""} className={fieldClass}>
+              <option value="">{t("filters.all")}</option>
+              {offices.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {pick(locale, o.name_fr, o.name_en)}
                 </option>
               ))}
             </select>

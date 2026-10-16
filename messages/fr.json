@@ -502,7 +502,8 @@
       "integrations": "Intégrations",
       "messages": "Messages",
       "templates": "Modèles de dossiers",
-      "requests": "Demandes de documents"
+      "requests": "Demandes de documents",
+      "offices": "Bureaux et tribunaux"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -614,7 +615,8 @@
         "reset": "Réinitialiser",
         "count": "{count, plural, =0 {Aucun dossier} one {# dossier} other {# dossiers}}",
         "none": "Aucun dossier ne correspond à ces filtres.",
-        "truncated": "seuls les {limit} plus récents sont analysés ; affinez les filtres"
+        "truncated": "seuls les {limit} plus récents sont analysés ; affinez les filtres",
+        "office": "Bureau"
       },
       "progress": "Avancement",
       "overdueCount": "{count} en retard",
@@ -791,7 +793,8 @@
         "deliverableUpdated": "Livrable mis à jour.",
         "deliverableRemoved": "Livrable retiré.",
         "documentLinked": "Document lié : la demande est marquée reçue.",
-        "tagsSaved": "Étiquettes enregistrées."
+        "tagsSaved": "Étiquettes enregistrées.",
+        "officeSaved": "Bureau enregistré."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -1002,11 +1005,16 @@
         "team": "équipe",
         "access": "accès du client",
         "requests": "demandes de documents",
-        "deliverables": "livrables"
+        "deliverables": "livrables",
+        "office": "bureau"
       },
       "tags": "Étiquettes",
       "tagVisible": "(visible par le client)",
-      "saveTags": "Enregistrer les étiquettes"
+      "saveTags": "Enregistrer les étiquettes",
+      "office": "Bureau",
+      "noOffice": "Aucun bureau",
+      "saveOffice": "Enregistrer le bureau",
+      "officeHelp": "Le bureau fixe le fuseau horaire et le calendrier du dossier. Il ne change pas qui peut voir le dossier."
     },
     "opening": {
       "title": "Mettre en place un dossier",
@@ -1051,7 +1059,10 @@
       "notices": {
         "invalid": "Veuillez vérifier le formulaire.",
         "failed": "Le dossier n'a pas pu être mis en place."
-      }
+      },
+      "office": "Bureau",
+      "officeAuto": "Bureau principal de l'avocat responsable",
+      "officeNone": "Aucun bureau"
     },
     "requests": {
       "title": "Demandes de documents",
@@ -1068,7 +1079,8 @@
         "type": "Type de dossier",
         "all": "Tous",
         "apply": "Filtrer",
-        "count": "{count, plural, =0 {Aucune demande} one {# demande} other {# demandes}}"
+        "count": "{count, plural, =0 {Aucune demande} one {# demande} other {# demandes}}",
+        "office": "Bureau"
       },
       "status": {
         "pending": "En attente",
@@ -1099,6 +1111,73 @@
         "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
         "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
         "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
+      }
+    },
+    "offices": {
+      "title": "Bureaux et tribunaux",
+      "subtitle": "Les bureaux du cabinet, qui travaille où, et les tribunaux devant lesquels vous plaidez.",
+      "offices": "Bureaux",
+      "staff": "Personnel par bureau",
+      "courts": "Tribunaux",
+      "noRights": "Un bureau organise les dossiers et les calendriers ; il ne donne jamais accès à un dossier. L'accès reste celui de l'équipe de chaque dossier.",
+      "staffHelp": "Choisissez le bureau principal de chaque personne, et les autres bureaux où elle travaille aussi.",
+      "courtsHelp": "Liste de départ, à vérifier et compléter par le cabinet. Archivez un tribunal plutôt que de le supprimer.",
+      "noOffice": "Aucun bureau pour l'instant.",
+      "noCourt": "Aucun tribunal pour l'instant.",
+      "addOffice": "Ajouter un bureau",
+      "addCourt": "Ajouter un tribunal",
+      "create": "Créer",
+      "save": "Enregistrer",
+      "edit": "Modifier {name}",
+      "archive": "Archiver",
+      "restore": "Réactiver",
+      "archived": "Archivé",
+      "primary": "Bureau principal",
+      "others": "Autres bureaux",
+      "none": "Aucun",
+      "fields": {
+        "nameFr": "Nom (français)",
+        "nameEn": "Nom (anglais)",
+        "city": "Ville",
+        "province": "Province",
+        "jurisdiction": "Compétence",
+        "timezone": "Fuseau horaire",
+        "timezoneFederal": "Selon l'audience (fédéral)",
+        "address": "Adresse (facultative)"
+      },
+      "provinces": {
+        "NS": "Nouvelle-Écosse",
+        "NB": "Nouveau-Brunswick",
+        "PE": "Île-du-Prince-Édouard",
+        "NL": "Terre-Neuve-et-Labrador",
+        "QC": "Québec",
+        "ON": "Ontario",
+        "MB": "Manitoba",
+        "SK": "Saskatchewan",
+        "AB": "Alberta",
+        "BC": "Colombie-Britannique",
+        "YT": "Yukon",
+        "NT": "Territoires du Nord-Ouest",
+        "NU": "Nunavut",
+        "FED": "Fédéral"
+      },
+      "timezones": {
+        "America_St_Johns": "Heure de Terre-Neuve",
+        "America_Halifax": "Heure de l'Atlantique",
+        "America_Toronto": "Heure de l'Est",
+        "America_Winnipeg": "Heure du Centre",
+        "America_Regina": "Heure de la Saskatchewan",
+        "America_Edmonton": "Heure des Rocheuses",
+        "America_Vancouver": "Heure du Pacifique",
+        "America_Whitehorse": "Heure du Yukon"
+      },
+      "notices": {
+        "saved": "Enregistré.",
+        "archived": "Archivé : n'est plus proposé, l'historique est conservé.",
+        "restored": "Réactivé.",
+        "duplicate": "Ce nom est déjà utilisé.",
+        "failed": "La modification n'a pas pu être enregistrée.",
+        "invalid": "Veuillez vérifier le formulaire (un tribunal provincial a besoin d'un fuseau horaire)."
       }
     }
   }

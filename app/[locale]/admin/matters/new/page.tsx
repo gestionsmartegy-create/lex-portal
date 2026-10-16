@@ -151,6 +151,25 @@ export default async function OpenMatterPage({
                     ))}
                   </select>
                 </div>
+                <div className="space-y-1">
+                  <label htmlFor="open-office" className={labelClass}>
+                    {t("office")}
+                  </label>
+                  <select
+                    id="open-office"
+                    name="officeId"
+                    defaultValue="auto"
+                    className={`${fieldClass} h-11`}
+                  >
+                    <option value="auto">{t("officeAuto")}</option>
+                    {ctx.offices.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {pick(locale, o.name_fr, o.name_en)}
+                      </option>
+                    ))}
+                    <option value="">{t("officeNone")}</option>
+                  </select>
+                </div>
                 <fieldset className="space-y-2">
                   <legend className={labelClass}>{t("collaborators")}</legend>
                   {ctx.staff.map((p) => (

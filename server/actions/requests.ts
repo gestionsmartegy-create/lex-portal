@@ -37,6 +37,7 @@ export async function bulkRequestsAction(formData: FormData): Promise<void> {
     q: formData.get("q") || undefined,
     status: formData.get("status") || undefined,
     tag: formData.get("tag") || undefined,
+    office: formData.get("office") || undefined,
   });
   const keep = new URLSearchParams(
     Object.entries(filters).filter((e): e is [string, string] => typeof e[1] === "string"),

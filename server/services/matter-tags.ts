@@ -135,6 +135,7 @@ export const matterFiltersSchema = z.object({
   tag: z.uuid().optional().catch(undefined),
   type: z.uuid().optional().catch(undefined),
   lawyer: z.uuid().optional().catch(undefined),
+  office: z.uuid().optional().catch(undefined),
   status: z.enum(["open", "action_required", "on_hold", "closed"]).optional().catch(undefined),
   alert: z.enum(["overdue", "idle"]).optional().catch(undefined),
 });
@@ -147,6 +148,7 @@ export type PortfolioRow = {
   status: MatterStatus;
   progress_percent: number | null;
   matter_type_id: string | null;
+  office_id: string | null;
   responsible_name: string | null;
   is_mock: boolean;
   tagIds: string[];
@@ -175,7 +177,7 @@ export async function listPortfolio(
   let query = supabase
     .from("matters")
     .select(
-      "id, display_number, title, status, progress_percent, matter_type_id, responsible_name, is_mock, updated_at",
+      "id, display_number, title, status, progress_percent, matter_type_id, office_id, responsible_name, is_mock, updated_at",
     )
     // Les plus anciens d'abord pour chercher les dossiers inactifs (sinon, les plus récents).
     .order("updated_at", { ascending: Boolean(opts.oldestFirst) })
@@ -183,6 +185,7 @@ export async function listPortfolio(
   if (filters.alert === "idle") query = query.neq("status", "closed");
   if (filters.status) query = query.eq("status", filters.status);
   if (filters.type) query = query.eq("matter_type_id", filters.type);
+  if (filters.office) query = query.eq("office_id", filters.office);
   const { data: matters } = await query;
   const truncated = (matters ?? []).length >= PORTFOLIO_LIMIT;
   let rows = matters ?? [];
@@ -224,6 +227,7 @@ export async function listPortfolio(
       status: m.status as MatterStatus,
       progress_percent: m.progress_percent,
       matter_type_id: m.matter_type_id,
+      office_id: m.office_id,
       responsible_name: m.responsible_name,
       is_mock: m.is_mock,
       tagIds: by(links, m.id).map((l) => l.tag_id),
