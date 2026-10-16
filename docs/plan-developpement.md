@@ -78,7 +78,7 @@ Une seule page par dossier remplace « Dossiers et accès » et « Suivi du doss
 2. Documents : Clio Documents comme dépôt principal, ou Clio et SharePoint.
 3. Écriture vers Clio : documents, notes, échéances.
 4. QuickBooks : intégration Clio à 38 $ US par mois.
-5. Signature : option B (Dropbox Sign API), après le test IRCC.
-6. IA : fournisseur et données autorisées.
+5. ~~Signature~~ : **option A, signature dans Clio** (décidé le 2026-10-15).
+6. IA : ~~fournisseur~~ **OpenAI** (décidé le 2026-10-15) ; reste à décider : données autorisées, conservation, plafond de coût, Loi 25 pour le Québec.
 7. Carrières : site public ou portail.
-8. Liste des bureaux et affectation des avocats.
+8. Bureaux : **Ottawa, Halifax, Montréal** (décidé le 2026-10-15) ; reste à fournir : adresses et bureau principal de chaque avocat.
