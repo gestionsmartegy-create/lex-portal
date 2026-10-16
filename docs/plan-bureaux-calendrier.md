@@ -101,7 +101,7 @@ Je découpe le travail en lots livrables séparément. Chaque lot suit le flux h
 
 Ces points ne sont pas techniques : je ne les tranche pas moi-même.
 
-1. ~~Liste des bureaux~~ : **Ottawa, Halifax, Montréal** (décidé le 2026-10-15). Reste à fournir : l'adresse de chaque bureau et le bureau principal de chaque avocat.
+1. ~~Liste des bureaux~~ : **Moncton (siège social), Ottawa, Halifax, Montréal** (décidé les 15 et 16 octobre 2026 ; adresses publiées sur lexcanadalaw.com/contact). Reste à fournir : l'adresse de Montréal et le bureau principal de chaque avocat.
 2. **Liste des tribunaux** fréquentés, par bureau. Je peux proposer une liste de départ (N.-É., Ontario, fédéral, CISR) à valider.
 3. **Où saisit-on une date de cour** : dans Clio, et la plateforme la lit (aucun risque de doublon) ; ou aussi dans la plateforme, qui l'écrit dans Clio, à condition que le cabinet autorise l'écriture vers Clio. Ma recommandation : **commencer par la lecture depuis Clio, plus la saisie dans la plateforme de ce que Clio n'a pas** (tribunal, salle, consignes client, confirmation par l'avocat). Ensuite, ajouter l'écriture vers Clio si elle est autorisée.
 4. **Le bureau donne-t-il des droits ?** Par exemple, un « responsable de bureau » verrait toutes les audiences de son bureau. Ma recommandation : **pas pour l'instant**. La vue générale est réservée à l'administrateur.
