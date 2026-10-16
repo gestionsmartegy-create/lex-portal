@@ -48,6 +48,8 @@ import { requireStaff } from "@/server/auth/session";
 import { pick, practiceGroups } from "@/server/services/matter-templates";
 import { deliverableStatuses, getMatterWorkspace } from "@/server/services/matter-workspace";
 import { getMatterTagIds, listTags } from "@/server/services/matter-tags";
+import { listOffices } from "@/server/services/offices";
+import { matterOfficeAction } from "@/server/actions/offices";
 
 const TABS = ["overview", "steps", "documents", "team", "details"] as const;
 type Tab = (typeof TABS)[number];
@@ -71,6 +73,7 @@ const NOTICES = [
   "deliverableRemoved",
   "documentLinked",
   "tagsSaved",
+  "officeSaved",
   "duplicate",
   "invalid",
   "failed",
@@ -149,13 +152,15 @@ export default async function MatterWorkspacePage({
   const sp = await searchParams;
   const data = await getMatterWorkspace(matterId);
   if (!data) notFound();
-  const [t, tm, tw, allTags, tagIds] = await Promise.all([
+  const [t, tm, tw, allTags, tagIds, offices] = await Promise.all([
     getTranslations("admin.tracking"),
     getTranslations("admin.matters"),
     getTranslations("admin.workspace"),
     listTags(),
     getMatterTagIds(matterId),
+    listOffices(),
   ]);
+  const office = offices.find((o) => o.id === data.matter.office_id);
   const matterTags = allTags.filter((tg) => tagIds.includes(tg.id));
   const {
     matter,
@@ -180,7 +185,7 @@ export default async function MatterWorkspacePage({
   const isAdmin = role === "firm_admin";
   const today = new Date().toISOString().slice(0, 10);
   const notice = NOTICES.find((n) => n === sp.notice);
-  const PARTS = ["steps", "team", "access", "requests", "deliverables"] as const;
+  const PARTS = ["steps", "team", "access", "requests", "deliverables", "office"] as const;
   const partial =
     typeof sp.partial === "string"
       ? sp.partial
@@ -233,6 +238,7 @@ export default async function MatterWorkspacePage({
                 types.find((ty) => ty.id === matter.matter_type_id)!.name_en,
               )
             : matter.practice_area,
+          office ? pick(locale, office.name_fr, office.name_en) : null,
           team.length ? team.map((m) => personName(m.person)).join(", ") : null,
         ]
           .filter(Boolean)
@@ -1129,6 +1135,33 @@ export default async function MatterWorkspacePage({
 
       {tab === "details" ? (
         <div className="grid gap-6 lg:grid-cols-2">
+          <SectionCard title={tw("office")}>
+            <form action={matterOfficeAction} className="space-y-3">
+              {hidden}
+              <label htmlFor="matter-office" className={labelClass}>
+                {tw("office")}
+              </label>
+              <select
+                id="matter-office"
+                name="officeId"
+                defaultValue={matter.office_id ?? ""}
+                className={`${fieldClass} h-11`}
+              >
+                <option value="">{tw("noOffice")}</option>
+                {offices
+                  .filter((o) => o.is_active || o.id === matter.office_id)
+                  .map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {pick(locale, o.name_fr, o.name_en)}
+                    </option>
+                  ))}
+              </select>
+              <p className="text-xs text-ink-muted">{tw("officeHelp")}</p>
+              <Button type="submit" variant="outline-gold" size="sm">
+                {tw("saveOffice")}
+              </Button>
+            </form>
+          </SectionCard>
           <SectionCard title={tw("tags")}>
             <form action={setMatterTagsAction} className="space-y-3">
               {hidden}

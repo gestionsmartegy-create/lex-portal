@@ -348,3 +348,9 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 
 ## Vues enregistrées (ADR 0023, migration `20261009120000_saved_views.sql`)
 - `matter_saved_views` (owner_id, name, query) : filtres du portefeuille enregistrés sous un nom, **personnels**. RLS : lecture, création et suppression par le seul propriétaire, s'il fait partie du personnel. Le propriétaire est imposé par défaut (`auth.uid()`). La requête est limitée à 500 caractères du jeu d'URL, et le serveur la remet sous forme canonique. Au plus 20 vues par personne : limite vérifiée par le service et garantie par le trigger `private.guard_saved_views_limit` (migration `20261009120100`).
+
+## Bureaux et tribunaux (ADR 0024, migration `20261015120000_offices_courts.sql`)
+- `offices` (nom FR/EN, ville, province, fuseau, adresse, `is_active`) et `courts` (nom FR/EN, compétence province ou `FED`, fuseau) : lecture par le personnel, création et modification par le firm_admin, **aucune suppression** (archivage).
+- `staff_offices` (user_id, office_id, is_primary) : un seul bureau principal par personne (index unique partiel). Personnel actif seulement, bureau actif seulement (trigger `private.guard_staff_office`). Écriture par `public.set_staff_offices(p_user, p_primary, p_others)` : firm_admin, une seule transaction (migration `20261015120100`).
+- `matters.office_id` : bureau du dossier, modifiable par l'équipe ou le firm_admin (politique existante). Bureau actif obligatoire, à la création comme à la modification (`private.guard_matter_office`). Changement journalisé (`matter.office_set`).
+- Le bureau **ne donne aucun droit** sur les dossiers.

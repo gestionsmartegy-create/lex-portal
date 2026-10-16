@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireStaff } from "@/server/auth/session";
 import { openMatter } from "@/server/services/matter-opening";
+import { primaryOfficeOf } from "@/server/services/offices";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -26,6 +27,7 @@ const schema = z.object({
   locale: localeSchema,
   matterId: z.uuid(),
   typeId: z.uuid(),
+  officeId: z.union([z.literal("auto"), z.literal(""), z.uuid()]).default("auto"),
   applySteps: z.literal("on").optional(),
   responsibleId: optionalUuid,
   collaboratorIds: z.array(z.uuid()).max(20),
@@ -56,9 +58,17 @@ export async function openMatterAction(formData: FormData): Promise<void> {
       return { title, dueDate: due.success ? due.data : null };
     })
     .filter((x) => x.title.length > 0);
+  // « auto » : bureau principal du responsable choisi (aucun si pas de responsable ou de bureau principal).
+  const officeId =
+    d.officeId === "auto"
+      ? d.responsibleId
+        ? await primaryOfficeOf(d.responsibleId)
+        : null
+      : d.officeId || null;
   const report = await openMatter({
     matterId: d.matterId,
     typeId: d.typeId,
+    officeId,
     applySteps: d.applySteps === "on",
     responsibleId: d.responsibleId,
     collaboratorIds: d.collaboratorIds,

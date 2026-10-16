@@ -502,7 +502,8 @@
       "integrations": "Integrations",
       "messages": "Messages",
       "templates": "Matter templates",
-      "requests": "Document requests"
+      "requests": "Document requests",
+      "offices": "Offices & courts"
     },
     "overview": {
       "title": "Firm workspace",
@@ -614,7 +615,8 @@
         "reset": "Reset",
         "count": "{count, plural, =0 {No matter} one {# matter} other {# matters}}",
         "none": "No matter matches these filters.",
-        "truncated": "showing the {limit} most recent; refine the filters"
+        "truncated": "showing the {limit} most recent; refine the filters",
+        "office": "Office"
       },
       "progress": "Progress",
       "overdueCount": "{count} overdue",
@@ -791,7 +793,8 @@
         "deliverableUpdated": "Deliverable updated.",
         "deliverableRemoved": "Deliverable removed.",
         "documentLinked": "Document linked: the request is marked received.",
-        "tagsSaved": "Tags saved."
+        "tagsSaved": "Tags saved.",
+        "officeSaved": "Office saved."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
@@ -1002,11 +1005,16 @@
         "team": "team",
         "access": "client access",
         "requests": "document requests",
-        "deliverables": "deliverables"
+        "deliverables": "deliverables",
+        "office": "office"
       },
       "tags": "Tags",
       "tagVisible": "(visible to the client)",
-      "saveTags": "Save the tags"
+      "saveTags": "Save the tags",
+      "office": "Office",
+      "noOffice": "No office",
+      "saveOffice": "Save the office",
+      "officeHelp": "The office sets the matter's time zone and calendar. It does not change who can see the matter."
     },
     "opening": {
       "title": "Set up a matter",
@@ -1051,7 +1059,10 @@
       "notices": {
         "invalid": "Please check the form.",
         "failed": "The matter could not be set up."
-      }
+      },
+      "office": "Office",
+      "officeAuto": "Main office of the responsible lawyer",
+      "officeNone": "No office"
     },
     "requests": {
       "title": "Document requests",
@@ -1068,7 +1079,8 @@
         "type": "Matter type",
         "all": "All",
         "apply": "Filter",
-        "count": "{count, plural, =0 {No request} one {# request} other {# requests}}"
+        "count": "{count, plural, =0 {No request} one {# request} other {# requests}}",
+        "office": "Office"
       },
       "status": {
         "pending": "Pending",
@@ -1099,6 +1111,73 @@
         "invalid": "Please check the form (at least one item must be checked).",
         "report": "{action}: {done} done, {skipped} skipped, {failed} failed.",
         "tooMany": "Too many batch sends in the last hour. Please try again later."
+      }
+    },
+    "offices": {
+      "title": "Offices & courts",
+      "subtitle": "The firm's offices, who works where, and the courts you appear before.",
+      "offices": "Offices",
+      "staff": "Staff by office",
+      "courts": "Courts",
+      "noRights": "An office organizes matters and calendars; it never grants access to a matter. Access stays with each matter's team.",
+      "staffHelp": "Choose each person's main office, and any other office where they also work.",
+      "courtsHelp": "Starting list, to be reviewed and completed by the firm. Archive a court instead of deleting it.",
+      "noOffice": "No office yet.",
+      "noCourt": "No court yet.",
+      "addOffice": "Add an office",
+      "addCourt": "Add a court",
+      "create": "Create",
+      "save": "Save",
+      "edit": "Edit {name}",
+      "archive": "Archive",
+      "restore": "Restore",
+      "archived": "Archived",
+      "primary": "Main office",
+      "others": "Other offices",
+      "none": "None",
+      "fields": {
+        "nameFr": "Name (French)",
+        "nameEn": "Name (English)",
+        "city": "City",
+        "province": "Province",
+        "jurisdiction": "Jurisdiction",
+        "timezone": "Time zone",
+        "timezoneFederal": "Varies with the hearing (federal)",
+        "address": "Address (optional)"
+      },
+      "provinces": {
+        "NS": "Nova Scotia",
+        "NB": "New Brunswick",
+        "PE": "Prince Edward Island",
+        "NL": "Newfoundland and Labrador",
+        "QC": "Quebec",
+        "ON": "Ontario",
+        "MB": "Manitoba",
+        "SK": "Saskatchewan",
+        "AB": "Alberta",
+        "BC": "British Columbia",
+        "YT": "Yukon",
+        "NT": "Northwest Territories",
+        "NU": "Nunavut",
+        "FED": "Federal"
+      },
+      "timezones": {
+        "America_St_Johns": "Newfoundland time",
+        "America_Halifax": "Atlantic time",
+        "America_Toronto": "Eastern time",
+        "America_Winnipeg": "Central time",
+        "America_Regina": "Saskatchewan time",
+        "America_Edmonton": "Mountain time",
+        "America_Vancouver": "Pacific time",
+        "America_Whitehorse": "Yukon time"
+      },
+      "notices": {
+        "saved": "Saved.",
+        "archived": "Archived: no longer offered, history kept.",
+        "restored": "Restored.",
+        "duplicate": "This name is already used.",
+        "failed": "The change could not be saved.",
+        "invalid": "Please check the form (a provincial court needs a time zone)."
       }
     }
   }

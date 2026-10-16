@@ -14,6 +14,7 @@ import {
   type TeamRole,
 } from "@/server/services/matter-tracking";
 import { addDeliverable } from "@/server/services/matter-workspace";
+import { listOffices, setMatterOffice } from "@/server/services/offices";
 
 /**
  * Assistant d'ouverture d'un dossier (ADR 0020, plan phase 1) : firm_admin seulement.
@@ -27,7 +28,7 @@ type Person = { id: string; first_name: string | null; last_name: string | null;
 export async function getOpeningContext(matterId: string | null, typeId: string | null) {
   if ((await getSessionRole()) !== "firm_admin") return null;
   const supabase = await createSupabaseServerClient();
-  const [{ data: matters }, types, { data: staff }, { data: clients }] = await Promise.all([
+  const [{ data: matters }, types, { data: staff }, { data: clients }, offices] = await Promise.all([
     supabase
       .from("matters")
       .select("id, display_number, title, responsible_name, matter_type_id, is_mock")
@@ -48,6 +49,7 @@ export async function getOpeningContext(matterId: string | null, typeId: string 
       .eq("status", "active")
       .order("last_name")
       .limit(500),
+    listOffices({ activeOnly: true }),
   ]);
   const matter =
     matterId && uuid.safeParse(matterId).success ? (matters ?? []).find((m) => m.id === matterId) : null;
@@ -59,12 +61,14 @@ export async function getOpeningContext(matterId: string | null, typeId: string 
     clients: (clients ?? []) as Person[],
     matter: matter ?? null,
     template,
+    offices,
   };
 }
 
 export type OpeningInput = {
   matterId: string;
   typeId: string;
+  officeId: string | null;
   applySteps: boolean;
   responsibleId: string | null;
   collaboratorIds: string[];
@@ -99,6 +103,7 @@ export async function openMatter(input: OpeningInput): Promise<OpeningReport> {
   const typeSet = await setMatterType(input.matterId, input.typeId);
   if (!typeSet.ok) return { ok: false, failed: ["type"] };
   if (input.applySteps && !(await applyTemplateSteps(input.matterId)).ok) failed.push("steps");
+  if (input.officeId && !(await setMatterOffice(input.matterId, input.officeId)).ok) failed.push("office");
 
   const team: [string, TeamRole][] = [];
   if (input.responsibleId) team.push([input.responsibleId, "responsible"]);
@@ -147,7 +152,7 @@ export async function openMatter(input: OpeningInput): Promise<OpeningReport> {
     resourceId: input.matterId,
     matterId: input.matterId,
     actorId: user?.id ?? null,
-    metadata: { matter_type_id: input.typeId, failed: [...new Set(failed)] },
+    metadata: { matter_type_id: input.typeId, office_id: input.officeId, failed: [...new Set(failed)] },
   });
   return { ok: failed.length === 0, failed: [...new Set(failed)] };
 }

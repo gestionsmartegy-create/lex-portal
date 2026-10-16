@@ -215,11 +215,12 @@ export function canonicalViewQuery(input: Record<string, unknown>): string {
     tag: input.tag || undefined,
     type: input.type || undefined,
     lawyer: input.lawyer || undefined,
+    office: input.office || undefined,
     status: input.status || undefined,
     alert: input.alert || undefined,
   });
   const params = new URLSearchParams();
-  for (const key of ["q", "tag", "type", "lawyer", "status", "alert"] as const) {
+  for (const key of ["q", "tag", "type", "lawyer", "office", "status", "alert"] as const) {
     const value = filters[key];
     if (value) params.set(key, value);
   }
