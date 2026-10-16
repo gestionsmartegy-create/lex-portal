@@ -49,9 +49,10 @@ import { pick, practiceGroups } from "@/server/services/matter-templates";
 import { deliverableStatuses, getMatterWorkspace } from "@/server/services/matter-workspace";
 import { getMatterTagIds, listTags } from "@/server/services/matter-tags";
 import { listOffices } from "@/server/services/offices";
+import { CourtTab } from "./court-tab";
 import { matterOfficeAction } from "@/server/actions/offices";
 
-const TABS = ["overview", "steps", "documents", "team", "details"] as const;
+const TABS = ["overview", "steps", "court", "documents", "team", "details"] as const;
 type Tab = (typeof TABS)[number];
 const NOTICES = [
   "added",
@@ -74,6 +75,12 @@ const NOTICES = [
   "documentLinked",
   "tagsSaved",
   "officeSaved",
+  "courtSaved",
+  "courtConfirmed",
+  "courtHeld",
+  "courtCancelled",
+  "courtAdjourned",
+  "courtInvalid",
   "duplicate",
   "invalid",
   "failed",
@@ -252,7 +259,13 @@ export default async function MatterWorkspacePage({
       />
       <Notice
         message={notice ? t(`notices.${notice}`) : accessNotice}
-        error={notice === "failed" || notice === "duplicate" || notice === "invalid" || partial.length > 0}
+        error={
+          notice === "failed" ||
+          notice === "duplicate" ||
+          notice === "invalid" ||
+          notice === "courtInvalid" ||
+          partial.length > 0
+        }
       />
       {matterTags.length ? (
         <p className="-mt-4 mb-4 flex flex-wrap gap-1.5">
@@ -756,6 +769,14 @@ export default async function MatterWorkspacePage({
             </SectionCard>
           </div>
         </div>
+      ) : null}
+
+      {tab === "court" ? (
+        <CourtTab
+          locale={locale}
+          matterId={matter.id}
+          team={team.filter((m) => m.person).map((m) => ({ id: m.user_id, name: personName(m.person!) }))}
+        />
       ) : null}
 
       {tab === "documents" ? (

@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { serverEnv } from "@/server/env";
+import { pushPendingCourtDates } from "@/server/services/court-dates";
 import { syncLinkedMatters } from "@/server/services/sync";
 
 export const maxDuration = 300;
@@ -19,8 +20,10 @@ export async function GET(request: NextRequest) {
     timingSafeEqual(Buffer.from(header), Buffer.from(expected));
   if (!valid) return new NextResponse("Not found", { status: 404 });
   const result = await syncLinkedMatters(null);
+  // Dates de cour en attente ou en échec : nouvelle tentative d'écriture dans Clio (ADR 0025).
+  const courts = await pushPendingCourtDates();
   return NextResponse.json(
-    { ok: result.ok, updated: result.updated, failed: result.failed },
+    { ok: result.ok, updated: result.updated, failed: result.failed, courtDates: courts },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

@@ -665,7 +665,7 @@
     },
     "integrations": {
       "title": "Intégrations",
-      "subtitle": "Connexions du portail aux logiciels du cabinet. En lecture seule : le portail ne modifie jamais Clio.",
+      "subtitle": "Connexions du portail aux logiciels du cabinet. En lecture seule, sauf les dates de cour, écrites dans le calendrier Clio que vous choisissez.",
       "clio": "Clio Manage (Canada)",
       "mockMode": "Mode démonstration : le portail utilise un Clio simulé avec des données fictives. Le vrai Clio s'active une fois l'application développeur du cabinet configurée (INTEGRATION_MODE_CLIO=live).",
       "status": {
@@ -689,7 +689,8 @@
         "connected": "Clio est connecté.",
         "disconnected": "Clio a été déconnecté et ses jetons supprimés.",
         "synced": "Synchronisation terminée.",
-        "failed": "L'opération a échoué. Réessayez ou reconnectez Clio."
+        "failed": "L'opération a échoué. Réessayez ou reconnectez Clio.",
+        "calendarSaved": "Calendrier Clio enregistré."
       },
       "errors": {
         "INVALID": "Veuillez saisir un e-mail valide.",
@@ -701,6 +702,15 @@
         "UPSTREAM": "Clio ne répond pas. Réessayez plus tard.",
         "INVALID_RESPONSE": "Clio a renvoyé une réponse inattendue.",
         "FAILED": "L'opération a échoué."
+      },
+      "courtCalendar": {
+        "title": "Calendrier Clio des dates de cour",
+        "help": "Les dates de cour saisies dans le portail sont écrites dans ce calendrier Clio (création, modification, annulation).",
+        "label": "Calendrier",
+        "none": "Aucun (les dates restent dans le portail)",
+        "save": "Enregistrer",
+        "notConnected": "Connectez d'abord Clio.",
+        "unavailable": "Les calendriers Clio n'ont pas pu être lus. Vérifiez que l'application Clio a la permission Calendriers (lecture et écriture), puis reconnectez."
       }
     },
     "messages": {
@@ -794,7 +804,13 @@
         "deliverableRemoved": "Livrable retiré.",
         "documentLinked": "Document lié : la demande est marquée reçue.",
         "tagsSaved": "Étiquettes enregistrées.",
-        "officeSaved": "Bureau enregistré."
+        "officeSaved": "Bureau enregistré.",
+        "courtSaved": "Date de cour enregistrée.",
+        "courtConfirmed": "Date de cour confirmée.",
+        "courtHeld": "Date de cour marquée comme tenue.",
+        "courtCancelled": "Date de cour annulée.",
+        "courtAdjourned": "Date de cour remise : la nouvelle date doit être confirmée.",
+        "courtInvalid": "Veuillez vérifier la date de cour : début obligatoire, fin après le début, lien commençant par https://, motif pour annuler, pas de retour à la ligne dans la salle, le juge ou le numéro de greffe."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -939,7 +955,8 @@
         "steps": "Étapes et livrables",
         "documents": "Documents",
         "team": "Équipe et accès",
-        "details": "Informations du dossier"
+        "details": "Informations du dossier",
+        "court": "Cour"
       },
       "kpi": {
         "requests": "Documents en attente",
@@ -1178,6 +1195,78 @@
         "duplicate": "Ce nom est déjà utilisé.",
         "failed": "La modification n'a pas pu être enregistrée.",
         "invalid": "Veuillez vérifier le formulaire (un tribunal provincial a besoin d'un fuseau horaire)."
+      }
+    },
+    "court": {
+      "upcoming": "Dates de cour à venir",
+      "history": "Historique",
+      "none": "Aucune date de cour à venir.",
+      "add": "Ajouter une date de cour",
+      "create": "Ajouter",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "confirm": "Confirmer cette date",
+      "markHeld": "Marquer comme tenue",
+      "adjourn": "Remettre (nouvelle date)",
+      "adjournHelp": "La nouvelle date est liée à celle-ci, qui passe « Remise ». La nouvelle date doit être confirmée.",
+      "adjournSubmit": "Remettre à cette date",
+      "cancel": "Annuler cette date",
+      "cancelReason": "Motif (obligatoire)",
+      "cancelSubmit": "Annuler la date",
+      "reconfirmHelp": "Changer la date, l'heure, le fuseau ou le tribunal demande une nouvelle confirmation.",
+      "noLegalDeadlines": "La plateforme ne calcule jamais de délai légal : chaque date de cour est saisie et confirmée par un avocat.",
+      "clioHelp": "Chaque date de cour d'un dossier lié à Clio est écrite dans le calendrier Clio choisi dans Intégrations. Modifiez-la ici, pas dans Clio. Les notes internes ne sont jamais envoyées à Clio.",
+      "roomValue": "salle {room}",
+      "docketValue": "greffe {docket}",
+      "attendeesValue": "Présents : {names}",
+      "replaces": "Remplace la date du {when}",
+      "cancelReasonValue": "Motif : {reason}",
+      "visibleValue": "Visible par le client (date, lieu et consignes)",
+      "kinds": {
+        "trial": "Procès",
+        "hearing": "Audience",
+        "motion": "Requête",
+        "case_conference": "Conférence de gestion",
+        "appearance": "Comparution",
+        "filing_deadline": "Date limite de dépôt"
+      },
+      "modes": {
+        "in_person": "En personne",
+        "virtual": "Virtuelle",
+        "hybrid": "Hybride"
+      },
+      "statuses": {
+        "scheduled": "À confirmer",
+        "confirmed": "Confirmée",
+        "adjourned": "Remise",
+        "cancelled": "Annulée",
+        "held": "Tenue"
+      },
+      "sync": {
+        "synced": "Clio : à jour",
+        "pending": "Clio : en attente",
+        "failed": "Clio : échec, nouvel essai prévu",
+        "not_applicable": "Dossier non lié à Clio",
+        "syncing": "Clio : écriture en cours"
+      },
+      "fields": {
+        "kind": "Type",
+        "court": "Tribunal",
+        "noCourt": "Non précisé",
+        "start": "Début (heure du tribunal)",
+        "end": "Fin (facultative)",
+        "timezone": "Fuseau horaire",
+        "timezoneHelp": "Pour un tribunal provincial, son fuseau est appliqué automatiquement ; sinon, choisissez le fuseau de l'audience.",
+        "allDay": "Toute la journée",
+        "room": "Salle",
+        "judge": "Juge (facultatif)",
+        "docket": "Numéro de greffe",
+        "mode": "Format",
+        "link": "Lien de l'audience virtuelle (équipe seulement)",
+        "attendees": "Avocats présents",
+        "notes": "Notes internes (jamais montrées au client ni envoyées à Clio)",
+        "instructions": "Consignes pour le client",
+        "visible": "Montrer cette date au client"
       }
     }
   }

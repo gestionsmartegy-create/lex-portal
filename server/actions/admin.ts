@@ -23,6 +23,7 @@ import {
   startConversationAsStaff,
 } from "@/server/services/messaging";
 import { resetClientMfa } from "@/server/services/mfa-reset";
+import { pushPendingCourtDates } from "@/server/services/court-dates";
 import { importClioContact, syncLinkedMatters } from "@/server/services/sync";
 import { provisionStaff } from "@/server/services/staff";
 import {
@@ -183,7 +184,8 @@ export async function syncClioNowAction(formData: FormData): Promise<void> {
   const locale = localeSchema.catch("en").parse(formData.get("locale"));
   const { user } = await requireStaff(locale, ["firm_admin"]);
   const result = await syncLinkedMatters(user.id);
-  redirect(`/${locale}/admin/integrations?notice=${result.ok ? "synced" : "failed"}`);
+  const courts = await pushPendingCourtDates();
+  redirect(`/${locale}/admin/integrations?notice=${result.ok && courts.failed === 0 ? "synced" : "failed"}`);
 }
 
 export async function disconnectClioAction(formData: FormData): Promise<void> {
