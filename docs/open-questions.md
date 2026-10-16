@@ -109,3 +109,11 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Domaine de préproduction (`portal-preprod.lexcanadalaw.com` ?) puis de production | Adresses de retour OAuth (Clio, Entra), Site URL Supabase | Élevée |
 | Hébergement de **production** : Vercel (ADR 0013) ou le VPS Hostinger, qui sert déjà de serveur de test (ADR 0016) ? | Sécurité d'exploitation (mises à jour, sauvegardes, surveillance) à la charge du cabinet si VPS | Élevée |
 
+## Décisions du 2026-10-15 (responsable du projet)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Signature électronique : option A (dans Clio) ou B (Dropbox Sign API) ?~~ | ✅ **Option A : signature dans Clio.** Remplace le choix DocuSign de l'ADR 0005 pour le parcours prévu. | La plateforme dépose le document dans le dossier Clio (API Documents, confirmée). L'avocat lance la signature depuis Clio, puisque Clio ne permet pas de la lancer par l'API (vérifié le 2026-10-07). Aucun fournisseur de signature n'est à intégrer. |
+| ~~Fournisseur d'IA pour l'aide à la rédaction~~ | ✅ **OpenAI (API)** | Les appels se font depuis le serveur seulement. **À confirmer avant le développement de la phase 6** : quelles données on peut envoyer, la conservation zéro chez OpenAI, et un plafond de coût. Les données sont traitées hors du Canada, ce qui demande une évaluation des facteurs relatifs à la vie privée pour les clients du Québec (Loi 25, voir la ligne suivante). |
+| ~~Liste des bureaux~~ | ✅ **Ottawa (ON), Halifax (N.-É.), Montréal (QC)** | Fuseaux : Ottawa et Montréal à l'heure de l'Est, Halifax à l'heure de l'Atlantique. **Montréal fait entrer le Québec dans le périmètre** : Loi 25 sur la protection des renseignements personnels, tribunaux du Québec (procédure civile du Québec, audiences surtout en français) et jours fériés du Québec. Reste à fournir : l'adresse de chaque bureau et le bureau principal de chaque avocat. |
+| Loi 25 (Québec) : obligations pour les clients du bureau de Montréal | **À valider par le cabinet** (responsable de la protection des renseignements personnels, EFVP avant tout transfert hors Québec, dont OpenAI) | Bloque l'envoi de données de clients du Québec à OpenAI tant que l'évaluation n'est pas faite. |
