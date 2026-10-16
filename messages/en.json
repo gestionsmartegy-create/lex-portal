@@ -665,7 +665,7 @@
     },
     "integrations": {
       "title": "Integrations",
-      "subtitle": "Connections of the portal to the firm's software. Read only: the portal never changes Clio.",
+      "subtitle": "The portal's connections to the firm's software. Read-only, except court dates, which are written to the Clio calendar you choose.",
       "clio": "Clio Manage (Canada)",
       "mockMode": "Demonstration mode: the portal uses a simulated Clio with fictitious data. Real Clio is enabled once the firm's developer application is configured (INTEGRATION_MODE_CLIO=live).",
       "status": {
@@ -689,7 +689,8 @@
         "connected": "Clio is connected.",
         "disconnected": "Clio was disconnected and its tokens deleted.",
         "synced": "Synchronization completed.",
-        "failed": "The operation failed. Try again or reconnect Clio."
+        "failed": "The operation failed. Try again or reconnect Clio.",
+        "calendarSaved": "Clio calendar saved."
       },
       "errors": {
         "INVALID": "Please enter a valid email.",
@@ -701,6 +702,15 @@
         "UPSTREAM": "Clio is not responding. Try again later.",
         "INVALID_RESPONSE": "Clio returned an unexpected response.",
         "FAILED": "The operation failed."
+      },
+      "courtCalendar": {
+        "title": "Clio calendar for court dates",
+        "help": "Court dates entered in the portal are written to this Clio calendar (create, update, cancel).",
+        "label": "Calendar",
+        "none": "None (court dates stay in the portal)",
+        "save": "Save",
+        "notConnected": "Connect Clio first.",
+        "unavailable": "The Clio calendars could not be read. Check that the Clio app has the Calendars permission (read and write), then reconnect."
       }
     },
     "messages": {
@@ -794,7 +804,13 @@
         "deliverableRemoved": "Deliverable removed.",
         "documentLinked": "Document linked: the request is marked received.",
         "tagsSaved": "Tags saved.",
-        "officeSaved": "Office saved."
+        "officeSaved": "Office saved.",
+        "courtSaved": "Court date saved.",
+        "courtConfirmed": "Court date confirmed.",
+        "courtHeld": "Court date marked as held.",
+        "courtCancelled": "Court date cancelled.",
+        "courtAdjourned": "Court date adjourned: the new date must be confirmed.",
+        "courtInvalid": "Please check the court date: start required, end after start, link starting with https://, a reason to cancel, no line breaks in room, judge or file number."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
@@ -939,7 +955,8 @@
         "steps": "Steps & deliverables",
         "documents": "Documents",
         "team": "Team & access",
-        "details": "Matter details"
+        "details": "Matter details",
+        "court": "Court"
       },
       "kpi": {
         "requests": "Documents pending",
@@ -1178,6 +1195,78 @@
         "duplicate": "This name is already used.",
         "failed": "The change could not be saved.",
         "invalid": "Please check the form (a provincial court needs a time zone)."
+      }
+    },
+    "court": {
+      "upcoming": "Upcoming court dates",
+      "history": "History",
+      "none": "No upcoming court date.",
+      "add": "Add a court date",
+      "create": "Add",
+      "save": "Save",
+      "edit": "Edit",
+      "confirm": "Confirm this date",
+      "markHeld": "Mark as held",
+      "adjourn": "Adjourn (new date)",
+      "adjournHelp": "The new date is linked to this one, which becomes \"Adjourned\". The new date must be confirmed.",
+      "adjournSubmit": "Adjourn to this date",
+      "cancel": "Cancel this date",
+      "cancelReason": "Reason (required)",
+      "cancelSubmit": "Cancel the date",
+      "reconfirmHelp": "Changing the date, time, time zone or court asks for a new confirmation.",
+      "noLegalDeadlines": "The platform never calculates a legal deadline: every court date is entered and confirmed by a lawyer.",
+      "clioHelp": "Each court date of a matter linked to Clio is written to the Clio calendar chosen in Integrations. Edit it here, not in Clio. Internal notes are never sent to Clio.",
+      "roomValue": "room {room}",
+      "docketValue": "file {docket}",
+      "attendeesValue": "Present: {names}",
+      "replaces": "Replaces the date of {when}",
+      "cancelReasonValue": "Reason: {reason}",
+      "visibleValue": "Visible to the client (date, place and instructions)",
+      "kinds": {
+        "trial": "Trial",
+        "hearing": "Hearing",
+        "motion": "Motion",
+        "case_conference": "Case conference",
+        "appearance": "Appearance",
+        "filing_deadline": "Filing deadline"
+      },
+      "modes": {
+        "in_person": "In person",
+        "virtual": "Virtual",
+        "hybrid": "Hybrid"
+      },
+      "statuses": {
+        "scheduled": "To be confirmed",
+        "confirmed": "Confirmed",
+        "adjourned": "Adjourned",
+        "cancelled": "Cancelled",
+        "held": "Held"
+      },
+      "sync": {
+        "synced": "Clio: up to date",
+        "pending": "Clio: pending",
+        "failed": "Clio: failed, will retry",
+        "not_applicable": "Not linked to Clio",
+        "syncing": "Clio: writing…"
+      },
+      "fields": {
+        "kind": "Type",
+        "court": "Court",
+        "noCourt": "Not specified",
+        "start": "Start (court time)",
+        "end": "End (optional)",
+        "timezone": "Time zone",
+        "timezoneHelp": "For a provincial court, its time zone is applied automatically; otherwise choose the hearing's time zone.",
+        "allDay": "All day",
+        "room": "Room",
+        "judge": "Judge (optional)",
+        "docket": "Court file number",
+        "mode": "Format",
+        "link": "Virtual hearing link (team only)",
+        "attendees": "Lawyers present",
+        "notes": "Internal notes (never shown to the client nor sent to Clio)",
+        "instructions": "Instructions for the client",
+        "visible": "Show this date to the client"
       }
     }
   }

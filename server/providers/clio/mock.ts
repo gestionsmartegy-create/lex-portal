@@ -1,6 +1,6 @@
 import "server-only";
 import type { ClioManageGateway } from "./gateway";
-import type { ClioBill, ClioContact, ClioMatter } from "./schemas";
+import type { ClioBill, ClioCalendar, ClioCalendarEntryInput, ClioContact, ClioMatter } from "./schemas";
 
 /**
  * MockClioManageGateway (AGENTS.md §2.6-7) : un faux Clio avec des données FICTIVES
@@ -87,4 +87,25 @@ export class MockClioManageGateway implements ClioManageGateway {
   async listBillsForMatter(matterId: number) {
     return BILLS[matterId] ?? [];
   }
+  async listWritableCalendars(): Promise<ClioCalendar[]> {
+    return [{ id: 880001, name: "Cabinet (démo)", type: "AccountCalendar" }];
+  }
+  async createCalendarEntry(input: ClioCalendarEntryInput) {
+    nextEntry += 1;
+    const id = `mock-${nextEntry.toString()}`;
+    ENTRIES.set(id, input);
+    return id;
+  }
+  async updateCalendarEntry(id: string, input: ClioCalendarEntryInput) {
+    if (!ENTRIES.has(id)) return false;
+    ENTRIES.set(id, input);
+    return true;
+  }
+  async deleteCalendarEntry(id: string) {
+    ENTRIES.delete(id);
+  }
 }
+
+/** Entrées de calendrier du faux Clio (mémoire du processus, données fictives). */
+const ENTRIES = new Map<string, ClioCalendarEntryInput>();
+let nextEntry = 0;

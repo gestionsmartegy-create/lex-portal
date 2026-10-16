@@ -34,7 +34,9 @@ export type AuditAction =
   | "integration.imported"
   | "integration.synced"
   | "invitation.sent"
-  | "staff.provisioned";
+  | "staff.provisioned"
+  | "court_date.clio_written"
+  | "court_date.clio_deleted";
 
 type AuditInput = {
   action: AuditAction;

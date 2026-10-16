@@ -7,6 +7,8 @@ import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatRelative } from "@/lib/format";
 import { disconnectClioAction, importClioContactAction, syncClioNowAction } from "@/server/actions/admin";
+import { courtCalendarAction } from "@/server/actions/court-dates";
+import { getCourtCalendarSetting, listClioCalendars } from "@/server/services/court-dates";
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { serverEnv } from "@/server/env";
@@ -17,7 +19,7 @@ const TONE: Record<string, StatusTone> = {
   error: "urgent",
   revoked: "pending",
 };
-const NOTICES = ["connected", "disconnected", "synced", "failed"] as const;
+const NOTICES = ["connected", "disconnected", "synced", "calendarSaved", "failed"] as const;
 
 export default async function IntegrationsPage({
   params,
@@ -36,6 +38,11 @@ export default async function IntegrationsPage({
   const clio = (connections ?? []).find((c) => c.provider === "clio_manage" && c.region === "ca");
   const status = live ? (clio?.status ?? "not_configured") : "connected";
   const notice = NOTICES.find((n) => n === sp.notice);
+  // Calendriers Clio où l'on peut écrire (seulement si la connexion est active).
+  const [courtCalendar, calendars] = await Promise.all([
+    getCourtCalendarSetting(),
+    status === "connected" ? listClioCalendars() : Promise.resolve({ ok: false as const, calendars: [] }),
+  ]);
 
   return (
     <>
@@ -87,6 +94,42 @@ export default async function IntegrationsPage({
         </SectionCard>
         <SectionCard title={t("importTitle")} className="lg:col-span-3">
           <ClioImportForm action={importClioContactAction} locale={locale} />
+        </SectionCard>
+        <SectionCard title={t("courtCalendar.title")} className="lg:col-span-5">
+          <p className="mb-3 text-sm text-ink-muted">{t("courtCalendar.help")}</p>
+          {status !== "connected" ? (
+            <InfoNote>{t("courtCalendar.notConnected")}</InfoNote>
+          ) : !calendars.ok ? (
+            <InfoNote>{t("courtCalendar.unavailable")}</InfoNote>
+          ) : (
+            <form action={courtCalendarAction} className="flex flex-wrap items-end gap-3">
+              <input type="hidden" name="locale" value={locale} />
+              <div className="w-full space-y-1 sm:w-80">
+                <label
+                  htmlFor="court-calendar"
+                  className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
+                >
+                  {t("courtCalendar.label")}
+                </label>
+                <select
+                  id="court-calendar"
+                  name="calendarId"
+                  defaultValue={courtCalendar ? String(courtCalendar) : ""}
+                  className="h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+                >
+                  <option value="">{t("courtCalendar.none")}</option>
+                  {calendars.calendars.map((c) => (
+                    <option key={c.id} value={String(c.id)}>
+                      {c.name ?? `#${c.id}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button type="submit" variant="outline-gold" size="sm" className="h-10">
+                {t("courtCalendar.save")}
+              </Button>
+            </form>
+          )}
         </SectionCard>
       </div>
     </>

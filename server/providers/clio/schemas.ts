@@ -81,3 +81,27 @@ export const storedTokensSchema = z.object({
   expires_at: z.number().int().optional(), // ms epoch
 });
 export type StoredTokens = z.infer<typeof storedTokensSchema>;
+
+/** Calendriers (GET /calendars.json?writeable=true). */
+export const clioCalendarSchema = z
+  .object({ id: z.number(), name: redactable(z.string()), type: redactable(z.string()) })
+  .passthrough();
+export type ClioCalendar = z.infer<typeof clioCalendarSchema>;
+export const CALENDAR_FIELDS = "id,name,type";
+
+/** Réponse d'une création ou d'une mise à jour d'entrée (seul l'identifiant est lu). */
+export const clioCalendarEntryRefSchema = z.object({
+  data: z.object({ id: z.union([z.number(), z.string()]).transform(String) }).passthrough(),
+});
+
+/** Entrée de calendrier écrite par la plateforme (dates en ISO 8601 UTC). */
+export type ClioCalendarEntryInput = {
+  calendarId: number;
+  matterId: number | null;
+  summary: string;
+  description: string;
+  location: string;
+  startAt: string;
+  endAt: string;
+  allDay: boolean;
+};

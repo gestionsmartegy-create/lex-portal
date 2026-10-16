@@ -218,3 +218,64 @@ describe("état OAuth (CSRF)", () => {
     expect(sameState("abc", "abcd")).toBe(false);
   });
 });
+
+describe("ClioManageClient — dates de cour (calendrier, ADR 0025)", () => {
+  const entry = {
+    calendarId: 42,
+    matterId: 7,
+    summary: "[Cour] Audience / Hearing — LC-1",
+    description: "Tribunal / Court: X",
+    location: "X",
+    startAt: "2026-12-15T14:30:00.000Z",
+    endAt: "2026-12-15T16:00:00.000Z",
+    allDay: false,
+  };
+
+  it("crée l'entrée (POST, calendrier et dossier) et renvoie son identifiant", async () => {
+    const { impl, calls } = fakeFetch([
+      (url, init) =>
+        url.pathname === "/api/v4/calendar_entries.json" && init?.method === "POST"
+          ? json({ data: { id: 991 } }, { status: 201 })
+          : undefined,
+    ]);
+    const client = new ClioManageClient(new MemoryStore(token()), impl, noSleep);
+    expect(await client.createCalendarEntry(entry)).toBe("991");
+    const body = JSON.parse(String(calls[0]!.init!.body)) as { data: Record<string, unknown> };
+    expect(body.data).toMatchObject({
+      calendar_owner: { id: 42 },
+      matter: { id: 7 },
+      start_at: entry.startAt,
+      send_email_notification: false,
+    });
+  });
+
+  it("ne rejoue jamais une création après une erreur serveur (évite les doublons)", async () => {
+    const { impl, calls } = fakeFetch([() => new Response("{}", { status: 502 })]);
+    const client = new ClioManageClient(new MemoryStore(token()), impl, noSleep);
+    await expect(client.createCalendarEntry(entry)).rejects.toBeInstanceOf(ClioError);
+    expect(calls).toHaveLength(1);
+  });
+
+  it("met à jour (PATCH) ; entrée disparue de Clio : false", async () => {
+    const { impl, calls } = fakeFetch([
+      (url, init) =>
+        init?.method === "PATCH" && url.pathname.endsWith("/991.json")
+          ? json({ data: { id: 991 } })
+          : undefined,
+      (url, init) => (init?.method === "PATCH" ? new Response("{}", { status: 404 }) : undefined),
+    ]);
+    const client = new ClioManageClient(new MemoryStore(token()), impl, noSleep);
+    expect(await client.updateCalendarEntry("991", entry)).toBe(true);
+    expect(await client.updateCalendarEntry("992", entry)).toBe(false);
+    expect(calls.map((c) => c.init?.method)).toEqual(["PATCH", "PATCH"]);
+  });
+
+  it("supprime (DELETE, réponse 204) et encode l'identifiant", async () => {
+    const { impl, calls } = fakeFetch([
+      (_url, init) => (init?.method === "DELETE" ? new Response(null, { status: 204 }) : undefined),
+    ]);
+    const client = new ClioManageClient(new MemoryStore(token()), impl, noSleep);
+    await client.deleteCalendarEntry("../matters/1");
+    expect(calls[0]!.url.pathname).toBe("/api/v4/calendar_entries/..%2Fmatters%2F1.json");
+  });
+});
