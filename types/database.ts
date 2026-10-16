@@ -334,6 +334,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"matter_saved_views": {
+                  Row: {
+                    "created_at": string,"id": string,"name": string,"owner_id": string,"query": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"name": string,"owner_id"?: string,"query": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"name"?: string,"owner_id"?: string,"query"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "matter_saved_views_owner_id_fkey"
+      columns: ["owner_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"matter_tag_links": {
                   Row: {
                     "created_at": string,"created_by": string | null,"matter_id": string,"tag_id": string

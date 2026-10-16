@@ -515,7 +515,21 @@
       "quick": "Quick actions",
       "inviteClient": "Invite a client",
       "manageAccess": "Manage matter access",
-      "staffOnly": "Your role gives read access to the matters of your team."
+      "staffOnly": "Your role gives read access to the matters of your team.",
+      "watch": {
+        "title": "To watch",
+        "none": "Nothing to watch: no overdue item, no upcoming deadline, no idle matter.",
+        "groups": {
+          "overdueRequests": "Overdue document requests ({count})",
+          "lateDeliverables": "Overdue deliverables ({count})",
+          "soonRequests": "Documents due within 7 days ({count})",
+          "soonDeliverables": "Deliverables due within 7 days ({count})",
+          "idleMatters": "No activity for 14 days ({count})"
+        },
+        "dueOn": "Due {date}",
+        "lastActivity": "Last activity {when}",
+        "seeAll": "See all ({count})"
+      }
     },
     "clients": {
       "title": "Clients",
@@ -605,7 +619,36 @@
       "progress": "Progress",
       "overdueCount": "{count} overdue",
       "pendingCount": "{count} document(s) pending",
-      "lastActivity": "Activity {when}"
+      "lastActivity": "Activity {when}",
+      "mode": {
+        "label": "Display",
+        "list": "List",
+        "board": "Board by step"
+      },
+      "board": {
+        "label": "Matters by step",
+        "chooseType": "Choose a matter type in the filters to see its matters by step (one column per step of its template).",
+        "notStarted": "No steps yet",
+        "other": "Other step",
+        "done": "All steps completed",
+        "empty": "No matter at this step."
+      },
+      "views": {
+        "title": "Saved views",
+        "none": "No saved view yet. Set the filters, then save them under a name.",
+        "name": "Name of this view",
+        "save": "Save this view",
+        "remove": "Remove the view {name}"
+      },
+      "notices": {
+        "viewSaved": "View saved.",
+        "viewRemoved": "View removed.",
+        "viewDuplicate": "You already have a view with this name.",
+        "viewLimit": "You can save up to 20 views. Remove one first.",
+        "viewInvalid": "Please give the view a name.",
+        "viewFailed": "The view could not be saved.",
+        "viewRemoveFailed": "The view could not be removed."
+      }
     },
     "audit": {
       "title": "Audit log",

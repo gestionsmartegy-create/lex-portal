@@ -25,7 +25,7 @@ Une seule page par dossier remplace « Dossiers et accès » et « Suivi du doss
 ## Phase 2 — Suivi de portefeuille, mieux que Clio
 - **Étiquettes** en couleur, définies par le cabinet, internes ou visibles par le client.
 - **Liste des dossiers** avec filtres combinés (étiquette, type, avocat, statut, étape, retard, inactivité) et **vues enregistrées**.
-- **Kanban par type de dossier**, avec une colonne par étape.
+- **Kanban par type de dossier**, avec une colonne par étape. *Fait (ADR 0023), ainsi que les vues enregistrées et le panneau « À surveiller ».*
 - **Demandes de documents globales** (tous les dossiers, actions groupées) et **demande envoyée en une fois à plusieurs dossiers**.
 - **Alertes** : dossier inactif, demande en retard, échéance proche.
 
