@@ -5,12 +5,16 @@ import { ClioError, type ClioManageGateway } from "./gateway";
 import { CLIO_BASE_URL, refreshTokens } from "./oauth";
 import {
   BILL_FIELDS,
+  CALENDAR_FIELDS,
   CONTACT_FIELDS,
   MATTER_FIELDS,
   clioBillSchema,
+  clioCalendarEntryRefSchema,
+  clioCalendarSchema,
   clioContactSchema,
   clioMatterSchema,
   pageSchema,
+  type ClioCalendarEntryInput,
   type StoredTokens,
 } from "./schemas";
 
@@ -23,7 +27,8 @@ type Sleep = (ms: number) => Promise<void>;
 const realSleep: Sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * ClioManageClient — API v4, région CA, LECTURE seulement (ADR 0014).
+ * ClioManageClient — API v4, région CA : lecture (ADR 0014) et écriture des seules entrées de calendrier
+ * des dates de cour (ADR 0025).
  * Débit borné (45 req/min), `Retry-After` respecté sur 429, reprise exponentielle sur 5xx,
  * pagination suivie par `meta.paging.next` (même hôte uniquement), réponses validées par Zod,
  * jeton rafraîchi 60 s avant échéance. Aucune réponse brute n'est journalisée.
@@ -67,6 +72,38 @@ export class ClioManageClient implements ClioManageGateway {
       { matter_id: String(matterId), fields: BILL_FIELDS },
       clioBillSchema,
     );
+  }
+
+  async listWritableCalendars() {
+    return this.list(
+      "/api/v4/calendars.json",
+      { writeable: "true", fields: CALENDAR_FIELDS },
+      clioCalendarSchema,
+    );
+  }
+
+  async createCalendarEntry(input: ClioCalendarEntryInput) {
+    const body = await this.request(new URL("/api/v4/calendar_entries.json?fields=id", CLIO_BASE_URL), {
+      method: "POST",
+      body: entryBody(input),
+    });
+    const parsed = clioCalendarEntryRefSchema.safeParse(body);
+    if (!parsed.success) throw new ClioError("INVALID_RESPONSE");
+    return parsed.data.data.id;
+  }
+
+  async updateCalendarEntry(id: string, input: ClioCalendarEntryInput) {
+    const body = await this.request(
+      new URL(`/api/v4/calendar_entries/${encodeURIComponent(id)}.json?fields=id`, CLIO_BASE_URL),
+      { method: "PATCH", body: entryBody(input) },
+    );
+    return body !== null;
+  }
+
+  async deleteCalendarEntry(id: string) {
+    await this.request(new URL(`/api/v4/calendar_entries/${encodeURIComponent(id)}.json`, CLIO_BASE_URL), {
+      method: "DELETE",
+    });
   }
 
   private async list<T extends z.ZodType>(
@@ -121,12 +158,21 @@ export class ClioManageClient implements ClioManageGateway {
     this.calls.push(this.now());
   }
 
-  /** Retourne le JSON, ou null sur 404. */
-  private async request(url: URL): Promise<unknown> {
+  /** Retourne le JSON (ou {} sur 204), ou null sur 404. Une écriture n'est jamais rejouée après un 5xx. */
+  private async request(
+    url: URL,
+    write?: { method: "POST" | "PATCH" | "DELETE"; body?: string },
+  ): Promise<unknown> {
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       await this.throttle();
       const res = await this.fetchImpl(url, {
-        headers: { Authorization: `Bearer ${await this.accessToken()}`, Accept: "application/json" },
+        method: write?.method ?? "GET",
+        headers: {
+          Authorization: `Bearer ${await this.accessToken()}`,
+          Accept: "application/json",
+          ...(write?.body ? { "Content-Type": "application/json" } : {}),
+        },
+        body: write?.body,
         cache: "no-store",
       });
       if (res.status === 404) return null;
@@ -138,15 +184,34 @@ export class ClioManageClient implements ClioManageGateway {
         continue;
       }
       if (res.status >= 500) {
-        if (attempt === MAX_ATTEMPTS) throw new ClioError("UPSTREAM");
+        // Une création peut avoir abouti malgré l'erreur : pas de nouvelle tentative (évite les doublons).
+        if (attempt === MAX_ATTEMPTS || write?.method === "POST") throw new ClioError("UPSTREAM");
         await this.sleep(2 ** attempt * 500);
         continue;
       }
       if (!res.ok) throw new ClioError("UPSTREAM");
+      if (res.status === 204) return {};
       return res.json().catch(() => {
         throw new ClioError("INVALID_RESPONSE");
       });
     }
     throw new ClioError("UPSTREAM");
   }
+}
+
+/** Corps d'une entrée de calendrier Clio (POST / PATCH /calendar_entries). */
+function entryBody(input: ClioCalendarEntryInput): string {
+  return JSON.stringify({
+    data: {
+      calendar_owner: { id: input.calendarId },
+      ...(input.matterId ? { matter: { id: input.matterId } } : {}),
+      summary: input.summary,
+      description: input.description,
+      location: input.location,
+      start_at: input.startAt,
+      end_at: input.endAt,
+      all_day: input.allDay,
+      send_email_notification: false,
+    },
+  });
 }

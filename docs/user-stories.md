@@ -64,9 +64,9 @@
 | [E2](https://github.com/SmartegyCanada/lex-portal/issues/71) | En tant qu'Admin, je veux gérer la liste des tribunaux. | 1 | 🟡 lot 1 |
 | [E3](https://github.com/SmartegyCanada/lex-portal/issues/72) | En tant qu'Admin, je veux rattacher chaque avocat à un bureau principal, et éventuellement à d'autres. | 1 | 🟡 lot 1 |
 | [E4](https://github.com/SmartegyCanada/lex-portal/issues/73) | En tant que Personnel, je veux qu'un dossier soit rattaché à un bureau, et pouvoir filtrer par bureau. | 1 | 🟡 lot 1 |
-| [E5](https://github.com/SmartegyCanada/lex-portal/issues/74) | En tant que Personnel, je veux inscrire une date de cour dans un dossier. | 2 | ⏳ |
-| [E6](https://github.com/SmartegyCanada/lex-portal/issues/75) | En tant qu'Avocat, je veux confirmer chaque date de cour. | 2 | ⏳ |
-| [E7](https://github.com/SmartegyCanada/lex-portal/issues/76) | En tant que Personnel, je veux remettre ou annuler une date de cour sans perdre l'historique. | 2 | ⏳ |
+| [E5](https://github.com/SmartegyCanada/lex-portal/issues/74) | En tant que Personnel, je veux inscrire une date de cour dans un dossier. | 2 | 🟡 lot 2 |
+| [E6](https://github.com/SmartegyCanada/lex-portal/issues/75) | En tant qu'Avocat, je veux confirmer chaque date de cour. | 2 | 🟡 lot 2 |
+| [E7](https://github.com/SmartegyCanada/lex-portal/issues/76) | En tant que Personnel, je veux remettre ou annuler une date de cour sans perdre l'historique. | 2 | 🟡 lot 2 |
 | [E8](https://github.com/SmartegyCanada/lex-portal/issues/77) | En tant que Personnel, je veux voir dans un dossier les dates de cour déjà saisies dans Clio. | 2 | ⏳ |
 | [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | ⏳ |
 | [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | ⏳ |

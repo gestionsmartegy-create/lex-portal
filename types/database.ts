@@ -140,6 +140,76 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"court_date_attendees": {
+                  Row: {
+                    "court_date_id": string,"created_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "court_date_id": string,"created_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "court_date_id"?: string,"created_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "court_date_attendees_court_date_id_fkey"
+      columns: ["court_date_id"]
+isOneToOne: false
+      referencedRelation: "court_dates"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_date_attendees_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"court_dates": {
+                  Row: {
+                    "all_day": boolean,"cancel_reason": string | null,"client_instructions": string | null,"clio_calendar_entry_id": string | null,"clio_sync_status": string,"clio_synced_at": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"court_id": string | null,"created_at": string,"created_by": string | null,"docket_number": string | null,"ends_at": string | null,"id": string,"judge": string | null,"kind": string,"matter_id": string,"mode": string,"notes": string | null,"replaces_id": string | null,"room": string | null,"starts_at": string,"status": string,"timezone": string,"updated_at": string,"virtual_link": string | null,"visible_to_client": boolean
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind": string,"matter_id": string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at": string,"status"?: string,"timezone": string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                  }
+                  Update: {
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind"?: string,"matter_id"?: string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at"?: string,"status"?: string,"timezone"?: string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "court_dates_confirmed_by_fkey"
+      columns: ["confirmed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_dates_court_id_fkey"
+      columns: ["court_id"]
+isOneToOne: false
+      referencedRelation: "courts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_dates_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_dates_matter_id_fkey"
+      columns: ["matter_id"]
+isOneToOne: false
+      referencedRelation: "matters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_dates_replaces_id_fkey"
+      columns: ["replaces_id"]
+isOneToOne: false
+      referencedRelation: "court_dates"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"courts": {
                   Row: {
                     "address": string | null,"created_at": string,"id": string,"is_active": boolean,"name_en": string,"name_fr": string,"position": number,"province": string,"timezone": string | null,"updated_at": string
@@ -848,6 +918,12 @@ isOneToOne: false
               "active_matters": number,"outstanding_balance": number,"pending_documents": number,"unread_messages": number
             }[]
                            },
+"clio_court_calendar":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"clio_court_calendar_internal":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "current_session_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
                            },
@@ -916,6 +992,9 @@ isOneToOne: false
                            },
 "revoke_user_sessions":
 { Args: { "p_user": string }; Returns: number
+                           },
+"set_clio_court_calendar":
+{ Args: { "p_calendar_id": number }; Returns: undefined
                            },
 "set_staff_offices":
 { Args: { "p_others": (string)[],"p_primary": string,"p_user": string }; Returns: undefined
