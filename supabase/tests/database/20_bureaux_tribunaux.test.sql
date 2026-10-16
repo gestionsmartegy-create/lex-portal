@@ -1,10 +1,13 @@
 -- Bureaux et tribunaux (ADR 0024) : lecture par le personnel, écriture par le firm_admin, aucun droit induit.
 begin;
 \ir _fixture.psql
-select plan(30);
+select plan(32);
 
-select is((select count(*)::int from public.offices), 3, 'trois bureaux de départ (Ottawa, Halifax, Montréal)');
-select ok((select count(*) from public.courts) >= 13, 'liste de départ des tribunaux');
+select is((select count(*)::int from public.offices), 4, 'quatre bureaux de départ (Moncton, Ottawa, Halifax, Montréal)');
+select is((select province || ' ' || timezone from public.offices order by position limit 1), 'NB America/Halifax',
+  'Moncton (siège social) en premier, heure de l''Atlantique');
+select is((select count(*)::int from public.offices where address is not null), 3, 'adresses publiées : Moncton, Halifax, Ottawa');
+select ok((select count(*) from public.courts) >= 16, 'liste de départ des tribunaux (dont Nouveau-Brunswick)');
 select ok((select relrowsecurity from pg_class where oid = 'public.offices'::regclass)
       and (select relrowsecurity from pg_class where oid = 'public.courts'::regclass)
       and (select relrowsecurity from pg_class where oid = 'public.staff_offices'::regclass), 'RLS active');
@@ -37,7 +40,7 @@ select tests.clear_authentication();
 
 -- Personnel de l'équipe : lit, ne modifie pas ; place son dossier dans un bureau.
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oauth');
-select is((select count(*)::int from public.offices where is_active), 3, 'personnel : lit les bureaux actifs');
+select is((select count(*)::int from public.offices where is_active), 4, 'personnel : lit les bureaux actifs');
 select is((select count(*)::int from public.offices where name_en = 'Ottawa' and city = 'Ottawa'), 1, 'personnel : lit un bureau');
 update public.offices set city = 'Pirate' where name_en = 'Ottawa';
 select is((select city from public.offices where name_en = 'Ottawa'), 'Ottawa', 'personnel : ne modifie pas un bureau');

@@ -81,4 +81,4 @@ Une seule page par dossier remplace « Dossiers et accès » et « Suivi du doss
 5. ~~Signature~~ : **option A, signature dans Clio** (décidé le 2026-10-15).
 6. IA : ~~fournisseur~~ **OpenAI** (décidé le 2026-10-15) ; reste à décider : données autorisées, conservation, plafond de coût, Loi 25 pour le Québec.
 7. Carrières : site public ou portail.
-8. Bureaux : **Ottawa, Halifax, Montréal** (décidé le 2026-10-15) ; reste à fournir : adresses et bureau principal de chaque avocat.
+8. Bureaux : **Moncton (siège social), Ottawa, Halifax, Montréal** (décidé les 15 et 16 octobre 2026) ; reste à fournir : l'adresse de Montréal et le bureau principal de chaque avocat.
