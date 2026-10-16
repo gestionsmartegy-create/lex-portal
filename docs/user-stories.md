@@ -55,3 +55,26 @@
 | [D1](https://github.com/SmartegyCanada/lex-portal/issues/43) | En tant qu'**Admin**, je veux connecter Clio, puis importer les dossiers et factures d'un client, en lecture. <ul><li>OAuth PKCE.</li><li>Jetons chiffrés dans Vault.</li><li>Brouillons jamais importés.</li><li>L'import ne donne aucun accès.</li><li>Synchronisation toutes les 30 min.</li></ul> | ✅ sur le faux Clio (`clio-sync.test.ts`, `admin.spec.ts`) ; 🟡 vrai Clio dès que vos identifiants sont saisis. Rendez-vous Clio : ⏳ |
 | [D2](https://github.com/SmartegyCanada/lex-portal/issues/44) | En tant que **Client**, je veux voir les vrais documents de SharePoint et y déposer les miens (avec antivirus). | ⏳ Phase 3 |
 | [D3](https://github.com/SmartegyCanada/lex-portal/issues/45) | En tant que **Client**, je veux signer avec DocuSign et payer en ligne. | ⏳ Phase 4 |
+
+## E. Bureaux et calendrier de cour (plan `docs/plan-bureaux-calendrier.md`)
+
+| # | Story | Lot | Statut |
+|---|---|---|---|
+| [E1](https://github.com/SmartegyCanada/lex-portal/issues/70) | En tant qu'Admin, je veux créer et gérer les bureaux du cabinet. | 1 | 🟡 lot 1 |
+| [E2](https://github.com/SmartegyCanada/lex-portal/issues/71) | En tant qu'Admin, je veux gérer la liste des tribunaux. | 1 | 🟡 lot 1 |
+| [E3](https://github.com/SmartegyCanada/lex-portal/issues/72) | En tant qu'Admin, je veux rattacher chaque avocat à un bureau principal, et éventuellement à d'autres. | 1 | 🟡 lot 1 |
+| [E4](https://github.com/SmartegyCanada/lex-portal/issues/73) | En tant que Personnel, je veux qu'un dossier soit rattaché à un bureau, et pouvoir filtrer par bureau. | 1 | 🟡 lot 1 |
+| [E5](https://github.com/SmartegyCanada/lex-portal/issues/74) | En tant que Personnel, je veux inscrire une date de cour dans un dossier. | 2 | ⏳ |
+| [E6](https://github.com/SmartegyCanada/lex-portal/issues/75) | En tant qu'Avocat, je veux confirmer chaque date de cour. | 2 | ⏳ |
+| [E7](https://github.com/SmartegyCanada/lex-portal/issues/76) | En tant que Personnel, je veux remettre ou annuler une date de cour sans perdre l'historique. | 2 | ⏳ |
+| [E8](https://github.com/SmartegyCanada/lex-portal/issues/77) | En tant que Personnel, je veux voir dans un dossier les dates de cour déjà saisies dans Clio. | 2 | ⏳ |
+| [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | ⏳ |
+| [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | ⏳ |
+| [E11](https://github.com/SmartegyCanada/lex-portal/issues/80) | En tant qu'Avocat, je veux être averti d'un conflit d'horaire. | 3 | ⏳ |
+| [E12](https://github.com/SmartegyCanada/lex-portal/issues/81) | En tant que Personnel, je veux des rappels avant chaque date de cour. | 3 | ⏳ |
+| [E13](https://github.com/SmartegyCanada/lex-portal/issues/82) | En tant que Personnel sur téléphone, je veux un calendrier lisible. | 3 | ⏳ |
+| [E14](https://github.com/SmartegyCanada/lex-portal/issues/83) | En tant que Personnel, je veux connecter mon agenda Outlook. | 4 | ⏳ |
+| [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | ⏳ |
+| [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | ⏳ |
+| [E17](https://github.com/SmartegyCanada/lex-portal/issues/86) | En tant que Client, je veux voir mes prochaines dates de cour et les consignes de mon avocat. | 5 | ⏳ |
+| [E18](https://github.com/SmartegyCanada/lex-portal/issues/87) | En tant qu'Admin, je veux voir la charge d'audiences par avocat, par bureau et par tribunal. | 6 | ⏳ |

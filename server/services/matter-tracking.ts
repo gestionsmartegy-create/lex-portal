@@ -68,7 +68,9 @@ export async function getMatterTracking(matterId: string) {
   ] = await Promise.all([
     supabase
       .from("matters")
-      .select("id, display_number, title, practice_area, status, progress_percent, is_mock, matter_type_id")
+      .select(
+        "id, display_number, title, practice_area, status, progress_percent, is_mock, matter_type_id, office_id",
+      )
       .eq("id", matterId)
       .maybeSingle(),
     supabase
@@ -122,6 +124,7 @@ export async function getMatterTracking(matterId: string) {
       progress_percent: number | null;
       is_mock: boolean;
       matter_type_id: string | null;
+      office_id: string | null;
     },
     types,
     template,

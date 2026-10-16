@@ -36,6 +36,8 @@ const eslintConfig = defineConfig([
     "diagrams/**",
     "docs/**",
     "types/database.ts",
+    // Artefacts locaux de QA (captures, traces Playwright), ignorés par Git.
+    ".tmp/**",
   ]),
 ]);
 

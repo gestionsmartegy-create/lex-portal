@@ -1,5 +1,6 @@
 import {
   Bell,
+  Building2,
   CalendarDays,
   CreditCard,
   FileQuestion,
@@ -40,6 +41,7 @@ export const ADMIN_NAV = [
   { key: "matters", href: "/admin/matters", icon: FolderOpen },
   { key: "requests", href: "/admin/requests", icon: FileQuestion },
   { key: "templates", href: "/admin/templates", icon: LayoutTemplate, adminOnly: true },
+  { key: "offices", href: "/admin/offices", icon: Building2, adminOnly: true },
   { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
   { key: "integrations", href: "/admin/integrations", icon: PlugZap, adminOnly: true },
   { key: "staff", href: "/admin/staff", icon: UserCog, adminOnly: true },

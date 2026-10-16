@@ -11,6 +11,7 @@ import { bulkRequestsAction } from "@/server/actions/requests";
 import { requireStaff } from "@/server/auth/session";
 import { listAllRequests, requestFiltersSchema } from "@/server/services/document-requests";
 import { listTags } from "@/server/services/matter-tags";
+import { listOffices } from "@/server/services/offices";
 import { pick } from "@/server/services/matter-templates";
 
 const fieldClass =
@@ -29,12 +30,14 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
   const filters = requestFiltersSchema.parse({
     status: sp.status || undefined,
     tag: sp.tag || undefined,
+    office: sp.office || undefined,
     q: sp.q || undefined,
   });
-  const [t, rows, tags] = await Promise.all([
+  const [t, rows, tags, offices] = await Promise.all([
     getTranslations("admin.requests"),
     listAllRequests(filters),
     listTags(),
+    listOffices(),
   ]);
   const notice = NOTICES.find((n) => n === sp.notice);
   const report = {
@@ -68,7 +71,11 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
       />
 
       <SectionCard className="mb-6">
-        <form method="get" action={`/${locale}/admin/requests`} className="grid gap-3 sm:grid-cols-3">
+        <form
+          method="get"
+          action={`/${locale}/admin/requests`}
+          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        >
           <div className="space-y-1">
             <label htmlFor="r-q" className={labelClass}>
               {t("filters.q")}
@@ -101,7 +108,20 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
               ))}
             </select>
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
+          <div className="space-y-1">
+            <label htmlFor="r-office" className={labelClass}>
+              {t("filters.office")}
+            </label>
+            <select id="r-office" name="office" defaultValue={filters.office ?? ""} className={fieldClass}>
+              <option value="">{t("filters.all")}</option>
+              {offices.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {pick(locale, o.name_fr, o.name_en)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2 lg:col-span-4">
             <Button type="submit" variant="primary" size="sm">
               {t("filters.apply")}
             </Button>
@@ -119,6 +139,7 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
             {filters.q ? <input type="hidden" name="q" value={filters.q} /> : null}
             {filters.status ? <input type="hidden" name="status" value={filters.status} /> : null}
             {filters.tag ? <input type="hidden" name="tag" value={filters.tag} /> : null}
+            {filters.office ? <input type="hidden" name="office" value={filters.office} /> : null}
             <div className="mb-4 flex flex-wrap items-end gap-2">
               <div className="space-y-1">
                 <label htmlFor="bulk-action" className={labelClass}>
