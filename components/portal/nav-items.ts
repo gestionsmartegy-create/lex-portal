@@ -1,4 +1,5 @@
 import {
+  BarChart3,
   Bell,
   Building2,
   CalendarDays,
@@ -44,6 +45,7 @@ export const ADMIN_NAV = [
   { key: "courtCalendar", href: "/admin/court-calendar", icon: Gavel },
   { key: "templates", href: "/admin/templates", icon: LayoutTemplate, adminOnly: true },
   { key: "offices", href: "/admin/offices", icon: Building2, adminOnly: true },
+  { key: "workload", href: "/admin/workload", icon: BarChart3, adminOnly: true },
   { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
   { key: "integrations", href: "/admin/integrations", icon: PlugZap, adminOnly: true },
   { key: "staff", href: "/admin/staff", icon: UserCog, adminOnly: true },

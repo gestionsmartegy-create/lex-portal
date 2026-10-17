@@ -77,4 +77,4 @@
 | [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | ⏳ |
 | [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | ⏳ |
 | [E17](https://github.com/SmartegyCanada/lex-portal/issues/86) | En tant que Client, je veux voir mes prochaines dates de cour et les consignes de mon avocat. | 5 | ⏳ |
-| [E18](https://github.com/SmartegyCanada/lex-portal/issues/87) | En tant qu'Admin, je veux voir la charge d'audiences par avocat, par bureau et par tribunal. | 6 | ⏳ |
+| [E18](https://github.com/SmartegyCanada/lex-portal/issues/87) | En tant qu'Admin, je veux voir la charge d'audiences par avocat, par bureau et par tribunal. | 6 | 🟡 lot 6 |

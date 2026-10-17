@@ -504,7 +504,8 @@
       "templates": "Modèles de dossiers",
       "requests": "Demandes de documents",
       "offices": "Bureaux et tribunaux",
-      "courtCalendar": "Calendrier de cour"
+      "courtCalendar": "Calendrier de cour",
+      "workload": "Charge de travail"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1310,6 +1311,45 @@
       "noneNext14": "Aucune date de cour dans les 14 prochains jours.",
       "upcomingCount": "{count, plural, one {# date de cour} other {# dates de cour}}",
       "alertsCount": "À vérifier : {conflicts} conflit(s), {toConfirm} à confirmer"
+    },
+    "workload": {
+      "title": "Charge de travail",
+      "subtitle": "Dossiers ouverts, dates de cour et livrables des {days} prochains jours, par avocat, bureau, tribunal et domaine.",
+      "lawyers": "Par avocat",
+      "offices": "Par bureau",
+      "courts": "Dates de cour par tribunal",
+      "types": "Dossiers ouverts par domaine",
+      "none": "Rien à afficher sur cette période.",
+      "noOffice": "Sans bureau",
+      "noCourt": "Tribunal non précisé",
+      "noType": "Sans type",
+      "openCalendar": "Ouvrir le calendrier de cour de {name}",
+      "truncated": "Volume très important : certains éléments n'ont pas été comptés. Affinez les filtres.",
+      "help": "Compteurs seulement : aucun contenu de dossier n'est affiché. Conflits : un avocat présent à deux dates de cour qui se chevauchent, ou séparées de moins d'une heure dans deux tribunaux.",
+      "filters": {
+        "period": "Période",
+        "days": "{days} prochains jours",
+        "office": "Bureau",
+        "allOffices": "Tous les bureaux",
+        "apply": "Afficher"
+      },
+      "totals": {
+        "matters": "Dossiers ouverts",
+        "courtDates": "Dates de cour ({days} prochains jours)",
+        "conflicts": "Conflits d'horaire"
+      },
+      "cols": {
+        "lawyer": "Avocat",
+        "office": "Bureau",
+        "openMatters": "Dossiers ouverts",
+        "responsible": "Responsable de",
+        "courtDates": "Dates de cour",
+        "conflicts": "Conflits",
+        "deliverables": "Livrables à remettre",
+        "court": "Tribunal",
+        "type": "Domaine",
+        "count": "Nombre"
+      }
     }
   }
 }

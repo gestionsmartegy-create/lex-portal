@@ -504,7 +504,8 @@
       "templates": "Matter templates",
       "requests": "Document requests",
       "offices": "Offices & courts",
-      "courtCalendar": "Court calendar"
+      "courtCalendar": "Court calendar",
+      "workload": "Workload"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1310,6 +1311,45 @@
       "noneNext14": "No court date in the next 14 days.",
       "upcomingCount": "{count, plural, one {# court date} other {# court dates}}",
       "alertsCount": "To check: {conflicts} conflict(s), {toConfirm} to be confirmed"
+    },
+    "workload": {
+      "title": "Workload",
+      "subtitle": "Open matters, court dates and deliverables over the next {days} days, by lawyer, office, court and practice area.",
+      "lawyers": "By lawyer",
+      "offices": "By office",
+      "courts": "Court dates by court",
+      "types": "Open matters by practice area",
+      "none": "Nothing to show for this period.",
+      "noOffice": "No office",
+      "noCourt": "Court not specified",
+      "noType": "No type",
+      "openCalendar": "Open {name}'s court calendar",
+      "truncated": "Very large volume: some items were not counted. Narrow the filters.",
+      "help": "Counts only: no matter content is shown. Conflicts: a lawyer present at two court dates that overlap, or with less than one hour between two courts.",
+      "filters": {
+        "period": "Period",
+        "days": "Next {days} days",
+        "office": "Office",
+        "allOffices": "All offices",
+        "apply": "Show"
+      },
+      "totals": {
+        "matters": "Open matters",
+        "courtDates": "Court dates (next {days} days)",
+        "conflicts": "Schedule conflicts"
+      },
+      "cols": {
+        "lawyer": "Lawyer",
+        "office": "Office",
+        "openMatters": "Open matters",
+        "responsible": "Responsible for",
+        "courtDates": "Court dates",
+        "conflicts": "Conflicts",
+        "deliverables": "Deliverables due",
+        "court": "Court",
+        "type": "Practice area",
+        "count": "Count"
+      }
     }
   }
 }
