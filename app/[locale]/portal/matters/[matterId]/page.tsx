@@ -12,6 +12,8 @@ import { formatCalendarDate, formatDate } from "@/lib/format";
 import { startConversationAction } from "@/server/actions/portal";
 import { requireClientSession } from "@/server/auth/session";
 import { listAppointments } from "@/server/services/appointment";
+import { listClientCourtDates } from "@/server/services/client-court-dates";
+import { ClientCourtDates } from "../../_components/client-court-dates";
 import { listInvoices } from "@/server/services/billing";
 import { listDocuments } from "@/server/services/document";
 import { getMatterDetail } from "@/server/services/matter";
@@ -127,11 +129,22 @@ export default async function MatterPage({
       </SectionCard>
     );
   } else {
-    const { upcoming, past } = await listAppointments({ matterId });
+    const [{ upcoming, past }, courtDates, tc] = await Promise.all([
+      listAppointments({ matterId }),
+      listClientCourtDates(matterId),
+      getTranslations("portal.courtDates"),
+    ]);
     content = (
-      <SectionCard>
-        <AppointmentList appointments={[...upcoming, ...past]} />
-      </SectionCard>
+      <div className="space-y-6">
+        {courtDates.length ? (
+          <SectionCard title={tc("title")}>
+            <ClientCourtDates dates={courtDates} locale={locale} />
+          </SectionCard>
+        ) : null}
+        <SectionCard>
+          <AppointmentList appointments={[...upcoming, ...past]} />
+        </SectionCard>
+      </div>
     );
   }
 

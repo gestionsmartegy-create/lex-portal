@@ -23,6 +23,7 @@ import {
   startConversationAsStaff,
 } from "@/server/services/messaging";
 import { resetClientMfa } from "@/server/services/mfa-reset";
+import { pushCourtDateReminders } from "@/server/services/client-court-dates";
 import { pushPendingCourtDates } from "@/server/services/court-dates";
 import { importClioContact, syncLinkedMatters } from "@/server/services/sync";
 import { provisionStaff } from "@/server/services/staff";
@@ -185,6 +186,12 @@ export async function syncClioNowAction(formData: FormData): Promise<void> {
   const { user } = await requireStaff(locale, ["firm_admin"]);
   const result = await syncLinkedMatters(user.id);
   const courts = await pushPendingCourtDates();
+  // Rappels de dates de cour aux clients (ADR 0028) : aussi déclenchés par le planificateur.
+  try {
+    await pushCourtDateReminders();
+  } catch {
+    console.error(JSON.stringify({ event: "court_reminders_failed" }));
+  }
   redirect(`/${locale}/admin/integrations?notice=${result.ok && courts.failed === 0 ? "synced" : "failed"}`);
 }
 
