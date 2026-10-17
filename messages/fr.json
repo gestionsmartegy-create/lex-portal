@@ -1226,6 +1226,13 @@
         "duplicate": "Ce nom est déjà utilisé.",
         "failed": "La modification n'a pas pu être enregistrée.",
         "invalid": "Veuillez vérifier le formulaire (un tribunal provincial a besoin d'un fuseau horaire)."
+      },
+      "viewers": {
+        "title": "Calendrier de cour : adjoint·e·s",
+        "help": "Les adjoint·e·s voient toutes les dates de cour du cabinet dans le calendrier de cour (lecture seule hors de leurs équipes : ni notes internes, ni lien virtuel, ni accès au dossier).",
+        "on": "Voit tout le cabinet",
+        "add": "Donner accès à tout le cabinet",
+        "remove": "Retirer l'accès"
       }
     },
     "court": {
@@ -1339,7 +1346,9 @@
       "open": "Ouvrir le calendrier de cour",
       "noneNext14": "Aucune date de cour dans les 14 prochains jours.",
       "upcomingCount": "{count, plural, one {# date de cour} other {# dates de cour}}",
-      "alertsCount": "À vérifier : {conflicts} conflit(s), {toConfirm} à confirmer"
+      "alertsCount": "À vérifier : {conflicts} conflit(s), {toConfirm} à confirmer",
+      "otherTeam": "Autre équipe (lecture seule)",
+      "unnamedMatter": "Dossier"
     }
   }
 }

@@ -117,3 +117,11 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Fournisseur d'IA pour l'aide à la rédaction~~ | ✅ **OpenAI (API)** | Les appels se font depuis le serveur seulement. **À confirmer avant le développement de la phase 6** : quelles données on peut envoyer, la conservation zéro chez OpenAI, et un plafond de coût. Les données sont traitées hors du Canada, ce qui demande une évaluation des facteurs relatifs à la vie privée pour les clients du Québec (Loi 25, voir la ligne suivante). |
 | ~~Liste des bureaux~~ | ✅ **Ottawa (ON), Halifax (N.-É.), Montréal (QC)**, plus **Moncton (N.-B., siège social)** ajouté le 2026-10-16. Adresses de Moncton, Halifax et Ottawa : lexcanadalaw.com/contact. **Montréal : adresse à fournir** (absent du site) | Fuseaux : Ottawa et Montréal à l'heure de l'Est, Halifax à l'heure de l'Atlantique. **Montréal fait entrer le Québec dans le périmètre** : Loi 25 sur la protection des renseignements personnels, tribunaux du Québec (procédure civile du Québec, audiences surtout en français) et jours fériés du Québec. Reste à fournir : l'adresse de chaque bureau et le bureau principal de chaque avocat. |
 | Loi 25 (Québec) : obligations pour les clients du bureau de Montréal | **À valider par le cabinet** (responsable de la protection des renseignements personnels, EFVP avant tout transfert hors Québec, dont OpenAI) | Bloque l'envoi de données de clients du Québec à OpenAI tant que l'évaluation n'est pas faite. |
+
+## Décisions du 2026-10-16 (calendrier de cour)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Qui peut confirmer une date de cour ?~~ | ✅ **Tout membre de l'équipe du dossier, adjoint·e·s compris** (courriel de la direction du 2026-10-16) | Comportement déjà en place (ADR 0025) |
+| ~~Accès des adjoint·e·s au calendrier de cour~~ | ✅ **Tout le cabinet**, en lecture seule hors de leurs équipes ; numéro du dossier seulement (pas le titre) hors équipe | ADR 0027 ; désignation par le firm_admin |
+| Adresse du bureau de Montréal | **À fournir** (téléphone connu : 514-533-0112) | Absente du site lexcanadalaw.com |

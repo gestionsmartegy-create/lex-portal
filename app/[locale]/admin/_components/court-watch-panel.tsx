@@ -22,15 +22,22 @@ export async function CourtWatchPanel({
   ]);
   const line = (i: CalendarItem) => (
     <li key={i.id} className="py-2 text-sm">
-      <Link
-        href={`/admin/matters/${i.matterId}?tab=court`}
-        className="font-medium text-marine hover:underline"
-      >
-        {tCourt(`kinds.${i.kind}`)} · {i.matterNumber ?? i.matterTitle}
-      </Link>
+      {i.onTeam ? (
+        <Link
+          href={`/admin/matters/${i.matterId}?tab=court`}
+          className="font-medium text-marine hover:underline"
+        >
+          {tCourt(`kinds.${i.kind}`)} · {i.matterNumber || i.matterTitle || t("unnamedMatter")}
+        </Link>
+      ) : (
+        <span className="font-medium text-marine">
+          {tCourt(`kinds.${i.kind}`)} · {i.matterNumber || i.matterTitle || t("unnamedMatter")}
+        </span>
+      )}
       <p className="text-xs text-ink-muted">
         {formatZoned(i.startsAt, i.timezone, locale, i.allDay)}
         {i.status === "scheduled" ? ` · ${t("toConfirm")}` : ""}
+        {!i.onTeam ? ` · ${t("otherTeam")}` : ""}
       </p>
     </li>
   );

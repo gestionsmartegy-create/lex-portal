@@ -43,6 +43,8 @@ export type CalendarItem = {
   courtId: string | null;
   room: string | null;
   attendeeIds: string[];
+  /** Membre de l'équipe du dossier (ou firm_admin) : peut ouvrir le dossier. */
+  onTeam: boolean;
   /** Jour local (AAAA-MM-JJ) dans le fuseau du tribunal : place la date dans la grille. */
   localDay: string;
   conflict: boolean;
@@ -135,7 +137,7 @@ export function markConflicts<
   return conflicts;
 }
 
-type Row = {
+type FeedRow = {
   id: string;
   matter_id: string;
   kind: CourtDateKind;
@@ -146,27 +148,28 @@ type Row = {
   timezone: Timezone;
   court_id: string | null;
   room: string | null;
-  matters: { display_number: string | null; title: string; office_id: string | null } | null;
-  court_date_attendees: { user_id: string }[];
+  display_number: string | null;
+  /** null hors de ses équipes (minimisation, ADR 0027). */
+  title: string | null;
+  office_id: string | null;
+  attendee_ids: string[];
+  on_team: boolean;
 };
 
+/**
+ * Lecture par public.court_calendar_feed (ADR 0027) : colonnes limitées (jamais les notes internes,
+ * le lien virtuel ni les consignes), dossiers de ses équipes, ou tout le cabinet pour le firm_admin
+ * et les adjoint·e·s désigné·e·s.
+ */
 async function fetchDates(fromIso: string, toIso: string): Promise<CalendarItem[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("court_dates")
-    .select(
-      "id, matter_id, kind, status, starts_at, ends_at, all_day, timezone, court_id, room, matters(display_number, title, office_id), court_date_attendees(user_id)",
-    )
-    .gte("starts_at", fromIso)
-    .lt("starts_at", toIso)
-    .order("starts_at")
-    .limit(LIMIT);
-  return ((data ?? []) as unknown as Row[]).map((r) => ({
+  const { data } = await supabase.rpc("court_calendar_feed", { p_from: fromIso, p_to: toIso });
+  return ((data ?? []) as unknown as FeedRow[]).map((r) => ({
     id: r.id,
     matterId: r.matter_id,
-    matterNumber: r.matters?.display_number ?? null,
-    matterTitle: r.matters?.title ?? "",
-    officeId: r.matters?.office_id ?? null,
+    matterNumber: r.display_number,
+    matterTitle: r.title ?? "",
+    officeId: r.office_id,
     kind: r.kind,
     status: r.status,
     startsAt: r.starts_at,
@@ -175,10 +178,24 @@ async function fetchDates(fromIso: string, toIso: string): Promise<CalendarItem[
     timezone: r.timezone,
     courtId: r.court_id,
     room: r.room,
-    attendeeIds: r.court_date_attendees.map((a) => a.user_id),
+    attendeeIds: r.attendee_ids ?? [],
+    onTeam: r.on_team,
     localDay: localDayOf(r.starts_at, r.timezone),
     conflict: false,
   }));
+}
+
+/** Vue de tout le cabinet : firm_admin ou adjoint·e désigné·e. */
+async function seesWholeFirm(role: string, userId: string | undefined) {
+  if (role === "firm_admin") return true;
+  if (!userId) return false;
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("court_calendar_viewers")
+    .select("user_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return Boolean(data);
 }
 
 export async function getCourtCalendar(filters: CalendarFilters) {
@@ -220,7 +237,7 @@ export async function getCourtCalendar(filters: CalendarFilters) {
     period,
     anchor,
     truncated: all.length >= LIMIT,
-    scope: role === "firm_admin" ? "firm" : "teams",
+    scope: (await seesWholeFirm(role, user?.id)) ? "firm" : "teams",
   };
 }
 
