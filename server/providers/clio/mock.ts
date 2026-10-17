@@ -1,6 +1,13 @@
 import "server-only";
 import type { ClioManageGateway } from "./gateway";
-import type { ClioBill, ClioCalendar, ClioCalendarEntryInput, ClioContact, ClioMatter } from "./schemas";
+import type {
+  ClioBill,
+  ClioCalendar,
+  ClioCalendarEntryInput,
+  ClioCalendarEntryState,
+  ClioContact,
+  ClioMatter,
+} from "./schemas";
 
 /**
  * MockClioManageGateway (AGENTS.md §2.6-7) : un faux Clio avec des données FICTIVES
@@ -103,9 +110,17 @@ export class MockClioManageGateway implements ClioManageGateway {
   }
   async deleteCalendarEntry(id: string) {
     ENTRIES.delete(id);
+    GONE.add(id);
+  }
+  /** Mémoire du processus : une entrée inconnue (redémarrage) n'est jamais déclarée supprimée. */
+  async getCalendarEntry(id: string): Promise<ClioCalendarEntryState> {
+    const entry = ENTRIES.get(id);
+    if (entry) return { state: "found", startAt: entry.startAt, endAt: entry.endAt, allDay: entry.allDay };
+    return GONE.has(id) ? { state: "gone" } : { state: "unknown" };
   }
 }
 
 /** Entrées de calendrier du faux Clio (mémoire du processus, données fictives). */
 const ENTRIES = new Map<string, ClioCalendarEntryInput>();
 let nextEntry = 0;
+const GONE = new Set<string>();

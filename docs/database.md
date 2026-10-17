@@ -367,3 +367,19 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 ## Calendrier de cour : adjoint·e·s (ADR 0027, migration `20261017120000`)
 - `court_calendar_viewers` (user_id) : personnel désigné par le firm_admin pour voir toutes les dates de cour du cabinet. Lecture par le personnel, écriture par le firm_admin, journalisée.
 - `public.court_calendar_feed(p_from, p_to)` : lecture du calendrier en colonnes limitées (sans notes, lien virtuel, consignes, juge ni greffe ; titre du dossier réservé à l'équipe), sur 62 jours au plus et 500 lignes au plus. Elle couvre l'équipe du dossier, le firm_admin et les personnes désignées. La RLS de `court_dates` est inchangée.
+
+## Agendas Outlook et retour Clio (ADR 0031, migration `20261019120000`)
+- `private.calendar_connections` (une par personne) : simulateur ou réel, état (`connected`, `needs_reconnect`), référence Vault du jeton (`calendar:<uuid>`), choix des rappels, dernière synchronisation, dernier code d'erreur. **Jamais de jeton en clair.**
+- `private.calendar_busy_blocks` : plages occupées, **début et fin seulement**.
+- `private.calendar_reminder_events` : rappels J-7 et J-1 écrits dans l'agenda « Lex Portail » (identifiant d'événement, heure).
+- Fonctions de l'utilisateur :
+  - `my_calendar_connection()` : personnel, sa connexion ;
+  - `calendar_connection_list()` : firm_admin ;
+  - `calendar_disconnect(p_user)` : la personne elle-même, ou le firm_admin ;
+  - `calendar_set_reminders(p_enabled)` : la personne ;
+  - `court_date_busy_conflicts(p_from, p_to)` : identifiants des dates en conflit avec Outlook, mêmes règles de visibilité que `court_calendar_feed`, 62 jours au plus.
+- Fonctions du serveur (service_role) : `calendar_save_connection` (personnel **actif** seulement), `calendar_read_tokens`, `calendar_connections_for_sync`, `calendar_store_busy` (62 jours, 1 000 plages au plus), `calendar_report_error`, `calendar_set_reminder_calendar`, `calendar_reminder_plan`, `calendar_reminder_record`, `calendar_reminder_events_of` et `court_date_apply_clio_change`.
+- Trigger `calendar_connections_drop_secret` : une connexion supprimée, y compris par cascade, retire son jeton du coffre.
+- Trigger `profiles_calendar_guard` : compte suspendu, désactivé ou devenu client, donc déconnexion automatique, journalisée.
+- `court_dates.clio_change` (`moved`, ou `deleted` = entrée introuvable : la date redevient « à confirmer », jamais annulée) et `clio_changed_at` : changement constaté dans Clio. Écrits par la base seulement. Retirés quand l'équipe confirme, déplace ou clôt la date (`private.clear_court_date_clio_change`).
+- Audit : `calendar.connected`, `calendar.disconnected` (motif `self`, `admin` ou `deactivated`), `calendar.reminders_set` et `court_date.clio_changed`.

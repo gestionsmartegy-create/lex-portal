@@ -2,7 +2,8 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { serverEnv } from "@/server/env";
 import { pushCourtDateReminders } from "@/server/services/client-court-dates";
-import { pushPendingCourtDates } from "@/server/services/court-dates";
+import { syncOutlookCalendars } from "@/server/services/calendar-connections";
+import { pullClioCourtDateChanges, pushPendingCourtDates } from "@/server/services/court-dates";
 import { syncLinkedMatters } from "@/server/services/sync";
 
 export const maxDuration = 300;
@@ -28,8 +29,26 @@ export async function GET(request: NextRequest) {
     console.error(JSON.stringify({ event: "court_reminders_failed" }));
     return { sent: 0, failed: -1 };
   });
+  // Dates modifiées ou supprimées directement dans Clio : signalées (ADR 0031).
+  const clioChanges = await pullClioCourtDateChanges().catch(() => {
+    console.error(JSON.stringify({ event: "court_date_clio_pull_failed", code: "UNEXPECTED" }));
+    return { moved: 0, missing: 0, skipped: true };
+  });
+  // Agendas Outlook connectés : plages occupées et rappels de préparation (ADR 0031).
+  const calendars = await syncOutlookCalendars().catch(() => {
+    console.error(JSON.stringify({ event: "calendar_sync_failed", code: "UNEXPECTED" }));
+    return { synced: 0, failed: -1 };
+  });
   return NextResponse.json(
-    { ok: result.ok, updated: result.updated, failed: result.failed, courtDates: courts, reminders },
+    {
+      ok: result.ok,
+      updated: result.updated,
+      failed: result.failed,
+      courtDates: courts,
+      reminders,
+      clioChanges,
+      calendars,
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

@@ -6,6 +6,8 @@ import { MockClioManageGateway } from "./clio/mock";
 import type { DocumentStore } from "./sharepoint/gateway";
 import { VaultTokenStore } from "./tokens/vault-store";
 import { MockDocumentStore } from "./sharepoint/mock";
+import type { OutlookCalendarGateway } from "./outlook/gateway";
+import { MockOutlookCalendarGateway } from "./outlook/mock";
 
 /**
  * Choix des implémentations (AGENTS.md §8) : INTEGRATION_MODE_<FOURNISSEUR>=mock|live,
@@ -32,4 +34,19 @@ export function getClioGateway(): ClioManageGateway {
 
 export function getClioTokenStore() {
   return new VaultTokenStore("clio_manage", "ca");
+}
+
+/**
+ * Agendas Outlook du personnel (lot 4, ADR 0031) : simulateur seulement. L'implémentation Microsoft Graph
+ * attend l'enregistrement de l'application par le cabinet (docs/outlook-integration.md) : « live » échoue.
+ */
+let outlook: OutlookCalendarGateway | undefined;
+
+export function getOutlookGateway(): OutlookCalendarGateway {
+  if (serverEnv().INTEGRATION_MODE_OUTLOOK === "live")
+    throw new Error(
+      "OutlookCalendarGateway réel non disponible avant l'accès Microsoft du cabinet (ADR 0031).",
+    );
+  outlook ??= new MockOutlookCalendarGateway();
+  return outlook;
 }

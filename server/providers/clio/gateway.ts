@@ -1,5 +1,12 @@
 import "server-only";
-import type { ClioBill, ClioCalendar, ClioCalendarEntryInput, ClioContact, ClioMatter } from "./schemas";
+import type {
+  ClioBill,
+  ClioCalendar,
+  ClioCalendarEntryInput,
+  ClioCalendarEntryState,
+  ClioContact,
+  ClioMatter,
+} from "./schemas";
 
 /**
  * ClioManageGateway (docs/class-diagram.md) — lecture (Phase 2) et, depuis l'ADR 0025, écriture des
@@ -20,6 +27,8 @@ export interface ClioManageGateway {
   updateCalendarEntry(id: string, input: ClioCalendarEntryInput): Promise<boolean>;
   /** Supprime l'entrée (déjà absente : sans effet). */
   deleteCalendarEntry(id: string): Promise<void>;
+  /** Heure actuelle de l'entrée dans Clio (retour Clio, ADR 0031) ; « gone » si elle a été supprimée. */
+  getCalendarEntry(id: string): Promise<ClioCalendarEntryState>;
 }
 
 /** Erreurs internes (AGENTS.md §5) : jamais la réponse brute de l'API. */

@@ -195,11 +195,23 @@ CLASSES = [
     ("ClioManageGateway", "interface", "provider", [], [
         "+listMatters(contactId): ClioMatter[]", "+getMatter(id): ClioMatter",
         "+listCalendarEntries(matterId): ClioCalendarEntry[]", "+listBills(matterId): ClioBill[]",
-        "+listDocuments(matterId): ClioDocument[]", "+verifyWebhook(payload, signature): bool"]),
+        "+listDocuments(matterId): ClioDocument[]", "+verifyWebhook(payload, signature): bool",
+        "+createCalendarEntry(input): string", "+updateCalendarEntry(id, input): bool",
+        "+deleteCalendarEntry(id): void", "+getCalendarEntry(id): ClioCalendarEntryState"]),
     ("ClioManageClient", None, "provider", [
         "-baseUrl: string = https://ca.app.clio.com/api/v4", "-tokens: OAuthTokenStore",
         "-rateLimiter: RateLimiter"], ["(implémente ClioManageGateway)"]),
     ("MockClioManageGateway", None, "provider", ["-fixtures: MockData"], ["(implémente ClioManageGateway)"]),
+    ("OutlookCalendarGateway", "interface", "provider", [], [
+        "+getBusyBlocks(userId, from, to): BusyBlock[]",
+        "+ensureReminderCalendar(userId, knownId): string",
+        "+upsertReminder(userId, calendarId, eventId, input): string",
+        "+deleteReminder(userId, eventId): void"]),
+    ("MockOutlookCalendarGateway", None, "provider", ["-agenda fictif stable par personne"],
+     ["(implémente OutlookCalendarGateway)"]),
+    ("CalendarConnectionService", "service", "service", ["-outlook: OutlookCalendarGateway", "-db: SupabaseServiceClient"], [
+        "+connectMyCalendar(): Result", "+disconnectCalendar(userId): Result",
+        "+setMyReminders(enabled): Result", "+syncOutlookCalendars(): Summary"]),
     ("DocumentStore", "interface", "provider", [], [
         "+ensureMatterFolder(matter): MatterStorageFolder",
         "+upload(folder, file, metadata): StoredRef",
@@ -285,6 +297,9 @@ RELATIONS = [
     ("Invoice", "1", "Payment", "*", "compose", ""),
     ("ClioManageClient", "", "ClioManageGateway", "", "realize", ""),
     ("MockClioManageGateway", "", "ClioManageGateway", "", "realize", ""),
+    ("MockOutlookCalendarGateway", "", "OutlookCalendarGateway", "", "realize", ""),
+    ("CalendarConnectionService", "", "OutlookCalendarGateway", "", "depend", "plages occupées, rappels"),
+    ("CalendarConnectionService", "", "OAuthTokenStore", "", "depend", "jetons (Vault)"),
     ("SharePointDocumentStore", "", "DocumentStore", "", "realize", ""),
     ("SharePointDocumentStore", "", "GraphClient", "", "depend", "utilise"),
     ("SharePointDocumentStore", "", "MatterStorageFolder", "", "depend", "crée"),

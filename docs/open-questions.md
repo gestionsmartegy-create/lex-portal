@@ -125,3 +125,12 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Qui peut confirmer une date de cour ?~~ | ✅ **Tout membre de l'équipe du dossier, adjoint·e·s compris** (courriel de la direction du 2026-10-16) | Comportement déjà en place (ADR 0025) |
 | ~~Accès des adjoint·e·s au calendrier de cour~~ | ✅ **Tout le cabinet**, en lecture seule hors de leurs équipes ; numéro du dossier seulement (pas le titre) hors équipe | ADR 0027 ; désignation par le firm_admin |
 | Adresse du bureau de Montréal | **À fournir** (téléphone connu : 514-533-0112) | Absente du site lexcanadalaw.com |
+
+## Questions du 2026-10-17 (connexion des agendas, ADR 0031)
+
+| Question | Pourquoi c'est important | Priorité |
+|---|---|---|
+| **Importer les dates de cour saisies directement dans Clio** (celles que la plateforme n'a pas créées) ? Si oui, comment les reconnaître parmi tous les rendez-vous Clio : une catégorie « Cour », un calendrier Clio dédié, un mot dans le titre ? | Sans règle claire, la plateforme pourrait prendre un simple rendez-vous pour une audience, ou en oublier une. Aujourd'hui, seules les dates créées dans la plateforme sont suivies (modifiées ou supprimées dans Clio). | Moyenne |
+| **Accès Microsoft 365 pour les agendas Outlook** : enregistrement de l'application par l'administrateur du cabinet (`docs/outlook-integration.md`) | Sans lui, les agendas restent en simulateur (données fictives) | Moyenne |
+| **Date changée dans Clio et visible du client** : faut-il la masquer au client tant qu'un avocat ne l'a pas reconfirmée ? Aujourd'hui, le client voit la nouvelle heure, marquée « à confirmer » | Évite d'annoncer au client une heure saisie par erreur dans Clio | Moyenne |
+| Rappels de préparation : **J-7 et J-1** vous conviennent-ils ? Faut-il d'autres échéances (J-30 pour un procès) ? | Valeurs par défaut posées par le plan (E12) ; facile à changer | Faible |

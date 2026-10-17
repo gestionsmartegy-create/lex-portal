@@ -71,10 +71,10 @@
 | [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | 🟡 lot 3 |
 | [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | 🟡 lot 3 |
 | [E11](https://github.com/SmartegyCanada/lex-portal/issues/80) | En tant qu'Avocat, je veux être averti d'un conflit d'horaire. | 3 | 🟡 lot 3 |
-| [E12](https://github.com/SmartegyCanada/lex-portal/issues/81) | En tant que Personnel, je veux des rappels avant chaque date de cour. | 3 | 🟡 partiel (accueil ; rappels Outlook au lot 4) |
+| [E12](https://github.com/SmartegyCanada/lex-portal/issues/81) | En tant que Personnel, je veux des rappels avant chaque date de cour. | 3 | 🟡 lot 3 + lot 4 (accueil, rappels Outlook J-7 et J-1) |
 | [E13](https://github.com/SmartegyCanada/lex-portal/issues/82) | En tant que Personnel sur téléphone, je veux un calendrier lisible. | 3 | 🟡 lot 3 |
-| [E14](https://github.com/SmartegyCanada/lex-portal/issues/83) | En tant que Personnel, je veux connecter mon agenda Outlook. | 4 | ⏳ |
-| [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | ⏳ |
-| [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | ⏳ |
+| [E14](https://github.com/SmartegyCanada/lex-portal/issues/83) | En tant que Personnel, je veux connecter mon agenda Outlook. | 4 | 🟡 lot 4 (simulateur ; vrai Outlook après l'accès Microsoft) |
+| [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | 🟡 lot 4 |
+| [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | 🟡 partiel (dates créées par la plateforme ; import des autres : décision du cabinet) |
 | [E17](https://github.com/SmartegyCanada/lex-portal/issues/86) | En tant que Client, je veux voir mes prochaines dates de cour et les consignes de mon avocat. | 5 | 🟡 lot 5 |
 | [E18](https://github.com/SmartegyCanada/lex-portal/issues/87) | En tant qu'Admin, je veux voir la charge d'audiences par avocat, par bureau et par tribunal. | 6 | 🟡 lot 6 |
