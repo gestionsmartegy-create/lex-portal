@@ -6,7 +6,7 @@ vi.mock("@/server/db/server-client", () => ({ createSupabaseServerClient: vi.fn(
 vi.mock("@/server/db/service-client", () => ({ createSupabaseServiceClient: vi.fn() }));
 vi.mock("@/server/providers", () => ({ getClioGateway: vi.fn() }));
 
-const { calendarFiltersSchema, daysOf, markConflicts, periodOf } =
+const { calendarFiltersSchema, daysOf, domainOf, markConflicts, periodOf } =
   await import("@/server/services/court-calendar");
 
 const base = { allDay: false, status: "confirmed" as const, courtId: "A", attendeeIds: ["avocat-1"] };
@@ -58,5 +58,16 @@ describe("calendrier de cour : adresse de la page", () => {
       expect(calendarFiltersSchema.parse({ date: bad }).date).toBeUndefined();
     }
     expect(calendarFiltersSchema.parse({ date: "2026-12-15" }).date).toBe("2026-12-15");
+  });
+});
+
+describe("calendrier de cour : domaines (légende)", () => {
+  it("immigration d'abord (y compris économique), sinon le groupe de pratique", () => {
+    expect(domainOf("immigration_pr", "legal")).toBe("immigration");
+    expect(domainOf("economic_immigration", "business")).toBe("immigration");
+    expect(domainOf("family", "legal")).toBe("legal");
+    expect(domainOf("tax", "business")).toBe("business");
+    expect(domainOf("growth", "advisory")).toBe("advisory");
+    expect(domainOf(null, null)).toBe("other");
   });
 });

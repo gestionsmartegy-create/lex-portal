@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import {
+  calendarDomains,
   calendarFiltersSchema,
   calendarViews,
   daysOf,
@@ -21,6 +22,22 @@ import { listCourts, listOffices } from "@/server/services/offices";
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
 const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+/** Couleur pleine par domaine (légende au-dessus du calendrier), texte lisible sur chaque fond. */
+const DOMAIN_CHIP: Record<(typeof calendarDomains)[number], string> = {
+  immigration: "bg-dom-immigration text-white border-dom-immigration",
+  legal: "bg-dom-legal text-white border-dom-legal",
+  business: "bg-dom-business text-marine border-dom-business",
+  advisory: "bg-dom-advisory text-white border-dom-advisory",
+  other: "bg-dom-other text-white border-dom-other",
+};
+const DOMAIN_DOT: Record<(typeof calendarDomains)[number], string> = {
+  immigration: "bg-dom-immigration",
+  legal: "bg-dom-legal",
+  business: "bg-dom-business",
+  advisory: "bg-dom-advisory",
+  other: "bg-dom-other",
+};
+
 const intlLocale = (locale: string) => (locale === "fr" ? "fr-CA" : "en-CA");
 
 /** Heure d'une date dans le fuseau du tribunal, avec l'abréviation du fuseau (« 9:30 a.m. EST »). */
@@ -98,17 +115,15 @@ export default async function CourtCalendarPage({
 
   const chip = (i: CalendarItem, compact: boolean) => {
     const court = i.courtId ? courtById.get(i.courtId) : undefined;
-    const tone = i.conflict
-      ? "border-red-300 bg-red-50 text-red-900"
-      : i.status === "scheduled"
-        ? "border-gold/50 bg-gold-pale text-marine"
-        : "border-gray-200 bg-white text-marine";
+    const tone = `${DOMAIN_CHIP[i.domain]} ${i.status === "scheduled" ? "border-dashed border-2 border-white/80" : ""} ${
+      i.conflict ? "ring-[3px] ring-black ring-offset-1" : ""
+    }`;
     const body = (
       <>
         <span className="font-semibold">{i.allDay ? t("allDay") : timeOf(i, locale)}</span>{" "}
         {tCourt(`kinds.${i.kind}`)} · {i.matterNumber || i.matterTitle || t("unnamedMatter")}
         {!compact && court ? (
-          <span className="block text-ink-muted">{pick(locale, court.name_fr, court.name_en)}</span>
+          <span className="block opacity-90">{pick(locale, court.name_fr, court.name_en)}</span>
         ) : null}
         {i.status === "scheduled" ? <span className="block font-semibold">{t("toConfirm")}</span> : null}
         {i.conflict ? (
@@ -117,7 +132,8 @@ export default async function CourtCalendarPage({
             {t("conflict")}
           </span>
         ) : null}
-        {!i.onTeam ? <span className="block text-ink-muted">{t("otherTeam")}</span> : null}
+        <span className="sr-only">{` · ${t(`domains.${i.domain}`)}`}</span>
+        {!i.onTeam ? <span className="block opacity-90">{t("otherTeam")}</span> : null}
       </>
     );
     // Hors de ses équipes (adjoint·e désigné·e) : lecture seule, le dossier ne s'ouvre pas.
@@ -347,6 +363,14 @@ export default async function CourtCalendarPage({
         </form>
       </SectionCard>
 
+      <ul className="mb-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-marine" aria-label={t("legend")}>
+        {calendarDomains.map((d) => (
+          <li key={d} className="inline-flex items-center gap-2">
+            <span aria-hidden className={`inline-block size-4 rounded-[3px] ${DOMAIN_DOT[d]}`} />
+            {t(`domains.${d}`)}
+          </li>
+        ))}
+      </ul>
       <SectionCard>
         {items.length === 0 && filters.view === "list" ? (
           <EmptyState icon={Gavel} message={t("none")} />
