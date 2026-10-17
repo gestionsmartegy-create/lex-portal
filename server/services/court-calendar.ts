@@ -54,8 +54,8 @@ export type CalendarItem = {
 export const TRAVEL_MINUTES = 60;
 const LIMIT = 500;
 
-export function todayIn(timeZone: string = DEFAULT_TIMEZONE) {
-  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date());
+export function todayIn(timeZone: string = DEFAULT_TIMEZONE, at: Date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(at);
 }
 
 function shiftDays(isoDay: string, days: number) {
