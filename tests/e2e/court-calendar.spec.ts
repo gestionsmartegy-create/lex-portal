@@ -148,3 +148,47 @@ test("calendrier de cour : personnel hors équipe sans les dates des autres", as
     await staff.cleanup();
   }
 });
+
+/** Adjoint·e désigné·e (ADR 0027) : voit les dates de tout le cabinet, en lecture seule, sans ouvrir le dossier. */
+test("calendrier de cour : adjoint·e désigné·e voit tout le cabinet en lecture seule", async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  const admin = serviceClient();
+  const stamp = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const staff = await createStaffSession(context, baseURL!, "staff");
+  const { data: matter } = await admin
+    .from("matters")
+    .insert({ display_number: `E2E-CALA-${stamp}`, title: `Adjoint ${stamp}`, status: "open", is_mock: true })
+    .select("id")
+    .single();
+  await admin.from("court_dates").insert({
+    matter_id: matter!.id,
+    kind: "hearing",
+    starts_at: new Date(Date.now() + 2 * 86_400_000).toISOString(),
+    timezone: "America/Halifax",
+    status: "scheduled",
+    notes: "Note interne e2e",
+  });
+  await admin.from("court_calendar_viewers").insert({ user_id: staff.id });
+  try {
+    await page.goto("/en/admin/court-calendar");
+    await expect(page.getByText("Every court date of the firm, all offices.")).toBeVisible({
+      timeout: 15_000,
+    });
+    const chip = page.getByText(`Hearing · E2E-CALA-${stamp}`).filter({ visible: true }).first();
+    await expect(chip).toBeVisible();
+    await expect(page.getByText("Other team (read only)").filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: new RegExp(`E2E-CALA-${stamp}`) })).toHaveCount(0);
+    await expect(page.getByText("Note interne e2e")).toHaveCount(0);
+    await expectAccessible(page);
+    const response = await page.goto(`/en/admin/matters/${matter!.id}`);
+    expect(response?.status()).toBe(404);
+  } finally {
+    await admin.from("court_calendar_viewers").delete().eq("user_id", staff.id);
+    await admin.from("court_dates").delete().eq("matter_id", matter!.id);
+    await admin.from("matters").delete().eq("id", matter!.id);
+    await staff.cleanup();
+  }
+});

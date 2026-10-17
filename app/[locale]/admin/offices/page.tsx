@@ -5,6 +5,7 @@ import { EmptyState, InfoNote, PageHeader, SectionCard } from "@/components/port
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import {
+  calendarViewerAction,
   saveCourtAction,
   saveOfficeAction,
   setActiveAction,
@@ -15,6 +16,7 @@ import { createSupabaseServerClient } from "@/server/db/server-client";
 import { pick } from "@/server/services/matter-templates";
 import {
   courtProvinces,
+  listCalendarViewers,
   listCourts,
   listOffices,
   listStaffOffices,
@@ -40,11 +42,12 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
   await requireStaff(locale, ["firm_admin"]);
   const sp = await searchParams;
   const supabase = await createSupabaseServerClient();
-  const [t, offices, courts, links, { data: staff }] = await Promise.all([
+  const [t, offices, courts, links, viewers, { data: staff }] = await Promise.all([
     getTranslations("admin.offices"),
     listOffices(),
     listCourts(),
     listStaffOffices(),
+    listCalendarViewers(),
     supabase
       .from("profiles")
       .select("id, first_name, last_name, email")
@@ -364,6 +367,35 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
                     aria-label={`${t("save")} : ${name}`}
                   >
                     {t("save")}
+                  </Button>
+                </form>
+              </li>
+            );
+          })}
+        </ul>
+      </SectionCard>
+
+      <SectionCard title={t("viewers.title")} className="mb-6">
+        <p className="mb-4 text-sm text-ink-muted">{t("viewers.help")}</p>
+        <ul className="divide-y divide-gray-100">
+          {(staff ?? []).map((p) => {
+            const on = viewers.includes(p.id);
+            const name = person(p);
+            return (
+              <li key={p.id} className="flex flex-wrap items-center gap-3 py-3">
+                <span className="min-w-0 flex-1 basis-48 font-medium break-words text-marine">{name}</span>
+                {on ? <StatusBadge tone="completed" label={t("viewers.on")} /> : null}
+                <form action={calendarViewerAction}>
+                  {hidden}
+                  <input type="hidden" name="userId" value={p.id} />
+                  <input type="hidden" name="enabled" value={on ? "false" : "true"} />
+                  <Button
+                    type="submit"
+                    variant="outline-gold"
+                    size="sm"
+                    aria-label={`${on ? t("viewers.remove") : t("viewers.add")} : ${name}`}
+                  >
+                    {on ? t("viewers.remove") : t("viewers.add")}
                   </Button>
                 </form>
               </li>
