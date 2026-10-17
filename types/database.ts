@@ -140,6 +140,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"court_calendar_viewers": {
+                  Row: {
+                    "created_at": string,"granted_by": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"granted_by"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"granted_by"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "court_calendar_viewers_granted_by_fkey"
+      columns: ["granted_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "court_calendar_viewers_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"court_date_attendees": {
                   Row: {
                     "court_date_id": string,"created_at": string,"user_id": string
@@ -923,6 +949,11 @@ isOneToOne: false
                            },
 "clio_court_calendar_internal":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"court_calendar_feed":
+{ Args: { "p_from": string,"p_to": string }; Returns: {
+              "all_day": boolean,"attendee_ids": (string)[],"court_id": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"office_id": string,"on_team": boolean,"room": string,"starts_at": string,"status": string,"timezone": string,"title": string
+            }[]
                            },
 "current_session_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
