@@ -95,7 +95,7 @@ Je découpe le travail en lots livrables séparément. Chaque lot suit le flux h
 
 **Ordre proposé** :
 - Lots 1, 2, 3 et 5 d'abord : démontrables tout de suite, avec des données fictives et le Clio de test.
-- Lot 4 avec le simulateur ensuite, branché pour de vrai dès que l'accès Azure est fourni.
+- Lot 4 avec le simulateur ensuite, branché pour de vrai dès que l'accès Azure est fourni. **Fait le 2026-10-17 avec le simulateur (ADR 0031)** ; guide pour l'administrateur Microsoft 365 : `docs/outlook-integration.md`.
 
 ## 5. Décisions à prendre par le cabinet
 

@@ -22,6 +22,8 @@ const schema = z
     INTEGRATION_MODE_SIGNATURE: integrationMode,
     INTEGRATION_MODE_PAYMENTS: integrationMode,
     INTEGRATION_MODE_MALWARE: integrationMode,
+    // Agendas Outlook du personnel (lot 4, ADR 0031) : « live » indisponible avant l'accès Microsoft du cabinet.
+    INTEGRATION_MODE_OUTLOOK: integrationMode,
     // Nombre de proxys de confiance devant l'application (revue J3, M2) : l'IP du client
     // est lue à droite de x-forwarded-for, en sautant ce nombre de proxys.
     // Clio Manage, région CA (Phase 2, ADR 0014) : requis seulement si INTEGRATION_MODE_CLIO=live.

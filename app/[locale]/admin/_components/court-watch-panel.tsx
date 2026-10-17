@@ -1,4 +1,4 @@
-import { AlertTriangle, Gavel } from "lucide-react";
+import { AlertTriangle, Gavel, RefreshCw } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { SectionCard } from "@/components/portal/ui";
 import { Link } from "@/i18n/navigation";
@@ -13,7 +13,12 @@ export async function CourtWatchPanel({
   data,
   locale,
 }: {
-  data: { upcoming: CalendarItem[]; toConfirm: CalendarItem[]; conflicts: CalendarItem[] };
+  data: {
+    upcoming: CalendarItem[];
+    toConfirm: CalendarItem[];
+    conflicts: CalendarItem[];
+    clioChanges: CalendarItem[];
+  };
   locale: string;
 }) {
   const [t, tCourt] = await Promise.all([
@@ -37,6 +42,8 @@ export async function CourtWatchPanel({
       <p className="text-xs text-ink-muted">
         {formatZoned(i.startsAt, i.timezone, locale, i.allDay)}
         {i.status === "scheduled" ? ` · ${t("toConfirm")}` : ""}
+        {i.busyConflict ? ` · ${t("busyConflict")}` : ""}
+        {i.clioChange ? ` · ${t(`clioChange.${i.clioChange}`)}` : ""}
         {!i.onTeam ? ` · ${t("otherTeam")}` : ""}
       </p>
     </li>
@@ -78,6 +85,15 @@ export async function CourtWatchPanel({
           ) : null}
         </div>
       )}
+      {data.clioChanges.length ? (
+        <section aria-labelledby="cw-clio" className="mt-6 border-t border-gray-100 pt-4">
+          <h3 id="cw-clio" className="mb-2 flex items-center gap-2 text-sm font-bold text-destructive">
+            <RefreshCw aria-hidden className="size-4" />
+            {t("clioChangesCount", { count: data.clioChanges.length })}
+          </h3>
+          <ul className="divide-y divide-gray-100">{data.clioChanges.slice(0, 8).map(line)}</ul>
+        </section>
+      ) : null}
     </SectionCard>
   );
 }
