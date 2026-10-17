@@ -68,11 +68,11 @@
 | [E6](https://github.com/SmartegyCanada/lex-portal/issues/75) | En tant qu'Avocat, je veux confirmer chaque date de cour. | 2 | 🟡 lot 2 |
 | [E7](https://github.com/SmartegyCanada/lex-portal/issues/76) | En tant que Personnel, je veux remettre ou annuler une date de cour sans perdre l'historique. | 2 | 🟡 lot 2 |
 | [E8](https://github.com/SmartegyCanada/lex-portal/issues/77) | En tant que Personnel, je veux voir dans un dossier les dates de cour déjà saisies dans Clio. | 2 | ⏳ |
-| [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | ⏳ |
-| [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | ⏳ |
-| [E11](https://github.com/SmartegyCanada/lex-portal/issues/80) | En tant qu'Avocat, je veux être averti d'un conflit d'horaire. | 3 | ⏳ |
-| [E12](https://github.com/SmartegyCanada/lex-portal/issues/81) | En tant que Personnel, je veux des rappels avant chaque date de cour. | 3 | ⏳ |
-| [E13](https://github.com/SmartegyCanada/lex-portal/issues/82) | En tant que Personnel sur téléphone, je veux un calendrier lisible. | 3 | ⏳ |
+| [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | 🟡 lot 3 |
+| [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | 🟡 lot 3 |
+| [E11](https://github.com/SmartegyCanada/lex-portal/issues/80) | En tant qu'Avocat, je veux être averti d'un conflit d'horaire. | 3 | 🟡 lot 3 |
+| [E12](https://github.com/SmartegyCanada/lex-portal/issues/81) | En tant que Personnel, je veux des rappels avant chaque date de cour. | 3 | 🟡 partiel (accueil ; rappels Outlook au lot 4) |
+| [E13](https://github.com/SmartegyCanada/lex-portal/issues/82) | En tant que Personnel sur téléphone, je veux un calendrier lisible. | 3 | 🟡 lot 3 |
 | [E14](https://github.com/SmartegyCanada/lex-portal/issues/83) | En tant que Personnel, je veux connecter mon agenda Outlook. | 4 | ⏳ |
 | [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | ⏳ |
 | [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | ⏳ |

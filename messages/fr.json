@@ -503,7 +503,8 @@
       "messages": "Messages",
       "templates": "Modèles de dossiers",
       "requests": "Demandes de documents",
-      "offices": "Bureaux et tribunaux"
+      "offices": "Bureaux et tribunaux",
+      "courtCalendar": "Calendrier de cour"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1268,6 +1269,47 @@
         "instructions": "Consignes pour le client",
         "visible": "Montrer cette date au client"
       }
+    },
+    "courtCalendar": {
+      "title": "Calendrier de cour",
+      "subtitleFirm": "Toutes les dates de cour du cabinet, tous bureaux confondus.",
+      "subtitleTeams": "Les dates de cour des dossiers de vos équipes.",
+      "viewLabel": "Affichage",
+      "periodLabel": "Période",
+      "views": {
+        "month": "Mois",
+        "week": "Semaine",
+        "list": "Liste"
+      },
+      "previous": "Période précédente",
+      "next": "Période suivante",
+      "today": "Aujourd'hui",
+      "gridLabel": "Dates de cour par jour",
+      "allDay": "Toute la journée",
+      "toConfirm": "À confirmer",
+      "conflict": "Conflit d'horaire",
+      "none": "Aucune date de cour sur cette période.",
+      "count": "{count, plural, =0 {Aucune date de cour} one {# date de cour} other {# dates de cour}}",
+      "truncated": "seules les 500 premières sont affichées ; affinez les filtres",
+      "help": "Les heures sont affichées dans le fuseau de chaque tribunal. Un conflit signale un avocat présent à deux dates qui se chevauchent, ou séparées de moins d'une heure dans deux tribunaux différents. Les dates de cour se saisissent dans l'onglet « Cour » de chaque dossier.",
+      "filters": {
+        "office": "Bureau",
+        "lawyer": "Avocat présent",
+        "court": "Tribunal",
+        "kind": "Type",
+        "status": "Statut",
+        "all": "Tous",
+        "active": "À venir et tenues",
+        "toConfirm": "À confirmer seulement",
+        "allStatuses": "Toutes (remises et annulées comprises)",
+        "mine": "Mes dossiers seulement",
+        "apply": "Filtrer"
+      },
+      "next14": "Dates de cour des 14 prochains jours",
+      "open": "Ouvrir le calendrier de cour",
+      "noneNext14": "Aucune date de cour dans les 14 prochains jours.",
+      "upcomingCount": "{count, plural, one {# date de cour} other {# dates de cour}}",
+      "alertsCount": "À vérifier : {conflicts} conflit(s), {toConfirm} à confirmer"
     }
   }
 }
