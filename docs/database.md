@@ -360,6 +360,10 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - `court_date_attendees` : membres du personnel actifs présents à une date.
 - `private.integration_connections.settings` : calendrier Clio des dates de cour (`court_calendar_id`). **Aucun secret ne doit jamais y être rangé** : les jetons restent dans le coffre-fort. Écriture par `public.set_clio_court_calendar` (firm_admin) ; lecture par `public.clio_court_calendar()` (personnel) et par `public.clio_court_calendar_internal()` (service_role, synchronisation).
 
+## Dates de cour côté client (ADR 0028, migration `20261017130000`)
+- `public.client_court_dates(p_matter)` : lecture client des dates rendues visibles, en colonnes limitées (sans notes, juge, greffe, présents ni état Clio). Session client avec double vérification et accès actif exigés.
+- `private.court_date_reminders` (court_date_id, user_id, kind '7d' ou '1d') : rappels déjà envoyés. Réservation par `public.claim_court_date_reminder`, réservée à service_role.
+- Type de notification `court_date_reminder`.
 ## Calendrier de cour : adjoint·e·s (ADR 0027, migration `20261017120000`)
 - `court_calendar_viewers` (user_id) : personnel désigné par le firm_admin pour voir toutes les dates de cour du cabinet. Lecture par le personnel, écriture par le firm_admin, journalisée.
 - `public.court_calendar_feed(p_from, p_to)` : lecture du calendrier en colonnes limitées (sans notes, lien virtuel, consignes, juge ni greffe ; titre du dossier réservé à l'équipe), sur 62 jours au plus et 500 lignes au plus. Elle couvre l'équipe du dossier, le firm_admin et les personnes désignées. La RLS de `court_dates` est inchangée.

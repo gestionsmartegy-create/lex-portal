@@ -187,6 +187,15 @@
       "cta": "Open the portal",
       "signature": "Lex Canada Law",
       "settings": "You can turn these emails off in your profile."
+    },
+    "courtReminder": {
+      "subject": "You have an upcoming date — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "You have an upcoming date with Lex Canada Law. For your confidentiality, the details are only available in your secure portal.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
     }
   },
   "portal": {
@@ -417,7 +426,10 @@
       "stepCompletedTitle": "Step completed",
       "stepCompletedBody": "A step of matter {number} is complete. See the progress.",
       "documentRequestedTitle": "Document requested",
-      "documentRequestedBody": "The firm is asking you for a document for matter {number}."
+      "documentRequestedBody": "The firm is asking you for a document for matter {number}.",
+      "courtSoonTitle": "Upcoming court date",
+      "courtTomorrowTitle": "Court date within 24 hours",
+      "courtReminderBody": "{kind}: {when}. See the details and your lawyer's instructions."
     },
     "search": {
       "label": "Search the portal",
@@ -435,6 +447,24 @@
         "matters": "Matters",
         "documents": "Documents",
         "messages": "Messages"
+      }
+    },
+    "courtDates": {
+      "title": "Court dates",
+      "none": "No upcoming court date.",
+      "confirmed": "Confirmed",
+      "toConfirm": "To be confirmed by the firm",
+      "matter": "Matter {number}",
+      "room": "room {room}",
+      "join": "Join the virtual hearing",
+      "instructions": "Instructions from your lawyer",
+      "kinds": {
+        "trial": "Trial",
+        "hearing": "Hearing",
+        "motion": "Motion",
+        "case_conference": "Case conference",
+        "appearance": "Appearance",
+        "filing_deadline": "Filing deadline"
       }
     }
   },
@@ -1271,11 +1301,11 @@
         "judge": "Judge (optional)",
         "docket": "Court file number",
         "mode": "Format",
-        "link": "Virtual hearing link (team only)",
+        "link": "Virtual hearing link (shown to the client only if the date is visible to them)",
         "attendees": "Lawyers present",
         "notes": "Internal notes (never shown to the client nor sent to Clio)",
         "instructions": "Instructions for the client",
-        "visible": "Show this date to the client"
+        "visible": "Show this date to the client (date, place, virtual link and instructions; reminders 7 days before and the day before)"
       }
     },
     "courtCalendar": {
