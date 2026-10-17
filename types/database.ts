@@ -960,7 +960,7 @@ isOneToOne: false
                            },
 "court_calendar_feed":
 { Args: { "p_from": string,"p_to": string }; Returns: {
-              "all_day": boolean,"attendee_ids": (string)[],"court_id": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"office_id": string,"on_team": boolean,"room": string,"starts_at": string,"status": string,"timezone": string,"title": string
+              "all_day": boolean,"attendee_ids": (string)[],"court_id": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"office_id": string,"on_team": boolean,"practice_group": string,"room": string,"starts_at": string,"status": string,"timezone": string,"title": string,"type_code": string
             }[]
                            },
 "current_session_role":
