@@ -187,6 +187,15 @@
       "cta": "Ouvrir le portail",
       "signature": "Lex Canada Law",
       "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "courtReminder": {
+      "subject": "Vous avez une date à venir — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Vous avez une date à venir avec Lex Canada Law. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
     }
   },
   "portal": {
@@ -417,7 +426,10 @@
       "stepCompletedTitle": "Étape terminée",
       "stepCompletedBody": "Une étape de votre dossier {number} est terminée. Voir l'avancement.",
       "documentRequestedTitle": "Document demandé",
-      "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}."
+      "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}.",
+      "courtSoonTitle": "Date de cour à venir",
+      "courtTomorrowTitle": "Date de cour dans moins de 24 heures",
+      "courtReminderBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
     },
     "search": {
       "label": "Rechercher dans le portail",
@@ -435,6 +447,24 @@
         "matters": "Dossiers",
         "documents": "Documents",
         "messages": "Messages"
+      }
+    },
+    "courtDates": {
+      "title": "Dates de cour",
+      "none": "Aucune date de cour à venir.",
+      "confirmed": "Confirmée",
+      "toConfirm": "À confirmer par le cabinet",
+      "matter": "Dossier {number}",
+      "room": "salle {room}",
+      "join": "Rejoindre l'audience virtuelle",
+      "instructions": "Consignes de votre avocat",
+      "kinds": {
+        "trial": "Procès",
+        "hearing": "Audience",
+        "motion": "Requête",
+        "case_conference": "Conférence de gestion",
+        "appearance": "Comparution",
+        "filing_deadline": "Date limite de dépôt"
       }
     }
   },
@@ -1270,11 +1300,11 @@
         "judge": "Juge (facultatif)",
         "docket": "Numéro de greffe",
         "mode": "Format",
-        "link": "Lien de l'audience virtuelle (équipe seulement)",
+        "link": "Lien de l'audience virtuelle (montré au client seulement si la date lui est visible)",
         "attendees": "Avocats présents",
         "notes": "Notes internes (jamais montrées au client ni envoyées à Clio)",
         "instructions": "Consignes pour le client",
-        "visible": "Montrer cette date au client"
+        "visible": "Montrer cette date au client (date, lieu, lien virtuel et consignes ; rappels 7 jours avant et la veille)"
       }
     },
     "courtCalendar": {

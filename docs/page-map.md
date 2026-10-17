@@ -79,7 +79,7 @@ graph TD
 | `/portal/documents` | Client | Onglets **Partagés par le cabinet / Mes dépôts / Signés** (= sous-dossiers SharePoint), filtre par dossier, pièces demandées, aperçu, téléchargement, signature, dépôt | `documents` (réf. **SharePoint**), `document_requests`, `signature_requests` | 1 mock → 3 |
 | `/portal/messages` | Client | Fils par dossier, envoi si `read_write` | `conversations`, `messages` | 1 mock → 4 |
 | `/portal/billing` | Client | Factures, soldes, statut, bouton Payer (désactivé tant que le fournisseur est mock) | `invoices`, `payments` | 1 mock → 2 lecture → 4 paiement |
-| `/portal/appointments` | Client | Rendez-vous à venir et passés, fuseau America/Halifax, ajout au calendrier (.ics) | `appointments` | 1 mock → 2 |
+| `/portal/appointments` | Client | Rendez-vous à venir et passés, fuseau America/Halifax, ajout au calendrier (.ics) ; **dates de cour** rendues visibles par l'avocat, avec consignes et lien virtuel (ADR 0028) | `appointments`, `client_court_dates()` | 1 mock → 2 |
 | `/portal/search?q=` | Client | Résultats de la recherche globale de l'en-tête (« Search files, messages... »), groupés : dossiers, documents, messages ; limités par la RLS | `matters`, `documents`, `messages` | 1 |
 | `/portal/notifications` | Client | Liste urgent / info / success, marquer comme lu, préférences | `notifications`, `notification_preferences` | 1 |
 | `/portal/profile` | Client | Identité, langue, téléphone ; **Sécurité** : MFA, changement de mot de passe, « déconnecter tous les appareils » | `profiles`, Supabase Auth | 1 |

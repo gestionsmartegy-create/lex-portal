@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { serverEnv } from "@/server/env";
+import { pushCourtDateReminders } from "@/server/services/client-court-dates";
 import { pushPendingCourtDates } from "@/server/services/court-dates";
 import { syncLinkedMatters } from "@/server/services/sync";
 
@@ -22,8 +23,13 @@ export async function GET(request: NextRequest) {
   const result = await syncLinkedMatters(null);
   // Dates de cour en attente ou en échec : nouvelle tentative d'écriture dans Clio (ADR 0025).
   const courts = await pushPendingCourtDates();
+  // Rappels J-7 et J-1 aux clients (dates rendues visibles), une seule fois chacun (ADR 0028).
+  const reminders = await pushCourtDateReminders().catch(() => {
+    console.error(JSON.stringify({ event: "court_reminders_failed" }));
+    return { sent: 0, failed: -1 };
+  });
   return NextResponse.json(
-    { ok: result.ok, updated: result.updated, failed: result.failed, courtDates: courts },
+    { ok: result.ok, updated: result.updated, failed: result.failed, courtDates: courts, reminders },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
