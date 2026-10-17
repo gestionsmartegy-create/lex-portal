@@ -1349,7 +1349,15 @@
       "upcomingCount": "{count, plural, one {# date de cour} other {# dates de cour}}",
       "alertsCount": "À vérifier : {conflicts} conflit(s), {toConfirm} à confirmer",
       "otherTeam": "Autre équipe (lecture seule)",
-      "unnamedMatter": "Dossier"
+      "unnamedMatter": "Dossier",
+      "legend": "Légende : domaines",
+      "domains": {
+        "immigration": "Immigration",
+        "legal": "Légal",
+        "business": "Affaires",
+        "advisory": "Conseil stratégique",
+        "other": "Autre"
+      }
     },
     "workload": {
       "title": "Charge de travail",

@@ -31,6 +31,14 @@
   --color-status-completed: #16a34a;
   --color-status-urgent: #dc2626;
 
+  /* --- Domaines du calendrier de cour (ADR 0030) : couleurs franches, saturées.
+     Texte blanc sur rouge, bleu et vert (contraste AA ≥ 4,5:1) ; texte marine sur jaune. --- */
+  --color-dom-immigration: #0050ff; /* bleu vif : blanc 5,9:1 */
+  --color-dom-legal: #e00000; /* rouge franc : blanc 4,7:1 */
+  --color-dom-business: #ffcc00; /* jaune franc : marine 11,9:1 */
+  --color-dom-advisory: #008a2e; /* vert franc : blanc 4,6:1 */
+  --color-dom-other: #4a4a5a;
+
   /* --- Typographie (variables posées par next/font dans app/[locale]/layout.tsx) --- */
   --font-sans: var(--font-body);
   --font-display: var(--font-display-family);

@@ -28,6 +28,18 @@ export const calendarFiltersSchema = z.object({
 });
 export type CalendarFilters = z.infer<typeof calendarFiltersSchema>;
 
+/** Domaine d'un dossier pour la légende de couleurs du calendrier (ADR 0030). */
+export const calendarDomains = ["immigration", "legal", "business", "advisory", "other"] as const;
+export type CalendarDomain = (typeof calendarDomains)[number];
+
+/** Immigration (tous les types « immigration », y compris économique), sinon le groupe de pratique. */
+export function domainOf(typeCode: string | null, practiceGroup: string | null): CalendarDomain {
+  if (typeCode && typeCode.includes("immigration")) return "immigration";
+  if (practiceGroup === "legal" || practiceGroup === "business" || practiceGroup === "advisory")
+    return practiceGroup;
+  return "other";
+}
+
 export type CalendarItem = {
   id: string;
   matterId: string;
@@ -45,6 +57,7 @@ export type CalendarItem = {
   attendeeIds: string[];
   /** Membre de l'équipe du dossier (ou firm_admin) : peut ouvrir le dossier. */
   onTeam: boolean;
+  domain: CalendarDomain;
   /** Jour local (AAAA-MM-JJ) dans le fuseau du tribunal : place la date dans la grille. */
   localDay: string;
   conflict: boolean;
@@ -154,6 +167,8 @@ type FeedRow = {
   office_id: string | null;
   attendee_ids: string[];
   on_team: boolean;
+  type_code: string | null;
+  practice_group: string | null;
 };
 
 /**
@@ -180,6 +195,7 @@ async function fetchDates(fromIso: string, toIso: string): Promise<CalendarItem[
     room: r.room,
     attendeeIds: r.attendee_ids ?? [],
     onTeam: r.on_team,
+    domain: domainOf(r.type_code, r.practice_group),
     localDay: localDayOf(r.starts_at, r.timezone),
     conflict: false,
   }));

@@ -1349,7 +1349,15 @@
       "upcomingCount": "{count, plural, one {# court date} other {# court dates}}",
       "alertsCount": "To check: {conflicts} conflict(s), {toConfirm} to be confirmed",
       "otherTeam": "Other team (read only)",
-      "unnamedMatter": "Matter"
+      "unnamedMatter": "Matter",
+      "legend": "Legend: practice areas",
+      "domains": {
+        "immigration": "Immigration",
+        "legal": "Legal",
+        "business": "Business",
+        "advisory": "Strategic advisory",
+        "other": "Other"
+      }
     },
     "workload": {
       "title": "Workload",
