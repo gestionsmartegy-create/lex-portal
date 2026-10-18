@@ -23,6 +23,11 @@
   - e2e `ux.spec.ts` (Ma journée, sous-menus, Ctrl K, cloche, menu « ⋯ », aide « ? », accueil client), sur ordinateur et à 375 px, avec axe ;
   - e2e existants mis à jour (`admin`, `court-dates`, `court-calendar`).
 - **Accessibilité** : sous-menus ouverts aussi au focus (Tab), nommés « Raccourcis : … » (pas de confusion avec les champs de formulaire) ; recherche en `<dialog>` natif (Échap) ; aide « ? » fermée par Échap.
+- **Après QA et revue de sécurité** :
+  - un seul sous-menu ouvert à la fois, fermé par Échap (le focus reste sur l'entrée), `aria-expanded` sur chaque entrée (WCAG 1.4.13) ;
+  - bulle d'aide tenue dans l'écran sur téléphone ;
+  - recherche : nettoyage partagé (`lib/search-query.ts`, le point est permis), message clair en cas d'échec ou de limite atteinte, raccourci affiché « ⌘ K » sur Mac ;
+  - tests ajoutés : personnel simple dans la recherche, caractères piégés (unitaire).
 - **À venir** :
   - séance de test avec 2 avocats, 1 adjointe et 2 clients ;
   - même traitement des actions sur les autres listes (étapes, demandes, documents).

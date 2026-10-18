@@ -49,7 +49,12 @@ export function RowActions({
                 <DropdownMenuItem
                   key={p.key}
                   onSelect={() => setOpen(p.key)}
-                  className={cn("py-2 text-sm", p.danger ? "font-semibold text-[#B91C1C]" : "text-marine")}
+                  className={cn(
+                    "py-2 text-sm",
+                    p.danger
+                      ? "font-semibold text-[#B91C1C] focus:bg-status-urgent/10 focus:text-[#B91C1C]"
+                      : "text-marine",
+                  )}
                 >
                   {p.label}
                 </DropdownMenuItem>

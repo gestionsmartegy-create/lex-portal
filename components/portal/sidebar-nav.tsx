@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LogOut, Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BrandMark } from "@/components/shared/brand-mark";
@@ -53,11 +53,13 @@ function Flyout({
   id,
   label,
   children,
+  open,
   bottom = false,
 }: {
   id: string;
   label: string;
   children: React.ReactNode;
+  open: boolean;
   bottom?: boolean;
 }) {
   return (
@@ -66,7 +68,8 @@ function Flyout({
       role="group"
       aria-label={label}
       className={cn(
-        "absolute left-full z-50 hidden w-64 rounded-[8px] bg-white p-2 text-marine shadow-xl ring-1 ring-black/5 group-focus-within:block group-hover:block",
+        "absolute left-full z-50 w-64 rounded-[8px] bg-white p-2 text-marine shadow-xl ring-1 ring-black/5",
+        open ? "block" : "hidden",
         bottom ? "bottom-0" : "top-0",
       )}
     >
@@ -89,8 +92,33 @@ function AdminNav({
   const t = useTranslations("admin.nav");
   const isActive = useIsActive();
   const groups = ADMIN_NAV_GROUPS.filter((g) => !("adminOnly" in g && g.adminOnly) || isFirmAdmin);
+  // Un seul sous-menu ouvert à la fois (QA ADR 0033) ; Échap le ferme et rend le focus à l'entrée.
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const skipFocus = useRef(false);
+  const handlers = (key: string | null) => ({
+    onMouseEnter: () => setOpenKey(key),
+    onFocus: () => {
+      if (skipFocus.current) {
+        skipFocus.current = false;
+        return;
+      }
+      setOpenKey(key);
+    },
+    onBlur: (e: React.FocusEvent<HTMLElement>) => {
+      if (!e.currentTarget.contains(e.relatedTarget as Node | null))
+        setOpenKey((k) => (k === key ? null : k));
+    },
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === "Escape" && openKey) {
+        e.stopPropagation();
+        setOpenKey(null);
+        skipFocus.current = true;
+        e.currentTarget.querySelector<HTMLElement>("a, button")?.focus();
+      }
+    },
+  });
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" onMouseLeave={() => setOpenKey(null)}>
       {groups.map((group) => {
         // Administration : une seule entrée ; son contenu dans un menu déroulant (barre) ou dépliable (tiroir).
         if ("collapsed" in group && group.collapsed) {
@@ -119,17 +147,24 @@ function AdminNav({
               </details>
             );
           return (
-            <div key={group.key} className="group relative">
+            <div key={group.key} className="relative" {...handlers(group.key)}>
               <button
                 type="button"
                 aria-haspopup="true"
+                aria-expanded={openKey === group.key}
                 aria-controls={`fly-${group.key}`}
+                onClick={() => setOpenKey((k) => (k === group.key ? null : group.key))}
                 className={cn(linkClass(anyActive), "w-full justify-between text-left")}
               >
                 <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">{t(group.key)}</span>
                 <span aria-hidden>›</span>
               </button>
-              <Flyout id={`fly-${group.key}`} label={t("submenu", { name: t(group.key) })} bottom>
+              <Flyout
+                id={`fly-${group.key}`}
+                label={t("submenu", { name: t(group.key) })}
+                open={openKey === group.key}
+                bottom
+              >
                 {group.items.map(({ key, href }) => (
                   <Link
                     key={key}
@@ -159,12 +194,17 @@ function AdminNav({
                     : [];
                 const count = counts[key] ?? 0;
                 return (
-                  <li key={key} className={children.length ? "group relative" : undefined}>
+                  <li
+                    key={key}
+                    className={children.length ? "relative" : undefined}
+                    {...(variant === "rail" ? handlers(children.length ? key : null) : {})}
+                  >
                     <Link
                       href={href}
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
                       aria-haspopup={children.length ? "true" : undefined}
+                      aria-expanded={children.length ? openKey === key : undefined}
                       className={linkClass(active)}
                     >
                       <Icon aria-hidden className="size-4 shrink-0" />
@@ -177,7 +217,7 @@ function AdminNav({
                       ) : null}
                     </Link>
                     {children.length ? (
-                      <Flyout id={`fly-${key}`} label={t("submenu", { name: t(key) })}>
+                      <Flyout id={`fly-${key}`} label={t("submenu", { name: t(key) })} open={openKey === key}>
                         {children.map((c) => (
                           <Link
                             key={c.key}

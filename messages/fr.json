@@ -1289,7 +1289,9 @@
         "add": "Donner accès à tout le cabinet",
         "remove": "Retirer l'accès"
       },
-      "helpLabel": "Aide : bureaux et tribunaux"
+      "helpLabel": "Aide : bureaux et tribunaux",
+      "helpOffices": "Aide : bureaux",
+      "helpCourts": "Aide : tribunaux"
     },
     "court": {
       "upcoming": "Dates de cour à venir",
@@ -1677,7 +1679,11 @@
         "matters": "Dossiers",
         "contracts": "Contrats",
         "clients": "Clients"
-      }
+      },
+      "shortcut": "Ctrl K",
+      "shortcutMac": "⌘ K",
+      "failed": "La recherche n'a pas abouti. Rechargez la page, puis réessayez.",
+      "limited": "Trop de recherches d'affilée : réessayez dans quelques minutes."
     },
     "alerts": {
       "label": "Alertes",
@@ -1699,10 +1705,10 @@
       "helloNoName": "Bonjour",
       "today": "{date} · voici ce qui vous attend.",
       "counters": {
-        "thisWeek": "{count, plural, =0 {aucune audience dans les 14 jours} one {audience dans les 14 jours} other {audiences dans les 14 jours}}",
-        "toConfirm": "{count, plural, =0 {date à confirmer} one {date à confirmer} other {dates à confirmer}}",
-        "unread": "{count, plural, =0 {message sans réponse} one {message sans réponse} other {messages sans réponse}}",
-        "late": "{count, plural, =0 {élément en retard} one {élément en retard} other {éléments en retard}}"
+        "thisWeek": "{count, plural, one {audience dans les 14 jours} other {audiences dans les 14 jours}}",
+        "toConfirm": "{count, plural, one {date à confirmer} other {dates à confirmer}}",
+        "unread": "{count, plural, one {message sans réponse} other {messages sans réponse}}",
+        "late": "{count, plural, one {élément en retard} other {éléments en retard}}"
       },
       "hearings": "Mes audiences",
       "hearingsHelpLabel": "Aide : audiences",

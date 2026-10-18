@@ -309,8 +309,8 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
                     <li key={a.id} className="text-sm">
                       <p className="text-marine">
                         <Gavel aria-hidden className="mr-1.5 inline size-3.5 text-gold-ink" />
-                        {t.has(`actions.${a.action.replace(".", "_")}`)
-                          ? t(`actions.${a.action.replace(".", "_")}`, { actor: a.actor ?? t("system") })
+                        {t.has(`actions.${a.action.replaceAll(".", "_")}`)
+                          ? t(`actions.${a.action.replaceAll(".", "_")}`, { actor: a.actor ?? t("system") })
                           : t("actions.other", { actor: a.actor ?? t("system") })}
                       </p>
                       <p className="text-xs text-ink-muted">

@@ -43,7 +43,7 @@ export function HelpTip({ label, children }: { label: string; children: React.Re
         <span
           id={id}
           role="note"
-          className="absolute top-8 left-0 z-40 w-72 max-w-[80vw] rounded-[8px] bg-marine px-3.5 py-3 text-left text-[13px] leading-relaxed font-normal text-white shadow-lg"
+          className="fixed inset-x-4 top-24 z-40 rounded-[8px] bg-marine px-3.5 py-3 text-left text-[13px] leading-relaxed font-normal text-white shadow-lg sm:absolute sm:inset-x-auto sm:top-8 sm:left-0 sm:w-72"
         >
           {children}
         </span>

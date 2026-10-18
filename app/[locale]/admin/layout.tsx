@@ -10,7 +10,6 @@ import { requireStaff } from "@/server/auth/session";
 import { StaffAlerts } from "@/components/admin/staff-alerts";
 import { StaffSearch } from "@/components/admin/staff-search";
 import { staffSearchAction } from "@/server/actions/staff-search";
-import { countStaffUnread } from "@/server/services/messaging";
 import { getStaffAlerts } from "@/server/services/staff-search";
 
 // Espace cabinet (J5) : garde du personnel (rôle EFFECTIF : session Microsoft, ou *.test en local),
@@ -20,12 +19,12 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
   setRequestLocale(locale);
   const { profile, role } = await requireStaff(locale);
   const [t, tc] = await Promise.all([getTranslations("admin.nav"), getTranslations("common")]);
-  const alerts = await getStaffAlerts();
+  const { alerts, unread } = await getStaffAlerts();
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.email;
   const shellProps = {
     area: "admin" as const,
     isFirmAdmin: role === "firm_admin",
-    counts: { messages: await countStaffUnread() },
+    counts: { messages: unread },
     user: {
       name,
       initials: initials(profile.first_name, profile.last_name, profile.email[0]?.toUpperCase()),

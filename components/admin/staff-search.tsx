@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 type Hit = { id: string; label: string; detail: string | null; href: string };
-type Results = { matters: Hit[]; contracts: Hit[]; clients: Hit[] };
+type Results = { matters: Hit[]; contracts: Hit[]; clients: Hit[]; limited?: boolean };
 
 /**
  * Recherche globale de l'espace cabinet (Ctrl K ou ⌘ K) : dossiers, contrats et, pour le firm_admin,
@@ -25,12 +25,21 @@ export function StaffSearch({
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Results | null>(null);
   const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [mac, setMac] = useState(false);
 
   const open = () => {
     dialog.current?.showModal();
     setTimeout(() => input.current?.focus(), 0);
   };
   const close = () => dialog.current?.close();
+
+  useEffect(() => {
+    // Raccourci affiché selon le système (⌘ K sur Mac, Ctrl K ailleurs) ; lu après l'affichage.
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    const id = setTimeout(() => setMac(isMac), 0);
+    return () => clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -50,10 +59,15 @@ export function StaffSearch({
     let cancelled = false;
     const timer = setTimeout(async () => {
       setPending(true);
-      const r = await search(locale, term);
-      if (!cancelled) {
-        setResults(r);
-        setPending(false);
+      setFailed(false);
+      try {
+        const r = await search(locale, term);
+        if (!cancelled) setResults(r);
+      } catch {
+        // Session expirée ou réseau : message clair, jamais d'indicateur bloqué.
+        if (!cancelled) setFailed(true);
+      } finally {
+        if (!cancelled) setPending(false);
       }
     }, 250);
     return () => {
@@ -63,7 +77,7 @@ export function StaffSearch({
   }, [q, locale, search]);
 
   const shown = q.trim().length >= 2 ? results : null;
-  const groups: { key: keyof Results; icon: typeof FolderOpen }[] = [
+  const groups: { key: "matters" | "contracts" | "clients"; icon: typeof FolderOpen }[] = [
     { key: "matters", icon: FolderOpen },
     { key: "contracts", icon: FileSignature },
     { key: "clients", icon: UserRound },
@@ -81,7 +95,7 @@ export function StaffSearch({
         <span className="hidden truncate sm:inline">{t("placeholder")}</span>
         <span className="sr-only sm:hidden">{t("open")}</span>
         <kbd className="ml-auto hidden rounded-[4px] border border-gray-300 px-1.5 text-[11px] text-ink-muted sm:inline">
-          Ctrl K
+          {mac ? t("shortcutMac") : t("shortcut")}
         </kbd>
       </button>
       <dialog
@@ -112,7 +126,15 @@ export function StaffSearch({
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto p-2" aria-live="polite">
-          {!shown ? (
+          {failed ? (
+            <p role="alert" className="px-3 py-6 text-center text-sm text-marine">
+              {t("failed")}
+            </p>
+          ) : shown?.limited ? (
+            <p role="alert" className="px-3 py-6 text-center text-sm text-marine">
+              {t("limited")}
+            </p>
+          ) : !shown ? (
             <p className="px-3 py-6 text-center text-sm text-ink-muted">{t("hint")}</p>
           ) : total === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-ink-muted">

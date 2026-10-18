@@ -255,7 +255,7 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
       <SectionCard
         title={t("offices")}
         className="mb-6"
-        help={<HelpTip label={t("helpLabel")}>{t("noRights")}</HelpTip>}
+        help={<HelpTip label={t("helpOffices")}>{t("noRights")}</HelpTip>}
       >
         {offices.length === 0 ? (
           <EmptyState icon={Building2} message={t("noOffice")} />
@@ -408,7 +408,7 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
         </ul>
       </SectionCard>
 
-      <SectionCard title={t("courts")} help={<HelpTip label={t("helpLabel")}>{t("courtsHelp")}</HelpTip>}>
+      <SectionCard title={t("courts")} help={<HelpTip label={t("helpCourts")}>{t("courtsHelp")}</HelpTip>}>
         {courts.length === 0 ? (
           <EmptyState icon={Landmark} message={t("noCourt")} />
         ) : (

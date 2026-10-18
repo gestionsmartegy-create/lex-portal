@@ -1,5 +1,5 @@
 import "server-only";
-import { z } from "zod";
+import { sanitizeSearch } from "@/lib/search-query";
 import { getSessionRole } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { getCourtWatch } from "@/server/services/court-calendar";
@@ -11,24 +11,21 @@ import { countStaffUnread } from "@/server/services/messaging";
  * Tout est lu sous la session de l'utilisateur (RLS) : on ne trouve que ses dossiers et contrats
  * (tout le cabinet pour le firm_admin). Aucun service_role.
  */
-const query = z
-  .string()
-  .trim()
-  .min(2)
-  .max(80)
-  // Caractères qui ont un sens pour PostgREST ou ilike : neutralisés.
-  .transform((q) => q.replace(/[%,()*\\"_.:]/g, " ").trim());
-
 export type SearchHit = { id: string; label: string; detail: string | null; href: string };
-export type SearchResults = { matters: SearchHit[]; contracts: SearchHit[]; clients: SearchHit[] };
+export type SearchResults = {
+  matters: SearchHit[];
+  contracts: SearchHit[];
+  clients: SearchHit[];
+  /** Trop de recherches : réessayer dans quelques minutes. */
+  limited?: boolean;
+};
 
 export async function searchStaff(raw: string): Promise<SearchResults> {
   const empty = { matters: [], contracts: [], clients: [] };
   const role = await getSessionRole();
   if (role !== "staff" && role !== "firm_admin") return empty;
-  const parsed = query.safeParse(raw);
-  if (!parsed.success || parsed.data.length < 2) return empty;
-  const q = parsed.data;
+  const q = sanitizeSearch(raw);
+  if (!q) return empty;
   const supabase = await createSupabaseServerClient();
   const [{ data: matters }, { data: contracts }, { data: clients }] = await Promise.all([
     supabase
@@ -83,9 +80,9 @@ export type StaffAlert = {
 };
 
 /** Cloche du cabinet : ce qui demande une action, avec un lien vers l'endroit où agir. */
-export async function getStaffAlerts(): Promise<StaffAlert[]> {
+export async function getStaffAlerts(): Promise<{ alerts: StaffAlert[]; unread: number }> {
   const role = await getSessionRole();
-  if (role !== "staff" && role !== "firm_admin") return [];
+  if (role !== "staff" && role !== "firm_admin") return { alerts: [], unread: 0 };
   const [unread, court, watch] = await Promise.all([countStaffUnread(), getCourtWatch(), getWatchlist()]);
   const all: StaffAlert[] = [
     { key: "unreadMessages", count: unread, href: "/admin/messages?filter=unread" },
@@ -103,5 +100,5 @@ export async function getStaffAlerts(): Promise<StaffAlert[]> {
     },
     { key: "lateDeliverables", count: watch?.lateDeliverables.total ?? 0, href: "/admin" },
   ];
-  return all.filter((a) => a.count > 0);
+  return { alerts: all.filter((a) => a.count > 0), unread };
 }

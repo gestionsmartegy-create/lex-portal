@@ -1289,7 +1289,9 @@
         "add": "Give access to the whole firm",
         "remove": "Remove access"
       },
-      "helpLabel": "Help: offices and courts"
+      "helpLabel": "Help: offices and courts",
+      "helpOffices": "Help: offices",
+      "helpCourts": "Help: courts"
     },
     "court": {
       "upcoming": "Upcoming court dates",
@@ -1677,7 +1679,11 @@
         "matters": "Matters",
         "contracts": "Contracts",
         "clients": "Clients"
-      }
+      },
+      "shortcut": "Ctrl K",
+      "shortcutMac": "⌘ K",
+      "failed": "The search did not complete. Reload the page, then try again.",
+      "limited": "Too many searches in a row: try again in a few minutes."
     },
     "alerts": {
       "label": "Alerts",
@@ -1699,10 +1705,10 @@
       "helloNoName": "Hello",
       "today": "{date} · here is what's waiting for you.",
       "counters": {
-        "thisWeek": "{count, plural, =0 {no hearings in the next 14 days} one {hearing in the next 14 days} other {hearings in the next 14 days}}",
-        "toConfirm": "{count, plural, =0 {date to confirm} one {date to confirm} other {dates to confirm}}",
-        "unread": "{count, plural, =0 {unanswered message} one {unanswered message} other {unanswered messages}}",
-        "late": "{count, plural, =0 {overdue item} one {overdue item} other {overdue items}}"
+        "thisWeek": "{count, plural, one {hearing in the next 14 days} other {hearings in the next 14 days}}",
+        "toConfirm": "{count, plural, one {date to confirm} other {dates to confirm}}",
+        "unread": "{count, plural, one {unanswered message} other {unanswered messages}}",
+        "late": "{count, plural, one {overdue item} other {overdue items}}"
       },
       "hearings": "My hearings",
       "hearingsHelpLabel": "Help: hearings",
