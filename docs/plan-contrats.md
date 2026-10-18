@@ -1,130 +1,202 @@
-# Plan — Contrats : modèles prédéfinis, génération dans le dossier, dépôt Clio et SharePoint, assistant IA
+# Plan — Contrats : rédaction dans la plateforme, modèles, services, assistant IA, envoi et suivi
 
-> Statut : **proposition, en attente de validation** (2026-10-18). Aucun code n'est écrit avant votre « oui ».
-> Rattachement au plan général : phase 4 « Ressources et rédaction » et phase 6 « Assistant de rédaction (IA) » de `docs/plan-developpement.md`.
+> Statut : **proposition v2, en attente de validation** (2026-10-18). Aucun code n'est écrit avant votre « oui ».
+> v2 : ajout d'une vraie **zone de rédaction et de modification** dans la plateforme, de la fiche du client dans le contrat, d'un catalogue de **services et honoraires**, de l'IA par section et du **suivi des contrats envoyés**.
+> Rattachement : phase 4 « Ressources et rédaction » et phase 6 « Assistant de rédaction (IA) » de `docs/plan-developpement.md`.
 
 ## 1. Ce que j'ai compris
 
-1. **Des contrats prédéfinis** : le cabinet garde ses modèles (contrats, lettres de mandat, conventions d'honoraires…) dans une bibliothèque, en français et en anglais, classés par domaine (Immigration, Légal, Affaires).
-2. **Générer un contrat depuis un dossier** : on choisit un modèle, les informations du dossier se remplissent seules, l'avocat complète et relit, puis la plateforme produit le document en Word et en PDF.
-3. **Le ranger dans Clio ET dans SharePoint** (décision du 2026-10-18).
-4. **Plus tard, l'IA (OpenAI)** propose un premier jet, une révision ou une traduction. L'avocat valide toujours.
+1. Une section **Contrats** dans l'espace cabinet, où l'on **rédige et modifie** chaque contrat directement dans la plateforme.
+2. Dans le contrat, on renseigne **le client** (nom, courriel, adresse, téléphone, langue) et **les services** (description, honoraires, taxes). Si le client existe déjà, tout se remplit seul.
+3. On part d'un **modèle prêt et enregistré** (convention de mandat, convention d'honoraires, contrat de services…) ou d'une page blanche.
+4. **OpenAI aide à rédiger** une section, à reformuler, à traduire, ou à créer un gabarit complet. L'avocat garde toujours la main.
+5. On **voit tous les contrats** : brouillons, envoyés, signés, avec leur historique.
+6. Les contrats finaux sont rangés **dans Clio et dans SharePoint** (décision du 2026-10-18), et la signature se fait **dans Clio** (option A).
 
-## 2. Comment ça marche, en une image
+## 2. Où se trouve la section dans la plateforme
 
 ```mermaid
-flowchart LR
-  A["Bibliothèque de modèles<br/>(Word du cabinet, FR / EN)"] --> B["Dossier → « Nouveau document »"]
-  C["Informations du dossier<br/>(client, numéro, dates, montants)"] --> B
-  B --> D["Champs manquants à compléter<br/>+ clauses à cocher"]
-  D -. "plus tard : premier jet IA<br/>(à réviser)" .-> D
-  D --> E["Brouillon interne<br/>Word + PDF"]
-  E --> F["Validation par l'avocat"]
-  F --> G["Clio Documents<br/>(dossier Clio)"]
-  F --> H["SharePoint<br/>(dossier client)"]
-  G --> I["Signature lancée dans Clio<br/>(option A)"]
-  F -. "seulement si l'avocat le décide" .-> J["Partagé au client<br/>dans le portail"]
+flowchart TB
+  subgraph Cabinet["Espace cabinet — menu « Contrats »"]
+    L["Contrats<br/>liste, filtres, statuts"]
+    E["Éditeur d'un contrat<br/>client · services · sections · IA"]
+    M["Modèles<br/>(firm_admin)"]
+    C["Clauses<br/>(firm_admin)"]
+    S["Services et honoraires<br/>(firm_admin)"]
+  end
+  D["Dossier → onglet « Contrats »<br/>(contrats de ce dossier)"]
+  P["Portail client → « Mes contrats »<br/>(seulement ceux qu'on lui a envoyés)"]
+  M --> E
+  C --> E
+  S --> E
+  L --> E
+  D --> E
+  E -- "envoyé" --> P
 ```
 
-## 3. Angles morts relevés, et ce que je propose
+| Où | Qui | Ce qu'on y fait |
+|---|---|---|
+| **Contrats** (nouveau menu) | personnel | Liste de tous les contrats auxquels on a accès : client, dossier, modèle, avocat, statut, dates. Filtres : statut, avocat, domaine, bureau, période. Bouton **« Nouveau contrat »**. |
+| **Contrats → Modèles** | firm_admin (lecture : personnel) | Créer et modifier les modèles enregistrés, dans le même éditeur. Versions, domaine, langue. |
+| **Contrats → Clauses** | firm_admin | Bibliothèque de clauses approuvées, FR et EN. |
+| **Contrats → Services et honoraires** | firm_admin | Catalogue des services du cabinet : nom, description, forfait ou taux horaire, taxes par province. |
+| **Dossier → onglet Contrats** | équipe du dossier | Les contrats de ce dossier, et « Nouveau contrat » pré-rempli avec le dossier. |
+| **Portail client → Mes contrats** | client | Seulement les contrats **envoyés** : lecture, téléchargement PDF, statut (« à signer », « signé »). Jamais un brouillon. |
+
+## 3. Le parcours d'un contrat
+
+```mermaid
+stateDiagram-v2
+  [*] --> Brouillon : Nouveau contrat (modèle ou page blanche)
+  Brouillon --> EnRevision : Demander une relecture
+  EnRevision --> Brouillon : Corrections demandées
+  Brouillon --> Valide : L'avocat valide
+  EnRevision --> Valide : L'avocat valide
+  Valide --> Brouillon : Rouvrir (nouvelle version)
+  Valide --> Envoye : Envoyer au client
+  Envoye --> Signe : Signé (dans Clio)
+  Envoye --> Refuse : Refusé ou expiré
+  Envoye --> Brouillon : Nouvelle version (l'ancienne est conservée)
+  Brouillon --> Annule
+  Signe --> [*]
+```
+
+| Étape | Ce qui se passe |
+|---|---|
+| **Créer** | « Nouveau contrat » → choisir un **modèle** (filtré selon le domaine du dossier) ou une page blanche → choisir le **client** : client existant (fiche remplie seule) ou **nouveau client** (saisie : nom, courriel, adresse, téléphone, langue). Dossier lié : existant, ou aucun pour l'instant (cas d'une convention de mandat avant l'ouverture du dossier). |
+| **Rédiger** | L'éditeur montre le contrat en **sections** (parties, objet, services, honoraires, durée, résiliation…). Chaque section se modifie directement : gras, listes, titres. Les **champs** (`Nom du client`, `Adresse`, `Total des honoraires`…) apparaissent comme des étiquettes qui se remplissent seules. Enregistrement automatique. |
+| **Services** | Tableau des services : choisis dans le catalogue ou saisis à la main, quantité, forfait ou taux horaire, **taxes selon la province du client** (TVH au N.-B., en N.-É. et en Ontario ; TPS + TVQ au Québec), total calculé. Les montants sont exacts (jamais d'arrondi flottant). |
+| **IA** | Sur chaque section : **Rédiger**, **Reformuler**, **Simplifier**, **Traduire FR ↔ EN**. Sur le contrat : **Créer un gabarit** à partir d'une description (« convention d'honoraires pour un permis de travail »), **Vérifier** avec la liste de contrôle du domaine. Le texte proposé s'affiche **à côté**, l'avocat l'accepte, le modifie ou le rejette. |
+| **Relire** | Optionnel : demander la relecture d'un autre avocat, avec des commentaires par section. |
+| **Valider** | L'avocat valide : la version est **figée** (personne ne peut la modifier). Un PDF et un Word sont produits. Dépôt automatique **dans Clio et SharePoint**. |
+| **Envoyer** | Deux possibilités :<br/>(a) **dans le portail** : le client le voit dans « Mes contrats » et reçoit un courriel sans contenu, avec un lien. S'il n'a pas de compte, une invitation lui est envoyée ;<br/>(b) **pour signature dans Clio** : l'avocat lance la signature depuis Clio (option A), la plateforme lui ouvre le bon dossier Clio. |
+| **Suivre** | Statut, date d'envoi, à qui, consulté par le client (oui/non, date), signé. Relance possible. Tout est journalisé. |
+| **Modifier après envoi** | On ne modifie jamais un contrat envoyé : on crée une **nouvelle version**. L'ancienne reste consultable et marquée « remplacée ». |
+
+## 4. Angles morts relevés, et ce que je propose
 
 | # | Angle mort | Risque | Ce que je propose |
 |---|---|---|---|
-| 1 | **Les avocats travaillent dans Word** | Un éditeur maison ne remplacera pas Word ; il serait long à construire et mal aimé. | Les modèles **restent des fichiers Word** du cabinet, avec des champs du type `{{client.nom}}`. La plateforme les remplit et produit un **Word modifiable** et un **PDF**. L'avocat peaufine dans Word s'il le souhaite, puis redépose la version finale. |
-| 2 | **Champ manquant ou faux** (adresse absente dans Clio, nom mal orthographié) | Un contrat avec un blanc ou une erreur part chez le client. | Chaque champ vide est **demandé avant la génération** et surligné dans l'aperçu. Rien ne part sans la validation explicite de l'avocat. |
-| 3 | **Version du modèle** | Un contrat généré avec une ancienne clause, sans qu'on sache laquelle. | Les modèles sont **versionnés**. Chaque document garde la version utilisée. Une ancienne version reste lisible mais ne peut plus servir. |
-| 4 | **Confidentialité des brouillons** | Le client voit un brouillon non validé. | Un document généré est **interne par défaut**. Il n'est visible du client que si l'avocat le **partage** explicitement (dossier « Partagé » de SharePoint, règle déjà en place). |
-| 5 | **Double dépôt Clio + SharePoint** | Deux copies qui divergent ; on ne sait plus laquelle est la bonne. | Le **même fichier final** est déposé dans les deux, avec les mêmes identifiants (numéro de dossier, identifiant du document). Toute nouvelle version est redéposée dans les deux. Un dépôt raté est **réessayé automatiquement**, et signalé dans « À surveiller ». |
-| 6 | **Clio : dépôt par l'API** | L'envoi de fichiers dans Clio Documents est « à reconfirmer » sur un vrai compte (règle : rien d'inventé). | Je le **vérifie d'abord sur le compte Clio de test**. En attendant, et si ce n'est pas confirmé : simulateur clairement marqué. |
-| 7 | **SharePoint pas encore branché** | Le dépôt SharePoint demande l'accès Microsoft (le même rendez-vous que pour Outlook). | **Simulateur SharePoint** d'abord (déjà prévu dans le code), branché pour de vrai lors de notre séance Microsoft. |
-| 8 | **Québec : langue des contrats** (Charte de la langue française, loi 96) | Certains contrats avec un client du Québec doivent d'abord être proposés en français. | Je **ne tranche pas** : question au cabinet. En attendant, la langue proposée par défaut est celle du client, et le français est toujours disponible. |
-| 9 | **IA : erreurs et inventions** | Une clause inventée ou une loi citée à tort. | L'IA ne fait qu'un **premier jet à partir d'un modèle validé**. Le document porte la mention « généré par IA, à réviser ». L'avocat valide chaque document. Rien n'est envoyé au client ni déposé sans validation. |
-| 10 | **IA : données personnelles** | Envoyer des noms de clients à OpenAI, hors du Canada (Loi 25 pour Montréal). | Tant que le cabinet n'a pas décidé, **simulateur seulement**. Ensuite : appels par le serveur uniquement, conservation zéro chez OpenAI, données réduites au strict nécessaire, plafond de coût mensuel, journal **sans contenu**. |
-| 11 | **Qui peut faire quoi** | N'importe qui modifie un modèle officiel. | Modèles et clauses : **firm_admin seulement**. Générer un document : **l'équipe du dossier**. Tout est journalisé. |
-| 12 | **Fichiers piégés** | Un modèle Word avec une macro ou un lien malveillant. | Seuls les `.docx` sont acceptés (pas de `.docm`), avec contrôle du type réel, de la taille et de l'antivirus (même chaîne que les dépôts de documents). |
+| 1 | **Les informations du client changent** après la signature | Le contrat signé afficherait la nouvelle adresse. | Le contrat garde **sa propre copie** des informations du client au moment de la validation. La fiche du client peut évoluer sans toucher aux contrats signés. |
+| 2 | **Nouveau client sans compte ni dossier** (convention de mandat avant l'ouverture) | Données saisies en double, ou client créé par erreur. | Le contrat accepte un **client sans compte**. À la signature, un bouton propose d'**ouvrir le dossier** et d'**inviter le client** au portail, avec les informations déjà saisies. Les doublons sont détectés par courriel. |
+| 3 | **Taxes et montants** | Mauvaise taxe selon la province, erreurs d'arrondi. | Taux de taxes **par province**, gérés par le firm_admin, avec date d'effet. Montants en décimal exact. Le taux utilisé est figé dans le contrat validé. |
+| 4 | **Champ vide ou faux** | Un contrat avec un blanc part chez le client. | Validation **bloquée** tant qu'un champ obligatoire est vide. Les champs vides sont surlignés en rouge. |
+| 5 | **Version du modèle ou de la clause** | Une ancienne clause réutilisée sans le savoir. | Modèles et clauses **versionnés**. Le contrat garde la version utilisée. Un message signale qu'une version plus récente existe. |
+| 6 | **Brouillon vu par le client** | Fuite d'un texte non validé. | Le client ne voit **que** les contrats envoyés. Contrôle en base, avec tests automatiques. |
+| 7 | **Modification d'un contrat envoyé** | Le client a signé un texte différent de celui conservé. | Contrat **figé** dès la validation. Toute modification crée une nouvelle version. Une empreinte du PDF est conservée. |
+| 8 | **Deux modifications en même temps** | Deux avocats écrasent le travail de l'autre. | Verrou par contrat : « En cours de modification par Me X ». La deuxième personne lit seulement. |
+| 9 | **IA : erreurs et inventions** | Une clause inventée, une loi citée à tort. | L'IA **propose seulement**. Le texte accepté porte la mention « rédigé avec l'IA, à réviser ». Validation humaine obligatoire. L'IA ne cite pas de jurisprudence. |
+| 10 | **IA : données personnelles** (Loi 25 pour Montréal) | Noms et adresses de clients envoyés à OpenAI, hors du Canada. | **Simulateur** tant que le cabinet n'a pas décidé. Ensuite : les champs du client sont **remplacés par des étiquettes** avant l'envoi (OpenAI ne voit jamais le vrai nom ni l'adresse), conservation zéro, appels par le serveur seulement, plafond de coût, journal sans contenu. |
+| 11 | **Texte collé depuis ailleurs** (courriel, site web) | Mise en forme cassée, ou contenu piégé. | Le collage est nettoyé : texte et mise en forme simple seulement. Rien n'est exécuté. |
+| 12 | **Double dépôt Clio et SharePoint** | Deux copies divergentes. | Le même PDF final, avec la même empreinte, va dans les deux. Un échec est réessayé et signalé dans « À surveiller ». Dépôt Clio à vérifier sur le compte de test. SharePoint en simulateur jusqu'à notre séance Microsoft. |
+| 13 | **Langue au Québec** (Charte de la langue française) | Contrat proposé d'abord en anglais à un client du Québec. | Question au cabinet, je ne tranche pas. En attendant : la langue du client par défaut, le français toujours disponible, et les versions FR et EN liées entre elles. |
+| 14 | **Qui voit quels contrats** | Un employé voit les honoraires de tous les clients. | Même règle que les dossiers : l'**équipe du dossier** et le firm_admin. Un contrat sans dossier est visible de son auteur, des personnes qu'il désigne et du firm_admin. |
+| 15 | **Téléphone et accessibilité** | Un éditeur inutilisable à 375 px. | Sur téléphone : **lecture**, suivi, envoi et relance. La rédaction se fait sur ordinateur, avec un message clair. Éditeur utilisable au clavier et au lecteur d'écran. |
 
-## 4. Plan de travail (lots)
+## 5. Plan de travail (lots)
 
-| Lot | Contenu | Accès externe nécessaire | Base de données |
+| Lot | Contenu | Accès externe | Base de données |
 |---|---|---|---|
-| **1. Bibliothèque de modèles** | Le firm_admin dépose un modèle Word (FR et/ou EN), le classe par domaine et type de dossier, voit la liste des champs détectés et ceux qui sont inconnus, publie une version. Champs disponibles listés dans une aide. 3 modèles de démonstration fournis. | Aucun | Modèles, versions, champs (RLS, audit) |
-| **2. Générer depuis un dossier** | Bouton « Nouveau document » dans le dossier : choix du modèle et de la langue, champs remplis depuis le dossier, champs manquants demandés, aperçu, génération Word + PDF, brouillon interne, historique des documents générés. | Aucun | Documents générés (RLS équipe, audit) |
-| **3. Clauses** | Bibliothèque de clauses bilingues (firm_admin) ; dans un modèle, des emplacements de clauses optionnelles que l'avocat coche au moment de générer. | Aucun | Clauses, versions |
-| **4. Dépôt Clio + SharePoint, partage, signature** | « Valider et déposer » : dépôt du fichier final dans Clio Documents et dans SharePoint, avec reprise automatique en cas d'échec. Partage au client sur décision de l'avocat. Rappel « Lancer la signature dans Clio ». | **Clio** : vérifier l'envoi de fichiers sur le compte de test. **SharePoint** : simulateur, puis séance Microsoft. | État de dépôt par destination |
-| **5. Assistant IA (OpenAI)** | Premier jet à partir d'un modèle, révision d'un passage, traduction FR ↔ EN, vérification avec la liste de contrôle du domaine. **Simulateur d'abord.** | **OpenAI** : clé du cabinet et décisions (section 5) | Compteur de coût, audit sans contenu |
+| **1. Section Contrats et éditeur** | Menu « Contrats », liste et filtres, « Nouveau contrat », fiche du client (existant ou nouveau), éditeur par sections avec champs, enregistrement automatique, verrou, versions, aperçu PDF. Onglet « Contrats » dans le dossier. | Aucun | Contrats, versions, sections, parties (RLS, audit) |
+| **2. Modèles, clauses, services** | Modèles enregistrés créés dans l'éditeur (versions, domaine, langue), bibliothèque de clauses, catalogue des services et honoraires, taxes par province. 3 modèles de démonstration. Import d'un modèle Word existant : en option, plus tard. | Aucun | Modèles, clauses, services, taxes |
+| **3. Valider, envoyer, suivre** | Relecture et commentaires, validation (version figée, PDF et Word, empreinte), envoi dans le portail (le client voit « Mes contrats »), suivi (envoyé, consulté, signé, relance), nouvelle version après envoi, passage au dossier et invitation du client à la signature. | Aucun | Envois, consultations |
+| **4. Dépôt Clio et SharePoint, signature Clio** | Dépôt automatique du PDF final dans les deux, reprise sur échec, lien « Signer dans Clio ». | **Clio** : envoi de fichiers à vérifier sur le compte de test. **SharePoint** : simulateur, puis séance Microsoft. | État des dépôts |
+| **5. Assistant IA (OpenAI)** | Rédiger, reformuler, simplifier, traduire une section ; créer un gabarit ; vérifier avec la liste de contrôle ; champs du client masqués avant l'envoi ; plafond de coût. **Simulateur d'abord.** | **OpenAI** : clé du cabinet et décisions (section 6) | Coût du mois, audit sans contenu |
 
-Ordre proposé : 1 → 2 → 3 → 4, puis 5 quand les décisions IA sont prises. Chaque lot : tests, QA, revue de sécurité, mise en ligne sur le serveur de test, puis « Comment tester ».
+Ordre : 1 → 2 → 3 → 4, puis 5. L'**emplacement de l'IA** (boutons dans l'éditeur, simulateur) est posé dès le lot 1, pour que vous voyiez l'ensemble tout de suite.
 
-Nouvelle librairie probable : une librairie de remplissage de modèles Word (à évaluer avec `/securite dependance` avant de l'ajouter : maintenance, licence, vulnérabilités).
+Nouvelles librairies probables, évaluées avec `/securite dependance` avant tout ajout :
+- un éditeur de texte riche pour React (TipTap, basé sur ProseMirror, ou équivalent) ;
+- la production de PDF et de Word côté serveur.
 
-## 5. Décisions à prendre par le cabinet
+## 6. Décisions à prendre par le cabinet
 
 1. ~~Où ranger les contrats générés ?~~ ✅ **Dans Clio ET dans SharePoint** (2026-10-18).
-2. **Les vrais modèles** : quels contrats et lettres mettre dans la bibliothèque en premier ? (fichiers Word actuels du cabinet, sans données de clients). En attendant, j'utilise 3 modèles de démonstration.
-3. **Québec** : faut-il imposer la version française d'abord pour un client du bureau de Montréal ?
-4. **IA** (avant de brancher OpenAI) :
-   - quelles données peut-on envoyer (noms réels, ou informations anonymisées) ;
+2. **Les vrais modèles** à créer en premier : convention de mandat, convention d'honoraires, autres ? Fournir le texte actuel, sans données de clients. Je pars de 3 modèles de démonstration.
+3. **Services et honoraires** : la liste des services et des tarifs à mettre dans le catalogue. Exemples fictifs en attendant.
+4. **Québec** : imposer la version française d'abord pour un client du bureau de Montréal ?
+5. **Qui valide** un contrat : l'avocat responsable seulement, ou tout avocat de l'équipe ? Une relecture par un second avocat est-elle obligatoire pour certains modèles ?
+6. **IA**, avant de brancher OpenAI :
+   - accord pour masquer les données du client avant l'envoi (ma recommandation) ;
    - conservation zéro chez OpenAI ;
    - plafond de coût mensuel ;
    - évaluation Loi 25 pour les clients du Québec ;
-   - clé OpenAI créée par le cabinet, transmise par un canal sécurisé (jamais dans le chat).
-5. **Qui valide** un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ?
+   - clé OpenAI créée par le cabinet, transmise par un canal sécurisé, jamais dans le chat.
 
-## 6. User stories (zone F — Contrats et rédaction)
+Aucune de ces décisions ne bloque les lots 1 à 3.
 
-### Lot 1 — Bibliothèque de modèles
-**F1. En tant qu'Admin, je veux déposer un modèle Word avec des champs, afin que l'équipe génère des documents conformes.**
-- [ ] Je dépose un `.docx` (FR, EN ou les deux), je choisis le domaine et les types de dossiers concernés.
-- [ ] La plateforme liste les champs trouvés ; un champ inconnu est signalé avant la publication.
-- [ ] Un `.docm`, un faux `.docx` ou un fichier trop gros est refusé.
+## 7. User stories (zone F — Contrats et rédaction)
 
-**F2. En tant qu'Admin, je veux publier une nouvelle version d'un modèle, afin de corriger une clause sans perdre l'historique.**
-- [ ] Chaque version est conservée ; seule la dernière publiée sert à générer.
-- [ ] Les documents déjà générés indiquent la version utilisée.
-- [ ] Publication et retrait sont journalisés.
+### Lot 1 — Section Contrats et éditeur
+**F1. En tant que membre du personnel, je veux une section « Contrats » qui liste tous mes contrats, afin de savoir où en est chacun.**
+- [ ] Liste : client, dossier, modèle, avocat, statut, date de modification, date d'envoi.
+- [ ] Filtres : statut, avocat, domaine, bureau, période ; recherche par client.
+- [ ] Je ne vois que les contrats de mes dossiers (tous pour le firm_admin). Un test le prouve.
 
-### Lot 2 — Générer depuis un dossier
-**F3. En tant que membre de l'équipe, je veux générer un document depuis un dossier, afin de ne pas ressaisir les informations.**
-- [ ] « Nouveau document » propose les modèles du domaine du dossier, dans la langue du client par défaut.
-- [ ] Les champs connus sont remplis ; les champs manquants sont demandés avant la génération.
-- [ ] J'obtiens un Word et un PDF ; le document est un **brouillon interne**, invisible du client.
-- [ ] Hors de l'équipe du dossier : même réponse « introuvable ». Génération journalisée, sans contenu.
+**F2. En tant que membre du personnel, je veux créer un contrat pour un client existant ou nouveau, afin de ne rien ressaisir.**
+- [ ] Client existant : nom, courriel, adresse, téléphone et langue remplis seuls.
+- [ ] Nouveau client : je saisis ces informations ; un courriel déjà connu est signalé (doublon).
+- [ ] Le contrat peut être lié à un dossier, ou à aucun pour l'instant.
 
-**F4. En tant que membre de l'équipe, je veux retrouver les documents générés d'un dossier, afin de suivre les versions.**
-- [ ] Liste : modèle, version, langue, auteur, date, état (brouillon, validé, déposé).
-- [ ] Je peux redéposer une version finale modifiée dans Word.
+**F3. En tant que membre du personnel, je veux rédiger et modifier le contrat dans la plateforme, afin de ne pas dépendre de Word.**
+- [ ] Le contrat est découpé en sections ; chacune se modifie (gras, listes, titres).
+- [ ] Les champs s'affichent comme des étiquettes remplies ; un champ vide est surligné.
+- [ ] Enregistrement automatique ; historique des versions ; aperçu PDF.
+- [ ] Si quelqu'un d'autre modifie le même contrat, je le vois et je suis en lecture seule.
 
-### Lot 3 — Clauses
-**F5. En tant qu'Admin, je veux une bibliothèque de clauses bilingues, afin de composer les documents à partir de textes approuvés.**
-- [ ] Une clause a un titre, un texte FR et EN, un domaine, des versions.
-- [ ] Dans un modèle, un emplacement accueille des clauses optionnelles, cochées au moment de générer.
+### Lot 2 — Modèles, clauses, services
+**F4. En tant qu'Admin, je veux créer et maintenir des modèles de contrats, afin que l'équipe parte de textes approuvés.**
+- [ ] Un modèle se crée dans le même éditeur, avec domaine, langue et sections.
+- [ ] Chaque publication crée une version ; les contrats gardent la version utilisée.
 
-### Lot 4 — Dépôt, partage, signature
-**F6. En tant qu'avocat, je veux valider un document et le déposer dans Clio et SharePoint, afin qu'il soit rangé au bon endroit sans double saisie.**
-- [ ] « Valider et déposer » envoie le même fichier dans le dossier Clio et dans le dossier SharePoint du client.
-- [ ] L'état de chaque dépôt est visible ; un échec est réessayé et signalé dans « À surveiller ».
-- [ ] Un dossier sans équivalent Clio ou SharePoint l'indique clairement, sans erreur.
+**F5. En tant qu'Admin, je veux une bibliothèque de clauses bilingues, afin de composer un contrat avec des textes validés.**
+- [ ] Dans l'éditeur, j'insère une clause depuis la bibliothèque, en FR ou en EN.
 
-**F7. En tant qu'avocat, je veux partager un document validé avec le client, afin qu'il le consulte dans son portail.**
-- [ ] Le partage est un geste explicite ; le client est averti (portail, e-mail sans contenu).
-- [ ] Un brouillon ne peut jamais être partagé.
-- [ ] Pour la signature, un rappel indique de la lancer depuis Clio.
+**F6. En tant qu'Admin, je veux un catalogue de services et d'honoraires avec les taxes par province, afin que les montants soient justes.**
+- [ ] Service : nom FR et EN, description, forfait ou taux horaire, domaine.
+- [ ] Taxes par province, avec date d'effet ; total calculé exactement.
+- [ ] Le tableau des services d'un contrat validé ne change plus.
+
+### Lot 3 — Valider, envoyer, suivre
+**F7. En tant qu'avocat, je veux valider un contrat, afin d'en figer le texte avant l'envoi.**
+- [ ] Validation bloquée si un champ obligatoire est vide.
+- [ ] Une fois validé : version figée, PDF et Word produits, empreinte conservée.
+- [ ] Relecture optionnelle par un autre avocat, avec commentaires par section.
+
+**F8. En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut, afin de savoir s'il l'a lu et signé.**
+- [ ] Envoi dans le portail : le client le voit dans « Mes contrats » et reçoit un courriel sans contenu.
+- [ ] Client sans compte : une invitation lui est envoyée.
+- [ ] Suivi : envoyé (date, à qui), consulté (date), signé ; relance possible.
+- [ ] Après l'envoi, toute modification crée une nouvelle version ; l'ancienne est marquée « remplacée ».
+
+**F9. En tant que client, je veux voir les contrats que le cabinet m'a envoyés, afin de les lire et de les télécharger.**
+- [ ] Je ne vois que les contrats envoyés, jamais un brouillon.
+- [ ] Je télécharge le PDF ; mon ouverture est notée (le cabinet sait que je l'ai consulté).
+
+**F10. En tant qu'avocat, je veux ouvrir le dossier et inviter le client à partir d'un contrat signé, afin d'enchaîner sans ressaisie.**
+- [ ] « Ouvrir le dossier » reprend le client, le domaine et les services du contrat.
+
+### Lot 4 — Dépôt et signature
+**F11. En tant qu'avocat, je veux que le contrat validé soit rangé dans Clio et SharePoint, afin de ne pas le déposer à la main.**
+- [ ] Le même PDF est déposé dans les deux ; l'état de chaque dépôt est visible.
+- [ ] Un échec est réessayé automatiquement et signalé dans « À surveiller ».
+- [ ] Un lien ouvre le dossier Clio pour lancer la signature.
 
 ### Lot 5 — Assistant IA (OpenAI)
-**F8. En tant qu'avocat, je veux un premier jet proposé par l'IA à partir d'un modèle, afin de gagner du temps.**
-- [ ] Le texte proposé porte la mention « généré par IA, à réviser » ; je le modifie ou je le rejette.
-- [ ] Rien n'est déposé ni partagé sans ma validation.
-- [ ] Le journal indique qu'une génération a eu lieu, jamais son contenu.
+**F12. En tant qu'avocat, je veux que l'IA m'aide à rédiger une section, afin de gagner du temps.**
+- [ ] Sur une section : Rédiger, Reformuler, Simplifier, Traduire FR ↔ EN.
+- [ ] La proposition s'affiche à côté ; je l'accepte, la modifie ou la rejette.
+- [ ] Le texte accepté est marqué « rédigé avec l'IA, à réviser ».
 
-**F9. En tant qu'avocat, je veux traduire un document FR ↔ EN et le vérifier avec la liste de contrôle du domaine, afin de livrer une version bilingue fiable.**
-- [ ] La traduction est un nouveau brouillon, lié au document d'origine.
-- [ ] La vérification liste les points manquants de la liste de contrôle, sans rien modifier seule.
+**F13. En tant qu'avocat, je veux que l'IA crée un gabarit de contrat à partir d'une description, afin de démarrer un nouveau type de contrat.**
+- [ ] Le gabarit est un brouillon, jamais un modèle publié sans validation du firm_admin.
 
-**F10. En tant qu'Admin, je veux un plafond de coût mensuel pour l'IA, afin de maîtriser la facture.**
-- [ ] Au-delà du plafond, l'assistant est désactivé jusqu'au mois suivant, avec un message clair.
-- [ ] Le coût du mois est visible dans Intégrations.
+**F14. En tant qu'Admin, je veux encadrer l'IA (données masquées, plafond de coût), afin de protéger les clients et la facture.**
+- [ ] Les informations du client sont remplacées par des étiquettes avant l'envoi à OpenAI.
+- [ ] Au-delà du plafond mensuel, l'assistant se désactive jusqu'au mois suivant, avec un message clair.
+- [ ] Le journal indique chaque utilisation, jamais son contenu.
 
-## 7. Ce que je vous demande
+## 8. Ce que je vous demande
 
-- **« oui »** : je publie les stories F1 à F10 en issues GitHub et je commence le **lot 1 (bibliothèque de modèles)** avec 3 modèles de démonstration.
-- Quand vous pouvez : les décisions 2 à 5 de la section 5 (aucune ne bloque les lots 1 à 3).
+- **« oui »** : je publie les stories F1 à F14 en issues GitHub et je commence le **lot 1** (section Contrats et éditeur, avec l'emplacement de l'IA en simulateur).
+- Quand vous pouvez : les décisions 2 à 6 de la section 6.
