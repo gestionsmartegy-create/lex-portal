@@ -36,6 +36,7 @@
 - **Revue de sécurité** :
   - un profil supprimé ne laisse pas de jeton dans le coffre (trigger) ;
   - « Connecter », « Synchroniser » et « Rappels » sont limités à 20 par personne et par 10 minutes.
+- **Correction après QA** (migration `20261019120100_clio_change_keep_synced.sql`) : après un changement venu de Clio, la date reste « synchronisée ». Rien n'est réécrit dans Clio (ni recréé) tant que l'équipe n'a pas confirmé ou annulé.
 - **Planificateur** (`/api/cron/sync`) : retour Clio, puis agendas Outlook, après les écritures en attente et les rappels clients.
 - **Clio** : `GET /calendar_entries/{id}.json` relève de la même ressource documentée que `PATCH` et `DELETE` (ADR 0025). Le format de réponse sera vérifié sur le compte de test Clio au premier passage du planificateur. En cas d'écart, aucune date n'est signalée par erreur : une réponse invalide est ignorée et journalisée (`INVALID_RESPONSE`).
 - **Reste à faire pour le vrai Outlook** :
