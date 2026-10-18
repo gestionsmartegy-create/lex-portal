@@ -125,3 +125,12 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Qui peut confirmer une date de cour ?~~ | ✅ **Tout membre de l'équipe du dossier, adjoint·e·s compris** (courriel de la direction du 2026-10-16) | Comportement déjà en place (ADR 0025) |
 | ~~Accès des adjoint·e·s au calendrier de cour~~ | ✅ **Tout le cabinet**, en lecture seule hors de leurs équipes ; numéro du dossier seulement (pas le titre) hors équipe | ADR 0027 ; désignation par le firm_admin |
 | Adresse du bureau de Montréal | **À fournir** (téléphone connu : 514-533-0112) | Absente du site lexcanadalaw.com |
+
+## Décisions du 2026-10-18 (contrats, plan `docs/plan-contrats.md`)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Où ranger les contrats et documents générés par la plateforme ?~~ | ✅ **Dans Clio Documents ET dans SharePoint** (responsable du projet) | Le même fichier final est déposé dans les deux, avec les mêmes identifiants, et redéposé à chaque nouvelle version. Le dépôt Clio par l'API reste à vérifier sur le compte de test ; SharePoint est en simulateur jusqu'à l'accès Microsoft. La question générale « Répartition SharePoint / Clio » (lecture des documents partagés avec le client) reste ouverte. |
+| Vrais modèles de contrats à mettre dans la bibliothèque en premier | **À fournir** (fichiers Word du cabinet, sans données de clients) | 3 modèles de démonstration en attendant |
+| Québec : imposer la version française d'abord pour un client du bureau de Montréal (Charte de la langue française) ? | **À décider par le cabinet** | Par défaut : langue du client, français toujours disponible |
+| Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ? | **À décider par le cabinet** | Lot 4 du plan des contrats |
