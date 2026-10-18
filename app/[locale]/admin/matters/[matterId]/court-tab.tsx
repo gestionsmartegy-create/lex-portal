@@ -1,6 +1,8 @@
 import { Gavel } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { EmptyState, InfoNote, SectionCard } from "@/components/portal/ui";
+import { RowActions } from "@/components/admin/row-actions";
+import { EmptyState, SectionCard } from "@/components/portal/ui";
+import { HelpTip } from "@/components/shared/help-tip";
 import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatZoned, formatZonedTime, utcToZonedInput } from "@/lib/zoned-time";
@@ -28,18 +30,12 @@ const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercas
 const tzKey = (tz: string) => tz.replace("/", "_");
 
 const STATUS_TONE: Record<CourtDate["status"], StatusTone> = {
-  scheduled: "urgent",
+  // Couleurs harmonisées (ADR 0033) : ambre = à confirmer, vert = confirmée.
+  scheduled: "warning",
   confirmed: "completed",
   adjourned: "pending",
   cancelled: "pending",
   held: "active",
-};
-const SYNC_TONE: Record<CourtDate["clio_sync_status"], StatusTone> = {
-  synced: "completed",
-  pending: "pending",
-  syncing: "pending",
-  failed: "urgent",
-  not_applicable: "pending",
 };
 
 /**
@@ -342,102 +338,126 @@ export async function CourtTab({
               <p className="text-xs text-ink-muted">{t("cancelReasonValue", { reason: d.cancel_reason })}</p>
             ) : null}
             {d.visible_to_client ? <p className="text-xs text-ink-muted">{t("visibleValue")}</p> : null}
+            <p
+              className={
+                d.clio_sync_status === "failed"
+                  ? "text-xs font-semibold text-[#B91C1C]"
+                  : "text-xs text-ink-muted"
+              }
+            >
+              {t(`sync.${d.clio_sync_status}`)}
+            </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge tone={STATUS_TONE[d.status]} label={t(`statuses.${d.status}`)} />
-            <StatusBadge tone={SYNC_TONE[d.clio_sync_status]} label={t(`sync.${d.clio_sync_status}`)} />
-          </div>
+          <StatusBadge tone={STATUS_TONE[d.status]} label={t(`statuses.${d.status}`)} />
+          {open ? (
+            <RowActions
+              moreLabel={t("moreActions")}
+              closeLabel={t("closePanel")}
+              primary={
+                d.status === "scheduled" ? (
+                  <form action={courtDateStatusAction}>
+                    {hidden}
+                    <input type="hidden" name="id" value={d.id} />
+                    <input type="hidden" name="status" value="confirmed" />
+                    <Button type="submit" variant="primary" size="sm" className="h-9">
+                      {t("confirm")}
+                    </Button>
+                  </form>
+                ) : null
+              }
+              panels={[
+                {
+                  key: "edit",
+                  label: t("edit"),
+                  content: (
+                    <form action={saveCourtDateAction} className="space-y-3">
+                      {hidden}
+                      <input type="hidden" name="id" value={d.id} />
+                      {fields(d, `e-${d.id}`)}
+                      <p className="text-xs text-ink-muted">{t("reconfirmHelp")}</p>
+                      <Button type="submit" variant="primary" size="sm">
+                        {t("save")}
+                      </Button>
+                    </form>
+                  ),
+                },
+                {
+                  key: "adjourn",
+                  label: t("adjourn"),
+                  content: (
+                    <form action={adjournCourtDateAction} className="space-y-3">
+                      {hidden}
+                      <input type="hidden" name="id" value={d.id} />
+                      <p className="text-sm text-ink-muted">{t("adjournHelp")}</p>
+                      {fields({ ...d, starts_at: d.starts_at, status: "scheduled" }, `a-${d.id}`)}
+                      <Button type="submit" variant="primary" size="sm">
+                        {t("adjournSubmit")}
+                      </Button>
+                    </form>
+                  ),
+                },
+                {
+                  key: "held",
+                  label: t("markHeld"),
+                  content: (
+                    <form action={courtDateStatusAction} className="flex flex-wrap items-center gap-3">
+                      {hidden}
+                      <input type="hidden" name="id" value={d.id} />
+                      <input type="hidden" name="status" value="held" />
+                      <p className="text-sm text-ink-muted">{t("markHeldHelp")}</p>
+                      <Button type="submit" variant="primary" size="sm">
+                        {t("markHeld")}
+                      </Button>
+                    </form>
+                  ),
+                },
+                {
+                  key: "cancel",
+                  label: t("cancel"),
+                  danger: true,
+                  content: (
+                    <form action={courtDateStatusAction} className="flex flex-wrap items-end gap-2">
+                      {hidden}
+                      <input type="hidden" name="id" value={d.id} />
+                      <input type="hidden" name="status" value="cancelled" />
+                      <div className="min-w-0 flex-1 basis-60 space-y-1">
+                        <label htmlFor={`c-${d.id}-reason`} className={labelClass}>
+                          {t("cancelReason")}
+                        </label>
+                        <input
+                          id={`c-${d.id}-reason`}
+                          name="reason"
+                          required
+                          maxLength={500}
+                          className={fieldClass}
+                        />
+                      </div>
+                      <Button type="submit" variant="outline-marine" size="sm" className="h-10">
+                        {t("cancelSubmit")}
+                      </Button>
+                    </form>
+                  ),
+                },
+              ]}
+            />
+          ) : null}
         </div>
-        {open ? (
-          <div className="mt-3 flex flex-wrap items-start gap-3">
-            {d.status === "scheduled" ? (
-              <form action={courtDateStatusAction}>
-                {hidden}
-                <input type="hidden" name="id" value={d.id} />
-                <input type="hidden" name="status" value="confirmed" />
-                <Button type="submit" variant="primary" size="sm">
-                  {t("confirm")}
-                </Button>
-              </form>
-            ) : null}
-            <form action={courtDateStatusAction}>
-              {hidden}
-              <input type="hidden" name="id" value={d.id} />
-              <input type="hidden" name="status" value="held" />
-              <Button type="submit" variant="outline-gold" size="sm">
-                {t("markHeld")}
-              </Button>
-            </form>
-            <details className="w-full">
-              <summary className="inline-flex min-h-6 cursor-pointer items-center text-sm text-gold-ink hover:underline">
-                {t("edit")}
-              </summary>
-              <form action={saveCourtDateAction} className="mt-3 space-y-3">
-                {hidden}
-                <input type="hidden" name="id" value={d.id} />
-                {fields(d, `e-${d.id}`)}
-                <p className="text-xs text-ink-muted">{t("reconfirmHelp")}</p>
-                <Button type="submit" variant="primary" size="sm">
-                  {t("save")}
-                </Button>
-              </form>
-            </details>
-            <details className="w-full">
-              <summary className="inline-flex min-h-6 cursor-pointer items-center text-sm text-gold-ink hover:underline">
-                {t("adjourn")}
-              </summary>
-              <form action={adjournCourtDateAction} className="mt-3 space-y-3">
-                {hidden}
-                <input type="hidden" name="id" value={d.id} />
-                <p className="text-sm text-ink-muted">{t("adjournHelp")}</p>
-                {fields({ ...d, starts_at: d.starts_at, status: "scheduled" }, `a-${d.id}`)}
-                <Button type="submit" variant="primary" size="sm">
-                  {t("adjournSubmit")}
-                </Button>
-              </form>
-            </details>
-            <details className="w-full">
-              <summary className="inline-flex min-h-6 cursor-pointer items-center text-sm text-gold-ink hover:underline">
-                {t("cancel")}
-              </summary>
-              <form action={courtDateStatusAction} className="mt-3 flex flex-wrap items-end gap-2">
-                {hidden}
-                <input type="hidden" name="id" value={d.id} />
-                <input type="hidden" name="status" value="cancelled" />
-                <div className="min-w-0 flex-1 basis-60 space-y-1">
-                  <label htmlFor={`c-${d.id}-reason`} className={labelClass}>
-                    {t("cancelReason")}
-                  </label>
-                  <input
-                    id={`c-${d.id}-reason`}
-                    name="reason"
-                    required
-                    maxLength={500}
-                    className={fieldClass}
-                  />
-                </div>
-                <Button type="submit" variant="outline-gold" size="sm" className="h-10">
-                  {t("cancelSubmit")}
-                </Button>
-              </form>
-            </details>
-          </div>
-        ) : null}
       </li>
     );
   };
 
   return (
     <div className="space-y-6">
-      <InfoNote>{t("noLegalDeadlines")}</InfoNote>
-      <SectionCard title={t("upcoming")}>
-        {upcoming.length === 0 ? (
-          <EmptyState icon={Gavel} message={t("none")} />
-        ) : (
-          <ul className="divide-y divide-gray-100">{upcoming.map(item)}</ul>
-        )}
-        <details className="mt-4 border-t border-gray-100 pt-4">
-          <summary className="inline-flex min-h-6 cursor-pointer items-center text-sm font-semibold text-gold-ink hover:underline">
+      <SectionCard
+        title={t("upcoming")}
+        help={
+          <HelpTip label={t("helpLabel")}>
+            {t("noLegalDeadlines")} {t("clioHelp")}
+          </HelpTip>
+        }
+      >
+        <details className="mb-4 border-b border-gray-100 pb-4">
+          <summary className="inline-flex h-10 cursor-pointer list-none items-center rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine-light focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none [&::-webkit-details-marker]:hidden">
             {t("add")}
           </summary>
           <form action={saveCourtDateAction} className="mt-3 space-y-3">
@@ -448,13 +468,17 @@ export async function CourtTab({
             </Button>
           </form>
         </details>
+        {upcoming.length === 0 ? (
+          <EmptyState icon={Gavel} message={t("none")} />
+        ) : (
+          <ul className="divide-y divide-gray-100">{upcoming.map(item)}</ul>
+        )}
       </SectionCard>
       {history.length ? (
         <SectionCard title={t("history")}>
           <ul className="divide-y divide-gray-100">{history.map(item)}</ul>
         </SectionCard>
       ) : null}
-      <p className="text-xs text-ink-muted">{t("clioHelp")}</p>
     </div>
   );
 }

@@ -26,7 +26,8 @@
     "active": "Active",
     "pending": "Pending",
     "completed": "Completed",
-    "urgent": "Action required"
+    "urgent": "Action required",
+    "warning": "To be confirmed"
   },
   "errors": {
     "notFound": {
@@ -466,6 +467,30 @@
         "appearance": "Appearance",
         "filing_deadline": "Filing deadline"
       }
+    },
+    "home": {
+      "subtitle": "Here is what's waiting for you and where your matters stand.",
+      "todoTitle": "What you need to do",
+      "todoCount": "{count, plural, one {# action is waiting for you.} other {# actions are waiting for you.}}",
+      "todoNone": "Nothing is waiting for you.",
+      "allDone": "All up to date: nothing to do right now.",
+      "dueOn": "by {date}",
+      "todo": {
+        "signature": "Sign: {title}",
+        "request": "Provide: {title}",
+        "invoice": "Pay invoice {title}"
+      },
+      "cta": {
+        "signature": "Read and sign",
+        "request": "Upload the document",
+        "invoice": "See the invoice"
+      },
+      "yourMatters": "Your matters",
+      "nextHearing": "Next hearing",
+      "room": "room {room}",
+      "instructions": "Your lawyer's instructions:",
+      "seeAppointments": "See all your appointments",
+      "noHearing": "No hearing scheduled for now."
     }
   },
   "admin": {
@@ -517,10 +542,10 @@
     "nav": {
       "label": "Firm workspace navigation",
       "workspace": "Firm workspace",
-      "overview": "Overview",
+      "overview": "My day",
       "clients": "Clients",
       "invitations": "Invitations",
-      "matters": "Matters & access",
+      "matters": "Matters",
       "audit": "Audit log",
       "staff": "Staff",
       "security": "Security",
@@ -537,7 +562,19 @@
       "courtCalendar": "Court calendar",
       "workload": "Workload",
       "myCalendar": "My calendar",
-      "contracts": "Contracts"
+      "contracts": "Contracts",
+      "groupWork": "My work",
+      "groupClients": "Clients",
+      "groupAdmin": "Administration",
+      "calendar": "Calendar",
+      "allMatters": "All matters",
+      "newMatter": "New matter",
+      "toConfirm": "Dates to confirm",
+      "allContracts": "All contracts",
+      "contractsInReview": "In review",
+      "myContracts": "My contracts",
+      "newContract": "New contract",
+      "submenu": "Shortcuts: {name}"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1251,7 +1288,8 @@
         "on": "Sees the whole firm",
         "add": "Give access to the whole firm",
         "remove": "Remove access"
-      }
+      },
+      "helpLabel": "Help: offices and courts"
     },
     "court": {
       "upcoming": "Upcoming court dates",
@@ -1323,7 +1361,11 @@
         "notes": "Internal notes (never shown to the client nor sent to Clio)",
         "instructions": "Instructions for the client",
         "visible": "Show this date to the client (date, place, virtual link and instructions; reminders 7 days before and the day before)"
-      }
+      },
+      "moreActions": "More actions",
+      "closePanel": "Close",
+      "markHeldHelp": "The hearing took place: it moves to the history.",
+      "helpLabel": "Help: court dates"
     },
     "courtCalendar": {
       "title": "Court calendar",
@@ -1380,7 +1422,8 @@
         "moved": "Changed in Clio",
         "deleted": "Missing in Clio"
       },
-      "clioChangesCount": "{count, plural, one {# date changed in Clio} other {# dates changed in Clio}}"
+      "clioChangesCount": "{count, plural, one {# date changed in Clio} other {# dates changed in Clio}}",
+      "helpLabel": "Help: court calendar"
     },
     "workload": {
       "title": "Workload",
@@ -1620,6 +1663,114 @@
           "INVALID": "Check the information entered.",
           "FAILED": "Saving failed. Please try again."
         }
+      }
+    },
+    "search": {
+      "title": "Search",
+      "open": "Search",
+      "placeholder": "Search a matter, a contract, a client…",
+      "hint": "Type at least 2 letters: name, matter number, contract title.",
+      "searching": "Searching…",
+      "none": "No results.",
+      "close": "Close (Esc)",
+      "groups": {
+        "matters": "Matters",
+        "contracts": "Contracts",
+        "clients": "Clients"
+      }
+    },
+    "alerts": {
+      "label": "Alerts",
+      "labelCount": "Alerts: {count} to handle",
+      "title": "To handle",
+      "none": "Nothing to handle right now.",
+      "seeDay": "See my day",
+      "items": {
+        "unreadMessages": "{count, plural, one {# unanswered message} other {# unanswered messages}}",
+        "toConfirm": "{count, plural, one {# court date to confirm} other {# court dates to confirm}}",
+        "conflicts": "{count, plural, one {# scheduling conflict} other {# scheduling conflicts}}",
+        "clioChanges": "{count, plural, one {# date changed in Clio} other {# dates changed in Clio}}",
+        "overdueRequests": "{count, plural, one {# overdue document} other {# overdue documents}}",
+        "lateDeliverables": "{count, plural, one {# late deliverable} other {# late deliverables}}"
+      }
+    },
+    "myDay": {
+      "hello": "Hello, {name}",
+      "helloNoName": "Hello",
+      "today": "{date} · here is what's waiting for you.",
+      "counters": {
+        "thisWeek": "{count, plural, =0 {no hearings in the next 14 days} one {hearing in the next 14 days} other {hearings in the next 14 days}}",
+        "toConfirm": "{count, plural, =0 {date to confirm} one {date to confirm} other {dates to confirm}}",
+        "unread": "{count, plural, =0 {unanswered message} one {unanswered message} other {unanswered messages}}",
+        "late": "{count, plural, =0 {overdue item} one {overdue item} other {overdue items}}"
+      },
+      "hearings": "My hearings",
+      "hearingsHelpLabel": "Help: hearings",
+      "hearingsHelp": "The next 14 days, in the court's time zone. The platform never calculates a legal deadline: every date is entered and confirmed by a lawyer. A conflict flags two hearings too close together, or a busy time in Outlook.",
+      "openCalendar": "Open the calendar",
+      "noHearings": "No hearings in the next 14 days.",
+      "unnamedMatter": "Unnumbered matter",
+      "conflict": "Scheduling conflict with another hearing",
+      "busyConflict": "Conflict: busy in Outlook",
+      "conflictBadge": "Conflict",
+      "toConfirmBadge": "To confirm",
+      "confirmedBadge": "Confirmed",
+      "confirm": "Confirm",
+      "toHandle": "To handle",
+      "nothingToHandle": "Nothing to handle right now.",
+      "message": "Message from {from}",
+      "client": "a client",
+      "reply": "Reply",
+      "document": "Document received: {name}",
+      "check": "Check",
+      "lateRequest": "Overdue document: {title}",
+      "lateDeliverable": "Late deliverable: {title}",
+      "dueOn": "due {date}",
+      "open": "Open",
+      "contractReview": "Contract in review: {title}",
+      "review": "Review",
+      "clioMissing": "Date missing in Clio · {matter}",
+      "clioMoved": "Date changed in Clio · {matter}",
+      "create": "Create",
+      "newContract": "New contract",
+      "newMatter": "New matter",
+      "addCourtDate": "Add a court date",
+      "inviteClient": "Invite a client",
+      "activity": "Recent activity",
+      "seeAll": "See all",
+      "noActivity": "No recent activity.",
+      "system": "The system",
+      "actions": {
+        "court_date_created": "{actor} added a court date",
+        "court_date_scheduled": "{actor} added a court date to confirm",
+        "court_date_confirmed": "{actor} confirmed a court date",
+        "court_date_cancelled": "{actor} cancelled a court date",
+        "court_date_adjourned": "{actor} adjourned a court date",
+        "court_date_held": "{actor} marked a hearing as held",
+        "court_date_updated": "{actor} changed a court date",
+        "court_date_clio_changed": "A date was changed in Clio",
+        "court_date_clio_written": "A court date was written to Clio",
+        "matter_access_granted": "{actor} gave a client access",
+        "matter_access_revoked": "{actor} removed a client's access",
+        "matter_team_added": "{actor} added a team member",
+        "matter_team_removed": "{actor} removed a team member",
+        "invitation_sent": "{actor} invited a client",
+        "invitation_created": "{actor} invited a client",
+        "invitation_revoked": "{actor} cancelled an invitation",
+        "message_sent": "{actor} sent a message",
+        "conversation_closed": "{actor} closed a conversation",
+        "document_downloaded": "{actor} downloaded a document",
+        "document_request_created": "{actor} requested a document from the client",
+        "matter_opened": "{actor} opened a matter",
+        "matter_timeline_completed": "{actor} completed a step",
+        "contract_created": "{actor} created a contract",
+        "contract_in_review": "{actor} requested a contract review",
+        "contract_cancelled": "{actor} cancelled a contract",
+        "contract_version_saved": "{actor} saved a contract version",
+        "calendar_connected": "{actor} connected their calendar",
+        "calendar_disconnected": "A calendar was disconnected",
+        "auth_login": "{actor} signed in",
+        "other": "{actor}: action recorded in the log"
       }
     }
   }

@@ -26,7 +26,8 @@
     "active": "Actif",
     "pending": "En attente",
     "completed": "Terminé",
-    "urgent": "Action requise"
+    "urgent": "Action requise",
+    "warning": "À confirmer"
   },
   "errors": {
     "notFound": {
@@ -466,6 +467,30 @@
         "appearance": "Comparution",
         "filing_deadline": "Date limite de dépôt"
       }
+    },
+    "home": {
+      "subtitle": "Voici ce qui vous attend et où en sont vos dossiers.",
+      "todoTitle": "Ce que vous devez faire",
+      "todoCount": "{count, plural, one {# action vous attend.} other {# actions vous attendent.}}",
+      "todoNone": "Aucune action ne vous attend.",
+      "allDone": "Tout est à jour : rien à faire pour le moment.",
+      "dueOn": "avant le {date}",
+      "todo": {
+        "signature": "Signer : {title}",
+        "request": "Fournir : {title}",
+        "invoice": "Régler la facture {title}"
+      },
+      "cta": {
+        "signature": "Lire et signer",
+        "request": "Déposer le document",
+        "invoice": "Voir la facture"
+      },
+      "yourMatters": "Vos dossiers",
+      "nextHearing": "Prochaine audience",
+      "room": "salle {room}",
+      "instructions": "Consignes de votre avocat :",
+      "seeAppointments": "Voir tous vos rendez-vous",
+      "noHearing": "Aucune audience prévue pour le moment."
     }
   },
   "admin": {
@@ -517,10 +542,10 @@
     "nav": {
       "label": "Navigation de l'espace cabinet",
       "workspace": "Espace cabinet",
-      "overview": "Accueil",
+      "overview": "Ma journée",
       "clients": "Clients",
       "invitations": "Invitations",
-      "matters": "Dossiers et accès",
+      "matters": "Dossiers",
       "audit": "Journal d'audit",
       "staff": "Personnel",
       "security": "Sécurité",
@@ -537,7 +562,19 @@
       "courtCalendar": "Calendrier de cour",
       "workload": "Charge de travail",
       "myCalendar": "Mon agenda",
-      "contracts": "Contrats"
+      "contracts": "Contrats",
+      "groupWork": "Mon travail",
+      "groupClients": "Clients",
+      "groupAdmin": "Administration",
+      "calendar": "Calendrier",
+      "allMatters": "Tous les dossiers",
+      "newMatter": "Nouveau dossier",
+      "toConfirm": "Dates à confirmer",
+      "allContracts": "Tous les contrats",
+      "contractsInReview": "En relecture",
+      "myContracts": "Mes contrats",
+      "newContract": "Nouveau contrat",
+      "submenu": "Raccourcis : {name}"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1251,7 +1288,8 @@
         "on": "Voit tout le cabinet",
         "add": "Donner accès à tout le cabinet",
         "remove": "Retirer l'accès"
-      }
+      },
+      "helpLabel": "Aide : bureaux et tribunaux"
     },
     "court": {
       "upcoming": "Dates de cour à venir",
@@ -1323,7 +1361,11 @@
         "notes": "Notes internes (jamais montrées au client ni envoyées à Clio)",
         "instructions": "Consignes pour le client",
         "visible": "Montrer cette date au client (date, lieu, lien virtuel et consignes ; rappels 7 jours avant et la veille)"
-      }
+      },
+      "moreActions": "Autres actions",
+      "closePanel": "Fermer",
+      "markHeldHelp": "L'audience a eu lieu : elle passe dans l'historique.",
+      "helpLabel": "Aide : dates de cour"
     },
     "courtCalendar": {
       "title": "Calendrier de cour",
@@ -1380,7 +1422,8 @@
         "moved": "Modifiée dans Clio",
         "deleted": "Introuvable dans Clio"
       },
-      "clioChangesCount": "{count, plural, one {# date changée dans Clio} other {# dates changées dans Clio}}"
+      "clioChangesCount": "{count, plural, one {# date changée dans Clio} other {# dates changées dans Clio}}",
+      "helpLabel": "Aide : calendrier de cour"
     },
     "workload": {
       "title": "Charge de travail",
@@ -1620,6 +1663,114 @@
           "INVALID": "Vérifiez les informations saisies.",
           "FAILED": "L'enregistrement a échoué. Réessayez."
         }
+      }
+    },
+    "search": {
+      "title": "Recherche",
+      "open": "Rechercher",
+      "placeholder": "Rechercher un dossier, un contrat, un client…",
+      "hint": "Tapez au moins 2 lettres : nom, numéro de dossier, titre de contrat.",
+      "searching": "Recherche…",
+      "none": "Aucun résultat.",
+      "close": "Fermer (Échap)",
+      "groups": {
+        "matters": "Dossiers",
+        "contracts": "Contrats",
+        "clients": "Clients"
+      }
+    },
+    "alerts": {
+      "label": "Alertes",
+      "labelCount": "Alertes : {count} à traiter",
+      "title": "À traiter",
+      "none": "Rien à traiter pour le moment.",
+      "seeDay": "Voir ma journée",
+      "items": {
+        "unreadMessages": "{count, plural, one {# message sans réponse} other {# messages sans réponse}}",
+        "toConfirm": "{count, plural, one {# date de cour à confirmer} other {# dates de cour à confirmer}}",
+        "conflicts": "{count, plural, one {# conflit d'horaire} other {# conflits d'horaire}}",
+        "clioChanges": "{count, plural, one {# date changée dans Clio} other {# dates changées dans Clio}}",
+        "overdueRequests": "{count, plural, one {# document en retard} other {# documents en retard}}",
+        "lateDeliverables": "{count, plural, one {# livrable en retard} other {# livrables en retard}}"
+      }
+    },
+    "myDay": {
+      "hello": "Bonjour, {name}",
+      "helloNoName": "Bonjour",
+      "today": "{date} · voici ce qui vous attend.",
+      "counters": {
+        "thisWeek": "{count, plural, =0 {aucune audience dans les 14 jours} one {audience dans les 14 jours} other {audiences dans les 14 jours}}",
+        "toConfirm": "{count, plural, =0 {date à confirmer} one {date à confirmer} other {dates à confirmer}}",
+        "unread": "{count, plural, =0 {message sans réponse} one {message sans réponse} other {messages sans réponse}}",
+        "late": "{count, plural, =0 {élément en retard} one {élément en retard} other {éléments en retard}}"
+      },
+      "hearings": "Mes audiences",
+      "hearingsHelpLabel": "Aide : audiences",
+      "hearingsHelp": "Les 14 prochains jours, dans le fuseau du tribunal. La plateforme ne calcule jamais un délai légal : chaque date est saisie et confirmée par un avocat. Un conflit signale deux audiences trop proches, ou une plage occupée dans Outlook.",
+      "openCalendar": "Ouvrir le calendrier",
+      "noHearings": "Aucune audience dans les 14 prochains jours.",
+      "unnamedMatter": "Dossier sans numéro",
+      "conflict": "Conflit d'horaire avec une autre audience",
+      "busyConflict": "Conflit : occupé dans Outlook",
+      "conflictBadge": "Conflit",
+      "toConfirmBadge": "À confirmer",
+      "confirmedBadge": "Confirmée",
+      "confirm": "Confirmer",
+      "toHandle": "À traiter",
+      "nothingToHandle": "Rien à traiter pour le moment.",
+      "message": "Message de {from}",
+      "client": "un client",
+      "reply": "Répondre",
+      "document": "Document reçu : {name}",
+      "check": "Vérifier",
+      "lateRequest": "Document en retard : {title}",
+      "lateDeliverable": "Livrable en retard : {title}",
+      "dueOn": "prévu le {date}",
+      "open": "Ouvrir",
+      "contractReview": "Contrat en relecture : {title}",
+      "review": "Relire",
+      "clioMissing": "Date introuvable dans Clio · {matter}",
+      "clioMoved": "Date modifiée dans Clio · {matter}",
+      "create": "Créer",
+      "newContract": "Nouveau contrat",
+      "newMatter": "Nouveau dossier",
+      "addCourtDate": "Ajouter une date de cour",
+      "inviteClient": "Inviter un client",
+      "activity": "Activité récente",
+      "seeAll": "Tout voir",
+      "noActivity": "Aucune activité récente.",
+      "system": "Le système",
+      "actions": {
+        "court_date_created": "{actor} a ajouté une date de cour",
+        "court_date_scheduled": "{actor} a ajouté une date de cour à confirmer",
+        "court_date_confirmed": "{actor} a confirmé une date de cour",
+        "court_date_cancelled": "{actor} a annulé une date de cour",
+        "court_date_adjourned": "{actor} a remis une date de cour",
+        "court_date_held": "{actor} a marqué une audience comme tenue",
+        "court_date_updated": "{actor} a modifié une date de cour",
+        "court_date_clio_changed": "Une date a été modifiée dans Clio",
+        "court_date_clio_written": "Une date de cour a été écrite dans Clio",
+        "matter_access_granted": "{actor} a donné accès à un client",
+        "matter_access_revoked": "{actor} a retiré l'accès d'un client",
+        "matter_team_added": "{actor} a ajouté un membre à l'équipe",
+        "matter_team_removed": "{actor} a retiré un membre de l'équipe",
+        "invitation_sent": "{actor} a invité un client",
+        "invitation_created": "{actor} a invité un client",
+        "invitation_revoked": "{actor} a annulé une invitation",
+        "message_sent": "{actor} a envoyé un message",
+        "conversation_closed": "{actor} a clos une conversation",
+        "document_downloaded": "{actor} a téléchargé un document",
+        "document_request_created": "{actor} a demandé un document au client",
+        "matter_opened": "{actor} a ouvert un dossier",
+        "matter_timeline_completed": "{actor} a terminé une étape",
+        "contract_created": "{actor} a créé un contrat",
+        "contract_in_review": "{actor} a demandé la relecture d'un contrat",
+        "contract_cancelled": "{actor} a annulé un contrat",
+        "contract_version_saved": "{actor} a enregistré une version de contrat",
+        "calendar_connected": "{actor} a connecté son agenda",
+        "calendar_disconnected": "Un agenda a été déconnecté",
+        "auth_login": "{actor} s'est connecté",
+        "other": "{actor} : action enregistrée au journal"
       }
     }
   }

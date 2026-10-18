@@ -7,7 +7,11 @@ import { StyleNonce } from "@/components/shared/style-nonce";
 import { initials } from "@/lib/format";
 import { idleLogoutAction, keepSessionAliveAction, logoutAction } from "@/server/actions/auth";
 import { requireStaff } from "@/server/auth/session";
+import { StaffAlerts } from "@/components/admin/staff-alerts";
+import { StaffSearch } from "@/components/admin/staff-search";
+import { staffSearchAction } from "@/server/actions/staff-search";
 import { countStaffUnread } from "@/server/services/messaging";
+import { getStaffAlerts } from "@/server/services/staff-search";
 
 // Espace cabinet (J5) : garde du personnel (rôle EFFECTIF : session Microsoft, ou *.test en local),
 // gabarit commun au portail, expiration après 30 min d'inactivité (ADR 0012).
@@ -16,6 +20,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
   setRequestLocale(locale);
   const { profile, role } = await requireStaff(locale);
   const [t, tc] = await Promise.all([getTranslations("admin.nav"), getTranslations("common")]);
+  const alerts = await getStaffAlerts();
   const name = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.email;
   const shellProps = {
     area: "admin" as const,
@@ -42,8 +47,12 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-gray-100 bg-white px-4 sm:px-8">
           <PortalMobileMenu {...shellProps} />
-          <div className="flex-1" />
+          {/* Recherche globale (Ctrl K) et cloche : décision UX du 2026-10-18 (ADR 0033). */}
+          <div className="flex min-w-0 flex-1">
+            <StaffSearch locale={locale} search={staffSearchAction} />
+          </div>
           <div className="flex items-center gap-1 sm:gap-3">
+            <StaffAlerts alerts={alerts} />
             <LocaleSwitcher />
             <AccountMenu
               initials={shellProps.user.initials}

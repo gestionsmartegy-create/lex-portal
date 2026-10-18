@@ -1,7 +1,8 @@
 import { AlertTriangle, ChevronLeft, ChevronRight, Gavel } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { EmptyState, InfoNote, PageHeader, SectionCard } from "@/components/portal/ui";
+import { EmptyState, PageHeader, SectionCard } from "@/components/portal/ui";
 import { Button } from "@/components/ui/button";
+import { HelpTip } from "@/components/shared/help-tip";
 import { Link } from "@/i18n/navigation";
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
@@ -239,7 +240,11 @@ export default async function CourtCalendarPage({
 
   return (
     <>
-      <PageHeader title={t("title")} subtitle={scope === "firm" ? t("subtitleFirm") : t("subtitleTeams")} />
+      <PageHeader
+        title={t("title")}
+        subtitle={scope === "firm" ? t("subtitleFirm") : t("subtitleTeams")}
+        help={<HelpTip label={t("helpLabel")}>{t("help")}</HelpTip>}
+      />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <nav aria-label={t("viewLabel")} className="flex gap-2">
@@ -386,9 +391,6 @@ export default async function CourtCalendarPage({
           </>
         )}
       </SectionCard>
-      <div className="mt-4">
-        <InfoNote>{t("help")}</InfoNote>
-      </div>
     </>
   );
 }

@@ -113,7 +113,7 @@ test.describe("espace cabinet", () => {
     const staff = await createStaffSession(context, baseURL!, "staff");
     try {
       await page.goto("/en/admin");
-      await expect(page.getByRole("heading", { level: 1, name: "Firm workspace" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "Hello, Morgan" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Clients" })).toHaveCount(0);
       await page.goto("/en/admin/clients");
       await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
@@ -165,7 +165,7 @@ test.describe("espace cabinet", () => {
     try {
       await page.goto("/en/admin/messages");
       await page
-        .getByLabel("Matter")
+        .getByLabel("Matter", { exact: true })
         .selectOption({ label: "LC-2026-0142 — Permanent Residency Application" });
       await page.getByLabel("Subject").fill(subject);
       await page.getByLabel("Message", { exact: true }).fill("Please review the updated form.");
