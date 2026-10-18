@@ -75,7 +75,13 @@ test("date de cour : saisie, confirmation, remise, annulation et écriture dans 
     await item.getByRole("button", { name: "Confirm this date" }).click();
     await expect(page.getByText("Court date confirmed.")).toBeVisible({ timeout: 15_000 });
     await expect(page.locator("li", { hasText: "Hearing ·" }).first()).toContainText("Confirmed");
-    await page.locator("li", { hasText: "Hearing ·" }).first().getByText("Edit", { exact: true }).click();
+    // Actions secondaires : menu « ⋯ » (ADR 0033).
+    await page
+      .locator("li", { hasText: "Hearing ·" })
+      .first()
+      .getByRole("button", { name: "More actions" })
+      .click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
     const edit = page.locator("form", { has: page.locator('[id^="e-"][id$="-start"]') }).first();
     await edit.getByLabel("Start (court time)").fill("2026-12-15T10:00");
     await edit.getByLabel("End (optional)").fill("2026-12-15T11:30");
@@ -84,7 +90,12 @@ test("date de cour : saisie, confirmation, remise, annulation et écriture dans 
     await expect(page.locator("li", { hasText: "Hearing ·" }).first()).toContainText("To be confirmed");
 
     // Remise à une nouvelle date : l'ancienne passe à l'historique.
-    await page.locator("li", { hasText: "Hearing ·" }).first().getByText("Adjourn (new date)").click();
+    await page
+      .locator("li", { hasText: "Hearing ·" })
+      .first()
+      .getByRole("button", { name: "More actions" })
+      .click();
+    await page.getByRole("menuitem", { name: "Adjourn (new date)" }).click();
     const adjourn = page.locator("form", { has: page.locator('[id^="a-"][id$="-start"]') }).first();
     await adjourn.getByLabel("Start (court time)").fill("2027-01-12T09:30");
     await adjourn.getByLabel("End (optional)").fill("2027-01-12T10:30");
@@ -95,7 +106,8 @@ test("date de cour : saisie, confirmation, remise, annulation et écriture dans 
 
     // Annulation avec motif.
     const next = page.locator("li", { hasText: "Replaces the date of" }).first();
-    await next.getByText("Cancel this date").click();
+    await next.getByRole("button", { name: "More actions" }).click();
+    await page.getByRole("menuitem", { name: "Cancel this date" }).click();
     await next.getByLabel("Reason (required)").fill("Règlement à l'amiable");
     await next.getByRole("button", { name: "Cancel the date" }).click();
     await expect(page.getByText("Court date cancelled.")).toBeVisible({ timeout: 15_000 });

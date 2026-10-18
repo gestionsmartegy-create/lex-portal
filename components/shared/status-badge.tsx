@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
-export type StatusTone = "active" | "pending" | "completed" | "urgent";
+export type StatusTone = "active" | "pending" | "completed" | "urgent" | "warning";
 
 // Couleurs de la maquette (docs/design-system.md §1, « Statuts »).
 const toneClasses: Record<StatusTone, string> = {
@@ -9,6 +9,8 @@ const toneClasses: Record<StatusTone, string> = {
   pending: "bg-status-pending/10 text-[#1D4ED8]",
   completed: "bg-status-completed/10 text-[#166534]",
   urgent: "bg-status-urgent/10 text-[#B91C1C]",
+  // À confirmer : ambre (vert = confirmé, rouge = conflit ou retard).
+  warning: "bg-status-warning/20 text-warning-ink",
 };
 
 type StatusBadgeProps = {

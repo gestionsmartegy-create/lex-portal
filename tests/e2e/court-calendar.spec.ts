@@ -101,11 +101,11 @@ test("calendrier de cour : vues, filtres, conflit d'horaire et accueil", async (
 
     // Accueil : dates des 14 prochains jours et alertes.
     await page.goto("/en/admin");
-    await expect(page.getByRole("heading", { name: "Court dates in the next 14 days" })).toBeVisible({
+    await expect(page.getByRole("heading", { name: "My hearings" })).toBeVisible({
       timeout: 15_000,
     });
     await expect(page.getByRole("link", { name: `Hearing · E2E-CAL-${stamp}` }).first()).toBeVisible();
-    await expect(page.getByText(/To check: \d+ conflict\(s\)/)).toBeVisible();
+    await expect(page.getByText("Scheduling conflict with another hearing").first()).toBeVisible();
     await expectAccessible(page);
 
     await page.goto(`/fr/admin/court-calendar?view=month&date=2026-12-15`);

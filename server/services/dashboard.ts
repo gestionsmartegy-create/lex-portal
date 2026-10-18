@@ -83,3 +83,79 @@ export async function getMostUrgentAction(): Promise<ActionRequired | null> {
     return { kind: "invoice", title: invoice.invoice_number, dueAt: invoice.due_at, href: "/portal/billing" };
   return null;
 }
+
+export type ClientTodo =
+  | { kind: "signature"; id: string; title: string; dueAt: string | null; href: string }
+  | { kind: "request"; id: string; title: string; dueAt: string | null; matter: string | null; href: string }
+  | {
+      kind: "invoice";
+      id: string;
+      title: string;
+      dueAt: string | null;
+      amount: Money;
+      overdue: boolean;
+      href: string;
+    };
+
+/**
+ * « Ce que vous devez faire » (accueil client, ADR 0033) : signatures, documents demandés et factures
+ * à régler, les plus urgents d'abord. Lecture sous la session du client (RLS : ses dossiers seulement).
+ */
+export async function listClientTodos(): Promise<ClientTodo[]> {
+  const supabase = await createSupabaseServerClient();
+  const [{ data: signatures }, { data: requests }, { data: invoices }] = await Promise.all([
+    supabase
+      .from("signature_requests")
+      .select("id, due_at, documents(display_name)")
+      .in("status", ["sent", "viewed"])
+      .order("due_at", { ascending: true, nullsFirst: false })
+      .limit(3),
+    supabase
+      .from("document_requests")
+      .select("id, title, due_date, matters(display_number)")
+      .eq("status", "pending")
+      .order("due_date", { ascending: true, nullsFirst: false })
+      .limit(5),
+    supabase
+      .from("invoices")
+      .select("id, invoice_number, due_at, balance_due::text, status")
+      .in("status", ["due", "overdue"])
+      .order("due_at", { ascending: true, nullsFirst: false })
+      .limit(3),
+  ]);
+  return [
+    ...(signatures ?? []).map((s): ClientTodo => ({
+      kind: "signature",
+      id: s.id,
+      title: (s.documents as unknown as { display_name: string } | null)?.display_name ?? "",
+      dueAt: s.due_at,
+      href: "/portal/documents",
+    })),
+    ...(requests ?? []).map((r): ClientTodo => ({
+      kind: "request",
+      id: r.id,
+      title: r.title,
+      dueAt: r.due_date,
+      matter: (r.matters as unknown as { display_number: string | null } | null)?.display_number ?? null,
+      href: "/portal/documents",
+    })),
+    ...(invoices ?? []).map((i) => {
+      const row = i as unknown as {
+        id: string;
+        invoice_number: string;
+        due_at: string | null;
+        balance_due: string;
+        status: string;
+      };
+      return {
+        kind: "invoice",
+        id: row.id,
+        title: row.invoice_number,
+        dueAt: row.due_at,
+        amount: row.balance_due as Money,
+        overdue: row.status === "overdue",
+        href: "/portal/billing",
+      } satisfies ClientTodo;
+    }),
+  ];
+}

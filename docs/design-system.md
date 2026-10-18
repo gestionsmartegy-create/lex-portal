@@ -63,7 +63,10 @@
 | `status-active` | `#B8962E` | `#B8962E` à 15 % | Dossier actif |
 | `status-pending` | `#3B82F6` | `#3B82F6` à 10 % | En attente, document téléversé |
 | `status-completed` | `#16A34A` | `#22C55E` à 10 % | Terminé, signé, payé |
-| `status-urgent` | `#DC2626` | `#EF4444` à 10 % | Action requise, signature requise, facture due ou en retard |
+| `status-urgent` | `#DC2626` | `#EF4444` à 10 % | Action requise, signature requise, facture due ou en retard, **conflit, retard** |
+| `status-warning` (ADR 0033) | `warning-ink #92400E` | `#F59E0B` à 20 % | **À confirmer**, en attente d'une décision (date de cour) |
+
+**Règle des couleurs (ADR 0033)** : ambre = à confirmer ; rouge = conflit ou retard ; vert = confirmé, terminé ; une seule couleur par sens, sur tous les écrans.
 
 Badge : `inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[.06em] rounded-[2px]`.
 
@@ -136,6 +139,11 @@ Le style est sobre : peu d'ombres, des coins presque droits et des bordures fine
 - `outline-gold` : fond et bordure `gold` (#B8962E), **texte `marine`** (un texte blanc sur ce doré n'atteindrait que 2,9:1) ; `gold-light` (#D4AF5A) au survol. Contraste 6:1, et 8,1:1 au survol.
 - `ghost-white` (fonds sombres) : bordure et texte blancs ; au survol, fond blanc et texte `marine`.
 - Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`).
+
+**Révision du 2026-10-18 (ADR 0033, décision du responsable)** :
+- **Boutons en casse normale** (« Confirmer », plus « CONFIRMER ») : `font-semibold`, sans majuscules ni espacement des lettres. Les majuscules restent pour les petits libellés de section et les étiquettes de statut.
+- **Une seule action principale par écran ou par ligne** (`primary`). Les actions secondaires utilisent `outline-marine` (contour gris, texte marine, survol crème) ou passent dans un menu **« ⋯ »** (`RowActions`) qui ouvre leur formulaire sous la ligne.
+- **Aide « ? »** (`HelpTip`) à côté d'un titre, à la place des bandeaux d'explication permanents ; les bandeaux restent pour un état important (simulateur, connexion à refaire).
 
 Les icônes viennent de **lucide-react**, en 14–18px. Une flèche `→` suit les CTA principaux (« ACCESS MY PORTAL → »).
 
@@ -256,3 +264,12 @@ La maquette liste Clio, Microsoft 365 (« … & SharePoint »), LexisNexis, West
 Palette fermée de 8 couleurs (`components/shared/tag-chip.tsx`), toujours un **texte foncé sur un fond clair**, contraste AA vérifié par axe :
 `marine` (tokens marine), `gold` (gold-pale / gold-ink), `red`, `orange`, `green`, `blue`, `purple` (nuances 50 et 800 de Tailwind) et `gray` (100 / 700).
 Forme : pastille arrondie, texte de 12 px en 500. Ces couleurs ne servent qu'aux étiquettes ; elles ne remplacent pas les couleurs de statut.
+
+## Navigation et accueil de l'espace cabinet (ADR 0033, 2026-10-18)
+
+- **Menu en trois groupes** : « Mon travail » (Ma journée, Dossiers, Messages, Calendrier, Contrats, Demandes), « Clients » (firm_admin) et « Administration » (firm_admin, une seule entrée).
+- **Sous-menus** : sur la barre fixe, les entrées Dossiers, Calendrier, Contrats et Administration ouvrent un menu déroulant au survol **et au clavier** (focus). Dans le tiroir mobile, Administration se déplie.
+- **En-tête** : recherche globale (**Ctrl K** ou ⌘ K : dossiers, contrats, clients pour le firm_admin) et **cloche** (ce qui demande une action, avec un lien).
+- **Accueil « Ma journée »** : 4 compteurs cliquables, « Mes audiences » (avec « Confirmer »), « À traiter » (messages, documents reçus, retards, contrats en relecture, changements Clio), « À surveiller », « Créer » et, pour le firm_admin, l'**activité récente en français lisible** (jamais les codes techniques du journal).
+- **Accueil client** : « Ce que vous devez faire » d'abord (signer, fournir, régler, chacun avec son bouton), puis « Vos dossiers », la prochaine audience avec les consignes, les messages récents. Aucun vocabulaire technique (synchronisation).
+
