@@ -536,7 +536,8 @@
       "offices": "Offices & courts",
       "courtCalendar": "Court calendar",
       "workload": "Workload",
-      "myCalendar": "My calendar"
+      "myCalendar": "My calendar",
+      "contracts": "Contracts"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1003,7 +1004,8 @@
         "documents": "Documents",
         "team": "Team & access",
         "details": "Matter details",
-        "court": "Court"
+        "court": "Court",
+        "contracts": "Contracts"
       },
       "kpi": {
         "requests": "Documents pending",
@@ -1456,6 +1458,168 @@
         "remindersOff": "Reminders removed from your calendar.",
         "unavailable": "The Outlook connection is not available yet.",
         "failed": "That didn't work. Please try again shortly."
+      }
+    },
+    "contracts": {
+      "title": "Contracts",
+      "subtitle": "Draft, review and track the firm's contracts.",
+      "new": "New contract",
+      "newSubtitle": "Choose the client and the matter; you can change everything afterwards.",
+      "back": "All contracts",
+      "backToEditor": "Back to drafting",
+      "listTitle": "{count, plural, =0 {No contracts} one {# contract} other {# contracts}}",
+      "matterTabTitle": "Matter contracts",
+      "none": "No contracts yet.",
+      "noMatter": "no matter",
+      "openMatter": "Open the matter",
+      "updated": "updated {date}",
+      "cancelledBecause": "Contract cancelled: {reason}",
+      "print": "Print or save as PDF",
+      "printMissing": "{count, plural, one {# field to complete} other {# fields to complete}} (highlighted).",
+      "demoFooter": "Demo data — fictitious document.",
+      "filters": {
+        "q": "Client or title",
+        "status": "Status",
+        "active": "In progress",
+        "all": "All",
+        "mine": "My contracts only",
+        "apply": "Filter"
+      },
+      "status": {
+        "draft": "Draft",
+        "in_review": "In review",
+        "validated": "Validated",
+        "sent": "Sent",
+        "signed": "Signed",
+        "declined": "Declined",
+        "cancelled": "Cancelled",
+        "superseded": "Superseded"
+      },
+      "fieldKeys": {
+        "client_name": "Client name",
+        "client_email": "Client email",
+        "client_address": "Client address",
+        "client_phone": "Client phone",
+        "matter_number": "Matter number",
+        "matter_title": "Matter title",
+        "lawyer_name": "Lawyer",
+        "firm_name": "Firm",
+        "date_today": "Today's date"
+      },
+      "newForm": {
+        "contractLegend": "Contract",
+        "title": "Contract title",
+        "titlePlaceholder": "E.g.: Retainer agreement — work permit",
+        "language": "Contract language",
+        "matter": "Linked matter",
+        "noMatter": "None for now",
+        "clientLegend": "Client",
+        "clientMode": "Client type",
+        "existingClient": "Existing client",
+        "newClient": "New client",
+        "chooseClient": "Client",
+        "chooseClientPlaceholder": "Choose a client…",
+        "clientName": "Full name",
+        "clientEmail": "Email",
+        "clientAddress": "Address",
+        "clientPhone": "Phone",
+        "clientLanguage": "Client language",
+        "emailKnown": "This email already belongs to a client: choose \"Existing client\" instead.",
+        "create": "Create and draft",
+        "creating": "Creating…",
+        "errors": {
+          "INVALID": "Check the fields: a title, a name and a valid email are required.",
+          "FAILED": "The contract could not be created. Please try again."
+        }
+      },
+      "editor": {
+        "bodyLabel": "Text of section {title}",
+        "sectionTitle": "Section title",
+        "aiAssisted": "Drafted with AI, to review",
+        "moveUp": "Move section up",
+        "moveDown": "Move section down",
+        "removeSection": "Delete section",
+        "toolbar": "Formatting",
+        "bold": "Bold",
+        "italic": "Italic",
+        "heading": "Subheading",
+        "bulletList": "Bulleted list",
+        "orderedList": "Numbered list",
+        "undo": "Undo",
+        "redo": "Redo",
+        "insertField": "Insert a field…",
+        "ai": {
+          "open": "Drafting help",
+          "panel": "Drafting help (AI)",
+          "help": "The AI suggests text; you accept, edit or reject it. The client's contact details are never sent to it.",
+          "kindLabel": "I want to…",
+          "kinds": {
+            "draft": "Draft this section",
+            "rephrase": "Rephrase",
+            "simplify": "Simplify",
+            "translate": "Translate (FR ↔ EN)"
+          },
+          "instruction": "Details (optional)",
+          "instructionPlaceholder": "E.g.: work permit mandate, flat fee",
+          "ask": "Suggest",
+          "pending": "Preparing a suggestion…",
+          "proposal": "Suggestion",
+          "mockProposal": "Suggestion (simulator)",
+          "append": "Add at the end",
+          "replace": "Replace the section",
+          "reject": "Reject",
+          "errors": {
+            "RATE_LIMITED": "Too many requests: try again in a few minutes.",
+            "UNAVAILABLE": "Drafting help is not available right now."
+          }
+        },
+        "lockedBy": "Being edited by {name}: read only.",
+        "lockedByOther": "Another firm member is editing this contract: read only.",
+        "retry": "Try again",
+        "saving": "Saving…",
+        "saved": "Saved",
+        "autosave": "Automatic saving",
+        "preview": "Preview",
+        "missing": "To complete: {fields}.",
+        "newSection": "New section",
+        "addSection": "Add a section",
+        "confirmRemove": "Delete this section?",
+        "sidebar": "Contract details",
+        "clientAndContract": "Client and contract",
+        "fields": {
+          "title": "Title",
+          "language": "Contract language",
+          "clientName": "Client name",
+          "clientEmail": "Email",
+          "clientAddress": "Address",
+          "clientPhone": "Phone",
+          "clientLanguage": "Client language"
+        },
+        "saveHeader": "Save details",
+        "versions": "Versions",
+        "versionLabel": "Version name (optional)",
+        "saveVersion": "Save a version",
+        "noVersions": "No saved versions.",
+        "restore": "Restore",
+        "confirmRestore": "Go back to version {version}? The current version will be saved first.",
+        "statusTitle": "Status",
+        "askReview": "Request a review",
+        "backToDraft": "Back to draft",
+        "validateLater": "Validation, sending to the client and signature come in the next step.",
+        "cancelTitle": "Cancel this contract",
+        "cancelReason": "Reason",
+        "cancelConfirm": "Cancel the contract",
+        "notices": {
+          "headerSaved": "Details saved.",
+          "versionSaved": "Version saved.",
+          "restored": "Version restored.",
+          "cancelled": "Contract cancelled."
+        },
+        "errors": {
+          "LOCKED": "You no longer hold this contract (someone else is editing it). Reload the page.",
+          "INVALID": "Check the information entered.",
+          "FAILED": "Saving failed. Please try again."
+        }
       }
     }
   }

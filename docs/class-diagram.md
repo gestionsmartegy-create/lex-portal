@@ -475,6 +475,27 @@ classDiagram
     +syncOutlookCalendars(): Summary
   }
   %% ==================== PASSERELLES ET FOURNISSEURS (INTERFACES + IMPLÉMENTATIONS) ====================
+  class AiDraftingGateway {
+    <<interface>>
+    +assist(kind, language, maskedText, instruction): string
+  }
+  class MockAiDraftingGateway {
+    -propositions fixes marquées « Simulateur »
+  }
+  %% ==================== SERVICES APPLICATIFS (SERVEUR UNIQUEMENT) ====================
+  class ContractService {
+    <<service>>
+    -db: SupabaseServerClient (RLS)
+    -ai: AiDraftingGateway
+    +listContracts(filters, matterId?): ContractRow[]
+    +createContract(input): uuid
+    +getContract(id): ContractEditorData
+    +saveSection(id, sectionId, json): Result
+    +acquireLock(id) / releaseLock(id)
+    +saveVersion(id, label) / restoreVersion(id, v)
+    +aiAssist(contractId, sectionId, kind, instruction): Proposal
+  }
+  %% ==================== PASSERELLES ET FOURNISSEURS (INTERFACES + IMPLÉMENTATIONS) ====================
   class DocumentStore {
     <<interface>>
     +ensureMatterFolder(matter): MatterStorageFolder
@@ -686,6 +707,9 @@ classDiagram
   MockOutlookCalendarGateway ..|> OutlookCalendarGateway
   CalendarConnectionService ..> OutlookCalendarGateway : plages occupées, rappels
   CalendarConnectionService ..> OAuthTokenStore : jetons (Vault)
+  MockAiDraftingGateway ..|> AiDraftingGateway
+  ContractService ..> AiDraftingGateway : texte masqué
+  ContractService ..> AccessControlService : vérifie d'abord (dossier lié)
   SharePointDocumentStore ..|> DocumentStore
   SharePointDocumentStore ..> GraphClient : utilise
   SharePointDocumentStore ..> MatterStorageFolder : crée

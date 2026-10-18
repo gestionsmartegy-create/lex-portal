@@ -212,6 +212,14 @@ CLASSES = [
     ("CalendarConnectionService", "service", "service", ["-outlook: OutlookCalendarGateway", "-db: SupabaseServiceClient"], [
         "+connectMyCalendar(): Result", "+disconnectCalendar(userId): Result",
         "+setMyReminders(enabled): Result", "+syncOutlookCalendars(): Summary"]),
+    ("AiDraftingGateway", "interface", "provider", [], ["+assist(kind, language, maskedText, instruction): string"]),
+    ("MockAiDraftingGateway", None, "provider", ["-propositions fixes marquées « Simulateur »"],
+     ["(implémente AiDraftingGateway)"]),
+    ("ContractService", "service", "service", ["-db: SupabaseServerClient (RLS)", "-ai: AiDraftingGateway"], [
+        "+listContracts(filters, matterId?): ContractRow[]", "+createContract(input): uuid",
+        "+getContract(id): ContractEditorData", "+saveSection(id, sectionId, json): Result",
+        "+acquireLock(id) / releaseLock(id)", "+saveVersion(id, label) / restoreVersion(id, v)",
+        "+aiAssist(contractId, sectionId, kind, instruction): Proposal"]),
     ("DocumentStore", "interface", "provider", [], [
         "+ensureMatterFolder(matter): MatterStorageFolder",
         "+upload(folder, file, metadata): StoredRef",
@@ -300,6 +308,9 @@ RELATIONS = [
     ("MockOutlookCalendarGateway", "", "OutlookCalendarGateway", "", "realize", ""),
     ("CalendarConnectionService", "", "OutlookCalendarGateway", "", "depend", "plages occupées, rappels"),
     ("CalendarConnectionService", "", "OAuthTokenStore", "", "depend", "jetons (Vault)"),
+    ("MockAiDraftingGateway", "", "AiDraftingGateway", "", "realize", ""),
+    ("ContractService", "", "AiDraftingGateway", "", "depend", "texte masqué"),
+    ("ContractService", "", "AccessControlService", "", "depend", "vérifie d'abord (dossier lié)"),
     ("SharePointDocumentStore", "", "DocumentStore", "", "realize", ""),
     ("SharePointDocumentStore", "", "GraphClient", "", "depend", "utilise"),
     ("SharePointDocumentStore", "", "MatterStorageFolder", "", "depend", "crée"),
