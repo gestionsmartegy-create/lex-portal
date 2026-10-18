@@ -88,6 +88,96 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"contract_sections": {
+                  Row: {
+                    "ai_assisted": boolean,"body": NonNullable<Json>,"contract_id": string,"created_at": string,"id": string,"position": number,"title": string,"updated_at": string,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_assisted"?: boolean,"body"?: NonNullable<Json>,"contract_id": string,"created_at"?: string,"id"?: string,"position": number,"title"?: string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "ai_assisted"?: boolean,"body"?: NonNullable<Json>,"contract_id"?: string,"created_at"?: string,"id"?: string,"position"?: number,"title"?: string,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_sections_contract_id_fkey"
+      columns: ["contract_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_sections_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_versions": {
+                  Row: {
+                    "contract_id": string,"created_at": string,"created_by": string | null,"id": string,"label": string | null,"snapshot": NonNullable<Json>,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "contract_id": string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"label"?: string | null,"snapshot": NonNullable<Json>,"version": number
+                  }
+                  Update: {
+                    "contract_id"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"label"?: string | null,"snapshot"?: NonNullable<Json>,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_versions_contract_id_fkey"
+      columns: ["contract_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_versions_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contracts": {
+                  Row: {
+                    "cancel_reason": string | null,"client_address": string | null,"client_email": string | null,"client_id": string | null,"client_language": string,"client_name": string,"client_phone": string | null,"created_at": string,"created_by": string,"id": string,"is_mock": boolean,"language": string,"locked_by": string | null,"locked_until": string | null,"matter_id": string | null,"status": string,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name": string,"client_phone"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"status"?: string,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name"?: string,"client_phone"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"status"?: string,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contracts_client_id_fkey"
+      columns: ["client_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_locked_by_fkey"
+      columns: ["locked_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_matter_id_fkey"
+      columns: ["matter_id"]
+isOneToOne: false
+      referencedRelation: "matters"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"conversation_participants": {
                   Row: {
                     "added_at": string,"conversation_id": string,"last_read_at": string | null,"user_id": string
@@ -1001,6 +1091,23 @@ isOneToOne: false
                            },
 "clio_court_calendar_internal":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"contract_acquire_lock":
+{ Args: { "p_contract": string }; Returns: {
+              "acquired": boolean,"holder": string,"holder_name": string,"until": string
+            }[]
+                           },
+"contract_client_email_known":
+{ Args: { "p_email": string }; Returns: boolean
+                           },
+"contract_release_lock":
+{ Args: { "p_contract": string }; Returns: undefined
+                           },
+"contract_restore_version":
+{ Args: { "p_contract": string,"p_version": number }; Returns: number
+                           },
+"contract_save_version":
+{ Args: { "p_contract": string,"p_label"?: string }; Returns: number
                            },
 "court_calendar_feed":
 { Args: { "p_from": string,"p_to": string }; Returns: {

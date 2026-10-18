@@ -50,9 +50,11 @@ import { deliverableStatuses, getMatterWorkspace } from "@/server/services/matte
 import { getMatterTagIds, listTags } from "@/server/services/matter-tags";
 import { listOffices } from "@/server/services/offices";
 import { CourtTab } from "./court-tab";
+import { ContractList } from "@/components/admin/contract-list";
+import { listContracts } from "@/server/services/contracts";
 import { matterOfficeAction } from "@/server/actions/offices";
 
-const TABS = ["overview", "steps", "court", "documents", "team", "details"] as const;
+const TABS = ["overview", "steps", "court", "contracts", "documents", "team", "details"] as const;
 type Tab = (typeof TABS)[number];
 const NOTICES = [
   "added",
@@ -159,10 +161,11 @@ export default async function MatterWorkspacePage({
   const sp = await searchParams;
   const data = await getMatterWorkspace(matterId);
   if (!data) notFound();
-  const [t, tm, tw, allTags, tagIds, offices] = await Promise.all([
+  const [t, tm, tw, tc, allTags, tagIds, offices] = await Promise.all([
     getTranslations("admin.tracking"),
     getTranslations("admin.matters"),
     getTranslations("admin.workspace"),
+    getTranslations("admin.contracts"),
     listTags(),
     getMatterTagIds(matterId),
     listOffices(),
@@ -777,6 +780,19 @@ export default async function MatterWorkspacePage({
           matterId={matter.id}
           team={team.filter((m) => m.person).map((m) => ({ id: m.user_id, name: personName(m.person!) }))}
         />
+      ) : null}
+
+      {tab === "contracts" ? (
+        <SectionCard
+          title={tc("matterTabTitle")}
+          action={
+            <Button asChild variant="primary" size="sm">
+              <Link href={`/admin/contracts/new?matter=${matter.id}`}>{tc("new")}</Link>
+            </Button>
+          }
+        >
+          <ContractList rows={(await listContracts({ status: "all" }, matter.id)) ?? []} locale={locale} />
+        </SectionCard>
       ) : null}
 
       {tab === "documents" ? (
