@@ -6,6 +6,8 @@ import { MockClioManageGateway } from "./clio/mock";
 import type { DocumentStore } from "./sharepoint/gateway";
 import { VaultTokenStore } from "./tokens/vault-store";
 import { MockDocumentStore } from "./sharepoint/mock";
+import type { AiDraftingGateway } from "./ai/gateway";
+import { MockAiDraftingGateway } from "./ai/mock";
 
 /**
  * Choix des implémentations (AGENTS.md §8) : INTEGRATION_MODE_<FOURNISSEUR>=mock|live,
@@ -32,4 +34,17 @@ export function getClioGateway(): ClioManageGateway {
 
 export function getClioTokenStore() {
   return new VaultTokenStore("clio_manage", "ca");
+}
+
+/**
+ * Assistant de rédaction des contrats (ADR 0032) : simulateur seulement. OpenAI attend les décisions du
+ * cabinet (données envoyées, conservation zéro, plafond de coût, Loi 25) : « live » échoue.
+ */
+let ai: AiDraftingGateway | undefined;
+
+export function getAiGateway(): AiDraftingGateway {
+  if (serverEnv().INTEGRATION_MODE_AI === "live")
+    throw new Error("Assistant OpenAI non disponible avant les décisions du cabinet (ADR 0032).");
+  ai ??= new MockAiDraftingGateway();
+  return ai;
 }

@@ -1,0 +1,492 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { CheckCircle2, CircleAlert, Eye, History, Lock, Plus, Save } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import type { ContractDoc } from "@/lib/contract-doc";
+import { formatDateTime } from "@/lib/format";
+import type { FieldDisplay } from "./field-node";
+import { SectionEditor } from "./section-editor";
+
+type Outcome = { ok: true } | { ok: false; code: string };
+type LockOutcome =
+  | { ok: true; data: { acquired: boolean; holderName: string | null; until: string | null } }
+  | { ok: false; code: string };
+type AiOutcome = { ok: true; data: { text: string; mock: boolean } } | { ok: false; code: string };
+
+export type WorkspaceProps = {
+  locale: string;
+  contract: {
+    id: string;
+    title: string;
+    language: "fr" | "en";
+    status: string;
+    editable: boolean;
+    clientName: string;
+    clientEmail: string | null;
+    clientAddress: string | null;
+    clientPhone: string | null;
+    clientLanguage: "fr" | "en";
+  };
+  sections: { id: string; position: number; title: string; body: ContractDoc; aiAssisted: boolean }[];
+  versions: { version: number; label: string | null; author: string | null; createdAt: string }[];
+  display: FieldDisplay;
+  missingLabels: string[];
+  actions: {
+    acquireLock: (locale: string, id: string) => Promise<LockOutcome>;
+    releaseLock: (locale: string, id: string) => Promise<void>;
+    saveSection: (locale: string, id: string, sectionId: string, input: unknown) => Promise<Outcome>;
+    updateHeader: (locale: string, id: string, input: unknown) => Promise<Outcome>;
+    sectionOp: (locale: string, id: string, input: unknown) => Promise<Outcome>;
+    version: (locale: string, id: string, input: unknown) => Promise<Outcome>;
+    status: (locale: string, id: string, input: unknown) => Promise<Outcome>;
+    ai: (locale: string, input: unknown) => Promise<AiOutcome>;
+  };
+};
+
+const inputClass =
+  "w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none disabled:bg-surface";
+const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+
+/**
+ * Espace de rédaction d'un contrat (F3) : verrou d'édition (une personne à la fois, renouvelé toutes
+ * les 2 minutes), sections enregistrées automatiquement, fiche du client, versions, relecture, annulation.
+ * Toute action de structure vide d'abord les modifications en attente.
+ */
+export function ContractWorkspace({
+  locale,
+  contract,
+  sections,
+  versions,
+  display,
+  missingLabels,
+  actions,
+}: WorkspaceProps) {
+  const t = useTranslations("admin.contracts.editor");
+  const router = useRouter();
+  const [lock, setLock] = useState<"pending" | "mine" | "other" | "closed">(
+    contract.editable ? "pending" : "closed",
+  );
+  const [holder, setHolder] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "locked">("idle");
+  const [message, setMessage] = useState<{ text: string; error?: boolean } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const flushers = useRef(new Map<string, () => Promise<void>>());
+
+  const register = useCallback((sectionId: string, flush: (() => Promise<void>) | null) => {
+    if (flush) flushers.current.set(sectionId, flush);
+    else flushers.current.delete(sectionId);
+  }, []);
+  const flushAll = useCallback(async () => {
+    await Promise.all([...flushers.current.values()].map((f) => f()));
+  }, []);
+
+  const takeLock = useCallback(async () => {
+    const r = await actions.acquireLock(locale, contract.id);
+    if (r.ok && r.data.acquired) {
+      setLock("mine");
+      setHolder(null);
+    } else {
+      setLock(r.ok ? "other" : "closed");
+      setHolder(r.ok ? r.data.holderName : null);
+    }
+  }, [actions, contract.id, locale]);
+
+  useEffect(() => {
+    if (!contract.editable) return;
+    // Premier essai juste après l'affichage, puis renouvellement toutes les 2 minutes.
+    const first = setTimeout(() => void takeLock(), 0);
+    const every = setInterval(() => void takeLock(), 120_000);
+    return () => {
+      clearTimeout(first);
+      clearInterval(every);
+      void actions.releaseLock(locale, contract.id);
+    };
+  }, [actions, contract.editable, contract.id, locale, takeLock]);
+
+  const editable = lock === "mine";
+
+  const run = async (fn: () => Promise<Outcome>, success?: string) => {
+    setBusy(true);
+    await flushAll();
+    const r = await fn();
+    setBusy(false);
+    if (r.ok) {
+      setMessage(success ? { text: success } : null);
+      router.refresh();
+    } else
+      setMessage({
+        text: t(`errors.${r.code === "LOCKED" ? "LOCKED" : r.code === "INVALID" ? "INVALID" : "FAILED"}`),
+        error: true,
+      });
+  };
+
+  const saveHeader = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    await run(
+      () => actions.updateHeader(locale, contract.id, Object.fromEntries(form)),
+      t("notices.headerSaved"),
+    );
+  };
+
+  const saveVersion = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    await run(
+      () => actions.version(locale, contract.id, { op: "save", label: String(form.get("label") ?? "") }),
+      t("notices.versionSaved"),
+    );
+    e.currentTarget?.reset();
+  };
+
+  const cancel = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    await run(
+      () => actions.status(locale, contract.id, { op: "cancel", reason: String(form.get("reason") ?? "") }),
+      t("notices.cancelled"),
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* État : verrou, enregistrement */}
+      <div className="flex flex-wrap items-center gap-3 text-sm" aria-live="polite">
+        {lock === "other" ? (
+          <span className="inline-flex items-center gap-2 rounded-[2px] border border-gold/40 bg-cream px-3 py-1.5 text-marine">
+            <Lock aria-hidden className="size-4" />
+            {holder ? t("lockedBy", { name: holder }) : t("lockedByOther")}
+            <button
+              type="button"
+              onClick={() => void takeLock()}
+              className="ml-2 font-semibold text-gold-ink hover:underline"
+            >
+              {t("retry")}
+            </button>
+          </span>
+        ) : null}
+        {lock === "mine" ? (
+          <span className="inline-flex items-center gap-1.5 text-ink-muted">
+            {saveState === "saving" ? t("saving") : null}
+            {saveState === "saved" ? (
+              <>
+                <CheckCircle2 aria-hidden className="size-4 text-status-completed" />
+                {t("saved")}
+              </>
+            ) : null}
+            {saveState === "error" || saveState === "locked" ? (
+              <span role="alert" className="inline-flex items-center gap-1.5 font-semibold text-marine">
+                <CircleAlert aria-hidden className="size-4 text-destructive" />
+                {saveState === "locked" ? t("errors.LOCKED") : t("errors.FAILED")}
+              </span>
+            ) : null}
+            {saveState === "idle" ? t("autosave") : null}
+          </span>
+        ) : null}
+        <a
+          href={`/${locale}/admin/contracts/${contract.id}/print`}
+          onClick={() => void flushAll()}
+          className="ml-auto inline-flex items-center gap-1.5 font-semibold text-gold-ink hover:underline"
+        >
+          <Eye aria-hidden className="size-4" />
+          {t("preview")}
+        </a>
+      </div>
+      {message ? (
+        <p
+          role={message.error ? "alert" : "status"}
+          className={message.error ? "text-sm text-destructive" : "text-sm text-marine"}
+        >
+          {message.text}
+        </p>
+      ) : null}
+      {missingLabels.length ? (
+        <p className="rounded-[2px] border border-gold/40 bg-cream px-3 py-2 text-sm text-marine">
+          {t("missing", { fields: missingLabels.join(", ") })}
+        </p>
+      ) : null}
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        {/* Sections */}
+        <div className="min-w-0 space-y-4">
+          {sections.map((s, i) => (
+            <SectionEditor
+              key={`${s.id}-${JSON.stringify(display)}`}
+              section={s}
+              index={i}
+              count={sections.length}
+              editable={editable}
+              display={display}
+              register={register}
+              onStatus={setSaveState}
+              onSave={(sectionId, payload: { title: string; body: string; aiAssisted?: boolean }) =>
+                actions.saveSection(locale, contract.id, sectionId, payload)
+              }
+              onAi={(sectionId, kind, instruction) =>
+                actions.ai(locale, { contractId: contract.id, sectionId, kind, instruction })
+              }
+              onMove={(sectionId, direction) =>
+                void run(() => actions.sectionOp(locale, contract.id, { op: "move", sectionId, direction }))
+              }
+              onRemove={(sectionId) => {
+                if (window.confirm(t("confirmRemove")))
+                  void run(() => actions.sectionOp(locale, contract.id, { op: "remove", sectionId }));
+              }}
+            />
+          ))}
+          {editable ? (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  actions.sectionOp(locale, contract.id, {
+                    op: "add",
+                    after: sections.length ? sections[sections.length - 1]!.position : -1,
+                    title: t("newSection"),
+                  }),
+                )
+              }
+              className="inline-flex items-center gap-2 rounded-[4px] border border-dashed border-gray-300 px-4 py-3 text-sm font-semibold text-marine hover:border-gold hover:bg-cream focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+            >
+              <Plus aria-hidden className="size-4" />
+              {t("addSection")}
+            </button>
+          ) : null}
+        </div>
+
+        {/* Colonne : client et contrat, versions, statut */}
+        <aside className="space-y-4" aria-label={t("sidebar")}>
+          <form
+            onSubmit={(e) => void saveHeader(e)}
+            className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
+          >
+            <h2 className="font-display text-base font-bold text-marine">{t("clientAndContract")}</h2>
+            <fieldset disabled={!editable || busy} className="space-y-3">
+              <div className="space-y-1">
+                <label htmlFor="c-title" className={labelClass}>
+                  {t("fields.title")}
+                </label>
+                <input
+                  id="c-title"
+                  name="title"
+                  required
+                  maxLength={200}
+                  defaultValue={contract.title}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-language" className={labelClass}>
+                  {t("fields.language")}
+                </label>
+                <select
+                  id="c-language"
+                  name="language"
+                  defaultValue={contract.language}
+                  className={inputClass}
+                >
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-name" className={labelClass}>
+                  {t("fields.clientName")}
+                </label>
+                <input
+                  id="c-name"
+                  name="clientName"
+                  required
+                  maxLength={200}
+                  defaultValue={contract.clientName}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-email" className={labelClass}>
+                  {t("fields.clientEmail")}
+                </label>
+                <input
+                  id="c-email"
+                  name="clientEmail"
+                  type="email"
+                  maxLength={254}
+                  defaultValue={contract.clientEmail ?? ""}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-address" className={labelClass}>
+                  {t("fields.clientAddress")}
+                </label>
+                <textarea
+                  id="c-address"
+                  name="clientAddress"
+                  rows={3}
+                  maxLength={500}
+                  defaultValue={contract.clientAddress ?? ""}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-phone" className={labelClass}>
+                  {t("fields.clientPhone")}
+                </label>
+                <input
+                  id="c-phone"
+                  name="clientPhone"
+                  type="tel"
+                  maxLength={40}
+                  defaultValue={contract.clientPhone ?? ""}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="c-clang" className={labelClass}>
+                  {t("fields.clientLanguage")}
+                </label>
+                <select
+                  id="c-clang"
+                  name="clientLanguage"
+                  defaultValue={contract.clientLanguage}
+                  className={inputClass}
+                >
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+              <button
+                type="submit"
+                className="inline-flex h-10 w-full items-center justify-center rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-60"
+              >
+                {t("saveHeader")}
+              </button>
+            </fieldset>
+          </form>
+
+          <section
+            aria-labelledby="c-versions"
+            className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
+          >
+            <h2
+              id="c-versions"
+              className="flex items-center gap-2 font-display text-base font-bold text-marine"
+            >
+              <History aria-hidden className="size-4" />
+              {t("versions")}
+            </h2>
+            {editable ? (
+              <form onSubmit={(e) => void saveVersion(e)} className="flex gap-2">
+                <label htmlFor="v-label" className="sr-only">
+                  {t("versionLabel")}
+                </label>
+                <input
+                  id="v-label"
+                  name="label"
+                  maxLength={120}
+                  placeholder={t("versionLabel")}
+                  className={inputClass}
+                />
+                <button
+                  type="submit"
+                  disabled={busy}
+                  aria-label={t("saveVersion")}
+                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-[2px] border border-gray-200 text-marine hover:bg-cream focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+                >
+                  <Save aria-hidden className="size-4" />
+                </button>
+              </form>
+            ) : null}
+            {versions.length === 0 ? (
+              <p className="text-sm text-ink-muted">{t("noVersions")}</p>
+            ) : (
+              <ul className="divide-y divide-gray-100 text-sm">
+                {versions.map((v) => (
+                  <li key={v.version} className="flex items-center justify-between gap-2 py-2">
+                    <span className="min-w-0">
+                      <span className="font-semibold text-marine">v{v.version}</span>{" "}
+                      <span className="text-ink-muted">
+                        {v.label ?? ""} · {v.author ?? ""} · {formatDateTime(v.createdAt, locale)}
+                      </span>
+                    </span>
+                    {editable ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(t("confirmRestore", { version: v.version })))
+                            void run(
+                              () =>
+                                actions.version(locale, contract.id, { op: "restore", version: v.version }),
+                              t("notices.restored"),
+                            );
+                        }}
+                        className="shrink-0 text-xs font-semibold text-gold-ink hover:underline"
+                      >
+                        {t("restore")}
+                      </button>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          {editable ? (
+            <section
+              aria-labelledby="c-status"
+              className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
+            >
+              <h2 id="c-status" className="font-display text-base font-bold text-marine">
+                {t("statusTitle")}
+              </h2>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() =>
+                  void run(() =>
+                    actions.status(locale, contract.id, {
+                      op: "review",
+                      status: contract.status === "in_review" ? "draft" : "in_review",
+                    }),
+                  )
+                }
+                className="inline-flex h-10 w-full items-center justify-center rounded-[8px] border border-gray-200 px-4 text-sm font-semibold text-marine hover:bg-cream focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+              >
+                {contract.status === "in_review" ? t("backToDraft") : t("askReview")}
+              </button>
+              <p className="text-xs text-ink-muted">{t("validateLater")}</p>
+              <details className="text-sm">
+                <summary className="cursor-pointer font-semibold text-destructive">
+                  {t("cancelTitle")}
+                </summary>
+                <form onSubmit={(e) => void cancel(e)} className="mt-2 space-y-2">
+                  <label htmlFor="c-reason" className={labelClass}>
+                    {t("cancelReason")}
+                  </label>
+                  <textarea
+                    id="c-reason"
+                    name="reason"
+                    required
+                    rows={2}
+                    maxLength={500}
+                    className={inputClass}
+                  />
+                  <button
+                    type="submit"
+                    disabled={busy}
+                    className="inline-flex h-9 items-center rounded-[8px] bg-destructive/10 px-3 text-sm font-semibold text-destructive hover:bg-destructive/20 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+                  >
+                    {t("cancelConfirm")}
+                  </button>
+                </form>
+              </details>
+            </section>
+          ) : null}
+        </aside>
+      </div>
+    </div>
+  );
+}

@@ -535,7 +535,8 @@
       "requests": "Demandes de documents",
       "offices": "Bureaux et tribunaux",
       "courtCalendar": "Calendrier de cour",
-      "workload": "Charge de travail"
+      "workload": "Charge de travail",
+      "contracts": "Contrats"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -988,7 +989,8 @@
         "documents": "Documents",
         "team": "Équipe et accès",
         "details": "Informations du dossier",
-        "court": "Cour"
+        "court": "Cour",
+        "contracts": "Contrats"
       },
       "kpi": {
         "requests": "Documents en attente",
@@ -1396,6 +1398,168 @@
         "court": "Tribunal",
         "type": "Domaine",
         "count": "Nombre"
+      }
+    },
+    "contracts": {
+      "title": "Contrats",
+      "subtitle": "Rédigez, relisez et suivez les contrats du cabinet.",
+      "new": "Nouveau contrat",
+      "newSubtitle": "Choisissez le client et le dossier ; vous pourrez tout modifier ensuite.",
+      "back": "Tous les contrats",
+      "backToEditor": "Retour à la rédaction",
+      "listTitle": "{count, plural, =0 {Aucun contrat} one {# contrat} other {# contrats}}",
+      "matterTabTitle": "Contrats du dossier",
+      "none": "Aucun contrat pour le moment.",
+      "noMatter": "sans dossier",
+      "openMatter": "Ouvrir le dossier",
+      "updated": "modifié le {date}",
+      "cancelledBecause": "Contrat annulé : {reason}",
+      "print": "Imprimer ou enregistrer en PDF",
+      "printMissing": "{count, plural, one {# champ à compléter} other {# champs à compléter}} (surlignés).",
+      "demoFooter": "Données de démonstration — document fictif.",
+      "filters": {
+        "q": "Client ou titre",
+        "status": "Statut",
+        "active": "En cours",
+        "all": "Tous",
+        "mine": "Mes contrats seulement",
+        "apply": "Filtrer"
+      },
+      "status": {
+        "draft": "Brouillon",
+        "in_review": "En relecture",
+        "validated": "Validé",
+        "sent": "Envoyé",
+        "signed": "Signé",
+        "declined": "Refusé",
+        "cancelled": "Annulé",
+        "superseded": "Remplacé"
+      },
+      "fieldKeys": {
+        "client_name": "Nom du client",
+        "client_email": "Courriel du client",
+        "client_address": "Adresse du client",
+        "client_phone": "Téléphone du client",
+        "matter_number": "Numéro du dossier",
+        "matter_title": "Titre du dossier",
+        "lawyer_name": "Avocat",
+        "firm_name": "Cabinet",
+        "date_today": "Date du jour"
+      },
+      "newForm": {
+        "contractLegend": "Contrat",
+        "title": "Titre du contrat",
+        "titlePlaceholder": "Ex. : Convention de mandat — permis de travail",
+        "language": "Langue du contrat",
+        "matter": "Dossier lié",
+        "noMatter": "Aucun pour l'instant",
+        "clientLegend": "Client",
+        "clientMode": "Type de client",
+        "existingClient": "Client existant",
+        "newClient": "Nouveau client",
+        "chooseClient": "Client",
+        "chooseClientPlaceholder": "Choisir un client…",
+        "clientName": "Nom complet",
+        "clientEmail": "Courriel",
+        "clientAddress": "Adresse",
+        "clientPhone": "Téléphone",
+        "clientLanguage": "Langue du client",
+        "emailKnown": "Ce courriel appartient déjà à un client : choisissez plutôt « Client existant ».",
+        "create": "Créer et rédiger",
+        "creating": "Création…",
+        "errors": {
+          "INVALID": "Vérifiez les champs : un titre, un nom et un courriel valide sont requis.",
+          "FAILED": "Le contrat n'a pas pu être créé. Réessayez."
+        }
+      },
+      "editor": {
+        "bodyLabel": "Texte de la section {title}",
+        "sectionTitle": "Titre de la section",
+        "aiAssisted": "Rédigée avec l'IA, à réviser",
+        "moveUp": "Monter la section",
+        "moveDown": "Descendre la section",
+        "removeSection": "Supprimer la section",
+        "toolbar": "Mise en forme",
+        "bold": "Gras",
+        "italic": "Italique",
+        "heading": "Sous-titre",
+        "bulletList": "Liste à puces",
+        "orderedList": "Liste numérotée",
+        "undo": "Annuler",
+        "redo": "Rétablir",
+        "insertField": "Insérer un champ…",
+        "ai": {
+          "open": "Aide à la rédaction",
+          "panel": "Aide à la rédaction (IA)",
+          "help": "L'IA propose un texte ; vous l'acceptez, le modifiez ou le rejetez. Les coordonnées du client ne lui sont jamais transmises.",
+          "kindLabel": "Je veux…",
+          "kinds": {
+            "draft": "Rédiger cette section",
+            "rephrase": "Reformuler",
+            "simplify": "Simplifier",
+            "translate": "Traduire (FR ↔ EN)"
+          },
+          "instruction": "Précisions (facultatif)",
+          "instructionPlaceholder": "Ex. : mandat de permis de travail, honoraires forfaitaires",
+          "ask": "Proposer",
+          "pending": "Proposition en cours…",
+          "proposal": "Proposition",
+          "mockProposal": "Proposition (simulateur)",
+          "append": "Ajouter à la fin",
+          "replace": "Remplacer la section",
+          "reject": "Rejeter",
+          "errors": {
+            "RATE_LIMITED": "Trop de demandes : réessayez dans quelques minutes.",
+            "UNAVAILABLE": "L'aide à la rédaction n'est pas disponible pour le moment."
+          }
+        },
+        "lockedBy": "En cours de modification par {name} : lecture seule.",
+        "lockedByOther": "Un autre membre du cabinet modifie ce contrat : lecture seule.",
+        "retry": "Réessayer",
+        "saving": "Enregistrement…",
+        "saved": "Enregistré",
+        "autosave": "Enregistrement automatique",
+        "preview": "Aperçu",
+        "missing": "À compléter : {fields}.",
+        "newSection": "Nouvelle section",
+        "addSection": "Ajouter une section",
+        "confirmRemove": "Supprimer cette section ?",
+        "sidebar": "Fiche du contrat",
+        "clientAndContract": "Client et contrat",
+        "fields": {
+          "title": "Titre",
+          "language": "Langue du contrat",
+          "clientName": "Nom du client",
+          "clientEmail": "Courriel",
+          "clientAddress": "Adresse",
+          "clientPhone": "Téléphone",
+          "clientLanguage": "Langue du client"
+        },
+        "saveHeader": "Enregistrer la fiche",
+        "versions": "Versions",
+        "versionLabel": "Nom de la version (facultatif)",
+        "saveVersion": "Enregistrer une version",
+        "noVersions": "Aucune version enregistrée.",
+        "restore": "Revenir",
+        "confirmRestore": "Revenir à la version {version} ? La version actuelle sera enregistrée d'abord.",
+        "statusTitle": "Statut",
+        "askReview": "Demander une relecture",
+        "backToDraft": "Repasser en brouillon",
+        "validateLater": "La validation, l'envoi au client et la signature arrivent à l'étape suivante.",
+        "cancelTitle": "Annuler ce contrat",
+        "cancelReason": "Motif",
+        "cancelConfirm": "Annuler le contrat",
+        "notices": {
+          "headerSaved": "Fiche enregistrée.",
+          "versionSaved": "Version enregistrée.",
+          "restored": "Version rétablie.",
+          "cancelled": "Contrat annulé."
+        },
+        "errors": {
+          "LOCKED": "Vous n'avez plus la main sur ce contrat (quelqu'un d'autre le modifie). Rechargez la page.",
+          "INVALID": "Vérifiez les informations saisies.",
+          "FAILED": "L'enregistrement a échoué. Réessayez."
+        }
       }
     }
   }

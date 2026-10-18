@@ -367,3 +367,11 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 ## Calendrier de cour : adjoint·e·s (ADR 0027, migration `20261017120000`)
 - `court_calendar_viewers` (user_id) : personnel désigné par le firm_admin pour voir toutes les dates de cour du cabinet. Lecture par le personnel, écriture par le firm_admin, journalisée.
 - `public.court_calendar_feed(p_from, p_to)` : lecture du calendrier en colonnes limitées (sans notes, lien virtuel, consignes, juge ni greffe ; titre du dossier réservé à l'équipe), sur 62 jours au plus et 500 lignes au plus. Elle couvre l'équipe du dossier, le firm_admin et les personnes désignées. La RLS de `court_dates` est inchangée.
+
+## Contrats (ADR 0032, migration `20261020120000`)
+- `contracts` : titre, langue, statut (`draft`, `in_review` ; `validated`, `sent`, `signed`, `declined` au lot 3 ; `cancelled` avec motif ; `superseded`), dossier lié facultatif, client existant facultatif (`client_id`, un vrai client visible de la personne) et **copie** des coordonnées du client (nom, courriel, adresse, téléphone, langue), auteur imposé, verrou (`locked_by`, `locked_until`), `is_mock`. RLS : personnel actif auteur, équipe du dossier lié, firm_admin. Droits par colonne : verrou, auteur et démonstration jamais écrits par l'utilisateur. Aucune suppression.
+- `contract_sections` : position, titre, contenu JSON ProseMirror (`jsonb`, 200 ko au plus, liste blanche vérifiée par le serveur), `ai_assisted`. Écriture : seulement en tenant le verrou, en brouillon ou en relecture (`private.can_edit_contract`).
+- `contract_versions` : copies complètes (en-tête et sections). Écrites par `public.contract_save_version` et `public.contract_restore_version` (verrou exigé ; la version courante est enregistrée avant un retour en arrière).
+- Fonctions : `contract_acquire_lock`, `contract_release_lock`, `contract_client_email_known` (personnel ; oui ou non).
+- Journal (trigger) : `contract.created`, `contract.<statut>`, `contract.matter_linked` ; par les fonctions : `contract.version_saved`, `contract.version_restored` ; par le serveur : `contract.ai_assisted`.
+

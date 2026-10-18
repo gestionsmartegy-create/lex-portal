@@ -36,7 +36,8 @@ export type AuditAction =
   | "invitation.sent"
   | "staff.provisioned"
   | "court_date.clio_written"
-  | "court_date.clio_deleted";
+  | "court_date.clio_deleted"
+  | "contract.ai_assisted";
 
 type AuditInput = {
   action: AuditAction;
