@@ -134,3 +134,12 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | **Accès Microsoft 365 pour les agendas Outlook** : enregistrement de l'application par l'administrateur du cabinet (`docs/outlook-integration.md`) | Sans lui, les agendas restent en simulateur (données fictives) | Moyenne |
 | **Date changée dans Clio et visible du client** : faut-il la masquer au client tant qu'un avocat ne l'a pas reconfirmée ? Aujourd'hui, le client voit la nouvelle heure, marquée « à confirmer » | Évite d'annoncer au client une heure saisie par erreur dans Clio | Moyenne |
 | Rappels de préparation : **J-7 et J-1** vous conviennent-ils ? Faut-il d'autres échéances (J-30 pour un procès) ? | Valeurs par défaut posées par le plan (E12) ; facile à changer | Faible |
+
+## Décisions du 2026-10-18 (contrats, plan `docs/plan-contrats.md`)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Où ranger les contrats et documents générés par la plateforme ?~~ | ✅ **Dans Clio Documents ET dans SharePoint** (responsable du projet) | Le même fichier final est déposé dans les deux, avec les mêmes identifiants, et redéposé à chaque nouvelle version. Le dépôt Clio par l'API reste à vérifier sur le compte de test ; SharePoint est en simulateur jusqu'à l'accès Microsoft. La question générale « Répartition SharePoint / Clio » (lecture des documents partagés avec le client) reste ouverte. |
+| Vrais modèles de contrats à mettre dans la bibliothèque en premier | **À fournir** (fichiers Word du cabinet, sans données de clients) | 3 modèles de démonstration en attendant |
+| Québec : imposer la version française d'abord pour un client du bureau de Montréal (Charte de la langue française) ? | **À décider par le cabinet** | Par défaut : langue du client, français toujours disponible |
+| Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ? | **À décider par le cabinet** | Lot 4 du plan des contrats |
