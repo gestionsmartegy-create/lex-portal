@@ -95,6 +95,8 @@ stateDiagram-v2
 
 ## 5. Plan de travail (lots)
 
+> Lot 1 livré le 2026-10-18 (ADR 0032), sur le serveur de test.
+
 | Lot | Contenu | Accès externe | Base de données |
 |---|---|---|---|
 | **1. Section Contrats et éditeur** | Menu « Contrats », liste et filtres, « Nouveau contrat », fiche du client (existant ou nouveau), éditeur par sections avec champs, enregistrement automatique, verrou, versions, aperçu PDF. Onglet « Contrats » dans le dossier. | Aucun | Contrats, versions, sections, parties (RLS, audit) |

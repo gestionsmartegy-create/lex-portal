@@ -154,3 +154,68 @@
     }
   }
 }
+
+/* --- Contrats (ADR 0032) : éditeur et rendu en lecture. TipTap n'injecte aucune feuille de style
+   (injectCSS: false, exigence CSP) : les règles nécessaires sont ici. --- */
+@layer components {
+  .contract-prose {
+    @apply text-[15px] leading-relaxed text-marine;
+  }
+  .contract-prose p {
+    @apply my-2;
+  }
+  .contract-prose h3 {
+    @apply mt-4 mb-2 text-lg font-bold;
+  }
+  .contract-prose h4 {
+    @apply mt-3 mb-1 text-base font-bold;
+  }
+  .contract-prose ul {
+    @apply my-2 list-disc pl-6;
+  }
+  .contract-prose ol {
+    @apply my-2 list-decimal pl-6;
+  }
+  .contract-prose li > p {
+    @apply my-0.5;
+  }
+  .ProseMirror {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .ProseMirror:focus-visible {
+    @apply ring-2 ring-gold/40 ring-inset;
+  }
+  .contract-field {
+    @apply rounded-[2px] bg-cream px-1 font-semibold text-gold-ink;
+  }
+  .contract-field-missing {
+    @apply rounded-[2px] bg-[#fde68a] px-1 font-semibold text-marine;
+  }
+  .ProseMirror-selectednode.contract-field,
+  .ProseMirror-selectednode.contract-field-missing {
+    @apply ring-2 ring-gold;
+  }
+}
+
+/* Aperçu imprimable d'un contrat : seule la feuille du contrat est imprimée. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .contract-print,
+  .contract-print * {
+    visibility: visible;
+  }
+  .contract-print {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  .contract-field-missing {
+    background: transparent;
+    border-bottom: 1px dashed currentColor;
+  }
+}
