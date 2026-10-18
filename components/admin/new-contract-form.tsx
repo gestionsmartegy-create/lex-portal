@@ -32,6 +32,7 @@ export function NewContractForm({
   checkEmail: (locale: string, email: string) => Promise<boolean>;
 }) {
   const t = useTranslations("admin.contracts.newForm");
+  const tl = useTranslations("portal.profile.languages");
   const [state, formAction, pending] = useActionState(action, {});
   const [mode, setMode] = useState<"existing" | "new">(clients.length ? "existing" : "new");
   const [clientId, setClientId] = useState("");
@@ -88,8 +89,8 @@ export function NewContractForm({
               onChange={(e) => setLanguage(e.target.value as "fr" | "en")}
               className={inputClass}
             >
-              <option value="fr">Français</option>
-              <option value="en">English</option>
+              <option value="fr">{tl("fr")}</option>
+              <option value="en">{tl("en")}</option>
             </select>
           </div>
           <div className="space-y-1">
@@ -230,8 +231,8 @@ export function NewContractForm({
               onChange={(e) => setClientLanguage(e.target.value as "fr" | "en")}
               className={inputClass}
             >
-              <option value="fr">Français</option>
-              <option value="en">English</option>
+              <option value="fr">{tl("fr")}</option>
+              <option value="en">{tl("en")}</option>
             </select>
           </div>
         </div>

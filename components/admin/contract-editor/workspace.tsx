@@ -64,6 +64,7 @@ export function ContractWorkspace({
   actions,
 }: WorkspaceProps) {
   const t = useTranslations("admin.contracts.editor");
+  const tl = useTranslations("portal.profile.languages");
   const router = useRouter();
   const [lock, setLock] = useState<"pending" | "mine" | "other" | "closed">(
     contract.editable ? "pending" : "closed",
@@ -95,12 +96,29 @@ export function ContractWorkspace({
 
   useEffect(() => {
     if (!contract.editable) return;
-    // Premier essai juste après l'affichage, puis renouvellement toutes les 2 minutes.
+    // Un onglet laissé ouvert sans activité ne garde pas le verrou : il n'est renouvelé que si la
+    // personne a agi dans les 10 dernières minutes ; dès qu'elle revient, on tente de le reprendre.
+    let lastActivity = Date.now();
+    let idle = false;
+    const onActivity = () => {
+      lastActivity = Date.now();
+      if (idle) {
+        idle = false;
+        void takeLock();
+      }
+    };
+    document.addEventListener("keydown", onActivity);
+    document.addEventListener("pointerdown", onActivity);
     const first = setTimeout(() => void takeLock(), 0);
-    const every = setInterval(() => void takeLock(), 120_000);
+    const every = setInterval(() => {
+      if (Date.now() - lastActivity < 10 * 60_000) void takeLock();
+      else idle = true;
+    }, 120_000);
     return () => {
       clearTimeout(first);
       clearInterval(every);
+      document.removeEventListener("keydown", onActivity);
+      document.removeEventListener("pointerdown", onActivity);
       void actions.releaseLock(locale, contract.id);
     };
   }, [actions, contract.editable, contract.id, locale, takeLock]);
@@ -133,12 +151,11 @@ export function ContractWorkspace({
 
   const saveVersion = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    await run(
-      () => actions.version(locale, contract.id, { op: "save", label: String(form.get("label") ?? "") }),
-      t("notices.versionSaved"),
-    );
-    e.currentTarget?.reset();
+    // Le formulaire est gardé avant l'attente : après un await, e.currentTarget vaut null.
+    const formEl = e.currentTarget;
+    const label = String(new FormData(formEl).get("label") ?? "");
+    await run(() => actions.version(locale, contract.id, { op: "save", label }), t("notices.versionSaved"));
+    formEl.reset();
   };
 
   const cancel = async (e: FormEvent<HTMLFormElement>) => {
@@ -288,8 +305,8 @@ export function ContractWorkspace({
                   defaultValue={contract.language}
                   className={inputClass}
                 >
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
+                  <option value="fr">{tl("fr")}</option>
+                  <option value="en">{tl("en")}</option>
                 </select>
               </div>
               <div className="space-y-1">
@@ -354,8 +371,8 @@ export function ContractWorkspace({
                   defaultValue={contract.clientLanguage}
                   className={inputClass}
                 >
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
+                  <option value="fr">{tl("fr")}</option>
+                  <option value="en">{tl("en")}</option>
                 </select>
               </div>
               <button

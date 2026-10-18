@@ -121,7 +121,7 @@ export async function listContracts(filters: z.infer<typeof contractFiltersSchem
   if (filters.mine) query = query.eq("created_by", user.id);
   if (matterId) query = query.eq("matter_id", matterId);
   if (filters.q) {
-    const q = filters.q.replace(/[%,()*\\]/g, " ").trim();
+    const q = filters.q.replace(/[%,()*\\"_]/g, " ").trim();
     if (q) query = query.or(`client_name.ilike.%${q}%,title.ilike.%${q}%`);
   }
   const { data } = await query;
@@ -340,7 +340,14 @@ export function fieldValues(c: {
   return {
     "client.name": c.clientName,
     "client.email": c.clientEmail,
-    "client.address": c.clientAddress,
+    // Dans le texte du contrat, l'adresse tient sur une ligne (décision du 2026-10-18) ; la fiche garde les lignes.
+    "client.address": c.clientAddress
+      ? c.clientAddress
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .join(", ")
+      : null,
     "client.phone": c.clientPhone,
     "matter.number": c.matter?.number ?? null,
     "matter.title": c.matter?.title ?? null,
@@ -356,8 +363,21 @@ export function fieldValues(c: {
 // ---------------------------------------------------------------------------------------------
 // Écriture (verrou exigé par la base)
 // ---------------------------------------------------------------------------------------------
+/**
+ * Avant toute écriture : le contrat doit être visible (RLS) et, s'il est lié à un dossier, l'accès au
+ * dossier est vérifié d'abord (assertMatterAccess, AGENTS.md §2.4). Invisible : « introuvable ».
+ */
+async function writable(id: string): Promise<boolean> {
+  if (!(await staffUser()) || !uuid.safeParse(id).success) return false;
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.from("contracts").select("matter_id").eq("id", id).maybeSingle();
+  if (!data) return false;
+  if (data.matter_id) await assertStaffMatterAccess(data.matter_id);
+  return true;
+}
+
 export async function acquireLock(id: string) {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("contract_acquire_lock", { p_contract: id });
   if (error) return fail(dbFail(error.code));
@@ -376,7 +396,7 @@ export async function releaseLock(id: string) {
 }
 
 export async function updateHeader(id: string, header: ContractHeader): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("contracts")
@@ -403,8 +423,7 @@ export const sectionInputSchema = z.object({
 
 /** Enregistrement automatique d'une section (contenu validé en liste blanche). */
 export async function saveSection(contractId: string, sectionId: string, input: unknown): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(contractId).success || !uuid.safeParse(sectionId).success)
-    return fail("NOT_FOUND");
+  if (!uuid.safeParse(sectionId).success || !(await writable(contractId))) return fail("NOT_FOUND");
   // Le contenu arrive en texte JSON (taille bornée avant la lecture), puis passe la liste blanche.
   const raw = input as { title?: unknown; body?: unknown; aiAssisted?: unknown } | null;
   if (!raw || typeof raw.body !== "string" || raw.body.length > 180_000) return fail("INVALID");
@@ -435,7 +454,7 @@ export async function saveSection(contractId: string, sectionId: string, input: 
 }
 
 export async function addSection(contractId: string, afterPosition: number, title: string): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(contractId).success) return fail("NOT_FOUND");
+  if (!(await writable(contractId))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data: rows } = await supabase
     .from("contract_sections")
@@ -461,8 +480,7 @@ export async function addSection(contractId: string, afterPosition: number, titl
 }
 
 export async function removeSection(contractId: string, sectionId: string): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(contractId).success || !uuid.safeParse(sectionId).success)
-    return fail("NOT_FOUND");
+  if (!uuid.safeParse(sectionId).success || !(await writable(contractId))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("contract_sections")
@@ -479,8 +497,7 @@ export async function moveSection(
   sectionId: string,
   direction: "up" | "down",
 ): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(contractId).success || !uuid.safeParse(sectionId).success)
-    return fail("NOT_FOUND");
+  if (!uuid.safeParse(sectionId).success || !(await writable(contractId))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("contract_sections")
@@ -503,7 +520,7 @@ export async function moveSection(
 }
 
 export async function saveVersion(id: string, label: string | null): Promise<Result<number>> {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("contract_save_version", {
     p_contract: id,
@@ -513,14 +530,14 @@ export async function saveVersion(id: string, label: string | null): Promise<Res
 }
 
 export async function restoreVersion(id: string, version: number): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("contract_restore_version", { p_contract: id, p_version: version });
   return error ? fail(dbFail(error.code === "42501" ? "55006" : error.code)) : ok(undefined);
 }
 
 export async function setReviewStatus(id: string, status: "draft" | "in_review"): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("contracts").update({ status }).eq("id", id).select("id");
   if (error) return fail(dbFail(error.code));
@@ -528,7 +545,7 @@ export async function setReviewStatus(id: string, status: "draft" | "in_review")
 }
 
 export async function cancelContract(id: string, reason: string): Promise<Result> {
-  if (!(await staffUser()) || !uuid.safeParse(id).success) return fail("NOT_FOUND");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("contracts")
@@ -603,6 +620,6 @@ export async function clientEmailKnown(email: string): Promise<boolean> {
   const parsed = z.email().max(254).safeParse(email.trim());
   if (!parsed.success) return false;
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.rpc("contract_client_email_known", { p_email: parsed.data });
-  return Boolean(data);
+  const { data, error } = await supabase.rpc("contract_client_email_known", { p_email: parsed.data });
+  return !error && Boolean(data);
 }

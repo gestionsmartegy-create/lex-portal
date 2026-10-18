@@ -1,7 +1,7 @@
 -- Contrats, lot 1 (ADR 0032) : visibilité, création, verrou d'édition, versions, garde-fous.
 begin;
 \ir _fixture.psql
-select plan(30);
+select plan(34);
 
 select ok((select bool_and(relrowsecurity) from pg_class
             where oid in ('public.contracts'::regclass, 'public.contract_sections'::regclass, 'public.contract_versions'::regclass)),
@@ -85,6 +85,25 @@ select throws_ok($$ update public.contracts set title = 'Autre' where id = 'f000
 update public.contracts set status = 'cancelled', cancel_reason = 'Client a renoncé' where id = 'f0000000-0000-0000-0000-0000000000f2';
 select is((select acquired from public.contract_acquire_lock('f0000000-0000-0000-0000-0000000000f2')), false,
   'contrat annulé : plus de verrou, plus de modification');
+select tests.clear_authentication();
+
+-- Fiche du client modifiée (admin, verrou tenu) : journalisée avec le NOM du champ, jamais la valeur.
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000a', 'aal1', 'oauth');
+select is((select acquired from public.contract_acquire_lock('f0000000-0000-0000-0000-0000000000f1')), true, 'admin : reprend le verrou');
+update public.contracts set client_phone = '506-555-0199' where id = 'f0000000-0000-0000-0000-0000000000f1';
+select tests.clear_authentication();
+select is((select metadata::text from audit.events where action = 'contract.header_updated'
+            and resource_id = 'f0000000-0000-0000-0000-0000000000f1' order by id desc limit 1),
+  '{"fields": ["client_phone"]}', 'fiche modifiée : journalisée sans la valeur');
+
+-- Wilson retiré de l'équipe du dossier 1 : il perd l'accès au contrat lié, garde son contrat sans dossier.
+delete from public.matter_team where matter_id = '10000000-0000-0000-0000-000000000001'
+  and user_id = '00000000-0000-0000-0000-00000000000b';
+select tests.authenticate_as('00000000-0000-0000-0000-00000000000b', 'aal1', 'oauth');
+select is((select array_agg(id::text) from public.contracts), array['f0000000-0000-0000-0000-0000000000f2'],
+  'hors équipe : plus le contrat lié au dossier, même comme auteur');
+select throws_ok($$ select * from public.contract_acquire_lock('f0000000-0000-0000-0000-0000000000f1') $$,
+  'P0002', null, 'hors équipe : plus de verrou sur le contrat du dossier');
 select tests.clear_authentication();
 
 select ok(exists (select 1 from audit.events where action = 'contract.created'
