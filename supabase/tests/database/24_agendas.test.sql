@@ -1,7 +1,7 @@
 -- Connexion des agendas (ADR 0031) : connexion, plages occupées, conflits, déconnexion, retour Clio.
 begin;
 \ir _fixture.psql
-select plan(35);
+select plan(36);
 
 -- Date de cour du dossier 1 (équipe : Wilson …0b), dans 3 jours, 10 h → 11 h UTC, Wilson présent.
 insert into public.court_dates (id, matter_id, kind, starts_at, ends_at, timezone, status)
@@ -115,6 +115,9 @@ reset role;
 select is((select status || '/' || clio_change from public.court_dates where id = 'c0000000-0000-0000-0000-0000000000d1')
        || ' ' || (select status || '/' || clio_change from public.court_dates where id = 'c0000000-0000-0000-0000-0000000000d2'),
   'scheduled/moved scheduled/deleted', 'Clio : déplacée et introuvable, à confirmer et signalées (jamais annulée)');
+select is((select string_agg(clio_sync_status, ',' order by id) from public.court_dates
+            where id in ('c0000000-0000-0000-0000-0000000000d1', 'c0000000-0000-0000-0000-0000000000d2')),
+  'synced,synced', 'Clio : rien n''est réécrit dans Clio avant une décision de l''équipe (QA)');
 set local role service_role;
 select is(public.court_date_apply_clio_change('c0000000-0000-0000-0000-0000000000d2', 'deleted', null, null), false,
   'Clio : une entrée introuvable n''est signalée qu''une fois');

@@ -157,12 +157,18 @@ describe("agendas Outlook (simulateur) et retour Clio (lot 4)", () => {
     expect(result.missing).toBeGreaterThanOrEqual(1);
     const { data } = await admin
       .from("court_dates")
-      .select("id, status, clio_change, starts_at")
+      .select("id, status, clio_change, clio_sync_status, starts_at")
       .in("id", [moved, removed]);
     const byId = new Map((data ?? []).map((r) => [r.id, r]));
     expect(byId.get(moved)).toMatchObject({ status: "scheduled", clio_change: "moved" });
     expect(Date.parse(byId.get(moved)!.starts_at)).toBe(start.getTime() + 86_400_000);
     // Introuvable dans Clio : signalée et « à confirmer », jamais annulée automatiquement.
-    expect(byId.get(removed)).toMatchObject({ status: "scheduled", clio_change: "deleted" });
+    expect(byId.get(removed)).toMatchObject({
+      status: "scheduled",
+      clio_change: "deleted",
+      clio_sync_status: "synced",
+    });
+    // Rien n'est réécrit dans Clio avant une décision de l'équipe (QA).
+    expect(byId.get(moved)).toMatchObject({ clio_sync_status: "synced" });
   });
 });
