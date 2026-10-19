@@ -574,7 +574,10 @@
       "contractsInReview": "In review",
       "myContracts": "My contracts",
       "newContract": "New contract",
-      "submenu": "Shortcuts: {name}"
+      "submenu": "Shortcuts: {name}",
+      "contractTemplates": "Templates",
+      "contractClauses": "Clauses",
+      "contractServices": "Services and taxes"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1549,7 +1552,10 @@
         "matter_title": "Matter title",
         "lawyer_name": "Lawyer",
         "firm_name": "Firm",
-        "date_today": "Today's date"
+        "date_today": "Today's date",
+        "fees_subtotal": "Fees (subtotal)",
+        "fees_taxes": "Taxes",
+        "fees_total": "Total fees"
       },
       "newForm": {
         "contractLegend": "Contract",
@@ -1575,7 +1581,12 @@
         "errors": {
           "INVALID": "Check the fields: a title, a name and a valid email are required.",
           "FAILED": "The contract could not be created. Please try again."
-        }
+        },
+        "template": "Start from",
+        "blank": "Blank contract",
+        "templateHelp": "The sections, services and language come from the template. You can change everything afterwards.",
+        "clientProvince": "Client's province (for taxes)",
+        "noProvince": "Not specified"
       },
       "editor": {
         "bodyLabel": "Text of section {title}",
@@ -1638,7 +1649,9 @@
           "clientEmail": "Email",
           "clientAddress": "Address",
           "clientPhone": "Phone",
-          "clientLanguage": "Client language"
+          "clientLanguage": "Client language",
+          "clientProvince": "Client's province",
+          "noProvince": "Not specified"
         },
         "saveHeader": "Save details",
         "versions": "Versions",
@@ -1664,6 +1677,171 @@
           "LOCKED": "You no longer hold this contract (someone else is editing it). Reload the page.",
           "INVALID": "Check the information entered.",
           "FAILED": "Saving failed. Please try again."
+        },
+        "insertClause": "Insert a clause…",
+        "template": {
+          "title": "Template",
+          "draftHelp": "You are editing a template. When it is ready, publish it as a new version: contracts already created are not changed.",
+          "publish": "Publish this version",
+          "published": "Template published.",
+          "saveAs": "Save as a template",
+          "name": "Template name",
+          "domain": "Area",
+          "signing": "How the client signs",
+          "create": "Create the template",
+          "created": "Template created as a draft. Review and publish it from Templates.",
+          "domains": {
+            "immigration": "Immigration",
+            "legal": "Legal services",
+            "business": "Business",
+            "advisory": "Advisory",
+            "other": "Other"
+          },
+          "signingModes": {
+            "clio": "Signature in Clio",
+            "portal": "Acceptance in the portal",
+            "both": "Either, chosen when sending"
+          },
+          "privacyWarning": "The template will be visible to all firm staff. Remove anything specific to this client (names, details typed in the text): use fields such as “Client name” instead.",
+          "privacyConfirm": "I have removed all data specific to the client."
+        }
+      },
+      "tabs": {
+        "label": "Contract sections",
+        "contracts": "Contracts",
+        "templates": "Templates",
+        "clauses": "Clauses",
+        "services": "Services and taxes"
+      },
+      "provinces": {
+        "NB": "New Brunswick",
+        "NS": "Nova Scotia",
+        "ON": "Ontario",
+        "QC": "Quebec",
+        "PE": "Prince Edward Island",
+        "NL": "Newfoundland and Labrador",
+        "other": "Other province or abroad"
+      },
+      "annex": "Schedule — Services and fees",
+      "annexCols": {
+        "description": "Service",
+        "quantity": "Qty / hours",
+        "unit": "Unit price",
+        "total": "Total",
+        "subtotal": "Subtotal"
+      },
+      "services": {
+        "title": "Services and fees",
+        "empty": "No services yet. Add one from the catalogue or enter it by hand.",
+        "description": "Service description",
+        "hours": "Hours",
+        "quantity": "Quantity",
+        "hourlyRate": "Hourly rate",
+        "unitPrice": "Unit price",
+        "remove": "Remove this line",
+        "addFromCatalog": "Add from the catalogue…",
+        "perHour": "/ hour",
+        "addLine": "Add a line",
+        "invalid": "Check each line: a description, a quantity above zero and a price with at most 2 decimals.",
+        "subtotal": "Subtotal",
+        "tax": {
+          "HST": "HST",
+          "GST": "GST",
+          "QST": "QST",
+          "PST": "PST"
+        },
+        "total": "Total",
+        "province": "Taxes for: {province}.",
+        "noProvince": "Choose the client's province in the client details to calculate taxes.",
+        "toVerify": "Tax rates still to be confirmed by the firm.",
+        "save": "Save services",
+        "saved": "Services saved.",
+        "failed": "The services could not be saved. Try again."
+      },
+      "templates": {
+        "title": "Contract templates",
+        "subtitle": "Ready-made contracts to start from.",
+        "helpLabel": "About templates",
+        "help": "Use a published template to create a contract already written. Only firm administrators can change a template: the change opens in the editor and becomes a new version when published.",
+        "none": "No templates yet.",
+        "version": "Version {version}",
+        "use": "Use",
+        "edit": "Edit",
+        "review": "Review and publish",
+        "settings": "Settings",
+        "statusLabel": "Status",
+        "saveSettings": "Save settings",
+        "status": {
+          "published": "Published",
+          "draft": "Draft",
+          "archived": "Archived",
+          "review": "To be reviewed by a lawyer"
+        },
+        "notices": {
+          "saved": "Template settings saved.",
+          "published": "Template published.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The action failed. Try again."
+        },
+        "description": "Description"
+      },
+      "clauses": {
+        "title": "Clause library",
+        "subtitle": "Standard paragraphs to insert into a contract.",
+        "helpLabel": "About clauses",
+        "help": "A clause is inserted at the cursor from the editor (“Insert a clause…”). Each change keeps the previous version. Only active clauses in the contract's language are offered.",
+        "new": "New clause",
+        "none": "No clauses yet.",
+        "bodyHelp": "Plain text. Leave an empty line between paragraphs.",
+        "version": "Version {version}",
+        "active": "Active",
+        "inactive": "Inactive",
+        "save": "Save",
+        "add": "Add the clause",
+        "fields": {
+          "title": "Title",
+          "language": "Language",
+          "body": "Text",
+          "status": "Status"
+        },
+        "notices": {
+          "saved": "Clause saved.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The clause could not be saved. Try again."
+        }
+      },
+      "catalog": {
+        "title": "Services and taxes",
+        "subtitle": "Service catalogue and tax rates used in contracts.",
+        "helpLabel": "About services and taxes",
+        "help": "Services are added to a contract in one click with their price. Taxes are calculated from the client's province on the date of the contract. Rates marked “to verify” must be confirmed by the firm.",
+        "new": "New service",
+        "listTitle": "Catalogue",
+        "none": "No services yet.",
+        "flat": "Flat fee",
+        "hourly": "Hourly",
+        "save": "Save",
+        "add": "Add the service",
+        "taxTitle": "Tax rates",
+        "taxHelp": "Rates in percent. Check the box once the firm has confirmed the rate.",
+        "period": "From {from} to {to}",
+        "since": "Since {from}",
+        "verified": "Confirmed",
+        "toVerify": "To verify",
+        "saveRate": "Save the rate",
+        "fields": {
+          "nameFr": "Name (French)",
+          "nameEn": "Name (English)",
+          "pricing": "Pricing",
+          "amount": "Amount (CAD)",
+          "rate": "Rate (%)",
+          "effectiveFrom": "In effect from"
+        },
+        "notices": {
+          "saved": "Service saved.",
+          "taxSaved": "Tax rate saved.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The change could not be saved. Try again."
         }
       }
     },

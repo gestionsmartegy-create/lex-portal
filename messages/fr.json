@@ -574,7 +574,10 @@
       "contractsInReview": "En relecture",
       "myContracts": "Mes contrats",
       "newContract": "Nouveau contrat",
-      "submenu": "Raccourcis : {name}"
+      "submenu": "Raccourcis : {name}",
+      "contractTemplates": "Modèles",
+      "contractClauses": "Clauses",
+      "contractServices": "Services et taxes"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1549,7 +1552,10 @@
         "matter_title": "Titre du dossier",
         "lawyer_name": "Avocat",
         "firm_name": "Cabinet",
-        "date_today": "Date du jour"
+        "date_today": "Date du jour",
+        "fees_subtotal": "Honoraires (sous-total)",
+        "fees_taxes": "Taxes",
+        "fees_total": "Total des honoraires"
       },
       "newForm": {
         "contractLegend": "Contrat",
@@ -1575,7 +1581,12 @@
         "errors": {
           "INVALID": "Vérifiez les champs : un titre, un nom et un courriel valide sont requis.",
           "FAILED": "Le contrat n'a pas pu être créé. Réessayez."
-        }
+        },
+        "template": "Partir de",
+        "blank": "Contrat vierge",
+        "templateHelp": "Les sections, les services et la langue viennent du modèle. Vous pourrez tout modifier ensuite.",
+        "clientProvince": "Province du client (pour les taxes)",
+        "noProvince": "Non précisée"
       },
       "editor": {
         "bodyLabel": "Texte de la section {title}",
@@ -1638,7 +1649,9 @@
           "clientEmail": "Courriel",
           "clientAddress": "Adresse",
           "clientPhone": "Téléphone",
-          "clientLanguage": "Langue du client"
+          "clientLanguage": "Langue du client",
+          "clientProvince": "Province du client",
+          "noProvince": "Non précisée"
         },
         "saveHeader": "Enregistrer la fiche",
         "versions": "Versions",
@@ -1664,6 +1677,171 @@
           "LOCKED": "Vous n'avez plus la main sur ce contrat (quelqu'un d'autre le modifie). Rechargez la page.",
           "INVALID": "Vérifiez les informations saisies.",
           "FAILED": "L'enregistrement a échoué. Réessayez."
+        },
+        "insertClause": "Insérer une clause…",
+        "template": {
+          "title": "Modèle",
+          "draftHelp": "Vous modifiez un modèle. Quand il est prêt, publiez-le en nouvelle version : les contrats déjà créés ne changent pas.",
+          "publish": "Publier cette version",
+          "published": "Modèle publié.",
+          "saveAs": "Enregistrer comme modèle",
+          "name": "Nom du modèle",
+          "domain": "Domaine",
+          "signing": "Mode de signature du client",
+          "create": "Créer le modèle",
+          "created": "Modèle créé en brouillon. Relisez-le et publiez-le depuis Modèles.",
+          "domains": {
+            "immigration": "Immigration",
+            "legal": "Services juridiques",
+            "business": "Affaires",
+            "advisory": "Conseil",
+            "other": "Autre"
+          },
+          "signingModes": {
+            "clio": "Signature dans Clio",
+            "portal": "Acceptation dans le portail",
+            "both": "Au choix, à l'envoi"
+          },
+          "privacyWarning": "Le modèle sera visible de tout le personnel du cabinet. Retirez tout ce qui est propre à ce client (noms, détails tapés dans le texte) : utilisez plutôt les champs comme « Nom du client ».",
+          "privacyConfirm": "J'ai retiré toute donnée propre au client."
+        }
+      },
+      "tabs": {
+        "label": "Sections des contrats",
+        "contracts": "Contrats",
+        "templates": "Modèles",
+        "clauses": "Clauses",
+        "services": "Services et taxes"
+      },
+      "provinces": {
+        "NB": "Nouveau-Brunswick",
+        "NS": "Nouvelle-Écosse",
+        "ON": "Ontario",
+        "QC": "Québec",
+        "PE": "Île-du-Prince-Édouard",
+        "NL": "Terre-Neuve-et-Labrador",
+        "other": "Autre province ou étranger"
+      },
+      "annex": "Annexe — Services et honoraires",
+      "annexCols": {
+        "description": "Service",
+        "quantity": "Qté / heures",
+        "unit": "Prix unitaire",
+        "total": "Total",
+        "subtotal": "Sous-total"
+      },
+      "services": {
+        "title": "Services et honoraires",
+        "empty": "Aucun service pour l'instant. Ajoutez-en un depuis le catalogue ou saisissez-le à la main.",
+        "description": "Description du service",
+        "hours": "Heures",
+        "quantity": "Quantité",
+        "hourlyRate": "Taux horaire",
+        "unitPrice": "Prix unitaire",
+        "remove": "Retirer cette ligne",
+        "addFromCatalog": "Ajouter depuis le catalogue…",
+        "perHour": "/ heure",
+        "addLine": "Ajouter une ligne",
+        "invalid": "Vérifiez chaque ligne : une description, une quantité supérieure à zéro et un prix avec au plus 2 décimales.",
+        "subtotal": "Sous-total",
+        "tax": {
+          "HST": "TVH",
+          "GST": "TPS",
+          "QST": "TVQ",
+          "PST": "TVP"
+        },
+        "total": "Total",
+        "province": "Taxes pour : {province}.",
+        "noProvince": "Choisissez la province du client dans la fiche pour calculer les taxes.",
+        "toVerify": "Taux de taxes encore à confirmer par le cabinet.",
+        "save": "Enregistrer les services",
+        "saved": "Services enregistrés.",
+        "failed": "Les services n'ont pas pu être enregistrés. Réessayez."
+      },
+      "templates": {
+        "title": "Modèles de contrats",
+        "subtitle": "Des contrats prêts à l'emploi pour commencer.",
+        "helpLabel": "À propos des modèles",
+        "help": "Utilisez un modèle publié pour créer un contrat déjà rédigé. Seuls les administrateurs du cabinet modifient un modèle : la modification s'ouvre dans l'éditeur et devient une nouvelle version à la publication.",
+        "none": "Aucun modèle pour l'instant.",
+        "version": "Version {version}",
+        "use": "Utiliser",
+        "edit": "Modifier",
+        "review": "Relire et publier",
+        "settings": "Réglages",
+        "statusLabel": "Statut",
+        "saveSettings": "Enregistrer les réglages",
+        "status": {
+          "published": "Publié",
+          "draft": "Brouillon",
+          "archived": "Archivé",
+          "review": "À faire valider par un avocat"
+        },
+        "notices": {
+          "saved": "Réglages du modèle enregistrés.",
+          "published": "Modèle publié.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "L'action a échoué. Réessayez."
+        },
+        "description": "Description"
+      },
+      "clauses": {
+        "title": "Bibliothèque de clauses",
+        "subtitle": "Des paragraphes types à insérer dans un contrat.",
+        "helpLabel": "À propos des clauses",
+        "help": "Une clause s'insère à l'endroit du curseur depuis l'éditeur (« Insérer une clause… »). Chaque modification garde la version précédente. Seules les clauses actives dans la langue du contrat sont proposées.",
+        "new": "Nouvelle clause",
+        "none": "Aucune clause pour l'instant.",
+        "bodyHelp": "Texte simple. Laissez une ligne vide entre les paragraphes.",
+        "version": "Version {version}",
+        "active": "Active",
+        "inactive": "Inactive",
+        "save": "Enregistrer",
+        "add": "Ajouter la clause",
+        "fields": {
+          "title": "Titre",
+          "language": "Langue",
+          "body": "Texte",
+          "status": "Statut"
+        },
+        "notices": {
+          "saved": "Clause enregistrée.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "La clause n'a pas pu être enregistrée. Réessayez."
+        }
+      },
+      "catalog": {
+        "title": "Services et taxes",
+        "subtitle": "Catalogue des services et taux de taxes utilisés dans les contrats.",
+        "helpLabel": "À propos des services et des taxes",
+        "help": "Un service s'ajoute à un contrat en un clic, avec son prix. Les taxes se calculent selon la province du client à la date du contrat. Les taux marqués « à vérifier » doivent être confirmés par le cabinet.",
+        "new": "Nouveau service",
+        "listTitle": "Catalogue",
+        "none": "Aucun service pour l'instant.",
+        "flat": "Forfait",
+        "hourly": "À l'heure",
+        "save": "Enregistrer",
+        "add": "Ajouter le service",
+        "taxTitle": "Taux de taxes",
+        "taxHelp": "Taux en pour cent. Cochez la case une fois le taux confirmé par le cabinet.",
+        "period": "Du {from} au {to}",
+        "since": "Depuis le {from}",
+        "verified": "Confirmé",
+        "toVerify": "À vérifier",
+        "saveRate": "Enregistrer le taux",
+        "fields": {
+          "nameFr": "Nom (français)",
+          "nameEn": "Nom (anglais)",
+          "pricing": "Tarification",
+          "amount": "Montant (CAD)",
+          "rate": "Taux (%)",
+          "effectiveFrom": "En vigueur depuis"
+        },
+        "notices": {
+          "saved": "Service enregistré.",
+          "taxSaved": "Taux enregistré.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "La modification n'a pas pu être enregistrée. Réessayez."
         }
       }
     },

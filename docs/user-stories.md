@@ -86,9 +86,9 @@
 | [F1](https://github.com/SmartegyCanada/lex-portal/issues/97) | En tant que membre du personnel, je veux une section « Contrats » qui liste tous mes contrats. | 1 | 🟡 lot 1 |
 | [F2](https://github.com/SmartegyCanada/lex-portal/issues/98) | En tant que membre du personnel, je veux créer un contrat pour un client existant ou nouveau. | 1 | 🟡 lot 1 |
 | [F3](https://github.com/SmartegyCanada/lex-portal/issues/99) | En tant que membre du personnel, je veux rédiger et modifier le contrat dans la plateforme. | 1 | 🟡 lot 1 (aperçu imprimable ; PDF figé au lot 3) |
-| [F4](https://github.com/SmartegyCanada/lex-portal/issues/100) | En tant qu'Admin, je veux créer et maintenir des modèles de contrats. | 2 | ⏳ |
-| [F5](https://github.com/SmartegyCanada/lex-portal/issues/101) | En tant qu'Admin, je veux une bibliothèque de clauses bilingues. | 2 | ⏳ |
-| [F6](https://github.com/SmartegyCanada/lex-portal/issues/102) | En tant qu'Admin, je veux un catalogue de services et d'honoraires avec les taxes par province. | 2 | ⏳ |
+| [F4](https://github.com/SmartegyCanada/lex-portal/issues/100) | En tant qu'Admin, je veux créer et maintenir des modèles de contrats. | 2 | 🟡 |
+| [F5](https://github.com/SmartegyCanada/lex-portal/issues/101) | En tant qu'Admin, je veux une bibliothèque de clauses bilingues. | 2 | 🟡 |
+| [F6](https://github.com/SmartegyCanada/lex-portal/issues/102) | En tant qu'Admin, je veux un catalogue de services et d'honoraires avec les taxes par province. | 2 | 🟡 |
 | [F7](https://github.com/SmartegyCanada/lex-portal/issues/103) | En tant qu'avocat, je veux valider un contrat. | 3 | ⏳ |
 | [F8](https://github.com/SmartegyCanada/lex-portal/issues/104) | En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut. | 3 | ⏳ |
 | [F9](https://github.com/SmartegyCanada/lex-portal/issues/105) | En tant que client, je veux voir les contrats que le cabinet m'a envoyés. | 3 | ⏳ |

@@ -75,6 +75,9 @@ describe("contrats : contenu en liste blanche (ADR 0032)", () => {
       "lawyer.name": "Me X",
       "firm.name": "Lex Canada Law",
       "date.today": "18 octobre 2026",
+      "fees.subtotal": null,
+      "fees.taxes": null,
+      "fees.total": null,
     };
     expect(missingFields([valid], values)).toEqual(["client.name"]);
   });

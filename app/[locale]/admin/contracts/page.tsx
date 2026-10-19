@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContractList } from "@/components/admin/contract-list";
+import { ContractsTabs } from "@/components/admin/contracts-tabs";
 import { PageHeader, SectionCard } from "@/components/portal/ui";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -17,7 +18,7 @@ export default async function ContractsPage({
 }: PageProps<"/[locale]/admin/contracts">) {
   const { locale } = await params;
   setRequestLocale(locale);
-  await requireStaff(locale);
+  const { role } = await requireStaff(locale);
   const sp = await searchParams;
   const filters = contractFiltersSchema.parse({
     status: sp.status || undefined,
@@ -37,6 +38,7 @@ export default async function ContractsPage({
           </Button>
         }
       />
+      <ContractsTabs active="contracts" isFirmAdmin={role === "firm_admin"} />
       <SectionCard className="mb-6">
         <form
           method="get"

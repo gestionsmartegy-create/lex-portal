@@ -4,6 +4,8 @@ import { PrintButton } from "@/components/admin/print-button";
 import { ContractDocView } from "@/components/shared/contract-doc-view";
 import { Link } from "@/i18n/navigation";
 import { contractFieldKeys, type ContractFieldKey } from "@/lib/contract-doc";
+import { formatMoney } from "@/lib/format";
+import { fromCents, lineTotal } from "@/lib/money";
 import { requireStaff } from "@/server/auth/session";
 import { getContract } from "@/server/services/contracts";
 
@@ -56,6 +58,74 @@ export default async function ContractPrintPage({
             <ContractDocView doc={s.body} values={loaded.values} labels={labels} />
           </section>
         ))}
+        {loaded.lines.length && loaded.totals ? (
+          <section className="mt-8">
+            <h2 className="mb-3 font-display text-lg font-bold text-marine">{tDoc("annex")}</h2>
+            <table className="w-full border-collapse text-sm text-marine">
+              <thead>
+                <tr className="border-b border-gray-300 text-left">
+                  <th scope="col" className="py-2 pr-2">
+                    {tDoc("annexCols.description")}
+                  </th>
+                  <th scope="col" className="py-2 pr-2 text-right">
+                    {tDoc("annexCols.quantity")}
+                  </th>
+                  <th scope="col" className="py-2 pr-2 text-right">
+                    {tDoc("annexCols.unit")}
+                  </th>
+                  <th scope="col" className="py-2 text-right">
+                    {tDoc("annexCols.total")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {loaded.lines.map((l) => (
+                  <tr key={l.id} className="border-b border-gray-100">
+                    <td className="py-2 pr-2">{l.description}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{l.quantity}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">
+                      {formatMoney(l.unit_price, loaded.contract.language)}
+                    </td>
+                    <td className="py-2 text-right tabular-nums">
+                      {formatMoney(fromCents(lineTotal(l.quantity, l.unit_price)), loaded.contract.language)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row" colSpan={3} className="py-1.5 pr-2 text-right font-normal">
+                    {tDoc("annexCols.subtotal")}
+                  </th>
+                  <td className="py-1.5 text-right tabular-nums">
+                    {formatMoney(loaded.totals.subtotal, loaded.contract.language)}
+                  </td>
+                </tr>
+                {loaded.totals.taxes.map((tx) => (
+                  <tr key={tx.code}>
+                    <th scope="row" colSpan={3} className="py-1.5 pr-2 text-right font-normal">
+                      {tDoc(`services.tax.${tx.code}`)} ({tx.rate.replace(/\.?0+$/, "")} %)
+                    </th>
+                    <td className="py-1.5 text-right tabular-nums">
+                      {formatMoney(tx.amount, loaded.contract.language)}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="border-t border-gray-300">
+                  <th scope="row" colSpan={3} className="py-2 pr-2 text-right">
+                    {tDoc("annexCols.total")}
+                  </th>
+                  <td className="py-2 text-right font-bold tabular-nums">
+                    {formatMoney(loaded.totals.total, loaded.contract.language)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+            {loaded.taxesToVerify ? (
+              <p className="mt-2 text-xs text-ink-muted">{tDoc("services.toVerify")}</p>
+            ) : null}
+          </section>
+        ) : null}
         {loaded.contract.isMock ? (
           <p className="mt-10 text-center text-xs text-ink-muted">{t("demoFooter")}</p>
         ) : null}

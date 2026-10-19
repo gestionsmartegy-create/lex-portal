@@ -28,6 +28,9 @@ export const contractFieldKeys = [
   "lawyer.name",
   "firm.name",
   "date.today",
+  "fees.subtotal",
+  "fees.taxes",
+  "fees.total",
 ] as const;
 export type ContractFieldKey = (typeof contractFieldKeys)[number];
 
