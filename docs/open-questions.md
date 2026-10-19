@@ -143,3 +143,13 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Vrais modèles de contrats à mettre dans la bibliothèque en premier | **À fournir** (fichiers Word du cabinet, sans données de clients) | 3 modèles de démonstration en attendant |
 | Québec : imposer la version française d'abord pour un client du bureau de Montréal (Charte de la langue française) ? | **À décider par le cabinet** | Par défaut : langue du client, français toujours disponible |
 | Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ? | **À décider par le cabinet** | Lot 4 du plan des contrats |
+
+## Décisions du 2026-10-19 (contrats, lot 2, ADR 0034)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Conditions générales du cabinet : faire renseigner ou signer ?~~ | ✅ **Les deux, au choix** (responsable du projet) : acceptation dans le portail pour des conditions générales, signature dans Clio pour un vrai contrat | Mode de signature porté par chaque modèle ; parcours au lot 3 |
+| ~~Version française des conditions générales~~ | ✅ **Brouillon français à faire valider par un avocat** | Modèles FR en brouillon « À faire valider », publiés par un firm_admin après relecture |
+| ~~Un ou deux modèles de conditions générales ?~~ | ✅ **Deux** : « Entreprises et organisations » et « Particuliers et familles » | 2 modèles EN publiés, 2 brouillons FR |
+| Taux de taxes par province | **À confirmer par le cabinet** | Taux de départ marqués « à vérifier » (page Services et taxes) |
+| Vrais services et tarifs du cabinet | **À fournir** | 5 services de démonstration en attendant |

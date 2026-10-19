@@ -38,6 +38,7 @@ export async function searchStaff(raw: string): Promise<SearchResults> {
       .from("contracts")
       .select("id, title, client_name")
       .or(`title.ilike.%${q}%,client_name.ilike.%${q}%`)
+      .eq("template_draft", false)
       .order("updated_at", { ascending: false })
       .limit(6),
     role === "firm_admin"

@@ -8,6 +8,7 @@ import type { ContractDoc } from "@/lib/contract-doc";
 import { formatDateTime } from "@/lib/format";
 import type { FieldDisplay } from "./field-node";
 import { SectionEditor } from "./section-editor";
+import { ServicesPanel, type PanelLine } from "./services-panel";
 
 type Outcome = { ok: true } | { ok: false; code: string };
 type LockOutcome =
@@ -28,7 +29,16 @@ export type WorkspaceProps = {
     clientAddress: string | null;
     clientPhone: string | null;
     clientLanguage: "fr" | "en";
+    clientProvince: string | null;
+    templateDraft: boolean;
   };
+  isFirmAdmin: boolean;
+  /** Tableau des services (lot 2) : lignes, catalogue, taux de la province du client. */
+  lines: PanelLine[];
+  services: { id: string; name: string; pricing: "flat" | "hourly"; amount: string }[];
+  rates: { tax_code: string; rate: string }[];
+  taxesToVerify: boolean;
+  clauses: { id: string; title: string; body: string }[];
   sections: { id: string; position: number; title: string; body: ContractDoc; aiAssisted: boolean }[];
   versions: { version: number; label: string | null; author: string | null; createdAt: string }[];
   display: FieldDisplay;
@@ -42,8 +52,14 @@ export type WorkspaceProps = {
     version: (locale: string, id: string, input: unknown) => Promise<Outcome>;
     status: (locale: string, id: string, input: unknown) => Promise<Outcome>;
     ai: (locale: string, input: unknown) => Promise<AiOutcome>;
+    saveLines: (locale: string, id: string, input: unknown) => Promise<Outcome>;
+    templateFromContract: (locale: string, input: unknown) => Promise<Outcome>;
+    publishTemplate: (locale: string, id: string) => Promise<Outcome>;
   };
 };
+
+const PROVINCES = ["NB", "NS", "ON", "QC", "PE", "NL", "other"] as const;
+const DOMAINS = ["immigration", "legal", "business", "advisory", "other"] as const;
 
 const inputClass =
   "w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none disabled:bg-surface";
@@ -62,8 +78,15 @@ export function ContractWorkspace({
   display,
   missingLabels,
   actions,
+  isFirmAdmin,
+  lines,
+  services,
+  rates,
+  taxesToVerify,
+  clauses,
 }: WorkspaceProps) {
   const t = useTranslations("admin.contracts.editor");
+  const tp = useTranslations("admin.contracts.provinces");
   const tl = useTranslations("portal.profile.languages");
   const router = useRouter();
   const [lock, setLock] = useState<"pending" | "mine" | "other" | "closed">(
@@ -236,6 +259,7 @@ export function ContractWorkspace({
               count={sections.length}
               editable={editable}
               display={display}
+              clauses={clauses}
               register={register}
               onStatus={setSaveState}
               onSave={(sectionId, payload: { title: string; body: string; aiAssisted?: boolean }) =>
@@ -375,6 +399,24 @@ export function ContractWorkspace({
                   <option value="en">{tl("en")}</option>
                 </select>
               </div>
+              <div className="space-y-1">
+                <label htmlFor="c-province" className={labelClass}>
+                  {t("fields.clientProvince")}
+                </label>
+                <select
+                  id="c-province"
+                  name="clientProvince"
+                  defaultValue={contract.clientProvince ?? ""}
+                  className={inputClass}
+                >
+                  <option value="">{t("fields.noProvince")}</option>
+                  {PROVINCES.map((pv) => (
+                    <option key={pv} value={pv}>
+                      {tp(pv)}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
                 type="submit"
                 className="inline-flex h-10 w-full items-center justify-center rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-60"
@@ -383,6 +425,125 @@ export function ContractWorkspace({
               </button>
             </fieldset>
           </form>
+
+          <ServicesPanel
+            locale={locale}
+            editable={editable}
+            initial={lines}
+            services={services}
+            rates={rates}
+            provinceLabel={contract.clientProvince ? tp(contract.clientProvince) : null}
+            taxesToVerify={taxesToVerify}
+            onSave={async (next) => {
+              await flushAll();
+              const r = await actions.saveLines(locale, contract.id, next);
+              if (r.ok) router.refresh();
+              return r;
+            }}
+          />
+
+          {isFirmAdmin ? (
+            <section
+              aria-labelledby="c-template"
+              className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
+            >
+              <h2 id="c-template" className="font-display text-base font-bold text-marine">
+                {t("template.title")}
+              </h2>
+              {contract.templateDraft ? (
+                <>
+                  <p className="text-xs text-ink-muted">{t("template.draftHelp")}</p>
+                  <button
+                    type="button"
+                    disabled={busy || !editable}
+                    onClick={() =>
+                      void run(async () => {
+                        const r = await actions.publishTemplate(locale, contract.id);
+                        if (r.ok) router.push(`/${locale}/admin/contracts/templates?notice=published`);
+                        return r;
+                      }, t("template.published"))
+                    }
+                    className="inline-flex h-10 w-full items-center justify-center rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-50"
+                  >
+                    {t("template.publish")}
+                  </button>
+                </>
+              ) : (
+                <details className="text-sm">
+                  <summary className="cursor-pointer font-semibold text-gold-ink">
+                    {t("template.saveAs")}
+                  </summary>
+                  <form
+                    className="mt-2 space-y-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const f = new FormData(e.currentTarget);
+                      void run(
+                        () =>
+                          actions.templateFromContract(locale, {
+                            contractId: contract.id,
+                            name: String(f.get("name") ?? ""),
+                            domain: String(f.get("domain") ?? "other"),
+                            signing: String(f.get("signing") ?? "clio"),
+                          }),
+                        t("template.created"),
+                      );
+                    }}
+                  >
+                    <label htmlFor="tpl-name" className={labelClass}>
+                      {t("template.name")}
+                    </label>
+                    <input
+                      id="tpl-name"
+                      name="name"
+                      required
+                      maxLength={200}
+                      defaultValue={contract.title}
+                      className={inputClass}
+                    />
+                    <label htmlFor="tpl-domain" className={labelClass}>
+                      {t("template.domain")}
+                    </label>
+                    <select id="tpl-domain" name="domain" defaultValue="other" className={inputClass}>
+                      {DOMAINS.map((d) => (
+                        <option key={d} value={d}>
+                          {t(`template.domains.${d}`)}
+                        </option>
+                      ))}
+                    </select>
+                    <label htmlFor="tpl-signing" className={labelClass}>
+                      {t("template.signing")}
+                    </label>
+                    <select id="tpl-signing" name="signing" defaultValue="clio" className={inputClass}>
+                      {(["clio", "portal", "both"] as const).map((m) => (
+                        <option key={m} value={m}>
+                          {t(`template.signingModes.${m}`)}
+                        </option>
+                      ))}
+                    </select>
+                    {/* Le modèle sera visible de tout le personnel : rien de propre au client ne doit y rester. */}
+                    <p className="text-xs text-ink-muted">{t("template.privacyWarning")}</p>
+                    <label className="flex items-start gap-2 text-sm text-marine">
+                      <input
+                        type="checkbox"
+                        name="confirmNoClientData"
+                        required
+                        className="mt-0.5 size-4 accent-marine"
+                      />
+                      {t("template.privacyConfirm")}
+                    </label>
+                    <button
+                      type="submit"
+                      disabled={busy}
+                      className="inline-flex h-9 items-center rounded-[8px] border border-gray-300 px-3 text-sm font-semibold text-marine hover:border-gold hover:bg-cream focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+                    >
+                      {t("template.create")}
+                    </button>
+                  </form>
+                </details>
+              )}
+            </section>
+          ) : null}
 
           <section
             aria-labelledby="c-versions"
