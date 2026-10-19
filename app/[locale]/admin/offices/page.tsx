@@ -1,7 +1,8 @@
 import { Building2, Landmark } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Notice } from "@/components/admin/notice";
-import { EmptyState, InfoNote, PageHeader, SectionCard } from "@/components/portal/ui";
+import { EmptyState, PageHeader, SectionCard } from "@/components/portal/ui";
+import { HelpTip } from "@/components/shared/help-tip";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -251,8 +252,11 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
         error={notice === "failed" || notice === "duplicate" || notice === "invalid"}
       />
 
-      <SectionCard title={t("offices")} className="mb-6">
-        <InfoNote>{t("noRights")}</InfoNote>
+      <SectionCard
+        title={t("offices")}
+        className="mb-6"
+        help={<HelpTip label={t("helpOffices")}>{t("noRights")}</HelpTip>}
+      >
         {offices.length === 0 ? (
           <EmptyState icon={Building2} message={t("noOffice")} />
         ) : (
@@ -404,8 +408,7 @@ export default async function OfficesPage({ params, searchParams }: PageProps<"/
         </ul>
       </SectionCard>
 
-      <SectionCard title={t("courts")}>
-        <InfoNote>{t("courtsHelp")}</InfoNote>
+      <SectionCard title={t("courts")} help={<HelpTip label={t("helpCourts")}>{t("courtsHelp")}</HelpTip>}>
         {courts.length === 0 ? (
           <EmptyState icon={Landmark} message={t("noCourt")} />
         ) : (

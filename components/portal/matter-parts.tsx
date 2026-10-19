@@ -68,9 +68,7 @@ export function MatterRow({ matter, actionRequired }: { matter: MatterRowData; a
 export function Freshness({ at }: { at: string | null }) {
   const t = useTranslations("portal.common");
   const locale = useLocale();
-  return (
-    <p className="text-xs text-ink-muted">
-      {at ? t("freshness", { time: formatRelative(at, locale) }) : t("freshnessUnknown")}
-    </p>
-  );
+  // Jamais de vocabulaire technique pour le client (ADR 0033) : rien si la date est inconnue.
+  if (!at) return null;
+  return <p className="text-xs text-ink-muted">{t("freshness", { time: formatRelative(at, locale) })}</p>;
 }

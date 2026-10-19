@@ -20,11 +20,14 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // --- Variantes Lex Canada (docs/design-system.md §4) : coins arrondis 8px, couleurs pleines du site (sRGB) ---
         primary:
-          "rounded-[8px] border-marine bg-marine font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:border-marine-light hover:bg-marine-light",
+          "rounded-[8px] border-marine bg-marine font-semibold text-white transition-all duration-200 ease-premium hover:border-marine-light hover:bg-marine-light",
         "outline-gold":
-          "rounded-[8px] border-gold bg-gold font-semibold tracking-[0.08em] text-marine uppercase transition-all duration-200 ease-premium hover:border-gold-light hover:bg-gold-light",
+          "rounded-[8px] border-gold bg-gold font-semibold text-marine transition-all duration-200 ease-premium hover:border-gold-light hover:bg-gold-light",
+        // Action secondaire : contour neutre (une seule action principale par écran).
+        "outline-marine":
+          "rounded-[8px] border border-gray-300 bg-white font-semibold text-marine transition-all duration-200 ease-premium hover:border-gold hover:bg-cream",
         "ghost-white":
-          "rounded-[8px] border-white bg-transparent font-medium tracking-[0.08em] text-white uppercase transition-all duration-200 ease-premium hover:bg-white hover:text-marine",
+          "rounded-[8px] border-white bg-transparent font-semibold text-white transition-all duration-200 ease-premium hover:bg-white hover:text-marine",
       },
       size: {
         default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",

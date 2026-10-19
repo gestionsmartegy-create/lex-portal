@@ -30,6 +30,9 @@
   --color-status-pending: #3b82f6;
   --color-status-completed: #16a34a;
   --color-status-urgent: #dc2626;
+  /* À confirmer, en attente d'une décision : ambre (texte #92400E sur ambre pâle, AA 7:1). */
+  --color-status-warning: #f59e0b;
+  --color-warning-ink: #92400e;
 
   /* --- Domaines du calendrier de cour (ADR 0030) : couleurs franches, saturées.
      Texte blanc sur rouge, bleu et vert (contraste AA ≥ 4,5:1) ; texte marine sur jaune. --- */

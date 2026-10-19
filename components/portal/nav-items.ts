@@ -2,7 +2,6 @@ import {
   BarChart3,
   Bell,
   Building2,
-  CalendarClock,
   CalendarDays,
   CreditCard,
   FileQuestion,
@@ -17,6 +16,7 @@ import {
   PlugZap,
   ScrollText,
   ShieldAlert,
+  Sun,
   UserCog,
   UserRound,
   Users,
@@ -36,24 +36,76 @@ export const PORTAL_NAV = [
 
 export type PortalNavKey = (typeof PORTAL_NAV)[number]["key"];
 
-/** Navigation de l'espace cabinet. `adminOnly` : réservé au firm_admin (revérifié par chaque page). */
-export const ADMIN_NAV = [
-  { key: "overview", href: "/admin", icon: LayoutDashboard, exact: true },
-  { key: "clients", href: "/admin/clients", icon: Users, adminOnly: true },
-  { key: "invitations", href: "/admin/invitations", icon: MailPlus, adminOnly: true },
-  { key: "messages", href: "/admin/messages", icon: MessageSquare },
-  { key: "matters", href: "/admin/matters", icon: FolderOpen },
-  { key: "requests", href: "/admin/requests", icon: FileQuestion },
-  { key: "contracts", href: "/admin/contracts", icon: FileSignature },
-  { key: "courtCalendar", href: "/admin/court-calendar", icon: Gavel },
-  { key: "myCalendar", href: "/admin/my-calendar", icon: CalendarClock },
-  { key: "templates", href: "/admin/templates", icon: LayoutTemplate, adminOnly: true },
-  { key: "offices", href: "/admin/offices", icon: Building2, adminOnly: true },
-  { key: "workload", href: "/admin/workload", icon: BarChart3, adminOnly: true },
-  { key: "audit", href: "/admin/audit", icon: ScrollText, adminOnly: true },
-  { key: "integrations", href: "/admin/integrations", icon: PlugZap, adminOnly: true },
-  { key: "staff", href: "/admin/staff", icon: UserCog, adminOnly: true },
-  { key: "security", href: "/admin/security/mfa-reset", icon: ShieldAlert, adminOnly: true },
+/** Sous-menu d'une entrée (menu déroulant au survol ou au clavier). `primary` : bouton d'action. */
+export type NavChild = { key: string; href: string; primary?: boolean; adminOnly?: boolean };
+
+/**
+ * Navigation de l'espace cabinet, en trois groupes (décision UX du 2026-10-18) : « Mon travail »,
+ * « Clients », « Administration » (une seule entrée, son contenu en menu déroulant).
+ * `adminOnly` : réservé au firm_admin (revérifié par chaque page).
+ */
+export const ADMIN_NAV_GROUPS = [
+  {
+    key: "groupWork",
+    items: [
+      { key: "overview", href: "/admin", icon: Sun, exact: true },
+      {
+        key: "matters",
+        href: "/admin/matters",
+        icon: FolderOpen,
+        children: [
+          { key: "allMatters", href: "/admin/matters" },
+          { key: "requests", href: "/admin/requests" },
+          { key: "newMatter", href: "/admin/matters/new", primary: true, adminOnly: true },
+        ],
+      },
+      { key: "messages", href: "/admin/messages", icon: MessageSquare },
+      {
+        key: "calendar",
+        href: "/admin/court-calendar",
+        icon: Gavel,
+        children: [
+          { key: "courtCalendar", href: "/admin/court-calendar" },
+          { key: "toConfirm", href: "/admin/court-calendar?view=list&status=to_confirm" },
+          { key: "myCalendar", href: "/admin/my-calendar" },
+        ],
+      },
+      {
+        key: "contracts",
+        href: "/admin/contracts",
+        icon: FileSignature,
+        children: [
+          { key: "allContracts", href: "/admin/contracts" },
+          { key: "contractsInReview", href: "/admin/contracts?status=in_review" },
+          { key: "myContracts", href: "/admin/contracts?mine=1" },
+          { key: "newContract", href: "/admin/contracts/new", primary: true },
+        ],
+      },
+      { key: "requests", href: "/admin/requests", icon: FileQuestion },
+    ],
+  },
+  {
+    key: "groupClients",
+    adminOnly: true,
+    items: [
+      { key: "clients", href: "/admin/clients", icon: Users },
+      { key: "invitations", href: "/admin/invitations", icon: MailPlus },
+    ],
+  },
+  {
+    key: "groupAdmin",
+    adminOnly: true,
+    collapsed: true,
+    items: [
+      { key: "templates", href: "/admin/templates", icon: LayoutTemplate },
+      { key: "offices", href: "/admin/offices", icon: Building2 },
+      { key: "workload", href: "/admin/workload", icon: BarChart3 },
+      { key: "staff", href: "/admin/staff", icon: UserCog },
+      { key: "integrations", href: "/admin/integrations", icon: PlugZap },
+      { key: "audit", href: "/admin/audit", icon: ScrollText },
+      { key: "security", href: "/admin/security/mfa-reset", icon: ShieldAlert },
+    ],
+  },
 ] as const;
 
-export type AdminNavKey = (typeof ADMIN_NAV)[number]["key"];
+export type AdminNavGroup = (typeof ADMIN_NAV_GROUPS)[number];
