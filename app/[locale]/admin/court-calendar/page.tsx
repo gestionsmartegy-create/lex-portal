@@ -129,9 +129,10 @@ export default async function CourtCalendarPage({
         {i.conflict ? (
           <span className="flex items-center gap-1 font-semibold">
             <AlertTriangle aria-hidden className="size-3" />
-            {t("conflict")}
+            {i.busyConflict ? t("busyConflict") : t("conflict")}
           </span>
         ) : null}
+        {i.clioChange ? <span className="block font-semibold">{t(`clioChange.${i.clioChange}`)}</span> : null}
         <span className="sr-only">{` · ${t(`domains.${i.domain}`)}`}</span>
         {!i.onTeam ? <span className="block opacity-90">{t("otherTeam")}</span> : null}
       </>

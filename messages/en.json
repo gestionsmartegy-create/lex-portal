@@ -536,6 +536,7 @@
       "offices": "Offices & courts",
       "courtCalendar": "Court calendar",
       "workload": "Workload",
+      "myCalendar": "My calendar",
       "contracts": "Contracts"
     },
     "overview": {
@@ -723,7 +724,8 @@
         "disconnected": "Clio was disconnected and its tokens deleted.",
         "synced": "Synchronization completed.",
         "failed": "The operation failed. Try again or reconnect Clio.",
-        "calendarSaved": "Clio calendar saved."
+        "calendarSaved": "Clio calendar saved.",
+        "calendarCut": "The calendar connection was cut."
       },
       "errors": {
         "INVALID": "Please enter a valid email.",
@@ -744,6 +746,19 @@
         "save": "Save",
         "notConnected": "Connect Clio first.",
         "unavailable": "The Clio calendars could not be read. Check that the Clio app has the Calendars permission (read and write), then reconnect."
+      },
+      "outlook": {
+        "title": "Connected Outlook calendars",
+        "help": "People who connected their calendar (busy times only). You can cut a connection: access is removed and the person sees it on their next visit. A suspended or deactivated account is disconnected automatically.",
+        "none": "No calendar connected yet.",
+        "unnamed": "Staff member",
+        "status": {
+          "connected": "Connected",
+          "needsReconnect": "Reconnect needed"
+        },
+        "simulator": "simulator",
+        "reminders": "reminders on",
+        "cut": "Cut connection"
       }
     },
     "messages": {
@@ -1359,7 +1374,13 @@
         "business": "Business",
         "advisory": "Strategic advisory",
         "other": "Other"
-      }
+      },
+      "busyConflict": "Busy in Outlook",
+      "clioChange": {
+        "moved": "Changed in Clio",
+        "deleted": "Missing in Clio"
+      },
+      "clioChangesCount": "{count, plural, one {# date changed in Clio} other {# dates changed in Clio}}"
     },
     "workload": {
       "title": "Workload",
@@ -1398,6 +1419,45 @@
         "court": "Court",
         "type": "Practice area",
         "count": "Count"
+      }
+    },
+    "myCalendar": {
+      "title": "My calendar",
+      "subtitle": "Connect your Outlook calendar so the court calendar takes your appointments into account.",
+      "outlook": "Outlook calendar",
+      "status": {
+        "notConnected": "Not connected",
+        "connected": "Connected",
+        "needs_reconnect": "Reconnect needed"
+      },
+      "mockMode": "Simulator mode: the calendar shown is fictitious. The real Outlook will be connected once the firm has authorized the Microsoft application.",
+      "connectedOn": "Connected on {date}",
+      "lastSync": "last synced {time}",
+      "neverSynced": "never synced",
+      "reconnectHelp": "The connection expired or the mode changed: reconnect your calendar.",
+      "connect": "Connect my Outlook calendar",
+      "reconnect": "Reconnect my calendar",
+      "liveUnavailable": "The Outlook connection will be available as soon as the firm's Microsoft 365 administrator has authorized the application.",
+      "syncNow": "Sync now",
+      "disconnect": "Disconnect my calendar",
+      "privacyTitle": "What the platform sees",
+      "privacyBusy": "Only your busy times (start and end). Never the title, location, attendees or content of your appointments.",
+      "privacyNoCopy": "Court dates are not copied into Outlook: Clio already sends them there. No duplicates.",
+      "privacyControl": "You can disconnect at any time; access is then removed. Every connection is recorded in the audit log.",
+      "remindersTitle": "Preparation reminders",
+      "remindersHelp": "Get a 30-minute reminder 7 days and 1 day before each of your court dates, in a separate \"Lex Portail\" calendar. The reminder shows the kind of date and the matter number, never the client's name. It is shown as \"free\".",
+      "remindersOn": "Reminders on",
+      "remindersOff": "Reminders off",
+      "remindersEnable": "Turn on reminders",
+      "remindersDisable": "Remove reminders",
+      "notices": {
+        "connected": "Your calendar is connected. Your busy times now count in scheduling conflicts.",
+        "disconnected": "Your calendar is disconnected. Access has been removed.",
+        "synced": "Calendar synced.",
+        "remindersOn": "Reminders on: they appear in the \"Lex Portail\" calendar.",
+        "remindersOff": "Reminders removed from your calendar.",
+        "unavailable": "The Outlook connection is not available yet.",
+        "failed": "That didn't work. Please try again shortly."
       }
     },
     "contracts": {

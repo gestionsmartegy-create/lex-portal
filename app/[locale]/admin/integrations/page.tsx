@@ -7,7 +7,9 @@ import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatRelative } from "@/lib/format";
 import { disconnectClioAction, importClioContactAction, syncClioNowAction } from "@/server/actions/admin";
+import { cutCalendarAction } from "@/server/actions/calendar";
 import { courtCalendarAction } from "@/server/actions/court-dates";
+import { listCalendarConnections } from "@/server/services/calendar-connections";
 import { getCourtCalendarSetting, listClioCalendars } from "@/server/services/court-dates";
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
@@ -19,7 +21,7 @@ const TONE: Record<string, StatusTone> = {
   error: "urgent",
   revoked: "pending",
 };
-const NOTICES = ["connected", "disconnected", "synced", "calendarSaved", "failed"] as const;
+const NOTICES = ["connected", "disconnected", "synced", "calendarSaved", "calendarCut", "failed"] as const;
 
 export default async function IntegrationsPage({
   params,
@@ -39,9 +41,10 @@ export default async function IntegrationsPage({
   const status = live ? (clio?.status ?? "not_configured") : "connected";
   const notice = NOTICES.find((n) => n === sp.notice);
   // Calendriers Clio où l'on peut écrire (seulement si la connexion est active).
-  const [courtCalendar, calendars] = await Promise.all([
+  const [courtCalendar, calendars, outlook] = await Promise.all([
     getCourtCalendarSetting(),
     status === "connected" ? listClioCalendars() : Promise.resolve({ ok: false as const, calendars: [] }),
+    listCalendarConnections(),
   ]);
 
   return (
@@ -129,6 +132,40 @@ export default async function IntegrationsPage({
                 {t("courtCalendar.save")}
               </Button>
             </form>
+          )}
+        </SectionCard>
+        <SectionCard title={t("outlook.title")} className="lg:col-span-5">
+          <p className="mb-3 text-sm text-ink-muted">{t("outlook.help")}</p>
+          {!outlook?.length ? (
+            <p className="text-sm text-ink-muted">{t("outlook.none")}</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {outlook.map((c) => (
+                <li key={c.user_id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-marine">
+                      {[c.title, c.first_name, c.last_name].filter(Boolean).join(" ") || t("outlook.unnamed")}
+                    </p>
+                    <p className="text-xs text-ink-muted">
+                      {t(`outlook.status.${c.status === "connected" ? "connected" : "needsReconnect"}`)}
+                      {c.is_mock ? ` · ${t("outlook.simulator")}` : ""}
+                      {" · "}
+                      {c.last_sync_at
+                        ? t("lastSync", { time: formatRelative(c.last_sync_at, locale) })
+                        : t("neverSynced")}
+                      {c.reminders_enabled ? ` · ${t("outlook.reminders")}` : ""}
+                    </p>
+                  </div>
+                  <form action={cutCalendarAction}>
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="userId" value={c.user_id} />
+                    <Button type="submit" variant="ghost" size="sm">
+                      {t("outlook.cut")}
+                    </Button>
+                  </form>
+                </li>
+              ))}
+            </ul>
           )}
         </SectionCard>
       </div>

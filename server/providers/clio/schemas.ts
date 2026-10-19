@@ -94,6 +94,25 @@ export const clioCalendarEntryRefSchema = z.object({
   data: z.object({ id: z.union([z.number(), z.string()]).transform(String) }).passthrough(),
 });
 
+/** Lecture d'une entrée (GET /calendar_entries/{id}.json) : seulement l'heure, pour le retour Clio (ADR 0031). */
+export const clioCalendarEntryStateSchema = z.object({
+  data: z
+    .object({
+      id: z.union([z.number(), z.string()]).transform(String),
+      start_at: z.string().nullish(),
+      end_at: z.string().nullish(),
+      all_day: z.boolean().nullish(),
+    })
+    .passthrough(),
+});
+export const CALENDAR_ENTRY_STATE_FIELDS = "id,start_at,end_at,all_day";
+
+/** État d'une entrée dans Clio : trouvée (heures), disparue, ou inconnue (simulateur redémarré). */
+export type ClioCalendarEntryState =
+  | { state: "found"; startAt: string | null; endAt: string | null; allDay: boolean }
+  | { state: "gone" }
+  | { state: "unknown" };
+
 /** Entrée de calendrier écrite par la plateforme (dates en ISO 8601 UTC). */
 export type ClioCalendarEntryInput = {
   calendarId: number;

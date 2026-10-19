@@ -5,16 +5,19 @@ import { ClioError, type ClioManageGateway } from "./gateway";
 import { CLIO_BASE_URL, refreshTokens } from "./oauth";
 import {
   BILL_FIELDS,
+  CALENDAR_ENTRY_STATE_FIELDS,
   CALENDAR_FIELDS,
   CONTACT_FIELDS,
   MATTER_FIELDS,
   clioBillSchema,
   clioCalendarEntryRefSchema,
+  clioCalendarEntryStateSchema,
   clioCalendarSchema,
   clioContactSchema,
   clioMatterSchema,
   pageSchema,
   type ClioCalendarEntryInput,
+  type ClioCalendarEntryState,
   type StoredTokens,
 } from "./schemas";
 
@@ -98,6 +101,22 @@ export class ClioManageClient implements ClioManageGateway {
       { method: "PATCH", body: entryBody(input) },
     );
     return body !== null;
+  }
+
+  async getCalendarEntry(id: string): Promise<ClioCalendarEntryState> {
+    const url = new URL(`/api/v4/calendar_entries/${encodeURIComponent(id)}.json`, CLIO_BASE_URL);
+    url.searchParams.set("fields", CALENDAR_ENTRY_STATE_FIELDS);
+    const body = await this.request(url);
+    if (body === null) return { state: "gone" };
+    const parsed = clioCalendarEntryStateSchema.safeParse(body);
+    if (!parsed.success) throw new ClioError("INVALID_RESPONSE");
+    const d = parsed.data.data;
+    return {
+      state: "found",
+      startAt: d.start_at ?? null,
+      endAt: d.end_at ?? null,
+      allDay: d.all_day ?? false,
+    };
   }
 
   async deleteCalendarEntry(id: string) {

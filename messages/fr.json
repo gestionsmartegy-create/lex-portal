@@ -536,6 +536,7 @@
       "offices": "Bureaux et tribunaux",
       "courtCalendar": "Calendrier de cour",
       "workload": "Charge de travail",
+      "myCalendar": "Mon agenda",
       "contracts": "Contrats"
     },
     "overview": {
@@ -723,7 +724,8 @@
         "disconnected": "Clio a été déconnecté et ses jetons supprimés.",
         "synced": "Synchronisation terminée.",
         "failed": "L'opération a échoué. Réessayez ou reconnectez Clio.",
-        "calendarSaved": "Calendrier Clio enregistré."
+        "calendarSaved": "Calendrier Clio enregistré.",
+        "calendarCut": "La connexion d'agenda a été coupée."
       },
       "errors": {
         "INVALID": "Veuillez saisir un e-mail valide.",
@@ -744,6 +746,19 @@
         "save": "Enregistrer",
         "notConnected": "Connectez d'abord Clio.",
         "unavailable": "Les calendriers Clio n'ont pas pu être lus. Vérifiez que l'application Clio a la permission Calendriers (lecture et écriture), puis reconnectez."
+      },
+      "outlook": {
+        "title": "Agendas Outlook connectés",
+        "help": "Personnes qui ont connecté leur agenda (plages occupées seulement). Vous pouvez couper une connexion : l'accès est supprimé et la personne est avertie à sa prochaine visite. Un compte suspendu ou désactivé est déconnecté automatiquement.",
+        "none": "Aucun agenda connecté pour le moment.",
+        "unnamed": "Membre du personnel",
+        "status": {
+          "connected": "Connecté",
+          "needsReconnect": "À reconnecter"
+        },
+        "simulator": "simulateur",
+        "reminders": "rappels activés",
+        "cut": "Couper la connexion"
       }
     },
     "messages": {
@@ -1359,7 +1374,13 @@
         "business": "Affaires",
         "advisory": "Conseil stratégique",
         "other": "Autre"
-      }
+      },
+      "busyConflict": "Occupé dans Outlook",
+      "clioChange": {
+        "moved": "Modifiée dans Clio",
+        "deleted": "Introuvable dans Clio"
+      },
+      "clioChangesCount": "{count, plural, one {# date changée dans Clio} other {# dates changées dans Clio}}"
     },
     "workload": {
       "title": "Charge de travail",
@@ -1398,6 +1419,45 @@
         "court": "Tribunal",
         "type": "Domaine",
         "count": "Nombre"
+      }
+    },
+    "myCalendar": {
+      "title": "Mon agenda",
+      "subtitle": "Connectez votre agenda Outlook pour que le calendrier de cour tienne compte de vos rendez-vous.",
+      "outlook": "Agenda Outlook",
+      "status": {
+        "notConnected": "Non connecté",
+        "connected": "Connecté",
+        "needs_reconnect": "À reconnecter"
+      },
+      "mockMode": "Mode simulateur : l'agenda affiché est fictif. Le vrai Outlook sera branché quand le cabinet aura autorisé l'application Microsoft.",
+      "connectedOn": "Connecté le {date}",
+      "lastSync": "dernière synchronisation {time}",
+      "neverSynced": "jamais synchronisé",
+      "reconnectHelp": "La connexion a expiré ou le mode a changé : reconnectez votre agenda.",
+      "connect": "Connecter mon agenda Outlook",
+      "reconnect": "Reconnecter mon agenda",
+      "liveUnavailable": "La connexion à Outlook sera disponible dès que l'administrateur Microsoft 365 du cabinet aura autorisé l'application.",
+      "syncNow": "Synchroniser maintenant",
+      "disconnect": "Déconnecter mon agenda",
+      "privacyTitle": "Ce que la plateforme voit",
+      "privacyBusy": "Seulement vos plages occupées (début et fin). Jamais le titre, le lieu, les participants ni le contenu de vos rendez-vous.",
+      "privacyNoCopy": "Les dates de cour ne sont pas recopiées dans Outlook : Clio les y envoie déjà. Pas de doublon.",
+      "privacyControl": "Vous pouvez vous déconnecter à tout moment ; l'accès est alors supprimé. Chaque connexion est inscrite au journal d'audit.",
+      "remindersTitle": "Rappels de préparation",
+      "remindersHelp": "Recevez un rappel de 30 minutes à J-7 et J-1 avant chacune de vos dates de cour, dans un agenda séparé « Lex Portail ». Le rappel indique la sorte de date et le numéro du dossier, jamais le nom du client. Il est affiché « disponible ».",
+      "remindersOn": "Rappels activés",
+      "remindersOff": "Rappels désactivés",
+      "remindersEnable": "Activer les rappels",
+      "remindersDisable": "Retirer les rappels",
+      "notices": {
+        "connected": "Votre agenda est connecté. Vos plages occupées comptent maintenant dans les conflits d'horaire.",
+        "disconnected": "Votre agenda est déconnecté. L'accès a été supprimé.",
+        "synced": "Agenda synchronisé.",
+        "remindersOn": "Rappels activés : ils apparaissent dans l'agenda « Lex Portail ».",
+        "remindersOff": "Rappels retirés de votre agenda.",
+        "unavailable": "La connexion à Outlook n'est pas encore disponible.",
+        "failed": "L'opération n'a pas abouti. Réessayez dans un instant."
       }
     },
     "contracts": {

@@ -441,6 +441,10 @@ classDiagram
     +listBills(matterId): ClioBill[]
     +listDocuments(matterId): ClioDocument[]
     +verifyWebhook(payload, signature): bool
+    +createCalendarEntry(input): string
+    +updateCalendarEntry(id, input): bool
+    +deleteCalendarEntry(id): void
+    +getCalendarEntry(id): ClioCalendarEntryState
   }
   class ClioManageClient {
     -baseUrl: string
@@ -450,6 +454,27 @@ classDiagram
   class MockClioManageGateway {
     -fixtures: MockData
   }
+  class OutlookCalendarGateway {
+    <<interface>>
+    +getBusyBlocks(userId, from, to): BusyBlock[]
+    +ensureReminderCalendar(userId, knownId): string
+    +upsertReminder(userId, calendarId, eventId, input): string
+    +deleteReminder(userId, eventId): void
+  }
+  class MockOutlookCalendarGateway {
+    -agenda fictif stable par personne
+  }
+  %% ==================== SERVICES APPLICATIFS (SERVEUR UNIQUEMENT) ====================
+  class CalendarConnectionService {
+    <<service>>
+    -outlook: OutlookCalendarGateway
+    -db: SupabaseServiceClient
+    +connectMyCalendar(): Result
+    +disconnectCalendar(userId): Result
+    +setMyReminders(enabled): Result
+    +syncOutlookCalendars(): Summary
+  }
+  %% ==================== PASSERELLES ET FOURNISSEURS (INTERFACES + IMPLÉMENTATIONS) ====================
   class AiDraftingGateway {
     <<interface>>
     +assist(kind, language, maskedText, instruction): string
@@ -679,6 +704,9 @@ classDiagram
   Invoice "1" *-- "*" Payment
   ClioManageClient ..|> ClioManageGateway
   MockClioManageGateway ..|> ClioManageGateway
+  MockOutlookCalendarGateway ..|> OutlookCalendarGateway
+  CalendarConnectionService ..> OutlookCalendarGateway : plages occupées, rappels
+  CalendarConnectionService ..> OAuthTokenStore : jetons (Vault)
   MockAiDraftingGateway ..|> AiDraftingGateway
   ContractService ..> AiDraftingGateway : texte masqué
   ContractService ..> AccessControlService : vérifie d'abord (dossier lié)

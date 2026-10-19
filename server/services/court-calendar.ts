@@ -61,6 +61,10 @@ export type CalendarItem = {
   /** Jour local (AAAA-MM-JJ) dans le fuseau du tribunal : place la date dans la grille. */
   localDay: string;
   conflict: boolean;
+  /** Un avocat présent est occupé dans son agenda Outlook connecté (ADR 0031). */
+  busyConflict: boolean;
+  /** Modifiée ou supprimée directement dans Clio (ADR 0031). */
+  clioChange: "moved" | "deleted" | null;
 };
 
 /** Marge minimale entre deux dates d'un même avocat dans deux tribunaux différents (déplacement). */
@@ -169,6 +173,8 @@ type FeedRow = {
   on_team: boolean;
   type_code: string | null;
   practice_group: string | null;
+  clio_change: "moved" | "deleted" | null;
+  clio_changed_at: string | null;
 };
 
 /**
@@ -198,7 +204,20 @@ async function fetchDates(fromIso: string, toIso: string): Promise<CalendarItem[
     domain: domainOf(r.type_code, r.practice_group),
     localDay: localDayOf(r.starts_at, r.timezone),
     conflict: false,
+    busyConflict: false,
+    // Signalement Clio : 14 jours (ensuite, l'historique reste dans le journal d'audit).
+    clioChange:
+      r.clio_change && r.clio_changed_at && Date.parse(r.clio_changed_at) > Date.now() - 14 * 86_400_000
+        ? r.clio_change
+        : null,
   }));
+}
+
+/** Dates dont un avocat présent est occupé dans Outlook (plages occupées seulement, ADR 0031). */
+async function fetchBusyConflicts(fromIso: string, toIso: string): Promise<Set<string>> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.rpc("court_date_busy_conflicts", { p_from: fromIso, p_to: toIso });
+  return new Set((data ?? []).map((r) => r.court_date_id));
 }
 
 /** Vue de tout le cabinet : firm_admin ou adjoint·e désigné·e. */
@@ -221,10 +240,9 @@ export async function getCourtCalendar(filters: CalendarFilters) {
   const anchor = filters.date ?? todayIn();
   const period = periodOf(filters.view, anchor);
   // Marge d'un jour de chaque côté : les fuseaux décalent le jour local d'une date.
-  const all = await fetchDates(
-    `${shiftDays(period.start, -1)}T00:00:00Z`,
-    `${shiftDays(period.end, 2)}T00:00:00Z`,
-  );
+  const fromIso = `${shiftDays(period.start, -1)}T00:00:00Z`;
+  const toIso = `${shiftDays(period.end, 2)}T00:00:00Z`;
+  const [all, busy] = await Promise.all([fetchDates(fromIso, toIso), fetchBusyConflicts(fromIso, toIso)]);
   // Conflits calculés sur toutes les dates visibles de la période, avant les filtres d'affichage.
   const conflicts = markConflicts(all);
   let team: Set<string> | null = null;
@@ -247,7 +265,7 @@ export async function getCourtCalendar(filters: CalendarFilters) {
         (!filters.kind || i.kind === filters.kind) &&
         (!team || team.has(i.matterId) || (user ? i.attendeeIds.includes(user.id) : false)),
     )
-    .map((i) => ({ ...i, conflict: conflicts.has(i.id) }));
+    .map((i) => ({ ...i, conflict: conflicts.has(i.id) || busy.has(i.id), busyConflict: busy.has(i.id) }));
   return {
     items,
     period,
@@ -262,7 +280,9 @@ export async function getCourtWatch() {
   const role = await getSessionRole();
   if (role !== "staff" && role !== "firm_admin") return null;
   const today = todayIn();
-  const items = await fetchDates(`${shiftDays(today, -1)}T00:00:00Z`, `${shiftDays(today, 16)}T00:00:00Z`);
+  const fromIso = `${shiftDays(today, -1)}T00:00:00Z`;
+  const toIso = `${shiftDays(today, 16)}T00:00:00Z`;
+  const [items, busy] = await Promise.all([fetchDates(fromIso, toIso), fetchBusyConflicts(fromIso, toIso)]);
   const conflicts = markConflicts(items);
   const active = items
     .filter(
@@ -271,10 +291,12 @@ export async function getCourtWatch() {
         i.localDay >= today &&
         i.localDay <= shiftDays(today, 13),
     )
-    .map((i) => ({ ...i, conflict: conflicts.has(i.id) }));
+    .map((i) => ({ ...i, conflict: conflicts.has(i.id) || busy.has(i.id), busyConflict: busy.has(i.id) }));
   return {
     upcoming: active,
     toConfirm: active.filter((i) => i.status === "scheduled"),
     conflicts: active.filter((i) => i.conflict),
+    // Changements venus de Clio (y compris les dates supprimées, devenues « annulées »).
+    clioChanges: items.filter((i) => i.clioChange && i.localDay >= today),
   };
 }

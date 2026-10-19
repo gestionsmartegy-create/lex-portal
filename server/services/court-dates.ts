@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/server/db/server-client";
 import { createSupabaseServiceClient } from "@/server/db/service-client";
 import { getClioGateway } from "@/server/providers";
 import { ClioError } from "@/server/providers/clio/gateway";
+import type { ClioCalendarEntryState } from "@/server/providers/clio/schemas";
 import { recordAudit } from "@/server/services/audit";
 import { assertStaffMatterAccess } from "@/server/services/matter-tracking";
 import { timezones, type Timezone } from "@/server/services/offices";
@@ -290,7 +291,7 @@ export async function adjournCourtDate(id: string, input: CourtDateInput): Promi
 // ---------------------------------------------------------------------------------------------
 // Écriture dans Clio
 // ---------------------------------------------------------------------------------------------
-const KIND_LABEL: Record<CourtDateKind, string> = {
+export const KIND_LABEL: Record<CourtDateKind, string> = {
   trial: "Procès / Trial",
   hearing: "Audience / Hearing",
   motion: "Requête / Motion",
@@ -424,6 +425,90 @@ export async function pushPendingCourtDates(limit = 50) {
     else if (status === "failed") failed += 1;
   }
   return { synced, failed };
+}
+
+/**
+ * Retour depuis Clio (E16, ADR 0031) : une date écrite par la plateforme, puis modifiée ou supprimée
+ * directement dans Clio, est signalée. Déplacée : nouvelle heure, et une date confirmée redevient
+ * « à confirmer ». Introuvable : « à confirmer » et signalée, JAMAIS annulée automatiquement (un 404 peut
+ * venir d'un droit retiré ou d'un calendrier changé). Garde-fou : plus de MAX_MISSING entrées introuvables
+ * dans un même passage, rien n'est appliqué (panne probable côté Clio). Seules les dates déjà synchronisées
+ * sont comparées (une modification locale en attente n'est pas un changement venu de Clio).
+ * Une journée entière n'est pas comparée à l'heure près (format des dates sans heure à confirmer).
+ * service_role : synchronisation (usage permis), depuis le planificateur seulement.
+ */
+export async function pullClioCourtDateChanges(limit = 60) {
+  const admin = createSupabaseServiceClient();
+  const { data } = await admin
+    .from("court_dates")
+    .select("id, starts_at, ends_at, all_day, clio_calendar_entry_id")
+    .eq("clio_sync_status", "synced")
+    .in("status", ["scheduled", "confirmed"])
+    .not("clio_calendar_entry_id", "is", null)
+    .is("clio_change", null)
+    .gt("starts_at", new Date(Date.now() - 86_400_000).toISOString())
+    .order("starts_at")
+    .limit(limit);
+  const gateway = getClioGateway();
+  const changes: { id: string; change: NonNullable<ReturnType<typeof clioChangeOf>> }[] = [];
+  for (const cd of data ?? []) {
+    let entry: ClioCalendarEntryState;
+    try {
+      entry = await gateway.getCalendarEntry(cd.clio_calendar_entry_id as string);
+    } catch (error) {
+      const code = error instanceof ClioError ? error.code : "UPSTREAM";
+      console.error(JSON.stringify({ event: "court_date_clio_pull_failed", code }));
+      if (code === "TOKEN_REVOKED" || code === "NOT_CONNECTED" || code === "RATE_LIMITED") break;
+      continue;
+    }
+    const change = clioChangeOf(cd, entry);
+    if (change) changes.push({ id: cd.id, change });
+  }
+  const missing = changes.filter((c) => c.change.kind === "deleted").length;
+  if (missing > MAX_MISSING) {
+    console.error(JSON.stringify({ event: "court_date_clio_pull_suspicious", missing }));
+    return { moved: 0, missing: 0, skipped: true };
+  }
+  let moved = 0;
+  let missingApplied = 0;
+  for (const { id, change } of changes) {
+    const { data: applied } = await admin.rpc("court_date_apply_clio_change", {
+      p_id: id,
+      p_change: change.kind,
+      p_starts: change.kind === "moved" ? change.startAt : NULL_ARG,
+      p_ends: change.kind === "moved" && change.endAt ? change.endAt : NULL_ARG,
+    });
+    if (applied && change.kind === "moved") moved += 1;
+    if (applied && change.kind === "deleted") missingApplied += 1;
+  }
+  return { moved, missing: missingApplied, skipped: false };
+}
+
+/** Au-delà, un passage qui trouve autant d'entrées introuvables n'applique rien. */
+const MAX_MISSING = 5;
+
+/** null explicite pour une RPC (les types générés ne marquent pas les paramètres nullables). */
+const NULL_ARG = null as unknown as string;
+
+/** Écart d'au moins une minute entre l'heure de la plateforme et celle de Clio. */
+export function clioChangeOf(
+  cd: { starts_at: string; ends_at: string | null; all_day: boolean },
+  entry: ClioCalendarEntryState,
+): { kind: "deleted" } | { kind: "moved"; startAt: string; endAt: string | null } | null {
+  if (entry.state === "gone") return { kind: "deleted" };
+  if (entry.state !== "found" || entry.allDay || cd.all_day || !entry.startAt) return null;
+  const start = Date.parse(entry.startAt);
+  const end = entry.endAt ? Date.parse(entry.endAt) : NaN;
+  if (!Number.isFinite(start)) return null;
+  const ourStart = Date.parse(cd.starts_at);
+  const ourEnd = cd.ends_at ? Date.parse(cd.ends_at) : ourStart + 3_600_000;
+  const validEnd = Number.isFinite(end) && end > start;
+  if (Math.abs(start - ourStart) < 60_000 && (!validEnd || Math.abs(end - ourEnd) < 60_000)) return null;
+  return {
+    kind: "moved",
+    startAt: new Date(start).toISOString(),
+    endAt: validEnd ? new Date(end).toISOString() : null,
+  };
 }
 
 // ---------------------------------------------------------------------------------------------

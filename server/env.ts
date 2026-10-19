@@ -22,6 +22,8 @@ const schema = z
     INTEGRATION_MODE_SIGNATURE: integrationMode,
     INTEGRATION_MODE_PAYMENTS: integrationMode,
     INTEGRATION_MODE_MALWARE: integrationMode,
+    // Agendas Outlook du personnel (lot 4, ADR 0031) : « live » indisponible avant l'accès Microsoft du cabinet.
+    INTEGRATION_MODE_OUTLOOK: integrationMode,
     // Assistant de rédaction (contrats, ADR 0032) : « live » (OpenAI) indisponible avant les décisions du cabinet.
     INTEGRATION_MODE_AI: integrationMode,
     // Nombre de proxys de confiance devant l'application (revue J3, M2) : l'IP du client

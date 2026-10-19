@@ -284,14 +284,14 @@ isOneToOne: false
                   ]
                 },"court_dates": {
                   Row: {
-                    "all_day": boolean,"cancel_reason": string | null,"client_instructions": string | null,"clio_calendar_entry_id": string | null,"clio_sync_status": string,"clio_synced_at": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"court_id": string | null,"created_at": string,"created_by": string | null,"docket_number": string | null,"ends_at": string | null,"id": string,"judge": string | null,"kind": string,"matter_id": string,"mode": string,"notes": string | null,"replaces_id": string | null,"room": string | null,"starts_at": string,"status": string,"timezone": string,"updated_at": string,"virtual_link": string | null,"visible_to_client": boolean
+                    "all_day": boolean,"cancel_reason": string | null,"client_instructions": string | null,"clio_calendar_entry_id": string | null,"clio_change": string | null,"clio_changed_at": string | null,"clio_sync_status": string,"clio_synced_at": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"court_id": string | null,"created_at": string,"created_by": string | null,"docket_number": string | null,"ends_at": string | null,"id": string,"judge": string | null,"kind": string,"matter_id": string,"mode": string,"notes": string | null,"replaces_id": string | null,"room": string | null,"starts_at": string,"status": string,"timezone": string,"updated_at": string,"virtual_link": string | null,"visible_to_client": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind": string,"matter_id": string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at": string,"status"?: string,"timezone": string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind": string,"matter_id": string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at": string,"status"?: string,"timezone": string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
                   }
                   Update: {
-                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind"?: string,"matter_id"?: string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at"?: string,"status"?: string,"timezone"?: string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind"?: string,"matter_id"?: string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at"?: string,"status"?: string,"timezone"?: string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
                   }
                   Relationships: [
                     {
@@ -1029,6 +1029,50 @@ isOneToOne: false
             "authorize_staff_provisioning":
 { Args: { "p_actor": string,"p_email": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: undefined
                            },
+"calendar_connection_list":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "connected_at": string,"first_name": string,"is_mock": boolean,"last_error": string,"last_name": string,"last_sync_at": string,"reminders_enabled": boolean,"status": string,"title": string,"user_id": string
+            }[]
+                           },
+"calendar_connections_for_sync":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "is_mock": boolean,"reminders_calendar_id": string,"reminders_enabled": boolean,"user_id": string
+            }[]
+                           },
+"calendar_disconnect":
+{ Args: { "p_user": string }; Returns: boolean
+                           },
+"calendar_read_tokens":
+{ Args: { "p_user": string }; Returns: string
+                           },
+"calendar_reminder_events_of":
+{ Args: { "p_user": string }; Returns: {
+              "court_date_id": string,"external_event_id": string,"offset_days": number
+            }[]
+                           },
+"calendar_reminder_plan":
+{ Args: { "p_user": string }; Returns: {
+              "court_date_id": string,"current_start": string,"desired_start": string,"display_number": string,"external_event_id": string,"kind": string,"offset_days": number,"timezone": string
+            }[]
+                           },
+"calendar_reminder_record":
+{ Args: { "p_court_date": string,"p_event_id": string,"p_offset": number,"p_starts": string,"p_user": string }; Returns: undefined
+                           },
+"calendar_report_error":
+{ Args: { "p_error": string,"p_user": string }; Returns: undefined
+                           },
+"calendar_save_connection":
+{ Args: { "p_is_mock": boolean,"p_payload": string,"p_scopes": (string)[],"p_user": string }; Returns: undefined
+                           },
+"calendar_set_reminder_calendar":
+{ Args: { "p_calendar_id": string,"p_user": string }; Returns: undefined
+                           },
+"calendar_set_reminders":
+{ Args: { "p_enabled": boolean }; Returns: boolean
+                           },
+"calendar_store_busy":
+{ Args: { "p_blocks": Json,"p_from": string,"p_to": string,"p_user": string }; Returns: number
+                           },
 "claim_court_date_reminder":
 { Args: { "p_court_date": string,"p_kind": string,"p_user": string }; Returns: boolean
                            },
@@ -1067,7 +1111,15 @@ isOneToOne: false
                            },
 "court_calendar_feed":
 { Args: { "p_from": string,"p_to": string }; Returns: {
-              "all_day": boolean,"attendee_ids": (string)[],"court_id": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"office_id": string,"on_team": boolean,"practice_group": string,"room": string,"starts_at": string,"status": string,"timezone": string,"title": string,"type_code": string
+              "all_day": boolean,"attendee_ids": (string)[],"clio_change": string,"clio_changed_at": string,"court_id": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"office_id": string,"on_team": boolean,"practice_group": string,"room": string,"starts_at": string,"status": string,"timezone": string,"title": string,"type_code": string
+            }[]
+                           },
+"court_date_apply_clio_change":
+{ Args: { "p_change": string,"p_ends": string,"p_id": string,"p_starts": string }; Returns: boolean
+                           },
+"court_date_busy_conflicts":
+{ Args: { "p_from": string,"p_to": string }; Returns: {
+              "court_date_id": string,"user_id": string
             }[]
                            },
 "current_session_role":
@@ -1126,6 +1178,11 @@ isOneToOne: false
                            },
 "move_timeline_step":
 { Args: { "p_direction": number,"p_step": string }; Returns: boolean
+                           },
+"my_calendar_connection":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "connected_at": string,"is_mock": boolean,"last_error": string,"last_sync_at": string,"reminders_enabled": boolean,"status": string
+            }[]
                            },
 "rate_limit_check":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
