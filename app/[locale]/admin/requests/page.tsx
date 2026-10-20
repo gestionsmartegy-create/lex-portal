@@ -2,6 +2,8 @@ import { FileQuestion } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { z } from "zod";
 import { Notice } from "@/components/admin/notice";
+import { RequestClients } from "./_components/request-clients";
+import { TabLinks } from "@/components/portal/tab-links";
 import { EmptyState, PageHeader, SectionCard } from "@/components/portal/ui";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,46 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
     office: sp.office || undefined,
     q: sp.q || undefined,
   });
+  // Onglet « Clients » par défaut ; la liste des demandes dès qu'un filtre ou un résultat d'action la vise.
+  const listView =
+    sp.view === "all" ||
+    Boolean(sp.status || sp.tag || sp.office || sp.q) ||
+    NOTICES.some((n) => n !== "invalid" && n === sp.notice);
+  const tabs = await getTranslations("admin.requests");
+  const header = (
+    <>
+      <PageHeader
+        title={tabs("title")}
+        subtitle={tabs("subtitle")}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline-marine" size="sm">
+              <Link href="/admin/requests/new">{tabs("bulkCreate")}</Link>
+            </Button>
+            <Button asChild variant="primary" size="sm">
+              <Link href="/admin/requests/ask">{tabs("ask")}</Link>
+            </Button>
+          </div>
+        }
+      />
+      <TabLinks
+        label={tabs("tabs.label")}
+        items={[
+          { href: "/admin/requests", label: tabs("tabs.clients"), active: !listView },
+          { href: "/admin/requests?view=all", label: tabs("tabs.all"), active: listView },
+        ]}
+      />
+    </>
+  );
+  if (!listView)
+    return (
+      <>
+        {header}
+        <Notice message={sp.notice === "asked" ? tabs("notices.asked") : undefined} />
+        <RequestClients locale={locale} q={z.string().trim().max(100).catch("").parse(sp.who)} />
+      </>
+    );
+
   const [t, rows, tags, offices] = await Promise.all([
     getTranslations("admin.requests"),
     listAllRequests(filters),
@@ -50,15 +92,7 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
 
   return (
     <>
-      <PageHeader
-        title={t("title")}
-        subtitle={t("subtitle")}
-        actions={
-          <Button asChild variant="primary" size="sm">
-            <Link href="/admin/requests/new">{t("bulkCreate")}</Link>
-          </Button>
-        }
-      />
+      {header}
       <Notice
         message={
           notice === "invalid"
@@ -76,6 +110,7 @@ export default async function RequestsPage({ params, searchParams }: PageProps<"
           action={`/${locale}/admin/requests`}
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
         >
+          <input type="hidden" name="view" value="all" />
           <div className="space-y-1">
             <label htmlFor="r-q" className={labelClass}>
               {t("filters.q")}
