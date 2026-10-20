@@ -1,4 +1,13 @@
-import { CheckCircle2, CreditCard, FileText, FolderOpen, Gavel, MessageSquare, PenLine } from "lucide-react";
+import {
+  CheckCircle2,
+  CreditCard,
+  FileSignature,
+  FileText,
+  FolderOpen,
+  Gavel,
+  MessageSquare,
+  PenLine,
+} from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MatterRow } from "@/components/portal/matter-parts";
 import { EmptyState, PageHeader, SectionCard, ViewAllLink } from "@/components/portal/ui";
@@ -13,7 +22,12 @@ import { listClientTodos } from "@/server/services/dashboard";
 import { listMatters, mattersRequiringAction } from "@/server/services/matter";
 import { listConversations } from "@/server/services/messaging";
 
-const TODO_ICON = { signature: PenLine, request: FileText, invoice: CreditCard } as const;
+const TODO_ICON = {
+  signature: PenLine,
+  request: FileText,
+  invoice: CreditCard,
+  contract: FileSignature,
+} as const;
 
 /**
  * Accueil du portail client (ADR 0033) : d'abord « Ce que vous devez faire » (signatures, documents

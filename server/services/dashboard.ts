@@ -2,6 +2,7 @@ import "server-only";
 import type { Money } from "@/types/domain";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { countUnreadNotifications } from "@/server/services/notification";
+import { listMyContracts } from "@/server/services/client-contracts";
 
 export type DashboardCounts = {
   activeMatters: number;
@@ -86,6 +87,7 @@ export async function getMostUrgentAction(): Promise<ActionRequired | null> {
 
 export type ClientTodo =
   | { kind: "signature"; id: string; title: string; dueAt: string | null; href: string }
+  | { kind: "contract"; id: string; title: string; dueAt: string | null; href: string }
   | { kind: "request"; id: string; title: string; dueAt: string | null; matter: string | null; href: string }
   | {
       kind: "invoice";
@@ -103,7 +105,7 @@ export type ClientTodo =
  */
 export async function listClientTodos(): Promise<ClientTodo[]> {
   const supabase = await createSupabaseServerClient();
-  const [{ data: signatures }, { data: requests }, { data: invoices }] = await Promise.all([
+  const [{ data: signatures }, { data: requests }, { data: invoices }, contracts] = await Promise.all([
     supabase
       .from("signature_requests")
       .select("id, due_at, documents(display_name)")
@@ -122,8 +124,20 @@ export async function listClientTodos(): Promise<ClientTodo[]> {
       .in("status", ["due", "overdue"])
       .order("due_at", { ascending: true, nullsFirst: false })
       .limit(3),
+    listMyContracts(),
   ]);
   return [
+    // Contrats envoyés à accepter dans le portail (ADR 0035) ; ceux de Clio se signent dans Clio.
+    ...contracts
+      .filter((c) => c.status === "sent" && c.signing_mode === "portal")
+      .slice(0, 3)
+      .map((c): ClientTodo => ({
+        kind: "contract",
+        id: c.id,
+        title: c.title,
+        dueAt: null,
+        href: `/portal/contracts/${c.id}`,
+      })),
     ...(signatures ?? []).map((s): ClientTodo => ({
       kind: "signature",
       id: s.id,

@@ -197,6 +197,24 @@
       "cta": "Open the portal",
       "signature": "Lex Canada Law",
       "settings": "You can turn off these emails in your profile."
+    },
+    "contractSent": {
+      "subject": "A document is waiting for you — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "Your law firm has sent you a document in your secure portal. For your privacy, its content is only available in the portal.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
+    },
+    "courtChanged": {
+      "subject": "A date has changed — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "A date related to your matter has been added or changed. For your privacy, the details are only available in your secure portal.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
     }
   },
   "portal": {
@@ -214,7 +232,8 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "clientNumber": "Client #{number}",
-      "countLabel": "{count} new"
+      "countLabel": "{count} new",
+      "contracts": "Contracts"
     },
     "header": {
       "notifications": "Notifications",
@@ -430,7 +449,17 @@
       "documentRequestedBody": "The firm is asking you for a document for matter {number}.",
       "courtSoonTitle": "Upcoming court date",
       "courtTomorrowTitle": "Court date within 24 hours",
-      "courtReminderBody": "{kind}: {when}. See the details and your lawyer's instructions."
+      "courtReminderBody": "{kind}: {when}. See the details and your lawyer's instructions.",
+      "contractSentTitle": "A contract has been sent to you",
+      "contractSentBodyPortal": "Read it and accept it in your portal.",
+      "contractSentBodyClio": "Read it in your portal. Your lawyer will send it to you for signature through Clio.",
+      "courtChange": {
+        "added": "New court date",
+        "moved": "A court date has been moved",
+        "changed": "A court date has been changed",
+        "cancelled": "A court date has been cancelled"
+      },
+      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions."
     },
     "search": {
       "label": "Search the portal",
@@ -478,12 +507,14 @@
       "todo": {
         "signature": "Sign: {title}",
         "request": "Provide: {title}",
-        "invoice": "Pay invoice {title}"
+        "invoice": "Pay invoice {title}",
+        "contract": "Accept: {title}"
       },
       "cta": {
         "signature": "Read and sign",
         "request": "Upload the document",
-        "invoice": "See the invoice"
+        "invoice": "See the invoice",
+        "contract": "Read and accept"
       },
       "yourMatters": "Your matters",
       "nextHearing": "Next hearing",
@@ -491,6 +522,34 @@
       "instructions": "Your lawyer's instructions:",
       "seeAppointments": "See all your appointments",
       "noHearing": "No hearing scheduled for now."
+    },
+    "contracts": {
+      "title": "My contracts",
+      "subtitle": "Contracts the firm has sent you.",
+      "none": "No contracts yet.",
+      "sentOn": "Sent on {date}",
+      "acceptedOn": "Accepted on {date}",
+      "states": {
+        "toAccept": "To accept",
+        "toSignClio": "To sign in Clio",
+        "accepted": "Accepted"
+      },
+      "back": "My contracts",
+      "print": "Print or save as PDF",
+      "notices": {
+        "accepted": "Thank you, your acceptance has been recorded.",
+        "invalid": "Type your full name and tick the box to accept.",
+        "failed": "Your acceptance could not be recorded. Try again."
+      },
+      "acceptTitle": "Accept this contract",
+      "acceptedTitle": "Contract accepted",
+      "clioTitle": "Signature in Clio",
+      "acceptedBy": "Accepted by {name} on {date}.",
+      "clioHelp": "Your lawyer will send you this contract for signature through Clio. You will receive an email from Clio.",
+      "acceptHelp": "By typing your name and ticking the box, you accept this contract as shown above. The date and time are recorded.",
+      "fullName": "Your full name",
+      "agree": "I have read this contract and I accept it.",
+      "accept": "Accept the contract"
     }
   },
   "admin": {
@@ -1704,6 +1763,27 @@
           },
           "privacyWarning": "The template will be visible to all firm staff. Remove anything specific to this client (names, details typed in the text): use fields such as “Client name” instead.",
           "privacyConfirm": "I have removed all data specific to the client."
+        },
+        "send": {
+          "title": "Send to client",
+          "needsAccount": "To send, the contract must be linked to a client who already has a portal account.",
+          "needsFields": "First complete: {fields}.",
+          "modeFixed": "Signature set by the template: {mode}.",
+          "modeLabel": "How the client signs",
+          "modes": {
+            "portal": "Acceptance in the portal",
+            "clio": "Signature in Clio"
+          },
+          "button": "Send to client",
+          "confirm": "Send this contract to the client? The current version will be frozen and the client will be notified.",
+          "help": "The client receives a portal notice and an email without the contract's content.",
+          "sent": "Contract sent to the client.",
+          "trackTitle": "Delivery tracking",
+          "sentOn": "Sent on {date}",
+          "viewedOn": "Viewed by the client on {date}",
+          "notViewed": "Not yet viewed by the client.",
+          "acceptedBy": "Accepted by {name} on {date}",
+          "clioNext": "To start in Clio: signature is launched from the Clio matter."
         }
       },
       "tabs": {

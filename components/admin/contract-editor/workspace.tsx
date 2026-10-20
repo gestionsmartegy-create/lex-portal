@@ -8,6 +8,7 @@ import type { ContractDoc } from "@/lib/contract-doc";
 import { formatDateTime } from "@/lib/format";
 import type { FieldDisplay } from "./field-node";
 import { SectionEditor } from "./section-editor";
+import { SendToClient } from "./send-to-client";
 import { ServicesPanel, type PanelLine } from "./services-panel";
 
 type Outcome = { ok: true } | { ok: false; code: string };
@@ -31,6 +32,14 @@ export type WorkspaceProps = {
     clientLanguage: "fr" | "en";
     clientProvince: string | null;
     templateDraft: boolean;
+    /** Envoi au client (ADR 0035). */
+    hasClientAccount: boolean;
+    templateSigning: "clio" | "portal" | "both" | null;
+    sentAt: string | null;
+    signingMode: "clio" | "portal" | null;
+    viewedAt: string | null;
+    acceptedAt: string | null;
+    acceptedName: string | null;
   };
   isFirmAdmin: boolean;
   /** Tableau des services (lot 2) : lignes, catalogue, taux de la province du client. */
@@ -146,7 +155,8 @@ export function ContractWorkspace({
     };
   }, [actions, contract.editable, contract.id, locale, takeLock]);
 
-  const editable = lock === "mine";
+  // L'état réel du contrat prime : après l'envoi, plus rien n'est modifiable, même sans recharger.
+  const editable = contract.editable && lock === "mine";
 
   const run = async (fn: () => Promise<Outcome>, success?: string) => {
     setBusy(true);
@@ -612,6 +622,35 @@ export function ContractWorkspace({
             )}
           </section>
 
+          {contract.sentAt ? (
+            <section
+              aria-labelledby="c-sent"
+              className="space-y-2 rounded-[4px] border border-gray-100 bg-white p-4 text-sm text-marine"
+            >
+              <h2 id="c-sent" className="font-display text-base font-bold text-marine">
+                {t("send.trackTitle")}
+              </h2>
+              <p>
+                {t("send.sentOn", { date: formatDateTime(contract.sentAt, locale) })} ·{" "}
+                {t(`send.modes.${contract.signingMode ?? "clio"}`)}
+              </p>
+              <p>
+                {contract.viewedAt
+                  ? t("send.viewedOn", { date: formatDateTime(contract.viewedAt, locale) })
+                  : t("send.notViewed")}
+              </p>
+              {contract.acceptedAt ? (
+                <p className="font-semibold">
+                  {t("send.acceptedBy", {
+                    name: contract.acceptedName ?? "",
+                    date: formatDateTime(contract.acceptedAt, locale),
+                  })}
+                </p>
+              ) : contract.signingMode === "clio" ? (
+                <p className="text-ink-muted">{t("send.clioNext")}</p>
+              ) : null}
+            </section>
+          ) : null}
           {editable ? (
             <section
               aria-labelledby="c-status"
@@ -635,7 +674,17 @@ export function ContractWorkspace({
               >
                 {contract.status === "in_review" ? t("backToDraft") : t("askReview")}
               </button>
-              <p className="text-xs text-ink-muted">{t("validateLater")}</p>
+              {contract.templateDraft ? null : (
+                <SendToClient
+                  busy={busy}
+                  hasClientAccount={contract.hasClientAccount}
+                  missingLabels={missingLabels}
+                  templateSigning={contract.templateSigning}
+                  onSend={(mode) =>
+                    void run(() => actions.status(locale, contract.id, { op: "send", mode }), t("send.sent"))
+                  }
+                />
+              )}
               <details className="text-sm">
                 <summary className="cursor-pointer font-semibold text-destructive">
                   {t("cancelTitle")}
