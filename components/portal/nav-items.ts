@@ -28,6 +28,7 @@ export const PORTAL_NAV = [
   { key: "matters", href: "/portal/matters", icon: FolderOpen },
   { key: "documents", href: "/portal/documents", icon: FileText },
   { key: "messages", href: "/portal/messages", icon: MessageSquare },
+  { key: "contracts", href: "/portal/contracts", icon: FileSignature },
   { key: "billing", href: "/portal/billing", icon: CreditCard },
   { key: "appointments", href: "/portal/appointments", icon: CalendarDays },
   { key: "notifications", href: "/portal/notifications", icon: Bell },

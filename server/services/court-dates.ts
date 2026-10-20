@@ -9,6 +9,7 @@ import { getClioGateway } from "@/server/providers";
 import { ClioError } from "@/server/providers/clio/gateway";
 import type { ClioCalendarEntryState } from "@/server/providers/clio/schemas";
 import { recordAudit } from "@/server/services/audit";
+import { notifyCourtDateChange } from "@/server/services/client-notifier";
 import { assertStaffMatterAccess } from "@/server/services/matter-tracking";
 import { timezones, type Timezone } from "@/server/services/offices";
 
@@ -210,7 +211,9 @@ async function loadForWrite(id: string) {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
     .from("court_dates")
-    .select("id, matter_id, status")
+    .select(
+      "id, matter_id, status, visible_to_client, starts_at, ends_at, all_day, timezone, court_id, room, mode",
+    )
     .eq("id", id)
     .maybeSingle();
   if (!data || !(await assertStaffMatterAccess(data.matter_id))) return null;
@@ -235,6 +238,8 @@ export async function createCourtDate(
   if (error || !data) return fail();
   const attendeesOk = await setAttendees(data.id, input.attendeeIds);
   await syncCourtDateToClio(data.id);
+  // Avis au client si la date lui est visible (le notificateur le revérifie).
+  await notifyCourtDateChange(data.id, replacesId ? "moved" : "added");
   if (!attendeesOk) return fail();
   return { ok: true, id: data.id };
 }
@@ -250,6 +255,20 @@ export async function updateCourtDate(id: string, input: CourtDateInput): Promis
   if (error) return fail();
   const attendeesOk = await setAttendees(id, input.attendeeIds);
   await syncCourtDateToClio(id);
+  // Rendue visible : « ajoutée » ; déjà visible et quand ou où a changé : « modifiée ».
+  if (row.visible_to_client && !current.visible_to_client) await notifyCourtDateChange(id, "added");
+  else if (
+    row.visible_to_client &&
+    (["starts_at", "ends_at", "all_day", "timezone", "court_id", "room", "mode"] as const).some((k) =>
+      k === "starts_at" || k === "ends_at"
+        ? (row[k] ? Date.parse(row[k]) : null) !== (current[k] ? Date.parse(current[k]) : null)
+        : String(row[k] ?? "") !== String(current[k] ?? ""),
+    )
+  )
+    await notifyCourtDateChange(
+      id,
+      Date.parse(row.starts_at) !== Date.parse(current.starts_at) ? "moved" : "changed",
+    );
   if (!attendeesOk) return fail();
   return { ok: true, id };
 }
@@ -271,6 +290,7 @@ export async function setCourtDateStatus(
     .eq("id", id);
   if (error) return fail();
   await syncCourtDateToClio(id);
+  if (status === "cancelled") await notifyCourtDateChange(id, "cancelled");
   return { ok: true, id };
 }
 

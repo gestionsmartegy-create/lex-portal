@@ -97,6 +97,13 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           clientLanguage: contract.clientLanguage,
           clientProvince: contract.clientProvince,
           templateDraft: contract.templateDraft,
+          hasClientAccount: Boolean(contract.clientId),
+          templateSigning: contract.templateSigning,
+          sentAt: contract.sentAt,
+          signingMode: contract.signingMode,
+          viewedAt: contract.viewedAt,
+          acceptedAt: contract.acceptedAt,
+          acceptedName: contract.acceptedName,
         }}
         isFirmAdmin={role === "firm_admin"}
         lines={loaded.lines.map((l) => ({

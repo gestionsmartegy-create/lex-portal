@@ -21,6 +21,7 @@ import {
   restoreVersion,
   saveSection,
   saveVersion,
+  sendContract,
   setReviewStatus,
   updateHeader,
 } from "@/server/services/contracts";
@@ -115,6 +116,7 @@ export async function versionAction(locale: string, contractId: string, input: u
 const statusOp = z.discriminatedUnion("op", [
   z.object({ op: z.literal("review"), status: z.enum(["draft", "in_review"]) }),
   z.object({ op: z.literal("cancel"), reason: z.string().trim().min(1).max(500) }),
+  z.object({ op: z.literal("send"), mode: z.enum(["clio", "portal"]) }),
 ]);
 
 export async function statusAction(locale: string, contractId: string, input: unknown): Promise<Outcome> {
@@ -122,6 +124,7 @@ export async function statusAction(locale: string, contractId: string, input: un
   const parsed = statusOp.safeParse(input);
   if (!parsed.success || !id.safeParse(contractId).success) return { ok: false, code: "INVALID" };
   if (parsed.data.op === "review") return done(await setReviewStatus(contractId, parsed.data.status));
+  if (parsed.data.op === "send") return done(await sendContract(contractId, parsed.data.mode));
   return done(await cancelContract(contractId, parsed.data.reason));
 }
 
