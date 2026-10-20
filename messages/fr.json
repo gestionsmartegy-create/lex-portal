@@ -197,6 +197,33 @@
       "cta": "Ouvrir le portail",
       "signature": "Lex Canada Law",
       "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "contractSent": {
+      "subject": "Un document vous attend — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Votre cabinet vous a transmis un document dans votre portail sécurisé. Pour votre confidentialité, son contenu n'est disponible que dans le portail.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "courtChanged": {
+      "subject": "Une date a changé — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Une date liée à votre dossier a été ajoutée ou modifiée. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "documentRequested": {
+      "subject": "Un document vous est demandé — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Votre cabinet vous demande un document. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé, où vous pouvez le déposer.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
     }
   },
   "portal": {
@@ -214,7 +241,8 @@
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu",
       "clientNumber": "Client nº {number}",
-      "countLabel": "{count} nouveau(x)"
+      "countLabel": "{count} nouveau(x)",
+      "contracts": "Contrats"
     },
     "header": {
       "notifications": "Notifications",
@@ -430,7 +458,17 @@
       "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}.",
       "courtSoonTitle": "Date de cour à venir",
       "courtTomorrowTitle": "Date de cour dans moins de 24 heures",
-      "courtReminderBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
+      "courtReminderBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat.",
+      "contractSentTitle": "Un contrat vous a été envoyé",
+      "contractSentBodyPortal": "Lisez-le et acceptez-le dans votre portail.",
+      "contractSentBodyClio": "Lisez-le dans votre portail. Votre avocat vous l'enverra à signer par Clio.",
+      "courtChange": {
+        "added": "Nouvelle date de cour",
+        "moved": "Une date de cour a été déplacée",
+        "changed": "Une date de cour a été modifiée",
+        "cancelled": "Une date de cour a été annulée"
+      },
+      "courtChangeBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
     },
     "search": {
       "label": "Rechercher dans le portail",
@@ -478,12 +516,14 @@
       "todo": {
         "signature": "Signer : {title}",
         "request": "Fournir : {title}",
-        "invoice": "Régler la facture {title}"
+        "invoice": "Régler la facture {title}",
+        "contract": "Accepter : {title}"
       },
       "cta": {
         "signature": "Lire et signer",
         "request": "Déposer le document",
-        "invoice": "Voir la facture"
+        "invoice": "Voir la facture",
+        "contract": "Lire et accepter"
       },
       "yourMatters": "Vos dossiers",
       "nextHearing": "Prochaine audience",
@@ -491,6 +531,34 @@
       "instructions": "Consignes de votre avocat :",
       "seeAppointments": "Voir tous vos rendez-vous",
       "noHearing": "Aucune audience prévue pour le moment."
+    },
+    "contracts": {
+      "title": "Mes contrats",
+      "subtitle": "Les contrats que le cabinet vous a envoyés.",
+      "none": "Aucun contrat pour l'instant.",
+      "sentOn": "Envoyé le {date}",
+      "acceptedOn": "Accepté le {date}",
+      "states": {
+        "toAccept": "À accepter",
+        "toSignClio": "À signer dans Clio",
+        "accepted": "Accepté"
+      },
+      "back": "Mes contrats",
+      "print": "Imprimer ou enregistrer en PDF",
+      "notices": {
+        "accepted": "Merci, votre acceptation est enregistrée.",
+        "invalid": "Tapez votre nom complet et cochez la case pour accepter.",
+        "failed": "L'acceptation n'a pas pu être enregistrée. Réessayez."
+      },
+      "acceptTitle": "Accepter ce contrat",
+      "acceptedTitle": "Contrat accepté",
+      "clioTitle": "Signature dans Clio",
+      "acceptedBy": "Accepté par {name} le {date}.",
+      "clioHelp": "Votre avocat vous enverra ce contrat à signer par Clio. Vous recevrez un courriel de Clio.",
+      "acceptHelp": "En tapant votre nom et en cochant la case, vous acceptez ce contrat tel qu'il est affiché ci-dessus. La date et l'heure sont enregistrées.",
+      "fullName": "Votre nom complet",
+      "agree": "J'ai lu ce contrat et je l'accepte.",
+      "accept": "Accepter le contrat"
     }
   },
   "admin": {
@@ -1173,7 +1241,7 @@
     "requests": {
       "title": "Demandes de documents",
       "subtitle": "Tous les documents demandés aux clients, sur l'ensemble de vos dossiers.",
-      "bulkCreate": "Demander à plusieurs dossiers",
+      "bulkCreate": "Même demande à plusieurs dossiers",
       "bulkSubtitle": "Envoyer la même demande aux clients de plusieurs dossiers en une fois.",
       "back": "Toutes les demandes",
       "none": "Aucune demande de document.",
@@ -1216,7 +1284,39 @@
       "notices": {
         "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
         "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
-        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
+        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard.",
+        "asked": "Demande envoyée. Le client a été averti.",
+        "ask_invalid": "Indiquez le document demandé et choisissez un dossier.",
+        "ask_failed": "La demande n'a pas pu être envoyée. Réessayez.",
+        "ask_tooMany": "Trop de demandes envoyées dans la dernière heure. Réessayez plus tard."
+      },
+      "ask": "Demander un document",
+      "askSubtitle": "Demander un document à un client, pour l'un de ses dossiers.",
+      "backToClients": "Demandes de documents",
+      "askStep1": "1. Client",
+      "askStep2": "2. Dossier concerné",
+      "askClient": "Client",
+      "askClientPlaceholder": "Choisir un client…",
+      "askContinue": "Continuer",
+      "askChangeClient": "Changer de client",
+      "requestTitlePlaceholder": "Ex. : copie du passeport, relevé bancaire de mars",
+      "askHelp": "Le client est averti dans son portail et par courriel (sans le détail). Il dépose le document directement dans son portail.",
+      "askSubmit": "Envoyer la demande",
+      "tabs": {
+        "label": "Vues des demandes",
+        "clients": "Clients",
+        "all": "Toutes les demandes"
+      },
+      "clients": {
+        "search": "Rechercher un client (nom ou courriel)",
+        "searchButton": "Rechercher",
+        "none": "Aucun client sur vos dossiers ouverts.",
+        "noMatch": "Aucun client ne correspond à cette recherche.",
+        "overdue": "{count, plural, one {# en retard} other {# en retard}}",
+        "pending": "{count, plural, one {# en attente} other {# en attente}}",
+        "nothing": "Aucune demande en cours",
+        "ask": "Demander un document",
+        "askFor": "Demander un document à {name}"
       }
     },
     "offices": {
@@ -1704,6 +1804,27 @@
           },
           "privacyWarning": "Le modèle sera visible de tout le personnel du cabinet. Retirez tout ce qui est propre à ce client (noms, détails tapés dans le texte) : utilisez plutôt les champs comme « Nom du client ».",
           "privacyConfirm": "J'ai retiré toute donnée propre au client."
+        },
+        "send": {
+          "title": "Envoyer au client",
+          "needsAccount": "Pour envoyer, le contrat doit être lié à un client qui a déjà un compte dans le portail.",
+          "needsFields": "Complétez d'abord : {fields}.",
+          "modeFixed": "Signature prévue par le modèle : {mode}.",
+          "modeLabel": "Comment le client signe",
+          "modes": {
+            "portal": "Acceptation dans le portail",
+            "clio": "Signature dans Clio"
+          },
+          "button": "Envoyer au client",
+          "confirm": "Envoyer ce contrat au client ? La version actuelle sera figée et le client sera averti.",
+          "help": "Le client reçoit un avis dans le portail et un courriel sans le contenu du contrat.",
+          "sent": "Contrat envoyé au client.",
+          "trackTitle": "Suivi de l'envoi",
+          "sentOn": "Envoyé le {date}",
+          "viewedOn": "Consulté par le client le {date}",
+          "notViewed": "Pas encore consulté par le client.",
+          "acceptedBy": "Accepté par {name} le {date}",
+          "clioNext": "À lancer dans Clio : la signature se fait depuis le dossier Clio."
         }
       },
       "tabs": {

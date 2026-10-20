@@ -20,6 +20,7 @@ import { createSupabaseServerClient } from "@/server/db/server-client";
 import { getAiGateway } from "@/server/providers";
 import { AiError, aiAssistKinds, type AiAssistKind } from "@/server/providers/ai/gateway";
 import { hitRateLimit } from "@/server/security/rate-limit";
+import { notifyContractSent } from "@/server/services/client-notifier";
 import { recordAudit } from "@/server/services/audit";
 import {
   copyTemplateContent,
@@ -100,7 +101,15 @@ export const contractFiltersSchema = z.object({
   mine: z.enum(["1"]).optional().catch(undefined),
 });
 
-type Fail = "NOT_FOUND" | "LOCKED" | "INVALID" | "FAILED" | "RATE_LIMITED" | "UNAVAILABLE";
+type Fail =
+  | "NOT_FOUND"
+  | "LOCKED"
+  | "INVALID"
+  | "FAILED"
+  | "RATE_LIMITED"
+  | "UNAVAILABLE"
+  | "NO_CLIENT_ACCOUNT"
+  | "MISSING_FIELDS";
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; code: Fail };
 const fail = (code: Fail) => ({ ok: false as const, code });
 const ok = <T>(data: T) => ({ ok: true as const, data });
@@ -277,7 +286,7 @@ export async function getContract(id: string) {
   const { data: c } = await supabase
     .from("contracts")
     .select(
-      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, client_province, template_id, template_version, template_draft, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at",
+      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, client_province, template_id, template_version, template_draft, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at, sent_at, sent_by, sent_version, signing_mode, viewed_at, accepted_at, accepted_name",
     )
     .eq("id", id)
     .maybeSingle();
@@ -340,7 +349,22 @@ export async function getContract(id: string) {
     templateId: c.template_id,
     templateVersion: c.template_version,
     templateDraft: c.template_draft,
+    sentAt: c.sent_at,
+    sentVersion: c.sent_version,
+    signingMode: (c.signing_mode as "clio" | "portal" | null) ?? null,
+    viewedAt: c.viewed_at,
+    acceptedAt: c.accepted_at,
+    acceptedName: c.accepted_name,
+    templateSigning: null as "clio" | "portal" | "both" | null,
   };
+  if (c.template_id) {
+    const { data: tpl } = await supabase
+      .from("contract_templates")
+      .select("signing")
+      .eq("id", c.template_id)
+      .maybeSingle();
+    contract.templateSigning = (tpl?.signing as "clio" | "portal" | "both" | undefined) ?? null;
+  }
   const [{ data: lineRows }, taxRates] = await Promise.all([
     supabase
       .from("contract_line_items")
@@ -392,6 +416,8 @@ export function fieldValues(
     author: string | null;
   },
   totals: Totals | null = null,
+  // Date du contrat : aujourd'hui en rédaction, la date d'envoi pour la version envoyée au client.
+  on: Date = new Date(),
 ): FieldValues {
   const money = (v: string) => formatMoney(v, c.language);
   return {
@@ -416,7 +442,7 @@ export function fieldValues(
     "date.today": new Intl.DateTimeFormat(c.language === "fr" ? "fr-CA" : "en-CA", {
       dateStyle: "long",
       timeZone: DEFAULT_TIMEZONE,
-    }).format(new Date()),
+    }).format(on),
   };
 }
 
@@ -603,6 +629,22 @@ export async function setReviewStatus(id: string, status: "draft" | "in_review")
   const { data, error } = await supabase.from("contracts").update({ status }).eq("id", id).select("id");
   if (error) return fail(dbFail(error.code));
   return data?.length ? ok(undefined) : fail("NOT_FOUND");
+}
+
+/**
+ * Envoi au client (ADR 0035) : tout membre de l'équipe qui tient le verrou (décision du 2026-10-20).
+ * Exige un client avec un compte et aucun champ vide ; la base fige une version et la revérifie.
+ */
+export async function sendContract(id: string, mode: "clio" | "portal"): Promise<Result> {
+  const loaded = await getContract(id);
+  if (!loaded || !(await writable(id))) return fail("NOT_FOUND");
+  if (!loaded.contract.clientId) return fail("NO_CLIENT_ACCOUNT");
+  if (loaded.missing.length) return fail("MISSING_FIELDS");
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("contract_send", { p_contract: id, p_mode: mode });
+  if (error) return fail(error.code === "55006" || error.code === "42501" ? "LOCKED" : dbFail(error.code));
+  await notifyContractSent(id);
+  return ok(undefined);
 }
 
 export async function cancelContract(id: string, reason: string): Promise<Result> {

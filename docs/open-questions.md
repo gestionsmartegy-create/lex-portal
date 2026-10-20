@@ -153,3 +153,11 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Un ou deux modèles de conditions générales ?~~ | ✅ **Deux** : « Entreprises et organisations » et « Particuliers et familles » | 2 modèles EN publiés, 2 brouillons FR |
 | Taux de taxes par province | **À confirmer par le cabinet** | Taux de départ marqués « à vérifier » (page Services et taxes) |
 | Vrais services et tarifs du cabinet | **À fournir** | 5 services de démonstration en attendant |
+
+## Décisions du 2026-10-20 (portail client, ADR 0035)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Qui peut envoyer un contrat au client ?~~ | ✅ **Tout membre de l'équipe du dossier**, adjoint·e·s compris (et le firm_admin) | Même règle que la confirmation des dates de cour |
+| ~~Une date de cour est-elle visible du client automatiquement ?~~ | ✅ **Non** : l'équipe coche « visible au client » | Avis au client seulement pour les dates visibles |
+| Valeur juridique de l'acceptation dans le portail pour un contrat autre que les conditions générales | **À confirmer par le cabinet** | Par défaut, le mode « Clio » reste disponible pour les vrais contrats |
