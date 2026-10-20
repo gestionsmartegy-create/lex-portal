@@ -215,6 +215,15 @@
       "cta": "Ouvrir le portail",
       "signature": "Lex Canada Law",
       "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "documentRequested": {
+      "subject": "Un document vous est demandé — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Votre cabinet vous demande un document. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé, où vous pouvez le déposer.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
     }
   },
   "portal": {
@@ -1232,7 +1241,7 @@
     "requests": {
       "title": "Demandes de documents",
       "subtitle": "Tous les documents demandés aux clients, sur l'ensemble de vos dossiers.",
-      "bulkCreate": "Demander à plusieurs dossiers",
+      "bulkCreate": "Même demande à plusieurs dossiers",
       "bulkSubtitle": "Envoyer la même demande aux clients de plusieurs dossiers en une fois.",
       "back": "Toutes les demandes",
       "none": "Aucune demande de document.",
@@ -1275,7 +1284,39 @@
       "notices": {
         "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
         "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
-        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
+        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard.",
+        "asked": "Demande envoyée. Le client a été averti.",
+        "ask_invalid": "Indiquez le document demandé et choisissez un dossier.",
+        "ask_failed": "La demande n'a pas pu être envoyée. Réessayez.",
+        "ask_tooMany": "Trop de demandes envoyées dans la dernière heure. Réessayez plus tard."
+      },
+      "ask": "Demander un document",
+      "askSubtitle": "Demander un document à un client, pour l'un de ses dossiers.",
+      "backToClients": "Demandes de documents",
+      "askStep1": "1. Client",
+      "askStep2": "2. Dossier concerné",
+      "askClient": "Client",
+      "askClientPlaceholder": "Choisir un client…",
+      "askContinue": "Continuer",
+      "askChangeClient": "Changer de client",
+      "requestTitlePlaceholder": "Ex. : copie du passeport, relevé bancaire de mars",
+      "askHelp": "Le client est averti dans son portail et par courriel (sans le détail). Il dépose le document directement dans son portail.",
+      "askSubmit": "Envoyer la demande",
+      "tabs": {
+        "label": "Vues des demandes",
+        "clients": "Clients",
+        "all": "Toutes les demandes"
+      },
+      "clients": {
+        "search": "Rechercher un client (nom ou courriel)",
+        "searchButton": "Rechercher",
+        "none": "Aucun client sur vos dossiers ouverts.",
+        "noMatch": "Aucun client ne correspond à cette recherche.",
+        "overdue": "{count, plural, one {# en retard} other {# en retard}}",
+        "pending": "{count, plural, one {# en attente} other {# en attente}}",
+        "nothing": "Aucune demande en cours",
+        "ask": "Demander un document",
+        "askFor": "Demander un document à {name}"
       }
     },
     "offices": {
