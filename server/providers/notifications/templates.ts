@@ -129,7 +129,7 @@ export async function portalNoticeEmail(params: {
   locale: "en" | "fr";
   firstName?: string | null;
   link: string;
-  kind: "contractSent" | "courtChanged";
+  kind: "contractSent" | "courtChanged" | "documentRequested";
 }): Promise<OutgoingEmail> {
   const t = await getTranslations({ locale: params.locale, namespace: `emails.${params.kind}` });
   const greeting = params.firstName ? t("greetingName", { name: params.firstName }) : t("greeting");

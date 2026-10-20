@@ -5,7 +5,10 @@ import type { MatterStatus } from "@/types/domain";
 import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { createSupabaseServiceClient } from "@/server/db/service-client";
-import { hitRateLimit } from "@/server/security/rate-limit";
+import { serverEnv } from "@/server/env";
+import { getEmailSender } from "@/server/providers/notifications";
+import { portalNoticeEmail } from "@/server/providers/notifications/templates";
+import { hitRateLimit, RATE_LIMITS } from "@/server/security/rate-limit";
 import { assertMatterAccess } from "@/server/services/access-control";
 import { recordAudit } from "@/server/services/audit";
 import { getMatterTypeTemplate, listMatterTypes } from "@/server/services/matter-templates";
@@ -479,17 +482,30 @@ export async function createDocumentRequest(
       };
   }
   if (!row.title) return fail();
-  const { error } = await supabase.from("document_requests").insert({
-    matter_id: matterId,
-    requested_from: input.clientId,
-    due_date: input.dueDate,
-    ...row,
-  });
-  if (error) {
+  const { data: created, error } = await supabase
+    .from("document_requests")
+    .insert({
+      matter_id: matterId,
+      requested_from: input.clientId,
+      due_date: input.dueDate,
+      ...row,
+    })
+    .select("id")
+    .single();
+  if (error || !created) {
     // Trace serveur (code seulement) : un échec ne passe plus inaperçu (plan, phase 1).
-    console.error(JSON.stringify({ event: "document_request_failed", code: error.code }));
+    console.error(JSON.stringify({ event: "document_request_failed", code: error?.code }));
     return fail();
   }
+  // Journal (AGENTS.md §2.8) : identifiants seulement, jamais le titre du document.
+  await recordAudit({
+    action: "document_request.created",
+    resourceType: "document_request",
+    resourceId: created.id,
+    matterId,
+    actorId: (await getUser())?.id ?? null,
+    metadata: { requested_from: input.clientId },
+  });
   await notifyDocumentRequested(matterId, input.clientId);
   return { ok: true };
 }
@@ -520,7 +536,11 @@ export async function notifyDocumentRequested(matterId: string, clientId: string
   try {
     const admin = createSupabaseServiceClient();
     const [{ data: person }, { data: matter }] = await Promise.all([
-      admin.from("profiles").select("id, status, role, preferred_language").eq("id", clientId).maybeSingle(),
+      admin
+        .from("profiles")
+        .select("id, email, first_name, status, role, preferred_language")
+        .eq("id", clientId)
+        .maybeSingle(),
       admin.from("matters").select("display_number").eq("id", matterId).maybeSingle(),
     ]);
     if (!person || person.role !== "client" || person.status !== "active") return;
@@ -538,6 +558,26 @@ export async function notifyDocumentRequested(matterId: string, clientId: string
       action_url: "/portal/documents",
     });
     if (error) console.error(JSON.stringify({ event: "request_notification_failed", code: error.code }));
+    // E-mail sans aucun détail (seulement le lien), selon la préférence du client ; au plus un par
+    // dossier et par client toutes les 15 minutes (un envoi groupé n'inonde pas sa boîte).
+    const { data: pref } = await admin
+      .from("notification_preferences")
+      .select("email_enabled")
+      .eq("user_id", person.id)
+      .maybeSingle();
+    if (
+      pref?.email_enabled !== false &&
+      (await hitRateLimit(`docreqmail:${matterId}:${person.id}`, RATE_LIMITS.messageEmailPerConversation))
+    )
+      await getEmailSender().send(
+        await portalNoticeEmail({
+          to: person.email,
+          locale,
+          firstName: person.first_name,
+          link: new URL(`/${locale}/portal/documents`, serverEnv().APP_BASE_URL).toString(),
+          kind: "documentRequested",
+        }),
+      );
   } catch {
     console.error(JSON.stringify({ event: "request_notify_failed", matter: matterId }));
   }

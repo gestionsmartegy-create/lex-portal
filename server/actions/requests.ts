@@ -8,6 +8,8 @@ import { hitRateLimit } from "@/server/security/rate-limit";
 import {
   bulkCreateRequests,
   bulkRequestAction,
+  clientRequestSchema,
+  createClientRequest,
   requestFiltersSchema,
 } from "@/server/services/document-requests";
 import { localeSchema } from "@/server/validation/auth";
@@ -74,4 +76,19 @@ export async function bulkCreateRequestsAction(formData: FormData): Promise<void
     dueDate: parsed.data.dueDate,
   });
   redirect(`/${parsed.data.locale}/admin/requests?notice=created&${counts(report)}`);
+}
+
+/** Demande de document à un client (onglet « Clients ») : retour à la liste avec la confirmation. */
+export async function createClientRequestAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  const { user } = await requireStaff(locale);
+  const parsed = clientRequestSchema.safeParse(Object.fromEntries(formData));
+  const client = z.uuid().safeParse(formData.get("clientId"));
+  const askPath = `/${locale}/admin/requests/ask${client.success ? `?client=${client.data}&` : "?"}`;
+  if (!parsed.success) redirect(`${askPath}notice=invalid`);
+  // 30 demandes ciblées par personne et par heure : chaque demande avertit le client.
+  if (!(await hitRateLimit(`requests:client-create:${user.id}`, { max: 30, windowSeconds: 3600 })))
+    redirect(`${askPath}notice=tooMany`);
+  const r = await createClientRequest(parsed.data);
+  redirect(r.ok ? `/${locale}/admin/requests?notice=asked` : `${askPath}notice=failed`);
 }
