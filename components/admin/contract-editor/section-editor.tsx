@@ -37,6 +37,8 @@ export type SectionEditorProps = {
   count: number;
   editable: boolean;
   display: FieldDisplay;
+  /** Bibliothèque de clauses dans la langue du contrat (lot 2). */
+  clauses: { id: string; title: string; body: string }[];
   onSave: (
     sectionId: string,
     payload: { title: string; body: string; aiAssisted?: boolean },
@@ -142,7 +144,8 @@ export function SectionEditor(props: SectionEditorProps) {
   }, [register, section.id]);
 
   useEffect(() => {
-    editor?.setEditable(editable);
+    // Sans émettre de mise à jour : prendre le verrou ne doit pas déclencher d'enregistrement.
+    editor?.setEditable(editable, false);
   }, [editor, editable]);
 
   const insertField = (key: ContractFieldKey) => {
@@ -322,6 +325,35 @@ export function SectionEditor(props: SectionEditorProps) {
               </option>
             ))}
           </select>
+          {props.clauses.length ? (
+            <>
+              <label htmlFor={`clause-${section.id}`} className="sr-only">
+                {t("insertClause")}
+              </label>
+              <select
+                id={`clause-${section.id}`}
+                value=""
+                onChange={(e) => {
+                  const c = props.clauses.find((x) => x.id === e.target.value);
+                  if (!c || !editor) return;
+                  // Insertion en JSON (jamais en HTML), à l'endroit du curseur.
+                  editor
+                    .chain()
+                    .focus()
+                    .insertContent((textToDoc(c.body).content ?? []) as JSONContent[])
+                    .run();
+                }}
+                className="h-8 max-w-40 rounded-[2px] border border-gray-200 bg-white px-2 text-xs text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+              >
+                <option value="">{t("insertClause")}</option>
+                {props.clauses.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : null}
           <button
             type="button"
             onClick={() => setAiOpen((v) => !v)}

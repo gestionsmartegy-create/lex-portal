@@ -197,6 +197,33 @@
       "cta": "Ouvrir le portail",
       "signature": "Lex Canada Law",
       "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "contractSent": {
+      "subject": "Un document vous attend — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Votre cabinet vous a transmis un document dans votre portail sécurisé. Pour votre confidentialité, son contenu n'est disponible que dans le portail.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "courtChanged": {
+      "subject": "Une date a changé — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Une date liée à votre dossier a été ajoutée ou modifiée. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
+    },
+    "documentRequested": {
+      "subject": "Un document vous est demandé — Lex Canada Law",
+      "greeting": "Bonjour,",
+      "greetingName": "Bonjour {name},",
+      "body": "Votre cabinet vous demande un document. Pour votre confidentialité, le détail n'est disponible que dans votre portail sécurisé, où vous pouvez le déposer.",
+      "cta": "Ouvrir le portail",
+      "signature": "Lex Canada Law",
+      "settings": "Vous pouvez désactiver ces e-mails dans votre profil."
     }
   },
   "portal": {
@@ -214,7 +241,8 @@
       "openMenu": "Ouvrir le menu",
       "closeMenu": "Fermer le menu",
       "clientNumber": "Client nº {number}",
-      "countLabel": "{count} nouveau(x)"
+      "countLabel": "{count} nouveau(x)",
+      "contracts": "Contrats"
     },
     "header": {
       "notifications": "Notifications",
@@ -430,7 +458,17 @@
       "documentRequestedBody": "Le cabinet vous demande un document pour le dossier {number}.",
       "courtSoonTitle": "Date de cour à venir",
       "courtTomorrowTitle": "Date de cour dans moins de 24 heures",
-      "courtReminderBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
+      "courtReminderBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat.",
+      "contractSentTitle": "Un contrat vous a été envoyé",
+      "contractSentBodyPortal": "Lisez-le et acceptez-le dans votre portail.",
+      "contractSentBodyClio": "Lisez-le dans votre portail. Votre avocat vous l'enverra à signer par Clio.",
+      "courtChange": {
+        "added": "Nouvelle date de cour",
+        "moved": "Une date de cour a été déplacée",
+        "changed": "Une date de cour a été modifiée",
+        "cancelled": "Une date de cour a été annulée"
+      },
+      "courtChangeBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
     },
     "search": {
       "label": "Rechercher dans le portail",
@@ -478,12 +516,14 @@
       "todo": {
         "signature": "Signer : {title}",
         "request": "Fournir : {title}",
-        "invoice": "Régler la facture {title}"
+        "invoice": "Régler la facture {title}",
+        "contract": "Accepter : {title}"
       },
       "cta": {
         "signature": "Lire et signer",
         "request": "Déposer le document",
-        "invoice": "Voir la facture"
+        "invoice": "Voir la facture",
+        "contract": "Lire et accepter"
       },
       "yourMatters": "Vos dossiers",
       "nextHearing": "Prochaine audience",
@@ -491,6 +531,34 @@
       "instructions": "Consignes de votre avocat :",
       "seeAppointments": "Voir tous vos rendez-vous",
       "noHearing": "Aucune audience prévue pour le moment."
+    },
+    "contracts": {
+      "title": "Mes contrats",
+      "subtitle": "Les contrats que le cabinet vous a envoyés.",
+      "none": "Aucun contrat pour l'instant.",
+      "sentOn": "Envoyé le {date}",
+      "acceptedOn": "Accepté le {date}",
+      "states": {
+        "toAccept": "À accepter",
+        "toSignClio": "À signer dans Clio",
+        "accepted": "Accepté"
+      },
+      "back": "Mes contrats",
+      "print": "Imprimer ou enregistrer en PDF",
+      "notices": {
+        "accepted": "Merci, votre acceptation est enregistrée.",
+        "invalid": "Tapez votre nom complet et cochez la case pour accepter.",
+        "failed": "L'acceptation n'a pas pu être enregistrée. Réessayez."
+      },
+      "acceptTitle": "Accepter ce contrat",
+      "acceptedTitle": "Contrat accepté",
+      "clioTitle": "Signature dans Clio",
+      "acceptedBy": "Accepté par {name} le {date}.",
+      "clioHelp": "Votre avocat vous enverra ce contrat à signer par Clio. Vous recevrez un courriel de Clio.",
+      "acceptHelp": "En tapant votre nom et en cochant la case, vous acceptez ce contrat tel qu'il est affiché ci-dessus. La date et l'heure sont enregistrées.",
+      "fullName": "Votre nom complet",
+      "agree": "J'ai lu ce contrat et je l'accepte.",
+      "accept": "Accepter le contrat"
     }
   },
   "admin": {
@@ -574,7 +642,10 @@
       "contractsInReview": "En relecture",
       "myContracts": "Mes contrats",
       "newContract": "Nouveau contrat",
-      "submenu": "Raccourcis : {name}"
+      "submenu": "Raccourcis : {name}",
+      "contractTemplates": "Modèles",
+      "contractClauses": "Clauses",
+      "contractServices": "Services et taxes"
     },
     "overview": {
       "title": "Espace cabinet",
@@ -1170,7 +1241,7 @@
     "requests": {
       "title": "Demandes de documents",
       "subtitle": "Tous les documents demandés aux clients, sur l'ensemble de vos dossiers.",
-      "bulkCreate": "Demander à plusieurs dossiers",
+      "bulkCreate": "Même demande à plusieurs dossiers",
       "bulkSubtitle": "Envoyer la même demande aux clients de plusieurs dossiers en une fois.",
       "back": "Toutes les demandes",
       "none": "Aucune demande de document.",
@@ -1213,7 +1284,39 @@
       "notices": {
         "invalid": "Veuillez vérifier le formulaire (au moins un élément doit être coché).",
         "report": "{action} : {done} fait(s), {skipped} ignoré(s), {failed} en échec.",
-        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard."
+        "tooMany": "Trop d'envois groupés dans la dernière heure. Veuillez réessayer plus tard.",
+        "asked": "Demande envoyée. Le client a été averti.",
+        "ask_invalid": "Indiquez le document demandé et choisissez un dossier.",
+        "ask_failed": "La demande n'a pas pu être envoyée. Réessayez.",
+        "ask_tooMany": "Trop de demandes envoyées dans la dernière heure. Réessayez plus tard."
+      },
+      "ask": "Demander un document",
+      "askSubtitle": "Demander un document à un client, pour l'un de ses dossiers.",
+      "backToClients": "Demandes de documents",
+      "askStep1": "1. Client",
+      "askStep2": "2. Dossier concerné",
+      "askClient": "Client",
+      "askClientPlaceholder": "Choisir un client…",
+      "askContinue": "Continuer",
+      "askChangeClient": "Changer de client",
+      "requestTitlePlaceholder": "Ex. : copie du passeport, relevé bancaire de mars",
+      "askHelp": "Le client est averti dans son portail et par courriel (sans le détail). Il dépose le document directement dans son portail.",
+      "askSubmit": "Envoyer la demande",
+      "tabs": {
+        "label": "Vues des demandes",
+        "clients": "Clients",
+        "all": "Toutes les demandes"
+      },
+      "clients": {
+        "search": "Rechercher un client (nom ou courriel)",
+        "searchButton": "Rechercher",
+        "none": "Aucun client sur vos dossiers ouverts.",
+        "noMatch": "Aucun client ne correspond à cette recherche.",
+        "overdue": "{count, plural, one {# en retard} other {# en retard}}",
+        "pending": "{count, plural, one {# en attente} other {# en attente}}",
+        "nothing": "Aucune demande en cours",
+        "ask": "Demander un document",
+        "askFor": "Demander un document à {name}"
       }
     },
     "offices": {
@@ -1549,7 +1652,10 @@
         "matter_title": "Titre du dossier",
         "lawyer_name": "Avocat",
         "firm_name": "Cabinet",
-        "date_today": "Date du jour"
+        "date_today": "Date du jour",
+        "fees_subtotal": "Honoraires (sous-total)",
+        "fees_taxes": "Taxes",
+        "fees_total": "Total des honoraires"
       },
       "newForm": {
         "contractLegend": "Contrat",
@@ -1575,7 +1681,12 @@
         "errors": {
           "INVALID": "Vérifiez les champs : un titre, un nom et un courriel valide sont requis.",
           "FAILED": "Le contrat n'a pas pu être créé. Réessayez."
-        }
+        },
+        "template": "Partir de",
+        "blank": "Contrat vierge",
+        "templateHelp": "Les sections, les services et la langue viennent du modèle. Vous pourrez tout modifier ensuite.",
+        "clientProvince": "Province du client (pour les taxes)",
+        "noProvince": "Non précisée"
       },
       "editor": {
         "bodyLabel": "Texte de la section {title}",
@@ -1638,7 +1749,9 @@
           "clientEmail": "Courriel",
           "clientAddress": "Adresse",
           "clientPhone": "Téléphone",
-          "clientLanguage": "Langue du client"
+          "clientLanguage": "Langue du client",
+          "clientProvince": "Province du client",
+          "noProvince": "Non précisée"
         },
         "saveHeader": "Enregistrer la fiche",
         "versions": "Versions",
@@ -1664,6 +1777,192 @@
           "LOCKED": "Vous n'avez plus la main sur ce contrat (quelqu'un d'autre le modifie). Rechargez la page.",
           "INVALID": "Vérifiez les informations saisies.",
           "FAILED": "L'enregistrement a échoué. Réessayez."
+        },
+        "insertClause": "Insérer une clause…",
+        "template": {
+          "title": "Modèle",
+          "draftHelp": "Vous modifiez un modèle. Quand il est prêt, publiez-le en nouvelle version : les contrats déjà créés ne changent pas.",
+          "publish": "Publier cette version",
+          "published": "Modèle publié.",
+          "saveAs": "Enregistrer comme modèle",
+          "name": "Nom du modèle",
+          "domain": "Domaine",
+          "signing": "Mode de signature du client",
+          "create": "Créer le modèle",
+          "created": "Modèle créé en brouillon. Relisez-le et publiez-le depuis Modèles.",
+          "domains": {
+            "immigration": "Immigration",
+            "legal": "Services juridiques",
+            "business": "Affaires",
+            "advisory": "Conseil",
+            "other": "Autre"
+          },
+          "signingModes": {
+            "clio": "Signature dans Clio",
+            "portal": "Acceptation dans le portail",
+            "both": "Au choix, à l'envoi"
+          },
+          "privacyWarning": "Le modèle sera visible de tout le personnel du cabinet. Retirez tout ce qui est propre à ce client (noms, détails tapés dans le texte) : utilisez plutôt les champs comme « Nom du client ».",
+          "privacyConfirm": "J'ai retiré toute donnée propre au client."
+        },
+        "send": {
+          "title": "Envoyer au client",
+          "needsAccount": "Pour envoyer, le contrat doit être lié à un client qui a déjà un compte dans le portail.",
+          "needsFields": "Complétez d'abord : {fields}.",
+          "modeFixed": "Signature prévue par le modèle : {mode}.",
+          "modeLabel": "Comment le client signe",
+          "modes": {
+            "portal": "Acceptation dans le portail",
+            "clio": "Signature dans Clio"
+          },
+          "button": "Envoyer au client",
+          "confirm": "Envoyer ce contrat au client ? La version actuelle sera figée et le client sera averti.",
+          "help": "Le client reçoit un avis dans le portail et un courriel sans le contenu du contrat.",
+          "sent": "Contrat envoyé au client.",
+          "trackTitle": "Suivi de l'envoi",
+          "sentOn": "Envoyé le {date}",
+          "viewedOn": "Consulté par le client le {date}",
+          "notViewed": "Pas encore consulté par le client.",
+          "acceptedBy": "Accepté par {name} le {date}",
+          "clioNext": "À lancer dans Clio : la signature se fait depuis le dossier Clio."
+        }
+      },
+      "tabs": {
+        "label": "Sections des contrats",
+        "contracts": "Contrats",
+        "templates": "Modèles",
+        "clauses": "Clauses",
+        "services": "Services et taxes"
+      },
+      "provinces": {
+        "NB": "Nouveau-Brunswick",
+        "NS": "Nouvelle-Écosse",
+        "ON": "Ontario",
+        "QC": "Québec",
+        "PE": "Île-du-Prince-Édouard",
+        "NL": "Terre-Neuve-et-Labrador",
+        "other": "Autre province ou étranger"
+      },
+      "annex": "Annexe — Services et honoraires",
+      "annexCols": {
+        "description": "Service",
+        "quantity": "Qté / heures",
+        "unit": "Prix unitaire",
+        "total": "Total",
+        "subtotal": "Sous-total"
+      },
+      "services": {
+        "title": "Services et honoraires",
+        "empty": "Aucun service pour l'instant. Ajoutez-en un depuis le catalogue ou saisissez-le à la main.",
+        "description": "Description du service",
+        "hours": "Heures",
+        "quantity": "Quantité",
+        "hourlyRate": "Taux horaire",
+        "unitPrice": "Prix unitaire",
+        "remove": "Retirer cette ligne",
+        "addFromCatalog": "Ajouter depuis le catalogue…",
+        "perHour": "/ heure",
+        "addLine": "Ajouter une ligne",
+        "invalid": "Vérifiez chaque ligne : une description, une quantité supérieure à zéro et un prix avec au plus 2 décimales.",
+        "subtotal": "Sous-total",
+        "tax": {
+          "HST": "TVH",
+          "GST": "TPS",
+          "QST": "TVQ",
+          "PST": "TVP"
+        },
+        "total": "Total",
+        "province": "Taxes pour : {province}.",
+        "noProvince": "Choisissez la province du client dans la fiche pour calculer les taxes.",
+        "toVerify": "Taux de taxes encore à confirmer par le cabinet.",
+        "save": "Enregistrer les services",
+        "saved": "Services enregistrés.",
+        "failed": "Les services n'ont pas pu être enregistrés. Réessayez."
+      },
+      "templates": {
+        "title": "Modèles de contrats",
+        "subtitle": "Des contrats prêts à l'emploi pour commencer.",
+        "helpLabel": "À propos des modèles",
+        "help": "Utilisez un modèle publié pour créer un contrat déjà rédigé. Seuls les administrateurs du cabinet modifient un modèle : la modification s'ouvre dans l'éditeur et devient une nouvelle version à la publication.",
+        "none": "Aucun modèle pour l'instant.",
+        "version": "Version {version}",
+        "use": "Utiliser",
+        "edit": "Modifier",
+        "review": "Relire et publier",
+        "settings": "Réglages",
+        "statusLabel": "Statut",
+        "saveSettings": "Enregistrer les réglages",
+        "status": {
+          "published": "Publié",
+          "draft": "Brouillon",
+          "archived": "Archivé",
+          "review": "À faire valider par un avocat"
+        },
+        "notices": {
+          "saved": "Réglages du modèle enregistrés.",
+          "published": "Modèle publié.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "L'action a échoué. Réessayez."
+        },
+        "description": "Description"
+      },
+      "clauses": {
+        "title": "Bibliothèque de clauses",
+        "subtitle": "Des paragraphes types à insérer dans un contrat.",
+        "helpLabel": "À propos des clauses",
+        "help": "Une clause s'insère à l'endroit du curseur depuis l'éditeur (« Insérer une clause… »). Chaque modification garde la version précédente. Seules les clauses actives dans la langue du contrat sont proposées.",
+        "new": "Nouvelle clause",
+        "none": "Aucune clause pour l'instant.",
+        "bodyHelp": "Texte simple. Laissez une ligne vide entre les paragraphes.",
+        "version": "Version {version}",
+        "active": "Active",
+        "inactive": "Inactive",
+        "save": "Enregistrer",
+        "add": "Ajouter la clause",
+        "fields": {
+          "title": "Titre",
+          "language": "Langue",
+          "body": "Texte",
+          "status": "Statut"
+        },
+        "notices": {
+          "saved": "Clause enregistrée.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "La clause n'a pas pu être enregistrée. Réessayez."
+        }
+      },
+      "catalog": {
+        "title": "Services et taxes",
+        "subtitle": "Catalogue des services et taux de taxes utilisés dans les contrats.",
+        "helpLabel": "À propos des services et des taxes",
+        "help": "Un service s'ajoute à un contrat en un clic, avec son prix. Les taxes se calculent selon la province du client à la date du contrat. Les taux marqués « à vérifier » doivent être confirmés par le cabinet.",
+        "new": "Nouveau service",
+        "listTitle": "Catalogue",
+        "none": "Aucun service pour l'instant.",
+        "flat": "Forfait",
+        "hourly": "À l'heure",
+        "save": "Enregistrer",
+        "add": "Ajouter le service",
+        "taxTitle": "Taux de taxes",
+        "taxHelp": "Taux en pour cent. Cochez la case une fois le taux confirmé par le cabinet.",
+        "period": "Du {from} au {to}",
+        "since": "Depuis le {from}",
+        "verified": "Confirmé",
+        "toVerify": "À vérifier",
+        "saveRate": "Enregistrer le taux",
+        "fields": {
+          "nameFr": "Nom (français)",
+          "nameEn": "Nom (anglais)",
+          "pricing": "Tarification",
+          "amount": "Montant (CAD)",
+          "rate": "Taux (%)",
+          "effectiveFrom": "En vigueur depuis"
+        },
+        "notices": {
+          "saved": "Service enregistré.",
+          "taxSaved": "Taux enregistré.",
+          "invalid": "Vérifiez les champs et réessayez.",
+          "failed": "La modification n'a pas pu être enregistrée. Réessayez."
         }
       }
     },

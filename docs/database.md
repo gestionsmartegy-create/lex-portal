@@ -393,3 +393,23 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - Fonctions : `contract_acquire_lock`, `contract_release_lock`, `contract_client_email_known` (personnel ; oui ou non).
 - Journal (trigger) : `contract.created`, `contract.<statut>`, `contract.matter_linked` ; par les fonctions : `contract.version_saved`, `contract.version_restored` ; par le serveur : `contract.ai_assisted`.
 - Durcissement (`20261020120100`) : `contract_client_email_known` limitée dans la base (60 par 10 minutes), `contract.header_updated` journalisé (noms des champs seulement), 200 sections au plus (`private.contract_section_count`).
+
+## Bibliothèque des contrats (ADR 0034, migrations `20261021120000` et `20261021120100`)
+- `contract_templates` : nom, description, domaine, langue, mode de signature (`clio`, `portal`, `both`), statut (`draft`, `published`, `archived`), `needs_review`, `current_version`, `is_mock`. Lecture : personnel, modèles publiés seulement (firm_admin : tous). Écriture : firm_admin.
+- `contract_template_versions` : copie figée des sections (`jsonb`) et des lignes de services (`jsonb`), par version.
+- `contracts` reçoit `template_id`, `template_version`, `template_draft` (brouillon de modèle, exclu de la liste) et `client_province`. Le trigger `guard_contract_template` empêche de les falsifier.
+- `contract_clauses` (titre, langue, domaine, texte, actif, version) et `contract_clause_history` (version précédente, par trigger ; lecture firm_admin).
+- `service_catalog` (noms FR/EN, forfait ou horaire, `amount numeric`, actif, `is_mock`) : lecture personnel, écriture firm_admin.
+- `contract_line_items` : lignes de services d'un contrat (au plus 100, `private.contract_line_count`), mêmes droits que les sections (verrou exigé).
+- `tax_rates` : province, code (`HST`, `GST`, `QST`, `PST`), taux en pour cent (3 décimales), période, `needs_verification`. Lecture personnel, écriture firm_admin.
+- Fonctions : `public.contract_template_from_contract` (crée un brouillon), `public.contract_template_publish` (firm_admin, seule à faire sortir un modèle du brouillon : trigger `guard_contract_template_status`), `public.contract_replace_lines` (security invoker, remplace le tableau des services en une transaction), `private.contract_snapshot`.
+- Journal (trigger `audit_contract_library`) : `contract_template.*`, `contract_clause.*`, `service_catalog.*`, `tax_rate.*` (`created` / `updated`) ; par les fonctions : `contract_template.created`, `contract_template.published`.
+
+## Contrats dans le portail client (ADR 0035, migrations `20261022120000` et `20261022120100`)
+- `contracts` reçoit `sent_at`, `sent_by`, `sent_version`, `signing_mode` (`clio`, `portal`), `viewed_at`, `accepted_at`, `accepted_name`. Ces colonnes ne sont écrites que par les fonctions ci-dessous (garde-fou `guard_contract`, indicateur `lex.contract_flow`).
+- `public.contract_send(contract, mode)` : personnel avec le verrou ; client avec un compte actif exigé ; mode imposé par le modèle sauf « au choix » ; version figée.
+- `public.client_contracts()` et `public.client_contract(id)` : le client (session aal2) lit seulement ses contrats envoyés, dans la version figée. `public.client_contract_viewed(id)` enregistre la première consultation.
+- `public.client_contract_accept(id, nom)` : acceptation en mode portail, une seule fois.
+- Types de notification `contract_sent` et `court_date_changed`.
+- Journal : `contract.sent`, `contract.viewed`, `contract.signed`, `contract.accepted` (sans le nom tapé).
+- `private.client_sees_contract(id)` : le sien, envoyé, en session client, **et** accès non révoqué au dossier lié. L'envoi exige aussi cet accès.

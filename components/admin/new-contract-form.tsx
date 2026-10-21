@@ -22,6 +22,8 @@ export function NewContractForm({
   clients,
   matters,
   defaultMatterId,
+  templates,
+  defaultTemplateId,
   checkEmail,
 }: {
   action: Action;
@@ -29,6 +31,9 @@ export function NewContractForm({
   clients: Client[];
   matters: Matter[];
   defaultMatterId: string | null;
+  /** Modèles publiés (lot 2) : le contrat part de leurs sections et de leur tableau des services. */
+  templates: { id: string; name: string; language: "fr" | "en"; domainLabel: string }[];
+  defaultTemplateId: string | null;
   checkEmail: (locale: string, email: string) => Promise<boolean>;
 }) {
   const t = useTranslations("admin.contracts.newForm");
@@ -40,7 +45,12 @@ export function NewContractForm({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [clientLanguage, setClientLanguage] = useState<"fr" | "en">(locale === "fr" ? "fr" : "en");
-  const [language, setLanguage] = useState<"fr" | "en">(locale === "fr" ? "fr" : "en");
+  const [templateId, setTemplateId] = useState(defaultTemplateId ?? "");
+  const template = templates.find((x) => x.id === templateId);
+  const [language, setLanguage] = useState<"fr" | "en">(
+    template?.language ?? (locale === "fr" ? "fr" : "en"),
+  );
+  const tp = useTranslations("admin.contracts.provinces");
   const [known, setKnown] = useState(false);
 
   const pickClient = (id: string) => {
@@ -51,13 +61,14 @@ export function NewContractForm({
     setEmail(c.email);
     setPhone(c.phone ?? "");
     setClientLanguage(c.language);
-    setLanguage(c.language);
+    if (!template) setLanguage(c.language);
   };
 
   return (
     <form action={formAction} className="space-y-6">
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="clientId" value={mode === "existing" ? clientId : ""} />
+      {template ? <input type="hidden" name="language" value={language} /> : null}
       <FormAlert
         message={state.error ? t(`errors.${state.error === "INVALID" ? "INVALID" : "FAILED"}`) : undefined}
       />
@@ -65,6 +76,30 @@ export function NewContractForm({
       <fieldset className="space-y-4">
         <legend className="mb-2 font-display text-lg font-bold text-marine">{t("contractLegend")}</legend>
         <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1 sm:col-span-2">
+            <label htmlFor="n-template" className={labelClass}>
+              {t("template")}
+            </label>
+            <select
+              id="n-template"
+              name="templateId"
+              value={templateId}
+              onChange={(e) => {
+                setTemplateId(e.target.value);
+                const tpl = templates.find((x) => x.id === e.target.value);
+                if (tpl) setLanguage(tpl.language);
+              }}
+              className={inputClass}
+            >
+              <option value="">{t("blank")}</option>
+              {templates.map((tpl) => (
+                <option key={tpl.id} value={tpl.id}>
+                  {tpl.name} · {tpl.domainLabel} · {tl(tpl.language)}
+                </option>
+              ))}
+            </select>
+            {template ? <p className="text-xs text-ink-muted">{t("templateHelp")}</p> : null}
+          </div>
           <div className="space-y-1 sm:col-span-2">
             <label htmlFor="n-title" className={labelClass}>
               {t("title")}
@@ -75,6 +110,8 @@ export function NewContractForm({
               required
               maxLength={200}
               placeholder={t("titlePlaceholder")}
+              defaultValue={template?.name}
+              key={templateId}
               className={inputClass}
             />
           </div>
@@ -86,6 +123,7 @@ export function NewContractForm({
               id="n-language"
               name="language"
               value={language}
+              disabled={Boolean(template)}
               onChange={(e) => setLanguage(e.target.value as "fr" | "en")}
               className={inputClass}
             >
@@ -233,6 +271,19 @@ export function NewContractForm({
             >
               <option value="fr">{tl("fr")}</option>
               <option value="en">{tl("en")}</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="n-province" className={labelClass}>
+              {t("clientProvince")}
+            </label>
+            <select id="n-province" name="clientProvince" defaultValue="" className={inputClass}>
+              <option value="">{t("noProvince")}</option>
+              {(["NB", "NS", "ON", "QC", "PE", "NL", "other"] as const).map((pv) => (
+                <option key={pv} value={pv}>
+                  {tp(pv)}
+                </option>
+              ))}
             </select>
           </div>
         </div>

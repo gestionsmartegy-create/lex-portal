@@ -197,6 +197,33 @@
       "cta": "Open the portal",
       "signature": "Lex Canada Law",
       "settings": "You can turn off these emails in your profile."
+    },
+    "contractSent": {
+      "subject": "A document is waiting for you — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "Your law firm has sent you a document in your secure portal. For your privacy, its content is only available in the portal.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
+    },
+    "courtChanged": {
+      "subject": "A date has changed — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "A date related to your matter has been added or changed. For your privacy, the details are only available in your secure portal.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
+    },
+    "documentRequested": {
+      "subject": "A document is requested from you — Lex Canada Law",
+      "greeting": "Hello,",
+      "greetingName": "Hello {name},",
+      "body": "Your law firm is requesting a document. For your privacy, the details are only available in your secure portal, where you can upload it.",
+      "cta": "Open the portal",
+      "signature": "Lex Canada Law",
+      "settings": "You can turn off these emails in your profile."
     }
   },
   "portal": {
@@ -214,7 +241,8 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "clientNumber": "Client #{number}",
-      "countLabel": "{count} new"
+      "countLabel": "{count} new",
+      "contracts": "Contracts"
     },
     "header": {
       "notifications": "Notifications",
@@ -430,7 +458,17 @@
       "documentRequestedBody": "The firm is asking you for a document for matter {number}.",
       "courtSoonTitle": "Upcoming court date",
       "courtTomorrowTitle": "Court date within 24 hours",
-      "courtReminderBody": "{kind}: {when}. See the details and your lawyer's instructions."
+      "courtReminderBody": "{kind}: {when}. See the details and your lawyer's instructions.",
+      "contractSentTitle": "A contract has been sent to you",
+      "contractSentBodyPortal": "Read it and accept it in your portal.",
+      "contractSentBodyClio": "Read it in your portal. Your lawyer will send it to you for signature through Clio.",
+      "courtChange": {
+        "added": "New court date",
+        "moved": "A court date has been moved",
+        "changed": "A court date has been changed",
+        "cancelled": "A court date has been cancelled"
+      },
+      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions."
     },
     "search": {
       "label": "Search the portal",
@@ -478,12 +516,14 @@
       "todo": {
         "signature": "Sign: {title}",
         "request": "Provide: {title}",
-        "invoice": "Pay invoice {title}"
+        "invoice": "Pay invoice {title}",
+        "contract": "Accept: {title}"
       },
       "cta": {
         "signature": "Read and sign",
         "request": "Upload the document",
-        "invoice": "See the invoice"
+        "invoice": "See the invoice",
+        "contract": "Read and accept"
       },
       "yourMatters": "Your matters",
       "nextHearing": "Next hearing",
@@ -491,6 +531,34 @@
       "instructions": "Your lawyer's instructions:",
       "seeAppointments": "See all your appointments",
       "noHearing": "No hearing scheduled for now."
+    },
+    "contracts": {
+      "title": "My contracts",
+      "subtitle": "Contracts the firm has sent you.",
+      "none": "No contracts yet.",
+      "sentOn": "Sent on {date}",
+      "acceptedOn": "Accepted on {date}",
+      "states": {
+        "toAccept": "To accept",
+        "toSignClio": "To sign in Clio",
+        "accepted": "Accepted"
+      },
+      "back": "My contracts",
+      "print": "Print or save as PDF",
+      "notices": {
+        "accepted": "Thank you, your acceptance has been recorded.",
+        "invalid": "Type your full name and tick the box to accept.",
+        "failed": "Your acceptance could not be recorded. Try again."
+      },
+      "acceptTitle": "Accept this contract",
+      "acceptedTitle": "Contract accepted",
+      "clioTitle": "Signature in Clio",
+      "acceptedBy": "Accepted by {name} on {date}.",
+      "clioHelp": "Your lawyer will send you this contract for signature through Clio. You will receive an email from Clio.",
+      "acceptHelp": "By typing your name and ticking the box, you accept this contract as shown above. The date and time are recorded.",
+      "fullName": "Your full name",
+      "agree": "I have read this contract and I accept it.",
+      "accept": "Accept the contract"
     }
   },
   "admin": {
@@ -574,7 +642,10 @@
       "contractsInReview": "In review",
       "myContracts": "My contracts",
       "newContract": "New contract",
-      "submenu": "Shortcuts: {name}"
+      "submenu": "Shortcuts: {name}",
+      "contractTemplates": "Templates",
+      "contractClauses": "Clauses",
+      "contractServices": "Services and taxes"
     },
     "overview": {
       "title": "Firm workspace",
@@ -1170,7 +1241,7 @@
     "requests": {
       "title": "Document requests",
       "subtitle": "Every document requested from clients, across your matters.",
-      "bulkCreate": "Request from several matters",
+      "bulkCreate": "Same request to several matters",
       "bulkSubtitle": "Send the same request to the clients of several matters at once.",
       "back": "All requests",
       "none": "No document request.",
@@ -1213,7 +1284,39 @@
       "notices": {
         "invalid": "Please check the form (at least one item must be checked).",
         "report": "{action}: {done} done, {skipped} skipped, {failed} failed.",
-        "tooMany": "Too many batch sends in the last hour. Please try again later."
+        "tooMany": "Too many batch sends in the last hour. Please try again later.",
+        "asked": "Request sent. The client has been notified.",
+        "ask_invalid": "Enter the requested document and choose a matter.",
+        "ask_failed": "The request could not be sent. Try again.",
+        "ask_tooMany": "Too many requests sent in the last hour. Try again later."
+      },
+      "ask": "Request a document",
+      "askSubtitle": "Ask a client for a document, for one of their matters.",
+      "backToClients": "Document requests",
+      "askStep1": "1. Client",
+      "askStep2": "2. Matter",
+      "askClient": "Client",
+      "askClientPlaceholder": "Choose a client…",
+      "askContinue": "Continue",
+      "askChangeClient": "Change client",
+      "requestTitlePlaceholder": "E.g. copy of passport, March bank statement",
+      "askHelp": "The client is notified in their portal and by email (without details). They upload the document directly in their portal.",
+      "askSubmit": "Send the request",
+      "tabs": {
+        "label": "Request views",
+        "clients": "Clients",
+        "all": "All requests"
+      },
+      "clients": {
+        "search": "Search for a client (name or email)",
+        "searchButton": "Search",
+        "none": "No clients on your open matters.",
+        "noMatch": "No client matches this search.",
+        "overdue": "{count, plural, one {# overdue} other {# overdue}}",
+        "pending": "{count, plural, one {# pending} other {# pending}}",
+        "nothing": "No open requests",
+        "ask": "Request a document",
+        "askFor": "Request a document from {name}"
       }
     },
     "offices": {
@@ -1549,7 +1652,10 @@
         "matter_title": "Matter title",
         "lawyer_name": "Lawyer",
         "firm_name": "Firm",
-        "date_today": "Today's date"
+        "date_today": "Today's date",
+        "fees_subtotal": "Fees (subtotal)",
+        "fees_taxes": "Taxes",
+        "fees_total": "Total fees"
       },
       "newForm": {
         "contractLegend": "Contract",
@@ -1575,7 +1681,12 @@
         "errors": {
           "INVALID": "Check the fields: a title, a name and a valid email are required.",
           "FAILED": "The contract could not be created. Please try again."
-        }
+        },
+        "template": "Start from",
+        "blank": "Blank contract",
+        "templateHelp": "The sections, services and language come from the template. You can change everything afterwards.",
+        "clientProvince": "Client's province (for taxes)",
+        "noProvince": "Not specified"
       },
       "editor": {
         "bodyLabel": "Text of section {title}",
@@ -1638,7 +1749,9 @@
           "clientEmail": "Email",
           "clientAddress": "Address",
           "clientPhone": "Phone",
-          "clientLanguage": "Client language"
+          "clientLanguage": "Client language",
+          "clientProvince": "Client's province",
+          "noProvince": "Not specified"
         },
         "saveHeader": "Save details",
         "versions": "Versions",
@@ -1664,6 +1777,192 @@
           "LOCKED": "You no longer hold this contract (someone else is editing it). Reload the page.",
           "INVALID": "Check the information entered.",
           "FAILED": "Saving failed. Please try again."
+        },
+        "insertClause": "Insert a clause…",
+        "template": {
+          "title": "Template",
+          "draftHelp": "You are editing a template. When it is ready, publish it as a new version: contracts already created are not changed.",
+          "publish": "Publish this version",
+          "published": "Template published.",
+          "saveAs": "Save as a template",
+          "name": "Template name",
+          "domain": "Area",
+          "signing": "How the client signs",
+          "create": "Create the template",
+          "created": "Template created as a draft. Review and publish it from Templates.",
+          "domains": {
+            "immigration": "Immigration",
+            "legal": "Legal services",
+            "business": "Business",
+            "advisory": "Advisory",
+            "other": "Other"
+          },
+          "signingModes": {
+            "clio": "Signature in Clio",
+            "portal": "Acceptance in the portal",
+            "both": "Either, chosen when sending"
+          },
+          "privacyWarning": "The template will be visible to all firm staff. Remove anything specific to this client (names, details typed in the text): use fields such as “Client name” instead.",
+          "privacyConfirm": "I have removed all data specific to the client."
+        },
+        "send": {
+          "title": "Send to client",
+          "needsAccount": "To send, the contract must be linked to a client who already has a portal account.",
+          "needsFields": "First complete: {fields}.",
+          "modeFixed": "Signature set by the template: {mode}.",
+          "modeLabel": "How the client signs",
+          "modes": {
+            "portal": "Acceptance in the portal",
+            "clio": "Signature in Clio"
+          },
+          "button": "Send to client",
+          "confirm": "Send this contract to the client? The current version will be frozen and the client will be notified.",
+          "help": "The client receives a portal notice and an email without the contract's content.",
+          "sent": "Contract sent to the client.",
+          "trackTitle": "Delivery tracking",
+          "sentOn": "Sent on {date}",
+          "viewedOn": "Viewed by the client on {date}",
+          "notViewed": "Not yet viewed by the client.",
+          "acceptedBy": "Accepted by {name} on {date}",
+          "clioNext": "To start in Clio: signature is launched from the Clio matter."
+        }
+      },
+      "tabs": {
+        "label": "Contract sections",
+        "contracts": "Contracts",
+        "templates": "Templates",
+        "clauses": "Clauses",
+        "services": "Services and taxes"
+      },
+      "provinces": {
+        "NB": "New Brunswick",
+        "NS": "Nova Scotia",
+        "ON": "Ontario",
+        "QC": "Quebec",
+        "PE": "Prince Edward Island",
+        "NL": "Newfoundland and Labrador",
+        "other": "Other province or abroad"
+      },
+      "annex": "Schedule — Services and fees",
+      "annexCols": {
+        "description": "Service",
+        "quantity": "Qty / hours",
+        "unit": "Unit price",
+        "total": "Total",
+        "subtotal": "Subtotal"
+      },
+      "services": {
+        "title": "Services and fees",
+        "empty": "No services yet. Add one from the catalogue or enter it by hand.",
+        "description": "Service description",
+        "hours": "Hours",
+        "quantity": "Quantity",
+        "hourlyRate": "Hourly rate",
+        "unitPrice": "Unit price",
+        "remove": "Remove this line",
+        "addFromCatalog": "Add from the catalogue…",
+        "perHour": "/ hour",
+        "addLine": "Add a line",
+        "invalid": "Check each line: a description, a quantity above zero and a price with at most 2 decimals.",
+        "subtotal": "Subtotal",
+        "tax": {
+          "HST": "HST",
+          "GST": "GST",
+          "QST": "QST",
+          "PST": "PST"
+        },
+        "total": "Total",
+        "province": "Taxes for: {province}.",
+        "noProvince": "Choose the client's province in the client details to calculate taxes.",
+        "toVerify": "Tax rates still to be confirmed by the firm.",
+        "save": "Save services",
+        "saved": "Services saved.",
+        "failed": "The services could not be saved. Try again."
+      },
+      "templates": {
+        "title": "Contract templates",
+        "subtitle": "Ready-made contracts to start from.",
+        "helpLabel": "About templates",
+        "help": "Use a published template to create a contract already written. Only firm administrators can change a template: the change opens in the editor and becomes a new version when published.",
+        "none": "No templates yet.",
+        "version": "Version {version}",
+        "use": "Use",
+        "edit": "Edit",
+        "review": "Review and publish",
+        "settings": "Settings",
+        "statusLabel": "Status",
+        "saveSettings": "Save settings",
+        "status": {
+          "published": "Published",
+          "draft": "Draft",
+          "archived": "Archived",
+          "review": "To be reviewed by a lawyer"
+        },
+        "notices": {
+          "saved": "Template settings saved.",
+          "published": "Template published.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The action failed. Try again."
+        },
+        "description": "Description"
+      },
+      "clauses": {
+        "title": "Clause library",
+        "subtitle": "Standard paragraphs to insert into a contract.",
+        "helpLabel": "About clauses",
+        "help": "A clause is inserted at the cursor from the editor (“Insert a clause…”). Each change keeps the previous version. Only active clauses in the contract's language are offered.",
+        "new": "New clause",
+        "none": "No clauses yet.",
+        "bodyHelp": "Plain text. Leave an empty line between paragraphs.",
+        "version": "Version {version}",
+        "active": "Active",
+        "inactive": "Inactive",
+        "save": "Save",
+        "add": "Add the clause",
+        "fields": {
+          "title": "Title",
+          "language": "Language",
+          "body": "Text",
+          "status": "Status"
+        },
+        "notices": {
+          "saved": "Clause saved.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The clause could not be saved. Try again."
+        }
+      },
+      "catalog": {
+        "title": "Services and taxes",
+        "subtitle": "Service catalogue and tax rates used in contracts.",
+        "helpLabel": "About services and taxes",
+        "help": "Services are added to a contract in one click with their price. Taxes are calculated from the client's province on the date of the contract. Rates marked “to verify” must be confirmed by the firm.",
+        "new": "New service",
+        "listTitle": "Catalogue",
+        "none": "No services yet.",
+        "flat": "Flat fee",
+        "hourly": "Hourly",
+        "save": "Save",
+        "add": "Add the service",
+        "taxTitle": "Tax rates",
+        "taxHelp": "Rates in percent. Check the box once the firm has confirmed the rate.",
+        "period": "From {from} to {to}",
+        "since": "Since {from}",
+        "verified": "Confirmed",
+        "toVerify": "To verify",
+        "saveRate": "Save the rate",
+        "fields": {
+          "nameFr": "Name (French)",
+          "nameEn": "Name (English)",
+          "pricing": "Pricing",
+          "amount": "Amount (CAD)",
+          "rate": "Rate (%)",
+          "effectiveFrom": "In effect from"
+        },
+        "notices": {
+          "saved": "Service saved.",
+          "taxSaved": "Tax rate saved.",
+          "invalid": "Check the fields and try again.",
+          "failed": "The change could not be saved. Try again."
         }
       }
     },

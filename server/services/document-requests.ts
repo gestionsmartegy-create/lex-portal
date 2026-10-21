@@ -223,3 +223,127 @@ export async function bulkCreateRequests(input: {
   }
   return report;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Demandes par client (2026-10-20) : liste des clients de ses dossiers et demande ciblée.
+// ---------------------------------------------------------------------------------------------
+export type RequestClient = {
+  id: string;
+  name: string;
+  email: string;
+  matters: { id: string; number: string | null; title: string }[];
+  pending: number;
+  overdue: number;
+};
+
+/**
+ * Clients ayant un accès ACTIF à un dossier ouvert que la personne voit (RLS : ses équipes, ou tous
+ * pour le firm_admin), avec leurs demandes en attente et en retard. Recherche par nom ou courriel.
+ */
+export async function listRequestClients(q?: string): Promise<RequestClient[]> {
+  if (!(await isStaff())) return [];
+  const supabase = await createSupabaseServerClient();
+  const { data: access } = await supabase
+    .from("matter_access")
+    .select("user_id, matter_id, matters!inner(display_number, title, status)")
+    .is("revoked_at", null)
+    .eq("matters.status", "open")
+    .limit(2000);
+  const rows = (access ?? []) as unknown as {
+    user_id: string;
+    matter_id: string;
+    matters: { display_number: string | null; title: string };
+  }[];
+  const ids = [...new Set(rows.map((r) => r.user_id))];
+  if (!ids.length) return [];
+  const [{ data: people }, { data: requests }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, first_name, last_name, email, role, status")
+      .in("id", ids)
+      .eq("role", "client")
+      .eq("status", "active"),
+    supabase
+      .from("document_requests")
+      .select("requested_from, due_date")
+      .in("requested_from", ids)
+      .eq("status", "pending")
+      .limit(LIMIT),
+  ]);
+  const today = todayHalifax();
+  const counts = new Map<string, { pending: number; overdue: number }>();
+  for (const r of requests ?? []) {
+    const c = counts.get(r.requested_from) ?? { pending: 0, overdue: 0 };
+    if (r.due_date !== null && r.due_date < today) c.overdue += 1;
+    else c.pending += 1;
+    counts.set(r.requested_from, c);
+  }
+  const needle = q?.trim().toLowerCase();
+  return (people ?? [])
+    .map((p): RequestClient => {
+      const name = [p.first_name, p.last_name].filter(Boolean).join(" ") || p.email;
+      const matters = new Map<string, { id: string; number: string | null; title: string }>();
+      for (const r of rows)
+        if (r.user_id === p.id)
+          matters.set(r.matter_id, {
+            id: r.matter_id,
+            number: r.matters.display_number,
+            title: r.matters.title,
+          });
+      return {
+        id: p.id,
+        name,
+        email: p.email,
+        matters: [...matters.values()],
+        ...(counts.get(p.id) ?? { pending: 0, overdue: 0 }),
+      };
+    })
+    .filter((c) => !needle || c.name.toLowerCase().includes(needle) || c.email.toLowerCase().includes(needle))
+    .sort((a, b) => b.overdue - a.overdue || a.name.localeCompare(b.name));
+}
+
+export const clientRequestSchema = z.object({
+  clientId: z.uuid(),
+  matterId: z.uuid(),
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(1000).default(""),
+  dueDate: z
+    .string()
+    .optional()
+    .transform((v) => (v ? v : null))
+    .pipe(z.iso.date().nullable()),
+});
+
+/**
+ * Demande à UN client pour UN de ses dossiers : le client doit avoir un accès actif au dossier
+ * (revérifié ici), puis le service commun revérifie l'accès du personnel au dossier, crée la demande
+ * et avertit le client.
+ */
+export async function createClientRequest(input: z.infer<typeof clientRequestSchema>) {
+  if (!(await isStaff())) return { ok: false as const };
+  const supabase = await createSupabaseServerClient();
+  // Avec la session (RLS : dossiers de ses équipes) : accès actif du client à ce dossier ouvert.
+  const [{ data: access }, { data: person }] = await Promise.all([
+    supabase
+      .from("matter_access")
+      .select("user_id, matters!inner(status)")
+      .eq("user_id", input.clientId)
+      .eq("matter_id", input.matterId)
+      .is("revoked_at", null)
+      .eq("matters.status", "open")
+      .limit(1),
+    supabase.from("profiles").select("role, status").eq("id", input.clientId).maybeSingle(),
+  ]);
+  if (!access?.length || person?.role !== "client" || person.status !== "active")
+    return { ok: false as const };
+  const r = await safely(() =>
+    createDocumentRequest(input.matterId, {
+      clientId: input.clientId,
+      templateDocumentId: null,
+      title: input.title,
+      description: input.description,
+      dueDate: input.dueDate,
+    }),
+  );
+  return { ok: Boolean(r?.ok) };
+}

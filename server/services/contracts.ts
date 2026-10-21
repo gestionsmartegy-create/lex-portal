@@ -13,13 +13,24 @@ import {
   type FieldValues,
 } from "@/lib/contract-doc";
 import { contractSkeleton } from "@/lib/contract-skeleton";
-import { DEFAULT_TIMEZONE } from "@/lib/format";
+import { DEFAULT_TIMEZONE, formatMoney } from "@/lib/format";
+import { computeTotals, type Totals } from "@/lib/money";
 import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { getAiGateway } from "@/server/providers";
 import { AiError, aiAssistKinds, type AiAssistKind } from "@/server/providers/ai/gateway";
 import { hitRateLimit } from "@/server/security/rate-limit";
+import { notifyContractSent } from "@/server/services/client-notifier";
 import { recordAudit } from "@/server/services/audit";
+import {
+  copyTemplateContent,
+  getTemplateVersion,
+  listTaxRates,
+  provinces,
+  ratesFor,
+  templateLineSchema,
+  type Province,
+} from "@/server/services/contract-library";
 import { assertStaffMatterAccess } from "@/server/services/matter-tracking";
 
 /**
@@ -62,10 +73,18 @@ export const contractHeaderSchema = z.object({
     .optional()
     .transform((v) => (v ? v : null)),
   clientLanguage: z.enum(["fr", "en"]),
+  clientProvince: z
+    .union([z.literal(""), z.enum(provinces)])
+    .optional()
+    .transform((v) => (v ? v : null)),
 });
 export type ContractHeader = z.infer<typeof contractHeaderSchema>;
 
 export const newContractSchema = contractHeaderSchema.extend({
+  templateId: z
+    .union([z.literal(""), uuid])
+    .optional()
+    .transform((v) => v || null),
   matterId: z
     .union([z.literal(""), uuid])
     .optional()
@@ -82,7 +101,15 @@ export const contractFiltersSchema = z.object({
   mine: z.enum(["1"]).optional().catch(undefined),
 });
 
-type Fail = "NOT_FOUND" | "LOCKED" | "INVALID" | "FAILED" | "RATE_LIMITED" | "UNAVAILABLE";
+type Fail =
+  | "NOT_FOUND"
+  | "LOCKED"
+  | "INVALID"
+  | "FAILED"
+  | "RATE_LIMITED"
+  | "UNAVAILABLE"
+  | "NO_CLIENT_ACCOUNT"
+  | "MISSING_FIELDS";
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; code: Fail };
 const fail = (code: Fail) => ({ ok: false as const, code });
 const ok = <T>(data: T) => ({ ok: true as const, data });
@@ -114,6 +141,7 @@ export async function listContracts(filters: z.infer<typeof contractFiltersSchem
   let query = supabase
     .from("contracts")
     .select(LIST_COLUMNS)
+    .eq("template_draft", false)
     .order("updated_at", { ascending: false })
     .limit(200);
   if (filters.status === "active") query = query.not("status", "in", "(cancelled,superseded)");
@@ -202,12 +230,18 @@ export async function createContract(input: z.infer<typeof newContractSchema>): 
   const user = await staffUser();
   if (!user) return fail("NOT_FOUND");
   if (input.matterId) await assertStaffMatterAccess(input.matterId);
+  const template = input.templateId ? await getTemplateVersion(input.templateId) : null;
+  if (input.templateId && (!template || template.template.status !== "published")) return fail("INVALID");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("contracts")
     .insert({
       title: input.title,
-      language: input.language,
+      // Un contrat issu d'un modèle est dans la langue du modèle.
+      language: template ? (template.template.language as "fr" | "en") : input.language,
+      template_id: template?.template.id ?? null,
+      template_version: template?.version ?? null,
+      client_province: input.clientProvince,
       matter_id: input.matterId,
       client_id: input.clientId,
       client_name: input.clientName,
@@ -219,6 +253,10 @@ export async function createContract(input: z.infer<typeof newContractSchema>): 
     .select("id")
     .single();
   if (error || !data) return fail(dbFail(error?.code));
+  if (template) {
+    const copied = await copyTemplateContent(data.id, template.sections, template.lines);
+    return copied ? ok(data.id) : fail("FAILED");
+  }
   // L'auteur tient le verrou depuis la création : il pose les sections de départ.
   const { error: sectionsError } = await supabase.from("contract_sections").insert(
     contractSkeleton(input.language).map((s, position) => ({
@@ -248,7 +286,7 @@ export async function getContract(id: string) {
   const { data: c } = await supabase
     .from("contracts")
     .select(
-      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at",
+      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, client_province, template_id, template_version, template_draft, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at, sent_at, sent_by, sent_version, signing_mode, viewed_at, accepted_at, accepted_name",
     )
     .eq("id", id)
     .maybeSingle();
@@ -307,8 +345,43 @@ export async function getContract(id: string) {
     cancelReason: c.cancel_reason,
     updatedAt: c.updated_at,
     editable: c.status === "draft" || c.status === "in_review",
+    clientProvince: (c.client_province as Province | null) ?? null,
+    templateId: c.template_id,
+    templateVersion: c.template_version,
+    templateDraft: c.template_draft,
+    sentAt: c.sent_at,
+    sentVersion: c.sent_version,
+    signingMode: (c.signing_mode as "clio" | "portal" | null) ?? null,
+    viewedAt: c.viewed_at,
+    acceptedAt: c.accepted_at,
+    acceptedName: c.accepted_name,
+    templateSigning: null as "clio" | "portal" | "both" | null,
   };
-  const values = fieldValues(contract);
+  if (c.template_id) {
+    const { data: tpl } = await supabase
+      .from("contract_templates")
+      .select("signing")
+      .eq("id", c.template_id)
+      .maybeSingle();
+    contract.templateSigning = (tpl?.signing as "clio" | "portal" | "both" | undefined) ?? null;
+  }
+  const [{ data: lineRows }, taxRates] = await Promise.all([
+    supabase
+      .from("contract_line_items")
+      .select("id, position, service_id, description, pricing, quantity::text, unit_price::text")
+      .eq("contract_id", id)
+      .order("position")
+      .order("created_at"),
+    listTaxRates(),
+  ]);
+  const lines = (lineRows ?? []) as unknown as ContractLine[];
+  // Taux en vigueur à la date du contrat : un changement de taux ne modifie pas un contrat déjà rédigé.
+  const contractDay = new Intl.DateTimeFormat("en-CA", { timeZone: DEFAULT_TIMEZONE }).format(
+    new Date(c.created_at),
+  );
+  const rates = ratesFor(taxRates, contract.clientProvince, contractDay);
+  const totals = lines.length ? computeTotals(lines, rates) : null;
+  const values = fieldValues(contract, totals);
   return {
     contract,
     sections: editorSections,
@@ -319,6 +392,10 @@ export async function getContract(id: string) {
       createdAt: v.created_at,
     })),
     lockedByOther,
+    lines,
+    totals,
+    taxesToVerify: rates.some((r) => r.needs_verification),
+    rates: rates.map((r) => ({ tax_code: r.tax_code, rate: r.rate })),
     values,
     missing: missingFields(
       editorSections.map((s) => s.body),
@@ -328,16 +405,25 @@ export async function getContract(id: string) {
 }
 
 /** Valeurs des champs (F3) : fiche du client copiée dans le contrat, dossier, auteur, cabinet, date. */
-export function fieldValues(c: {
-  language: "fr" | "en";
-  clientName: string;
-  clientEmail: string | null;
-  clientAddress: string | null;
-  clientPhone: string | null;
-  matter: { number: string | null; title: string } | null;
-  author: string | null;
-}): FieldValues {
+export function fieldValues(
+  c: {
+    language: "fr" | "en";
+    clientName: string;
+    clientEmail: string | null;
+    clientAddress: string | null;
+    clientPhone: string | null;
+    matter: { number: string | null; title: string } | null;
+    author: string | null;
+  },
+  totals: Totals | null = null,
+  // Date du contrat : aujourd'hui en rédaction, la date d'envoi pour la version envoyée au client.
+  on: Date = new Date(),
+): FieldValues {
+  const money = (v: string) => formatMoney(v, c.language);
   return {
+    "fees.subtotal": totals ? money(totals.subtotal) : null,
+    "fees.taxes": totals ? money(totals.taxTotal) : null,
+    "fees.total": totals ? money(totals.total) : null,
     "client.name": c.clientName,
     "client.email": c.clientEmail,
     // Dans le texte du contrat, l'adresse tient sur une ligne (décision du 2026-10-18) ; la fiche garde les lignes.
@@ -356,7 +442,7 @@ export function fieldValues(c: {
     "date.today": new Intl.DateTimeFormat(c.language === "fr" ? "fr-CA" : "en-CA", {
       dateStyle: "long",
       timeZone: DEFAULT_TIMEZONE,
-    }).format(new Date()),
+    }).format(on),
   };
 }
 
@@ -408,6 +494,7 @@ export async function updateHeader(id: string, header: ContractHeader): Promise<
       client_address: header.clientAddress,
       client_phone: header.clientPhone,
       client_language: header.clientLanguage,
+      client_province: header.clientProvince,
     })
     .eq("id", id)
     .select("id");
@@ -544,6 +631,22 @@ export async function setReviewStatus(id: string, status: "draft" | "in_review")
   return data?.length ? ok(undefined) : fail("NOT_FOUND");
 }
 
+/**
+ * Envoi au client (ADR 0035) : tout membre de l'équipe qui tient le verrou (décision du 2026-10-20).
+ * Exige un client avec un compte et aucun champ vide ; la base fige une version et la revérifie.
+ */
+export async function sendContract(id: string, mode: "clio" | "portal"): Promise<Result> {
+  const loaded = await getContract(id);
+  if (!loaded || !(await writable(id))) return fail("NOT_FOUND");
+  if (!loaded.contract.clientId) return fail("NO_CLIENT_ACCOUNT");
+  if (loaded.missing.length) return fail("MISSING_FIELDS");
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("contract_send", { p_contract: id, p_mode: mode });
+  if (error) return fail(error.code === "55006" || error.code === "42501" ? "LOCKED" : dbFail(error.code));
+  await notifyContractSent(id);
+  return ok(undefined);
+}
+
 export async function cancelContract(id: string, reason: string): Promise<Result> {
   if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
@@ -622,4 +725,39 @@ export async function clientEmailKnown(email: string): Promise<boolean> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("contract_client_email_known", { p_email: parsed.data });
   return !error && Boolean(data);
+}
+
+export type ContractLine = {
+  id: string;
+  position: number;
+  service_id: string | null;
+  description: string;
+  pricing: "flat" | "hourly";
+  quantity: string;
+  unit_price: string;
+};
+
+export const linesInputSchema = z.array(templateLineSchema).max(100);
+
+/**
+ * Tableau des services (F6) : remplacé en entier, en une transaction (`contract_replace_lines`, verrou exigé
+ * par la base ; en cas d'erreur, l'ancien tableau reste).
+ * Montants en chaînes décimales exactes, jamais en nombre flottant.
+ */
+export async function saveLines(contractId: string, input: unknown): Promise<Result> {
+  if (!(await writable(contractId))) return fail("NOT_FOUND");
+  const parsed = linesInputSchema.safeParse(input);
+  if (!parsed.success) return fail("INVALID");
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("contract_replace_lines", {
+    p_contract: contractId,
+    p_lines: parsed.data.map((l) => ({
+      description: l.description,
+      pricing: l.pricing,
+      quantity: l.quantity,
+      unit_price: l.unit_price,
+      service_id: l.service_id ?? null,
+    })),
+  });
+  return error ? fail(dbFail(error.code)) : ok(undefined);
 }

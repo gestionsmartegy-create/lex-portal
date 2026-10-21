@@ -17,6 +17,12 @@ import {
   updateHeaderAction,
   versionAction,
 } from "@/server/actions/contracts";
+import {
+  publishTemplateAction,
+  saveLinesAction,
+  templateFromContractAction,
+} from "@/server/actions/contract-library";
+import { listClauses, listServices } from "@/server/services/contract-library";
 import { requireStaff } from "@/server/auth/session";
 import { getContract } from "@/server/services/contracts";
 
@@ -24,10 +30,14 @@ import { getContract } from "@/server/services/contracts";
 export default async function ContractPage({ params }: PageProps<"/[locale]/admin/contracts/[contractId]">) {
   const { locale, contractId } = await params;
   setRequestLocale(locale);
-  await requireStaff(locale);
+  const { role } = await requireStaff(locale);
   const loaded = await getContract(contractId);
   if (!loaded) notFound();
-  const t = await getTranslations("admin.contracts");
+  const [t, services, clauses] = await Promise.all([
+    getTranslations("admin.contracts"),
+    listServices(true),
+    listClauses(loaded.contract.language),
+  ]);
   const { contract } = loaded;
   const labels = Object.fromEntries(
     contractFieldKeys.map((k) => [k, t(`fieldKeys.${k.replace(".", "_")}`)]),
@@ -85,7 +95,33 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           clientAddress: contract.clientAddress,
           clientPhone: contract.clientPhone,
           clientLanguage: contract.clientLanguage,
+          clientProvince: contract.clientProvince,
+          templateDraft: contract.templateDraft,
+          hasClientAccount: Boolean(contract.clientId),
+          templateSigning: contract.templateSigning,
+          sentAt: contract.sentAt,
+          signingMode: contract.signingMode,
+          viewedAt: contract.viewedAt,
+          acceptedAt: contract.acceptedAt,
+          acceptedName: contract.acceptedName,
         }}
+        isFirmAdmin={role === "firm_admin"}
+        lines={loaded.lines.map((l) => ({
+          description: l.description,
+          pricing: l.pricing,
+          quantity: l.quantity,
+          unit_price: l.unit_price,
+          service_id: l.service_id,
+        }))}
+        services={services.map((sv) => ({
+          id: sv.id,
+          name: contract.language === "fr" ? sv.name_fr : sv.name_en,
+          pricing: sv.pricing,
+          amount: sv.amount,
+        }))}
+        rates={loaded.rates}
+        taxesToVerify={loaded.taxesToVerify}
+        clauses={clauses.map((c) => ({ id: c.id, title: c.title, body: c.body }))}
         sections={loaded.sections}
         versions={loaded.versions}
         display={display}
@@ -99,6 +135,9 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           version: versionAction,
           status: statusAction,
           ai: aiAssistAction,
+          saveLines: saveLinesAction,
+          templateFromContract: templateFromContractAction,
+          publishTemplate: publishTemplateAction,
         }}
       />
     </>

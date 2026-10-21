@@ -22,6 +22,7 @@ export type AuditAction =
   | "matter.fields_updated"
   | "matter.opened"
   | "document_request.reminded"
+  | "document_request.created"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"

@@ -88,6 +88,84 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"contract_clause_history": {
+                  Row: {
+                    "body": string,"changed_at": string,"changed_by": string | null,"clause_id": string,"id": number,"title": string,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"changed_at"?: string,"changed_by"?: string | null,"clause_id": string,"id"?: never,"title": string,"version": number
+                  }
+                  Update: {
+                    "body"?: string,"changed_at"?: string,"changed_by"?: string | null,"clause_id"?: string,"id"?: never,"title"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_clause_history_changed_by_fkey"
+      columns: ["changed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_clause_history_clause_id_fkey"
+      columns: ["clause_id"]
+isOneToOne: false
+      referencedRelation: "contract_clauses"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_clauses": {
+                  Row: {
+                    "body": string,"created_at": string,"created_by": string | null,"domain": string,"id": string,"is_active": boolean,"language": string,"title": string,"updated_at": string,"updated_by": string | null,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"created_at"?: string,"created_by"?: string | null,"domain"?: string,"id"?: string,"is_active"?: boolean,"language": string,"title": string,"updated_at"?: string,"updated_by"?: string | null,"version"?: number
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"created_by"?: string | null,"domain"?: string,"id"?: string,"is_active"?: boolean,"language"?: string,"title"?: string,"updated_at"?: string,"updated_by"?: string | null,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_clauses_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_clauses_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_line_items": {
+                  Row: {
+                    "contract_id": string,"created_at": string,"description": string,"id": string,"position": number,"pricing": string,"quantity": number,"service_id": string | null,"unit_price": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "contract_id": string,"created_at"?: string,"description": string,"id"?: string,"position"?: number,"pricing"?: string,"quantity"?: number,"service_id"?: string | null,"unit_price": number,"updated_at"?: string
+                  }
+                  Update: {
+                    "contract_id"?: string,"created_at"?: string,"description"?: string,"id"?: string,"position"?: number,"pricing"?: string,"quantity"?: number,"service_id"?: string | null,"unit_price"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_line_items_contract_id_fkey"
+      columns: ["contract_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_line_items_service_id_fkey"
+      columns: ["service_id"]
+isOneToOne: false
+      referencedRelation: "service_catalog"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"contract_sections": {
                   Row: {
                     "ai_assisted": boolean,"body": NonNullable<Json>,"contract_id": string,"created_at": string,"id": string,"position": number,"title": string,"updated_at": string,"updated_by": string | null
@@ -109,6 +187,52 @@ isOneToOne: false
     },{
       foreignKeyName: "contract_sections_updated_by_fkey"
       columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_template_versions": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"line_items": NonNullable<Json>,"sections": NonNullable<Json>,"template_id": string,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"line_items"?: NonNullable<Json>,"sections": NonNullable<Json>,"template_id": string,"version": number
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"line_items"?: NonNullable<Json>,"sections"?: NonNullable<Json>,"template_id"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_template_versions_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_template_versions_template_id_fkey"
+      columns: ["template_id"]
+isOneToOne: false
+      referencedRelation: "contract_templates"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_templates": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"current_version": number,"description": string | null,"domain": string,"id": string,"is_mock": boolean,"language": string,"name": string,"needs_review": boolean,"signing": string,"status": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"current_version"?: number,"description"?: string | null,"domain"?: string,"id"?: string,"is_mock"?: boolean,"language": string,"name": string,"needs_review"?: boolean,"signing"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"current_version"?: number,"description"?: string | null,"domain"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"name"?: string,"needs_review"?: boolean,"signing"?: string,"status"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_templates_created_by_fkey"
+      columns: ["created_by"]
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
@@ -142,14 +266,14 @@ isOneToOne: false
                   ]
                 },"contracts": {
                   Row: {
-                    "cancel_reason": string | null,"client_address": string | null,"client_email": string | null,"client_id": string | null,"client_language": string,"client_name": string,"client_phone": string | null,"created_at": string,"created_by": string,"id": string,"is_mock": boolean,"language": string,"locked_by": string | null,"locked_until": string | null,"matter_id": string | null,"status": string,"title": string,"updated_at": string
+                    "accepted_at": string | null,"accepted_name": string | null,"cancel_reason": string | null,"client_address": string | null,"client_email": string | null,"client_id": string | null,"client_language": string,"client_name": string,"client_phone": string | null,"client_province": string | null,"created_at": string,"created_by": string,"id": string,"is_mock": boolean,"language": string,"locked_by": string | null,"locked_until": string | null,"matter_id": string | null,"sent_at": string | null,"sent_by": string | null,"sent_version": number | null,"signing_mode": string | null,"status": string,"template_draft": boolean,"template_id": string | null,"template_version": number | null,"title": string,"updated_at": string,"viewed_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name": string,"client_phone"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"status"?: string,"title": string,"updated_at"?: string
+                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name": string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title": string,"updated_at"?: string,"viewed_at"?: string | null
                   }
                   Update: {
-                    "cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name"?: string,"client_phone"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"status"?: string,"title"?: string,"updated_at"?: string
+                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name"?: string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title"?: string,"updated_at"?: string,"viewed_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -175,6 +299,18 @@ isOneToOne: false
       columns: ["matter_id"]
 isOneToOne: false
       referencedRelation: "matters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_sent_by_fkey"
+      columns: ["sent_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_template_id_fkey"
+      columns: ["template_id"]
+isOneToOne: false
+      referencedRelation: "contract_templates"
       referencedColumns: ["id"]
     }
                   ]
@@ -956,6 +1092,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"service_catalog": {
+                  Row: {
+                    "amount": number,"created_at": string,"description_en": string | null,"description_fr": string | null,"domain": string,"id": string,"is_active": boolean,"is_mock": boolean,"name_en": string,"name_fr": string,"position": number,"pricing": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "amount": number,"created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"domain"?: string,"id"?: string,"is_active"?: boolean,"is_mock"?: boolean,"name_en": string,"name_fr": string,"position"?: number,"pricing": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "amount"?: number,"created_at"?: string,"description_en"?: string | null,"description_fr"?: string | null,"domain"?: string,"id"?: string,"is_active"?: boolean,"is_mock"?: boolean,"name_en"?: string,"name_fr"?: string,"position"?: number,"pricing"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"signature_requests": {
                   Row: {
                     "created_at": string,"document_id": string,"due_at": string | null,"id": string,"matter_id": string,"provider": string,"provider_envelope_id": string | null,"requested_by": string | null,"sent_at": string | null,"signed_at": string | null,"signer_id": string,"status": Database["public"]['Enums']["signature_status"],"updated_at": string,"viewed_at": string | null
@@ -1020,6 +1170,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"tax_rates": {
+                  Row: {
+                    "created_at": string,"effective_from": string,"effective_to": string | null,"id": string,"needs_verification": boolean,"province": string,"rate": number,"tax_code": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"effective_from": string,"effective_to"?: string | null,"id"?: string,"needs_verification"?: boolean,"province": string,"rate": number,"tax_code": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"effective_from"?: string,"effective_to"?: string | null,"id"?: string,"needs_verification"?: boolean,"province"?: string,"rate"?: number,"tax_code"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
@@ -1076,6 +1240,20 @@ isOneToOne: false
 "claim_court_date_reminder":
 { Args: { "p_court_date": string,"p_kind": string,"p_user": string }; Returns: boolean
                            },
+"client_contract":
+{ Args: { "p_contract": string }; Returns: Json
+                           },
+"client_contract_accept":
+{ Args: { "p_contract": string,"p_name": string }; Returns: undefined
+                           },
+"client_contract_viewed":
+{ Args: { "p_contract": string }; Returns: undefined
+                           },
+"client_contracts":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "accepted_at": string,"id": string,"language": string,"sent_at": string,"signing_mode": string,"status": string,"title": string,"viewed_at": string
+            }[]
+                           },
 "client_court_dates":
 { Args: { "p_matter"?: string }; Returns: {
               "all_day": boolean,"client_instructions": string,"court_address": string,"court_name_en": string,"court_name_fr": string,"display_number": string,"ends_at": string,"id": string,"kind": string,"matter_id": string,"mode": string,"room": string,"starts_at": string,"status": string,"timezone": string,"virtual_link": string
@@ -1103,11 +1281,23 @@ isOneToOne: false
 "contract_release_lock":
 { Args: { "p_contract": string }; Returns: undefined
                            },
+"contract_replace_lines":
+{ Args: { "p_contract": string,"p_lines": Json }; Returns: undefined
+                           },
 "contract_restore_version":
 { Args: { "p_contract": string,"p_version": number }; Returns: number
                            },
 "contract_save_version":
 { Args: { "p_contract": string,"p_label"?: string }; Returns: number
+                           },
+"contract_send":
+{ Args: { "p_contract": string,"p_mode": string }; Returns: number
+                           },
+"contract_template_from_contract":
+{ Args: { "p_contract": string,"p_description"?: string,"p_domain": string,"p_name": string,"p_signing": string }; Returns: string
+                           },
+"contract_template_publish":
+{ Args: { "p_contract": string }; Returns: number
                            },
 "court_calendar_feed":
 { Args: { "p_from": string,"p_to": string }; Returns: {
@@ -1207,7 +1397,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "access_level": "read"|"read_write","app_role": "client"|"staff"|"firm_admin","appointment_status": "scheduled"|"completed"|"cancelled","conversation_scope": "matter"|"general","document_folder": "shared"|"client_upload"|"signed"|"internal","document_provider": "sharepoint"|"clio"|"supabase_storage"|"imanage","document_status": "uploaded"|"in_review"|"accepted"|"rejected"|"pending_signature"|"signed","invitation_status": "pending"|"accepted"|"expired"|"revoked","invoice_status": "due"|"overdue"|"paid"|"void","matter_status": "open"|"action_required"|"on_hold"|"closed","notification_priority": "urgent"|"info"|"success","notification_type": "document_requested"|"document_received"|"new_document"|"new_message"|"appointment_scheduled"|"appointment_reminder"|"matter_status_changed"|"matter_completed"|"invoice_issued"|"payment_received"|"signature_required"|"security_alert"|"court_date_reminder","org_member_role": "owner"|"member","org_type": "client_organization"|"partner","payment_status": "pending"|"processing"|"succeeded"|"failed"|"refunded"|"cancelled","request_status": "pending"|"fulfilled"|"overdue"|"cancelled","scan_status": "pending"|"clean"|"infected"|"failed"|"not_required","signature_status": "to_sign"|"sent"|"viewed"|"signed"|"declined"|"expired","team_role": "responsible"|"originating"|"collaborator"|"assistant","user_status": "invited"|"active"|"suspended"|"deactivated"
+            "access_level": "read"|"read_write","app_role": "client"|"staff"|"firm_admin","appointment_status": "scheduled"|"completed"|"cancelled","conversation_scope": "matter"|"general","document_folder": "shared"|"client_upload"|"signed"|"internal","document_provider": "sharepoint"|"clio"|"supabase_storage"|"imanage","document_status": "uploaded"|"in_review"|"accepted"|"rejected"|"pending_signature"|"signed","invitation_status": "pending"|"accepted"|"expired"|"revoked","invoice_status": "due"|"overdue"|"paid"|"void","matter_status": "open"|"action_required"|"on_hold"|"closed","notification_priority": "urgent"|"info"|"success","notification_type": "document_requested"|"document_received"|"new_document"|"new_message"|"appointment_scheduled"|"appointment_reminder"|"matter_status_changed"|"matter_completed"|"invoice_issued"|"payment_received"|"signature_required"|"security_alert"|"court_date_reminder"|"contract_sent"|"court_date_changed","org_member_role": "owner"|"member","org_type": "client_organization"|"partner","payment_status": "pending"|"processing"|"succeeded"|"failed"|"refunded"|"cancelled","request_status": "pending"|"fulfilled"|"overdue"|"cancelled","scan_status": "pending"|"clean"|"infected"|"failed"|"not_required","signature_status": "to_sign"|"sent"|"viewed"|"signed"|"declined"|"expired","team_role": "responsible"|"originating"|"collaborator"|"assistant","user_status": "invited"|"active"|"suspended"|"deactivated"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1323,7 +1513,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "access_level": ["read", "read_write"],"app_role": ["client", "staff", "firm_admin"],"appointment_status": ["scheduled", "completed", "cancelled"],"conversation_scope": ["matter", "general"],"document_folder": ["shared", "client_upload", "signed", "internal"],"document_provider": ["sharepoint", "clio", "supabase_storage", "imanage"],"document_status": ["uploaded", "in_review", "accepted", "rejected", "pending_signature", "signed"],"invitation_status": ["pending", "accepted", "expired", "revoked"],"invoice_status": ["due", "overdue", "paid", "void"],"matter_status": ["open", "action_required", "on_hold", "closed"],"notification_priority": ["urgent", "info", "success"],"notification_type": ["document_requested", "document_received", "new_document", "new_message", "appointment_scheduled", "appointment_reminder", "matter_status_changed", "matter_completed", "invoice_issued", "payment_received", "signature_required", "security_alert", "court_date_reminder"],"org_member_role": ["owner", "member"],"org_type": ["client_organization", "partner"],"payment_status": ["pending", "processing", "succeeded", "failed", "refunded", "cancelled"],"request_status": ["pending", "fulfilled", "overdue", "cancelled"],"scan_status": ["pending", "clean", "infected", "failed", "not_required"],"signature_status": ["to_sign", "sent", "viewed", "signed", "declined", "expired"],"team_role": ["responsible", "originating", "collaborator", "assistant"],"user_status": ["invited", "active", "suspended", "deactivated"]
+            "access_level": ["read", "read_write"],"app_role": ["client", "staff", "firm_admin"],"appointment_status": ["scheduled", "completed", "cancelled"],"conversation_scope": ["matter", "general"],"document_folder": ["shared", "client_upload", "signed", "internal"],"document_provider": ["sharepoint", "clio", "supabase_storage", "imanage"],"document_status": ["uploaded", "in_review", "accepted", "rejected", "pending_signature", "signed"],"invitation_status": ["pending", "accepted", "expired", "revoked"],"invoice_status": ["due", "overdue", "paid", "void"],"matter_status": ["open", "action_required", "on_hold", "closed"],"notification_priority": ["urgent", "info", "success"],"notification_type": ["document_requested", "document_received", "new_document", "new_message", "appointment_scheduled", "appointment_reminder", "matter_status_changed", "matter_completed", "invoice_issued", "payment_received", "signature_required", "security_alert", "court_date_reminder", "contract_sent", "court_date_changed"],"org_member_role": ["owner", "member"],"org_type": ["client_organization", "partner"],"payment_status": ["pending", "processing", "succeeded", "failed", "refunded", "cancelled"],"request_status": ["pending", "fulfilled", "overdue", "cancelled"],"scan_status": ["pending", "clean", "infected", "failed", "not_required"],"signature_status": ["to_sign", "sent", "viewed", "signed", "declined", "expired"],"team_role": ["responsible", "originating", "collaborator", "assistant"],"user_status": ["invited", "active", "suspended", "deactivated"]
           }
         }
 } as const
