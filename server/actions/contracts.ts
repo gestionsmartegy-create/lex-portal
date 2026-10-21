@@ -25,6 +25,15 @@ import {
   setReviewStatus,
   updateHeader,
 } from "@/server/services/contracts";
+import {
+  addComment,
+  linkContractMatter,
+  newContractVersion,
+  remindContract,
+  reopenContract,
+  resolveComment,
+  validateContract,
+} from "@/server/services/contract-workflow";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -143,4 +152,53 @@ export async function checkClientEmailAction(locale: string, email: string): Pro
   if (!(await hitRateLimit(`contract_email:user:${profile.id}`, { max: 60, windowSeconds: 600 })))
     return false;
   return clientEmailKnown(email);
+}
+
+// ---------------------------------------------------------------------------------------------
+// Lot 3 (ADR 0036) : valider, revenir au brouillon, relancer, nouvelle version, rattacher, commentaires.
+// ---------------------------------------------------------------------------------------------
+const workflowOp = z.discriminatedUnion("op", [
+  z.object({ op: z.literal("validate") }),
+  z.object({ op: z.literal("reopen") }),
+  z.object({ op: z.literal("remind") }),
+  z.object({ op: z.literal("newVersion") }),
+  z.object({ op: z.literal("linkMatter"), matterId: z.uuid() }),
+]);
+
+export async function workflowAction(
+  locale: string,
+  contractId: string,
+  input: unknown,
+): Promise<{ ok: true; id?: string } | { ok: false; code: string }> {
+  await requireStaff(localeSchema.catch("en").parse(locale));
+  const parsed = workflowOp.safeParse(input);
+  if (!parsed.success || !id.safeParse(contractId).success) return { ok: false, code: "INVALID" };
+  switch (parsed.data.op) {
+    case "validate":
+      return done(await validateContract(contractId));
+    case "reopen":
+      return done(await reopenContract(contractId));
+    case "remind":
+      return done(await remindContract(contractId));
+    case "linkMatter":
+      return done(await linkContractMatter(contractId, parsed.data.matterId));
+    case "newVersion": {
+      const r = await newContractVersion(contractId);
+      return r.ok ? { ok: true, id: r.data } : { ok: false, code: r.code };
+    }
+  }
+}
+
+const commentOp = z.discriminatedUnion("op", [
+  z.object({ op: z.literal("add"), sectionId: z.uuid().nullable(), body: z.string().max(4000) }),
+  z.object({ op: z.literal("resolve"), commentId: z.uuid(), resolved: z.boolean() }),
+]);
+
+export async function commentAction(locale: string, contractId: string, input: unknown): Promise<Outcome> {
+  await requireStaff(localeSchema.catch("en").parse(locale));
+  const parsed = commentOp.safeParse(input);
+  if (!parsed.success || !id.safeParse(contractId).success) return { ok: false, code: "INVALID" };
+  if (parsed.data.op === "add")
+    return done(await addComment(contractId, { sectionId: parsed.data.sectionId, body: parsed.data.body }));
+  return done(await resolveComment(contractId, parsed.data.commentId, parsed.data.resolved));
 }

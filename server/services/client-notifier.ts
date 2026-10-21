@@ -46,7 +46,7 @@ async function sendNotice(
 }
 
 /** Contrat envoyé : son client (compte actif) est averti dans le portail et par e-mail. */
-export async function notifyContractSent(contractId: string) {
+export async function notifyContractSent(contractId: string, opts: { reminder?: boolean } = {}) {
   try {
     const admin = createSupabaseServiceClient();
     const { data: c } = await admin
@@ -71,7 +71,7 @@ export async function notifyContractSent(contractId: string) {
       user_id: person.id,
       type: "contract_sent",
       priority: c.signing_mode === "portal" ? "urgent" : "info",
-      title: t("contractSentTitle"),
+      title: opts.reminder ? t("contractReminderTitle") : t("contractSentTitle"),
       body: c.signing_mode === "portal" ? t("contractSentBodyPortal") : t("contractSentBodyClio"),
       matter_id: c.matter_id,
       action_url: path,

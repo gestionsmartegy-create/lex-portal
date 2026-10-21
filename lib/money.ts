@@ -49,7 +49,10 @@ export function computeTotals(
   rates: { tax_code: string; rate: string }[],
 ): Totals {
   const subtotal = lines.reduce((sum, l) => sum + lineTotal(l.quantity, l.unit_price), 0n);
-  const taxes = rates.map((r) => ({ code: r.tax_code, rate: r.rate, cents: taxOn(subtotal, r.rate) }));
+  const order = ["GST", "HST", "PST", "QST"];
+  const taxes = [...rates]
+    .sort((a, b) => order.indexOf(a.tax_code) - order.indexOf(b.tax_code))
+    .map((r) => ({ code: r.tax_code, rate: r.rate, cents: taxOn(subtotal, r.rate) }));
   const taxTotal = taxes.reduce((s, t) => s + t.cents, 0n);
   return {
     subtotal: fromCents(subtotal),

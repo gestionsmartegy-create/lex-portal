@@ -413,3 +413,20 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - Types de notification `contract_sent` et `court_date_changed`.
 - Journal : `contract.sent`, `contract.viewed`, `contract.signed`, `contract.accepted` (sans le nom tapé).
 - `private.client_sees_contract(id)` : le sien, envoyé, en session client, **et** accès non révoqué au dossier lié. L'envoi exige aussi cet accès.
+
+## Contrats, lot 3 (ADR 0036, migrations `20261023120000` et `20261023120100`)
+- `contracts` reçoit `validated_at`, `validated_by`, `validated_version`, `pdf_sha256`, `reminded_at`, `reminder_count`, `declined_at`, `decline_reason`, `previous_id` et `superseded_by`, écrits seulement par les fonctions.
+- `private.contract_pdfs` : PDF officiel (`bytea`, au plus 5 Mo) par version, avec son empreinte SHA-256 calculée par la base.
+- `public.contract_comments` : commentaires de relecture (section facultative), RLS équipe du contrat ; seule la résolution change ensuite (trigger `guard_contract_comment`).
+- Fonctions :
+  - `contract_validate` : avocat de l'équipe, verrou ;
+  - `contract_reopen` ;
+  - `contract_send` : contrat validé ; retrouve le compte du client d'après son courriel ;
+  - `contract_pdf` : équipe ou client destinataire, journalisé ;
+  - `contract_remind` : une fois par jour ;
+  - `client_contract_decline` ;
+  - `contract_new_version` ;
+  - `contract_link_matter` : firm_admin, contrat accepté ;
+  - `private.is_contract_lawyer`.
+- Journal : `contract.pdf_generated`, `contract.pdf_downloaded`, `contract.reopened`, `contract.reminded`, `contract.declined` (trigger), `contract.new_version`. Jamais le motif d'un refus.
+- Corrections (`20261023120200`) : contrat sans dossier validé par le firm_admin seulement ; `public.contract_client_account` (aperçu du destinataire) et `private.contract_recipient` ; journal `contract.client_linked` ; `contract_link_matter` exige l'accès du client au dossier ; résolution des commentaires non réécrivable ; `is_mock` reporté sur une nouvelle version.

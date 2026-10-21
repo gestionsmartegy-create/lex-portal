@@ -14,6 +14,8 @@ import {
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { listInvitations } from "@/server/services/admin";
+import { z } from "zod";
+import { getContract } from "@/server/services/contracts";
 
 const TONE: Record<string, StatusTone> = {
   pending: "pending",
@@ -31,6 +33,20 @@ export default async function InvitationsPage({
   await requireStaff(locale, ["firm_admin"]);
   const sp = await searchParams;
   const supabase = await createSupabaseServerClient();
+  // « Inviter ce client » depuis un contrat (ADR 0036) : la fiche est relue ici (accès revérifié).
+  const fromContract = z.uuid().safeParse(sp.fromContract);
+  const source = fromContract.success ? await getContract(fromContract.data) : null;
+  const [firstName, ...rest] = (source?.contract.clientName ?? "").trim().split(/\s+/);
+  const defaults =
+    source && source.contract.clientEmail && !source.contract.clientId
+      ? {
+          email: source.contract.clientEmail,
+          firstName: firstName ?? "",
+          lastName: rest.join(" "),
+          language: source.contract.clientLanguage,
+          matterId: source.contract.matter?.id ?? null,
+        }
+      : undefined;
   const [{ data: matters }, invitations, t] = await Promise.all([
     supabase
       .from("matters")
@@ -55,7 +71,12 @@ export default async function InvitationsPage({
       <Notice message={notice} error={sp.notice === "failed"} />
       <div className="grid gap-6 lg:grid-cols-5">
         <SectionCard title={t("invitations.title")} className="lg:col-span-2">
-          <InvitationForm action={createInvitationAction} locale={locale} matters={matters ?? []} />
+          <InvitationForm
+            action={createInvitationAction}
+            locale={locale}
+            matters={matters ?? []}
+            defaults={defaults}
+          />
         </SectionCard>
         <SectionCard title={t("invitationsList.list")} className="lg:col-span-3">
           {invitations.length === 0 ? (

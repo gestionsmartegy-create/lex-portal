@@ -468,7 +468,8 @@
         "changed": "Une date de cour a été modifiée",
         "cancelled": "Une date de cour a été annulée"
       },
-      "courtChangeBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat."
+      "courtChangeBody": "{kind} : {when}. Voir le détail et les consignes de votre avocat.",
+      "contractReminderTitle": "Rappel : un contrat vous attend"
     },
     "search": {
       "label": "Rechercher dans le portail",
@@ -541,14 +542,16 @@
       "states": {
         "toAccept": "À accepter",
         "toSignClio": "À signer dans Clio",
-        "accepted": "Accepté"
+        "accepted": "Accepté",
+        "declined": "Refusé"
       },
       "back": "Mes contrats",
       "print": "Imprimer ou enregistrer en PDF",
       "notices": {
         "accepted": "Merci, votre acceptation est enregistrée.",
         "invalid": "Tapez votre nom complet et cochez la case pour accepter.",
-        "failed": "L'acceptation n'a pas pu être enregistrée. Réessayez."
+        "failed": "L'acceptation n'a pas pu être enregistrée. Réessayez.",
+        "declined": "Votre refus est enregistré. Votre avocat en est informé."
       },
       "acceptTitle": "Accepter ce contrat",
       "acceptedTitle": "Contrat accepté",
@@ -558,7 +561,14 @@
       "acceptHelp": "En tapant votre nom et en cochant la case, vous acceptez ce contrat tel qu'il est affiché ci-dessus. La date et l'heure sont enregistrées.",
       "fullName": "Votre nom complet",
       "agree": "J'ai lu ce contrat et je l'accepte.",
-      "accept": "Accepter le contrat"
+      "accept": "Accepter le contrat",
+      "downloadPdf": "Télécharger le PDF",
+      "declinedTitle": "Contrat refusé",
+      "declinedOn": "Vous avez refusé ce contrat le {date}. Votre avocat pourra vous en proposer une nouvelle version.",
+      "declineTitle": "Je ne souhaite pas accepter ce contrat",
+      "declineHelp": "Vous pouvez indiquer pourquoi (facultatif). Votre avocat en sera informé.",
+      "declineReason": "Motif (facultatif)",
+      "decline": "Refuser le contrat"
     }
   },
   "admin": {
@@ -1638,7 +1648,7 @@
         "in_review": "En relecture",
         "validated": "Validé",
         "sent": "Envoyé",
-        "signed": "Signé",
+        "signed": "Accepté",
         "declined": "Refusé",
         "cancelled": "Annulé",
         "superseded": "Remplacé"
@@ -1776,7 +1786,11 @@
         "errors": {
           "LOCKED": "Vous n'avez plus la main sur ce contrat (quelqu'un d'autre le modifie). Rechargez la page.",
           "INVALID": "Vérifiez les informations saisies.",
-          "FAILED": "L'enregistrement a échoué. Réessayez."
+          "FAILED": "L'enregistrement a échoué. Réessayez.",
+          "NOT_LAWYER": "Seul un avocat de l'équipe peut valider ce contrat.",
+          "MISSING_FIELDS": "Complétez d'abord les champs à remplir.",
+          "NO_CLIENT_ACCOUNT": "Le client n'a pas encore de compte dans le portail (ou pas d'accès à ce dossier). Un administrateur peut l'inviter.",
+          "TOO_SOON": "Une seule relance par jour : réessayez demain."
         },
         "insertClause": "Insérer une clause…",
         "template": {
@@ -1824,7 +1838,57 @@
           "viewedOn": "Consulté par le client le {date}",
           "notViewed": "Pas encore consulté par le client.",
           "acceptedBy": "Accepté par {name} le {date}",
-          "clioNext": "À lancer dans Clio : la signature se fait depuis le dossier Clio."
+          "clioNext": "À lancer dans Clio : la signature se fait depuis le dossier Clio.",
+          "recipient": "Destinataire : {name}",
+          "confirmTo": "Envoyer ce contrat à {name} ? La version validée sera envoyée et le client sera averti."
+        },
+        "lifecycle": {
+          "validate": "Valider le contrat",
+          "validated": "Contrat validé : version figée et PDF officiel créés.",
+          "confirmValidate": "Valider ce contrat ? Le texte sera figé et le PDF officiel créé.",
+          "validateHelp": "La validation fige le texte et crée le PDF officiel avec son empreinte. Ensuite seulement, le contrat peut être envoyé.",
+          "lawyerOnly": "Un avocat de l'équipe valide le contrat avant l'envoi. Vous pouvez demander une relecture.",
+          "validatedTitle": "Contrat validé",
+          "validatedOn": "Validé le {date} par {name} · version {version}",
+          "fingerprint": "Empreinte (SHA-256) :",
+          "downloadPdf": "Télécharger le PDF officiel (version {version})",
+          "reopen": "Revenir au brouillon",
+          "confirmReopen": "Revenir au brouillon ? La validation sera retirée ; il faudra valider de nouveau avant l'envoi.",
+          "reopened": "Le contrat est de nouveau en brouillon.",
+          "remind": "Relancer le client",
+          "reminded": "Relance envoyée au client.",
+          "remindedOn": "Dernière relance le {date}",
+          "remindLater": "Relance possible un jour après l'envoi ou la dernière relance.",
+          "newVersion": "Modifier (nouvelle version)",
+          "confirmNewVersion": "Créer une nouvelle version ? Celle-ci sera marquée « Remplacée » et retirée du portail du client.",
+          "declinedOn": "Refusé par le client le {date}",
+          "declineReason": "Motif : {reason}",
+          "replaces": "Ce contrat remplace une version précédente.",
+          "openPrevious": "Voir la version précédente",
+          "supersededTitle": "Remplacé par une nouvelle version",
+          "openNew": "Ouvrir la nouvelle version",
+          "matterTitle": "Dossier",
+          "linkMatter": "Rattacher ce contrat accepté à un dossier",
+          "chooseMatter": "Choisir un dossier…",
+          "link": "Rattacher au dossier",
+          "linked": "Contrat rattaché au dossier.",
+          "invite": "Inviter ce client dans le portail",
+          "askAdminInvite": "Si le client n'a pas encore de compte, demandez à un administrateur de l'inviter. L'envoi trouvera ensuite son compte.",
+          "startOpening": "Démarrer l'ouverture du dossier"
+        },
+        "comments": {
+          "title": "{count, plural, =0 {Commentaires de relecture} one {Commentaires de relecture (# ouvert)} other {Commentaires de relecture (# ouverts)}}",
+          "none": "Aucun commentaire ouvert.",
+          "whole": "Tout le contrat",
+          "removedSection": "Section retirée",
+          "about": "Sur",
+          "body": "Commentaire",
+          "add": "Ajouter le commentaire",
+          "added": "Commentaire ajouté.",
+          "resolve": "Marquer réglé",
+          "reopen": "Rouvrir",
+          "showResolved": "{count, plural, one {Voir # commentaire réglé} other {Voir # commentaires réglés}}",
+          "hideResolved": "Masquer les commentaires réglés"
         }
       },
       "tabs": {
@@ -1964,6 +2028,10 @@
           "invalid": "Vérifiez les champs et réessayez.",
           "failed": "La modification n'a pas pu être enregistrée. Réessayez."
         }
+      },
+      "pdf": {
+        "footer": "Lex Canada Law — version {version} validée le {date}",
+        "page": "Page {page} / {pages}"
       }
     },
     "search": {

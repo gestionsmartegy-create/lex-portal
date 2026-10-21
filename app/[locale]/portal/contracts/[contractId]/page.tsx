@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { clientContractState } from "@/lib/client-contract-state";
 import { contractFieldKeys, type ContractFieldKey } from "@/lib/contract-doc";
-import { formatDateTime, formatMoney } from "@/lib/format";
+import { formatDateTime, formatDecimal, formatMoney } from "@/lib/format";
 import { fromCents, lineTotal } from "@/lib/money";
-import { acceptContractAction } from "@/server/actions/client-contracts";
+import { acceptContractAction, declineContractAction } from "@/server/actions/client-contracts";
 import { requireClientSession } from "@/server/auth/session";
 import { getMyContract } from "@/server/services/client-contracts";
 
-const NOTICES = ["accepted", "invalid", "failed"] as const;
+const NOTICES = ["accepted", "declined", "invalid", "failed"] as const;
 const fieldClass =
   "h-11 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
 
@@ -52,7 +52,15 @@ export default async function ClientContractPage({
         subtitle={t("sentOn", { date: formatDateTime(c.sent_at, locale) })}
         actions={
           <StatusBadge
-            tone={state === "accepted" ? "completed" : state === "toAccept" ? "urgent" : "pending"}
+            tone={
+              state === "accepted"
+                ? "completed"
+                : state === "toAccept"
+                  ? "urgent"
+                  : state === "declined"
+                    ? "warning"
+                    : "pending"
+            }
             label={t(`states.${state}`)}
           />
         }
@@ -62,6 +70,14 @@ export default async function ClientContractPage({
           ← {t("back")}
         </Link>
         <PrintButton label={t("print")} />
+        {c.pdf_sha256 ? (
+          <a
+            href={`/api/contracts/${c.id}/pdf`}
+            className="inline-flex min-h-9 items-center rounded-[8px] border border-gray-300 px-3 text-sm font-semibold text-marine hover:border-gold hover:bg-cream focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+          >
+            {t("downloadPdf")}
+          </a>
+        ) : null}
       </div>
       <Notice
         message={notice ? t(`notices.${notice}`) : undefined}
@@ -107,7 +123,9 @@ export default async function ClientContractPage({
                 {c.lines.map((l, i) => (
                   <tr key={i} className="border-b border-gray-100">
                     <td className="py-2 pr-2">{l.description}</td>
-                    <td className="py-2 pr-2 text-right tabular-nums">{l.quantity}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">
+                      {formatDecimal(l.quantity, c.language)}
+                    </td>
                     <td className="py-2 pr-2 text-right tabular-nums">{money(l.unit_price)}</td>
                     <td className="py-2 text-right tabular-nums">
                       {money(fromCents(lineTotal(l.quantity, l.unit_price)))}
@@ -125,7 +143,7 @@ export default async function ClientContractPage({
                 {c.totals.taxes.map((tx) => (
                   <tr key={tx.code}>
                     <th scope="row" colSpan={3} className="py-1.5 pr-2 text-right font-normal">
-                      {tDoc(`services.tax.${tx.code}`)} ({tx.rate.replace(/\.?0+$/, "")} %)
+                      {tDoc(`services.tax.${tx.code}`)} ({formatDecimal(tx.rate, c.language)} %)
                     </th>
                     <td className="py-1.5 text-right tabular-nums">{money(tx.amount)}</td>
                   </tr>
@@ -149,9 +167,11 @@ export default async function ClientContractPage({
         <h2 id="accept-title" className="mb-2 font-display text-lg font-bold text-marine">
           {state === "accepted"
             ? t("acceptedTitle")
-            : state === "toAccept"
-              ? t("acceptTitle")
-              : t("clioTitle")}
+            : state === "declined"
+              ? t("declinedTitle")
+              : state === "toAccept"
+                ? t("acceptTitle")
+                : t("clioTitle")}
         </h2>
         {state === "accepted" ? (
           <p className="text-sm text-marine">
@@ -159,6 +179,10 @@ export default async function ClientContractPage({
               name: c.accepted_name ?? "",
               date: c.accepted_at ? formatDateTime(c.accepted_at, locale) : "",
             })}
+          </p>
+        ) : state === "declined" ? (
+          <p className="text-sm text-marine">
+            {t("declinedOn", { date: c.declined_at ? formatDateTime(c.declined_at, locale) : "" })}
           </p>
         ) : state === "toSignClio" ? (
           <p className="text-sm text-marine">{t("clioHelp")}</p>
@@ -193,6 +217,32 @@ export default async function ClientContractPage({
             </Button>
           </form>
         )}
+        {state === "toAccept" || state === "toSignClio" ? (
+          <details className="mt-5 border-t border-gray-100 pt-4 text-sm">
+            <summary className="cursor-pointer font-semibold text-marine">{t("declineTitle")}</summary>
+            <form action={declineContractAction} className="mt-3 space-y-3">
+              <input type="hidden" name="locale" value={locale} />
+              <input type="hidden" name="contractId" value={c.id} />
+              <p className="text-ink-muted">{t("declineHelp")}</p>
+              <label
+                htmlFor="decline-reason"
+                className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
+              >
+                {t("declineReason")}
+              </label>
+              <textarea
+                id="decline-reason"
+                name="reason"
+                rows={3}
+                maxLength={500}
+                className="w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+              />
+              <Button type="submit" variant="outline-marine">
+                {t("decline")}
+              </Button>
+            </form>
+          </details>
+        ) : null}
       </section>
     </>
   );

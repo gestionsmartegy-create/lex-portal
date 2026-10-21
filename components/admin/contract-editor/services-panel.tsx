@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { formatMoney } from "@/lib/format";
+import { formatDecimal, formatMoney } from "@/lib/format";
 import { computeTotals } from "@/lib/money";
 
 export type PanelLine = {
@@ -200,7 +200,7 @@ export function ServicesPanel({
             {totals.taxes.map((tx) => (
               <div key={tx.code} className="flex justify-between">
                 <dt className="text-ink-muted">
-                  {t(`tax.${tx.code}`)} ({tx.rate.replace(/\.?0+$/, "")} %)
+                  {t(`tax.${tx.code}`)} ({formatDecimal(tx.rate, locale)} %)
                 </dt>
                 <dd className="text-marine tabular-nums">{money(tx.amount)}</dd>
               </div>

@@ -142,7 +142,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Où ranger les contrats et documents générés par la plateforme ?~~ | ✅ **Dans Clio Documents ET dans SharePoint** (responsable du projet) | Le même fichier final est déposé dans les deux, avec les mêmes identifiants, et redéposé à chaque nouvelle version. Le dépôt Clio par l'API reste à vérifier sur le compte de test ; SharePoint est en simulateur jusqu'à l'accès Microsoft. La question générale « Répartition SharePoint / Clio » (lecture des documents partagés avec le client) reste ouverte. |
 | Vrais modèles de contrats à mettre dans la bibliothèque en premier | **À fournir** (fichiers Word du cabinet, sans données de clients) | 3 modèles de démonstration en attendant |
 | Québec : imposer la version française d'abord pour un client du bureau de Montréal (Charte de la langue française) ? | **À décider par le cabinet** | Par défaut : langue du client, français toujours disponible |
-| Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ? | **À décider par le cabinet** | Lot 4 du plan des contrats |
+| ~~Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ?~~ | ✅ **Tout avocat de l'équipe** (responsable, d'origine, collaborateur) et le firm_admin ; pas les adjoint·e·s (responsable du projet, 2026-10-21, ADR 0036) | Règle appliquée à la validation des contrats ; à reprendre pour le dépôt dans Clio et SharePoint (lot 4) |
 
 ## Décisions du 2026-10-19 (contrats, lot 2, ADR 0034)
 
@@ -161,3 +161,10 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Qui peut envoyer un contrat au client ?~~ | ✅ **Tout membre de l'équipe du dossier**, adjoint·e·s compris (et le firm_admin) | Même règle que la confirmation des dates de cour |
 | ~~Une date de cour est-elle visible du client automatiquement ?~~ | ✅ **Non** : l'équipe coche « visible au client » | Avis au client seulement pour les dates visibles |
 | Valeur juridique de l'acceptation dans le portail pour un contrat autre que les conditions générales | **À confirmer par le cabinet** | Par défaut, le mode « Clio » reste disponible pour les vrais contrats |
+
+## Décisions du 2026-10-21 (contrats, lot 3, ADR 0036)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Format du contrat validé~~ | ✅ **PDF seulement pour l'instant** ; Word plus tard | PDF officiel avec empreinte SHA-256 |
+| ~~Qui valide un contrat sans dossier ?~~ | ✅ **Le firm_admin seulement** (responsable du projet, 2026-10-21) | Un avocat qui rédige sans dossier fait valider par un administrateur, ou rattache d'abord le contrat à un dossier |
