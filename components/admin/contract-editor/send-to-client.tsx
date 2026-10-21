@@ -12,12 +12,14 @@ import { useTranslations } from "next-intl";
 export function SendToClient({
   busy,
   hasClientAccount,
+  recipientLabel = null,
   missingLabels,
   templateSigning,
   onSend,
 }: {
   busy: boolean;
   hasClientAccount: boolean;
+  recipientLabel?: string | null;
   missingLabels: string[];
   templateSigning: "clio" | "portal" | "both" | null;
   onSend: (mode: "clio" | "portal") => void;
@@ -31,6 +33,9 @@ export function SendToClient({
     <div className="space-y-2 border-t border-gray-100 pt-3">
       <h3 className="text-sm font-semibold text-marine">{t("title")}</h3>
       {!hasClientAccount ? <p className="text-xs text-ink-muted">{t("needsAccount")}</p> : null}
+      {recipientLabel ? (
+        <p className="text-sm text-marine">{t("recipient", { name: recipientLabel })}</p>
+      ) : null}
       {missingLabels.length ? (
         <p className="text-xs text-ink-muted">{t("needsFields", { fields: missingLabels.join(", ") })}</p>
       ) : null}
@@ -58,7 +63,8 @@ export function SendToClient({
         type="button"
         disabled={busy || blocked}
         onClick={() => {
-          if (window.confirm(t("confirm"))) onSend(fixed ?? mode);
+          if (window.confirm(recipientLabel ? t("confirmTo", { name: recipientLabel }) : t("confirm")))
+            onSend(fixed ?? mode);
         }}
         className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-50"
       >

@@ -140,6 +140,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"contract_comments": {
+                  Row: {
+                    "body": string,"contract_id": string,"created_at": string,"created_by": string | null,"id": string,"resolved_at": string | null,"resolved_by": string | null,"section_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"contract_id": string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"resolved_at"?: string | null,"resolved_by"?: string | null,"section_id"?: string | null
+                  }
+                  Update: {
+                    "body"?: string,"contract_id"?: string,"created_at"?: string,"created_by"?: string | null,"id"?: string,"resolved_at"?: string | null,"resolved_by"?: string | null,"section_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_comments_contract_id_fkey"
+      columns: ["contract_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_comments_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_comments_resolved_by_fkey"
+      columns: ["resolved_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contract_comments_section_id_fkey"
+      columns: ["section_id"]
+isOneToOne: false
+      referencedRelation: "contract_sections"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"contract_line_items": {
                   Row: {
                     "contract_id": string,"created_at": string,"description": string,"id": string,"position": number,"pricing": string,"quantity": number,"service_id": string | null,"unit_price": number,"updated_at": string
@@ -266,14 +304,14 @@ isOneToOne: false
                   ]
                 },"contracts": {
                   Row: {
-                    "accepted_at": string | null,"accepted_name": string | null,"cancel_reason": string | null,"client_address": string | null,"client_email": string | null,"client_id": string | null,"client_language": string,"client_name": string,"client_phone": string | null,"client_province": string | null,"created_at": string,"created_by": string,"id": string,"is_mock": boolean,"language": string,"locked_by": string | null,"locked_until": string | null,"matter_id": string | null,"sent_at": string | null,"sent_by": string | null,"sent_version": number | null,"signing_mode": string | null,"status": string,"template_draft": boolean,"template_id": string | null,"template_version": number | null,"title": string,"updated_at": string,"viewed_at": string | null
+                    "accepted_at": string | null,"accepted_name": string | null,"cancel_reason": string | null,"client_address": string | null,"client_email": string | null,"client_id": string | null,"client_language": string,"client_name": string,"client_phone": string | null,"client_province": string | null,"created_at": string,"created_by": string,"decline_reason": string | null,"declined_at": string | null,"id": string,"is_mock": boolean,"language": string,"locked_by": string | null,"locked_until": string | null,"matter_id": string | null,"pdf_sha256": string | null,"previous_id": string | null,"reminded_at": string | null,"reminder_count": number,"sent_at": string | null,"sent_by": string | null,"sent_version": number | null,"signing_mode": string | null,"status": string,"superseded_by": string | null,"template_draft": boolean,"template_id": string | null,"template_version": number | null,"title": string,"updated_at": string,"validated_at": string | null,"validated_by": string | null,"validated_version": number | null,"viewed_at": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name": string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title": string,"updated_at"?: string,"viewed_at"?: string | null
+                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name": string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"decline_reason"?: string | null,"declined_at"?: string | null,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"pdf_sha256"?: string | null,"previous_id"?: string | null,"reminded_at"?: string | null,"reminder_count"?: number,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"superseded_by"?: string | null,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title": string,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null,"validated_version"?: number | null,"viewed_at"?: string | null
                   }
                   Update: {
-                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name"?: string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title"?: string,"updated_at"?: string,"viewed_at"?: string | null
+                    "accepted_at"?: string | null,"accepted_name"?: string | null,"cancel_reason"?: string | null,"client_address"?: string | null,"client_email"?: string | null,"client_id"?: string | null,"client_language"?: string,"client_name"?: string,"client_phone"?: string | null,"client_province"?: string | null,"created_at"?: string,"created_by"?: string,"decline_reason"?: string | null,"declined_at"?: string | null,"id"?: string,"is_mock"?: boolean,"language"?: string,"locked_by"?: string | null,"locked_until"?: string | null,"matter_id"?: string | null,"pdf_sha256"?: string | null,"previous_id"?: string | null,"reminded_at"?: string | null,"reminder_count"?: number,"sent_at"?: string | null,"sent_by"?: string | null,"sent_version"?: number | null,"signing_mode"?: string | null,"status"?: string,"superseded_by"?: string | null,"template_draft"?: boolean,"template_id"?: string | null,"template_version"?: number | null,"title"?: string,"updated_at"?: string,"validated_at"?: string | null,"validated_by"?: string | null,"validated_version"?: number | null,"viewed_at"?: string | null
                   }
                   Relationships: [
                     {
@@ -301,16 +339,34 @@ isOneToOne: false
       referencedRelation: "matters"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "contracts_previous_id_fkey"
+      columns: ["previous_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "contracts_sent_by_fkey"
       columns: ["sent_by"]
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "contracts_superseded_by_fkey"
+      columns: ["superseded_by"]
+isOneToOne: false
+      referencedRelation: "contracts"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "contracts_template_id_fkey"
       columns: ["template_id"]
 isOneToOne: false
       referencedRelation: "contract_templates"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "contracts_validated_by_fkey"
+      columns: ["validated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -1246,6 +1302,9 @@ isOneToOne: false
 "client_contract_accept":
 { Args: { "p_contract": string,"p_name": string }; Returns: undefined
                            },
+"client_contract_decline":
+{ Args: { "p_contract": string,"p_reason": string }; Returns: undefined
+                           },
 "client_contract_viewed":
 { Args: { "p_contract": string }; Returns: undefined
                            },
@@ -1275,10 +1334,32 @@ isOneToOne: false
               "acquired": boolean,"holder": string,"holder_name": string,"until": string
             }[]
                            },
+"contract_client_account":
+{ Args: { "p_contract": string }; Returns: {
+              "email": string,"id": string,"linked": boolean,"name": string
+            }[]
+                           },
 "contract_client_email_known":
 { Args: { "p_email": string }; Returns: boolean
                            },
+"contract_link_matter":
+{ Args: { "p_contract": string,"p_matter": string }; Returns: undefined
+                           },
+"contract_new_version":
+{ Args: { "p_contract": string }; Returns: string
+                           },
+"contract_pdf":
+{ Args: { "p_contract": string }; Returns: {
+              "pdf_base64": string,"sha256": string,"version": number
+            }[]
+                           },
 "contract_release_lock":
+{ Args: { "p_contract": string }; Returns: undefined
+                           },
+"contract_remind":
+{ Args: { "p_contract": string }; Returns: undefined
+                           },
+"contract_reopen":
 { Args: { "p_contract": string }; Returns: undefined
                            },
 "contract_replace_lines":
@@ -1298,6 +1379,9 @@ isOneToOne: false
                            },
 "contract_template_publish":
 { Args: { "p_contract": string }; Returns: number
+                           },
+"contract_validate":
+{ Args: { "p_contract": string,"p_pdf_base64": string }; Returns: string
                            },
 "court_calendar_feed":
 { Args: { "p_from": string,"p_to": string }; Returns: {

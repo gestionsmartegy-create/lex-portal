@@ -89,10 +89,10 @@
 | [F4](https://github.com/SmartegyCanada/lex-portal/issues/100) | En tant qu'Admin, je veux créer et maintenir des modèles de contrats. | 2 | 🟡 |
 | [F5](https://github.com/SmartegyCanada/lex-portal/issues/101) | En tant qu'Admin, je veux une bibliothèque de clauses bilingues. | 2 | 🟡 |
 | [F6](https://github.com/SmartegyCanada/lex-portal/issues/102) | En tant qu'Admin, je veux un catalogue de services et d'honoraires avec les taxes par province. | 2 | 🟡 |
-| [F7](https://github.com/SmartegyCanada/lex-portal/issues/103) | En tant qu'avocat, je veux valider un contrat. | 3 | ⏳ |
-| [F8](https://github.com/SmartegyCanada/lex-portal/issues/104) | En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut. | 3 | ⏳ |
-| [F9](https://github.com/SmartegyCanada/lex-portal/issues/105) | En tant que client, je veux voir les contrats que le cabinet m'a envoyés. | 3 | ⏳ |
-| [F10](https://github.com/SmartegyCanada/lex-portal/issues/106) | En tant qu'avocat, je veux ouvrir le dossier et inviter le client à partir d'un contrat signé. | 3 | ⏳ |
+| [F7](https://github.com/SmartegyCanada/lex-portal/issues/103) | En tant qu'avocat, je veux valider un contrat. | 3 | 🟡 |
+| [F8](https://github.com/SmartegyCanada/lex-portal/issues/104) | En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut. | 3 | 🟡 |
+| [F9](https://github.com/SmartegyCanada/lex-portal/issues/105) | En tant que client, je veux voir les contrats que le cabinet m'a envoyés. | 3 | 🟡 |
+| [F10](https://github.com/SmartegyCanada/lex-portal/issues/106) | En tant qu'avocat, je veux ouvrir le dossier et inviter le client à partir d'un contrat signé. | 3 | 🟡 |
 | [F11](https://github.com/SmartegyCanada/lex-portal/issues/107) | En tant qu'avocat, je veux que le contrat validé soit rangé dans Clio et SharePoint. | 4 | ⏳ |
 | [F12](https://github.com/SmartegyCanada/lex-portal/issues/108) | En tant qu'avocat, je veux que l'IA m'aide à rédiger une section. | 5 | ⏳ |
 | [F13](https://github.com/SmartegyCanada/lex-portal/issues/109) | En tant qu'avocat, je veux que l'IA crée un gabarit de contrat à partir d'une description. | 5 | ⏳ |

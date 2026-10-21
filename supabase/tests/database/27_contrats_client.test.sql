@@ -25,6 +25,10 @@ values ('f1000000-0000-0000-0000-0000000000c1', 0, 'Parties',
 insert into public.contract_line_items (contract_id, position, description, quantity, unit_price)
 values ('f1000000-0000-0000-0000-0000000000c1', 0, 'Consultation', 1, 200.00);
 
+-- Lot 3 (ADR 0036) : seul un contrat VALIDÉ s'envoie ; on valide c1, c3 et c5 (…0b est avocat responsable).
+select public.contract_validate('f1000000-0000-0000-0000-0000000000c1', encode(convert_to('%PDF-1.4' || repeat(' contenu', 30), 'UTF8'), 'base64'));
+select public.contract_validate('f1000000-0000-0000-0000-0000000000c3', encode(convert_to('%PDF-1.4' || repeat(' contenu', 30), 'UTF8'), 'base64'));
+select public.contract_validate('f1000000-0000-0000-0000-0000000000c5', encode(convert_to('%PDF-1.4' || repeat(' contenu', 30), 'UTF8'), 'base64'));
 select throws_ok($$ select public.contract_send('f1000000-0000-0000-0000-0000000000c2', 'portal') $$,
   '23514', null, 'envoi refusé sans compte client');
 select throws_ok($$ select public.contract_send('f1000000-0000-0000-0000-0000000000c1', 'email') $$,
@@ -50,7 +54,7 @@ select tests.clear_authentication();
 -- Personnel hors équipe : n'envoie pas.
 select tests.authenticate_as('00000000-0000-0000-0000-00000000000c', 'aal1', 'oauth');
 select throws_ok($$ select public.contract_send('f1000000-0000-0000-0000-0000000000c2', 'portal') $$,
-  '42501', null, 'hors équipe : pas d''envoi');
+  'P0002', null, 'hors équipe : pas d''envoi (même réponse que « introuvable »)');
 select tests.clear_authentication();
 
 -- Autre client (…0002) : rien, même réponse que « n'existe pas ».

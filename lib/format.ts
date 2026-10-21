@@ -7,6 +7,15 @@ export const DEFAULT_TIMEZONE = "America/Halifax";
 const intlLocale = (locale: string) => (locale === "fr" ? "fr-CA" : "en-CA");
 
 /** « 1250.00 » → « 1 250,00 $ » (fr) / « $1,250.00 » (en). Intl accepte une chaîne décimale exacte. */
+/**
+ * Nombre décimal exact (chaîne venue de la base, jamais un flottant) : zéros inutiles retirés,
+ * virgule en français. « 9.975 » → « 9,975 » ; « 1.00 » → « 1 » ; « 2.50 » → « 2,5 ».
+ */
+export function formatDecimal(value: string, locale: string): string {
+  const trimmed = value.includes(".") ? value.replace(/0+$/, "").replace(/\.$/, "") : value;
+  return locale === "fr" ? trimmed.replace(".", ",") : trimmed;
+}
+
 export function formatMoney(amount: string, locale: string, currency = "CAD"): string {
   const nf = new Intl.NumberFormat(intlLocale(locale), { style: "currency", currency });
   return nf.format(amount as unknown as number);

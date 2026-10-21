@@ -468,7 +468,8 @@
         "changed": "A court date has been changed",
         "cancelled": "A court date has been cancelled"
       },
-      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions."
+      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions.",
+      "contractReminderTitle": "Reminder: a contract is waiting for you"
     },
     "search": {
       "label": "Search the portal",
@@ -541,14 +542,16 @@
       "states": {
         "toAccept": "To accept",
         "toSignClio": "To sign in Clio",
-        "accepted": "Accepted"
+        "accepted": "Accepted",
+        "declined": "Declined"
       },
       "back": "My contracts",
       "print": "Print or save as PDF",
       "notices": {
         "accepted": "Thank you, your acceptance has been recorded.",
         "invalid": "Type your full name and tick the box to accept.",
-        "failed": "Your acceptance could not be recorded. Try again."
+        "failed": "Your acceptance could not be recorded. Try again.",
+        "declined": "Your decision has been recorded. Your lawyer has been informed."
       },
       "acceptTitle": "Accept this contract",
       "acceptedTitle": "Contract accepted",
@@ -558,7 +561,14 @@
       "acceptHelp": "By typing your name and ticking the box, you accept this contract as shown above. The date and time are recorded.",
       "fullName": "Your full name",
       "agree": "I have read this contract and I accept it.",
-      "accept": "Accept the contract"
+      "accept": "Accept the contract",
+      "downloadPdf": "Download the PDF",
+      "declinedTitle": "Contract declined",
+      "declinedOn": "You declined this contract on {date}. Your lawyer may offer you a new version.",
+      "declineTitle": "I do not wish to accept this contract",
+      "declineHelp": "You can say why (optional). Your lawyer will be informed.",
+      "declineReason": "Reason (optional)",
+      "decline": "Decline the contract"
     }
   },
   "admin": {
@@ -1638,7 +1648,7 @@
         "in_review": "In review",
         "validated": "Validated",
         "sent": "Sent",
-        "signed": "Signed",
+        "signed": "Accepted",
         "declined": "Declined",
         "cancelled": "Cancelled",
         "superseded": "Superseded"
@@ -1776,7 +1786,11 @@
         "errors": {
           "LOCKED": "You no longer hold this contract (someone else is editing it). Reload the page.",
           "INVALID": "Check the information entered.",
-          "FAILED": "Saving failed. Please try again."
+          "FAILED": "Saving failed. Please try again.",
+          "NOT_LAWYER": "Only a lawyer on the team can validate this contract.",
+          "MISSING_FIELDS": "First complete the fields to fill in.",
+          "NO_CLIENT_ACCOUNT": "The client does not have a portal account yet (or no access to this matter). An administrator can invite them.",
+          "TOO_SOON": "One reminder per day: try again tomorrow."
         },
         "insertClause": "Insert a clause…",
         "template": {
@@ -1824,7 +1838,57 @@
           "viewedOn": "Viewed by the client on {date}",
           "notViewed": "Not yet viewed by the client.",
           "acceptedBy": "Accepted by {name} on {date}",
-          "clioNext": "To start in Clio: signature is launched from the Clio matter."
+          "clioNext": "To start in Clio: signature is launched from the Clio matter.",
+          "recipient": "Recipient: {name}",
+          "confirmTo": "Send this contract to {name}? The validated version will be sent and the client notified."
+        },
+        "lifecycle": {
+          "validate": "Validate the contract",
+          "validated": "Contract validated: frozen version and official PDF created.",
+          "confirmValidate": "Validate this contract? The text will be frozen and the official PDF created.",
+          "validateHelp": "Validation freezes the text and creates the official PDF with its fingerprint. Only then can the contract be sent.",
+          "lawyerOnly": "A lawyer on the team validates the contract before it is sent. You can ask for a review.",
+          "validatedTitle": "Contract validated",
+          "validatedOn": "Validated on {date} by {name} · version {version}",
+          "fingerprint": "Fingerprint (SHA-256):",
+          "downloadPdf": "Download the official PDF (version {version})",
+          "reopen": "Back to draft",
+          "confirmReopen": "Back to draft? The validation will be removed; you will need to validate again before sending.",
+          "reopened": "The contract is back in draft.",
+          "remind": "Remind the client",
+          "reminded": "Reminder sent to the client.",
+          "remindedOn": "Last reminder on {date}",
+          "remindLater": "A reminder is possible one day after sending or after the last reminder.",
+          "newVersion": "Edit (new version)",
+          "confirmNewVersion": "Create a new version? This one will be marked “Superseded” and removed from the client's portal.",
+          "declinedOn": "Declined by the client on {date}",
+          "declineReason": "Reason: {reason}",
+          "replaces": "This contract replaces a previous version.",
+          "openPrevious": "See the previous version",
+          "supersededTitle": "Superseded by a new version",
+          "openNew": "Open the new version",
+          "matterTitle": "Matter",
+          "linkMatter": "Link this accepted contract to a matter",
+          "chooseMatter": "Choose a matter…",
+          "link": "Link to the matter",
+          "linked": "Contract linked to the matter.",
+          "invite": "Invite this client to the portal",
+          "askAdminInvite": "If the client has no account yet, ask an administrator to invite them. Sending will then find their account.",
+          "startOpening": "Start opening the matter"
+        },
+        "comments": {
+          "title": "{count, plural, =0 {Review comments} one {Review comments (# open)} other {Review comments (# open)}}",
+          "none": "No open comments.",
+          "whole": "Whole contract",
+          "removedSection": "Removed section",
+          "about": "About",
+          "body": "Comment",
+          "add": "Add the comment",
+          "added": "Comment added.",
+          "resolve": "Mark resolved",
+          "reopen": "Reopen",
+          "showResolved": "{count, plural, one {Show # resolved comment} other {Show # resolved comments}}",
+          "hideResolved": "Hide resolved comments"
         }
       },
       "tabs": {
@@ -1964,6 +2028,10 @@
           "invalid": "Check the fields and try again.",
           "failed": "The change could not be saved. Try again."
         }
+      },
+      "pdf": {
+        "footer": "Lex Canada Law — version {version} validated on {date}",
+        "page": "Page {page} of {pages}"
       }
     },
     "search": {
