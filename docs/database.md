@@ -440,3 +440,11 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
   - `public.ai_month_usage` (firm_admin) ;
   - `public.contract_template_create_draft` (firm_admin, brouillon « à faire valider »).
 
+## Clio : dépôt et agenda (ADR 0038, migrations `20261025120000`, `120100` et `120200`)
+- `public.contract_deposits` : un dépôt par version validée et par destination (`clio`, `sharepoint`). États : `pending`, `done`, `failed`, `waiting`. Contenu : identifiant externe, essais, code d'erreur, prochaine tentative. Il est créé par le trigger `contracts_queue_deposits` à la validation. RLS : lecture par l'équipe du contrat ; aucune écriture par l'API.
+- Fonctions du planificateur (service_role seulement) : `contract_deposit_claim`, `contract_deposit_result`, `clio_agenda_next`, `clio_agenda_mark`. Côté équipe : `contract_deposit_retry`.
+- `court_dates.source` (`portal`, `clio`) et `public.court_date_import_clio` (équipe ou planificateur) : date « à confirmer », déjà liée à l'entrée Clio.
+- `private.clio_agenda_cursor` : dernier passage de l'import, par dossier.
+- `public.matter_clio_id` : identifiant Clio d'un dossier, pour l'équipe seulement.
+- Journal : `contract.deposited`, `contract.deposit_failed`, `court_date.imported_from_clio`.
+

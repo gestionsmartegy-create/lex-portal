@@ -1,5 +1,5 @@
 import "server-only";
-import type { ClioManageGateway } from "./gateway";
+import type { ClioDocumentUpload, ClioManageGateway } from "./gateway";
 import type {
   ClioBill,
   ClioCalendar,
@@ -7,6 +7,7 @@ import type {
   ClioCalendarEntryState,
   ClioContact,
   ClioMatter,
+  ClioMatterCalendarEntry,
 } from "./schemas";
 
 /**
@@ -117,6 +118,49 @@ export class MockClioManageGateway implements ClioManageGateway {
     const entry = ENTRIES.get(id);
     if (entry) return { state: "found", startAt: entry.startAt, endAt: entry.endAt, allDay: entry.allDay };
     return GONE.has(id) ? { state: "gone" } : { state: "unknown" };
+  }
+
+  /** Simulateur : aucun envoi ; identifiant de document fictif. */
+  readonly uploads: { matterId: number; previousDocumentId: number | null; name: string; size: number }[] =
+    [];
+  async uploadDocument(input: ClioDocumentUpload): Promise<number> {
+    this.uploads.push({
+      matterId: input.matterId,
+      previousDocumentId: input.previousDocumentId,
+      name: input.name,
+      size: input.bytes.byteLength,
+    });
+    return input.previousDocumentId ?? 700_000 + this.uploads.length;
+  }
+
+  /** Simulateur : deux entrées par dossier (une audience, un rendez-vous), dates relatives à aujourd'hui. */
+  async listMatterCalendarEntries(matterId: number): Promise<ClioMatterCalendarEntry[]> {
+    const day = (n: number, h: number) => {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() + n);
+      d.setUTCHours(h, 30, 0, 0);
+      return d.toISOString();
+    };
+    return [
+      {
+        id: String(880_000 + (matterId % 10_000) * 2),
+        summary: "Audience — Cour suprême (démo)",
+        location: "Halifax",
+        startAt: day(21, 13),
+        endAt: day(21, 15),
+        allDay: false,
+        eventType: "Court",
+      },
+      {
+        id: String(880_001 + (matterId % 10_000) * 2),
+        summary: "Rencontre avec le client (démo)",
+        location: null,
+        startAt: day(7, 15),
+        endAt: day(7, 16),
+        allDay: false,
+        eventType: "Meeting",
+      },
+    ];
   }
 }
 

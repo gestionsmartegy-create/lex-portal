@@ -130,7 +130,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 
 | Question | Pourquoi c'est important | Priorité |
 |---|---|---|
-| **Importer les dates de cour saisies directement dans Clio** (celles que la plateforme n'a pas créées) ? Si oui, comment les reconnaître parmi tous les rendez-vous Clio : une catégorie « Cour », un calendrier Clio dédié, un mot dans le titre ? | Sans règle claire, la plateforme pourrait prendre un simple rendez-vous pour une audience, ou en oublier une. Aujourd'hui, seules les dates créées dans la plateforme sont suivies (modifiées ou supprimées dans Clio). | Moyenne |
+| ~~Importer les dates de cour saisies directement dans Clio ?~~ | ✅ **Oui, celles dont le type d'événement Clio est « Cour » / « Court »** (responsable du projet, 2026-10-28, ADR 0038). Les autres rendez-vous restent importables à la main depuis l'onglet « Cour » du dossier. | Moyenne |
 | **Accès Microsoft 365 pour les agendas Outlook** : enregistrement de l'application par l'administrateur du cabinet (`docs/outlook-integration.md`) | Sans lui, les agendas restent en simulateur (données fictives) | Moyenne |
 | **Date changée dans Clio et visible du client** : faut-il la masquer au client tant qu'un avocat ne l'a pas reconfirmée ? Aujourd'hui, le client voit la nouvelle heure, marquée « à confirmer » | Évite d'annoncer au client une heure saisie par erreur dans Clio | Moyenne |
 | Rappels de préparation : **J-7 et J-1** vous conviennent-ils ? Faut-il d'autres échéances (J-30 pour un procès) ? | Valeurs par défaut posées par le plan (E12) ; facile à changer | Faible |

@@ -52,6 +52,9 @@ export function ContractLifecycle({
   busy,
   isFirmAdmin,
   matterChoices,
+  deposits,
+  clioMatterUrl,
+  clioDocumentsLive,
   run,
   workflow,
   send,
@@ -61,6 +64,18 @@ export function ContractLifecycle({
   busy: boolean;
   isFirmAdmin: boolean;
   matterChoices: { id: string; label: string }[];
+  /** Dépôts du PDF officiel (ADR 0038) : Clio, SharePoint. */
+  deposits: {
+    id: string;
+    version: number;
+    target: "clio" | "sharepoint";
+    status: string;
+    lastError: string | null;
+  }[];
+  /** Lien vers le dossier dans Clio (connexion réelle seulement), pour lancer la signature. */
+  clioMatterUrl: string | null;
+  /** Dépôt réel dans Clio autorisé (sinon : « en attente de l'accord du cabinet »). */
+  clioDocumentsLive: boolean;
   run: (fn: () => Promise<Outcome>, success?: string) => Promise<void>;
   workflow: (input: unknown) => Promise<Outcome>;
   send: (mode: "clio" | "portal") => Promise<Outcome>;
@@ -137,6 +152,46 @@ export function ContractLifecycle({
                 {t("lifecycle.reopen")}
               </button>
             </>
+          ) : null}
+        </section>
+      ) : null}
+
+      {deposits.length ? (
+        <section aria-labelledby="c-deposits" className={box}>
+          <h2 id="c-deposits" className="font-display text-base font-bold text-marine">
+            {t("deposits.title")}
+          </h2>
+          <ul className="space-y-1.5">
+            {deposits.map((d) => (
+              <li key={d.id} className="flex flex-wrap items-center gap-2">
+                <span className="font-semibold">{t(`deposits.targets.${d.target}`)}</span>
+                <span className="text-ink-muted">v{d.version}</span>
+                <span>
+                  {d.status === "waiting"
+                    ? t(`deposits.waiting.${d.lastError === "NO_CLIO_MATTER" ? "noMatter" : "microsoft"}`)
+                    : d.status === "pending" && d.target === "clio" && !clioDocumentsLive
+                      ? t("deposits.waiting.approval")
+                      : t(`deposits.status.${d.status}`)}
+                </span>
+                {d.status === "failed" ? (
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      void run(() => workflow({ op: "retryDeposit", depositId: d.id }), t("deposits.retried"))
+                    }
+                    className="text-xs font-semibold text-gold-ink underline focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+                  >
+                    {t("deposits.retry")}
+                  </button>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+          {clioMatterUrl ? (
+            <a href={clioMatterUrl} target="_blank" rel="noopener noreferrer" className={secondary}>
+              {t("deposits.openClio")}
+            </a>
           ) : null}
         </section>
       ) : null}
