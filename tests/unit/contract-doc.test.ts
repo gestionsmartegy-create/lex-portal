@@ -105,4 +105,48 @@ describe("contrats : masquage avant l'IA", () => {
       expect(masked).not.toContain(v);
     expect(masked).toContain("[NOM_CLIENT]");
   });
+
+  it("masque aussi les parties du nom, sans tenir compte des accents ni des majuscules (ADR 0037)", () => {
+    const party = { name: "Éloïse Tremblay-Gagnon", email: null, address: null, phone: null };
+    const masked = maskPersonalData("Mme ELOISE et M. tremblay-gagnon ; Éloïse signe. Analyse.", party);
+    for (const v of ["ELOISE", "tremblay-gagnon", "Éloïse"]) expect(masked).not.toContain(v);
+    expect(masked).toContain("Analyse");
+  });
+
+  it("masque les données personnelles hors de la fiche (ADR 0037)", () => {
+    const masked = maskPersonalData(
+      "Écrire à autre@example.com ou au (902) 555-0199, code E1C 4M3, NAS 123 456 789, dossier IRCC 1234567.",
+      {},
+    );
+    for (const v of ["autre@example.com", "555-0199", "E1C 4M3", "123 456 789", "1234567"])
+      expect(masked).not.toContain(v);
+    expect(masked).toContain("[COURRIEL]");
+    expect(masked).toContain("[CODE_POSTAL]");
+  });
+
+  it("masque chaque moitié d'un nom composé, les noms de 2 lettres et un texte aux accents décomposés", () => {
+    const party = { name: "Éloïse Tremblay-Gagnon", email: null, address: null, phone: null };
+    const masked = maskPersonalData(
+      "Mme Tremblay a signé ; M. Gagnon aussi. " + "E\u0301loi\u0308se".normalize("NFD"),
+      party,
+    );
+    for (const v of ["Tremblay", "Gagnon", "loi"]) expect(masked).not.toContain(v);
+    const ng = maskPersonalData("Mme Ng et le dossier de la cliente 한.", { name: "Li Ng" });
+    expect(ng).not.toContain(" Ng ");
+    expect(ng).toContain(" le dossier de la ");
+    expect(maskPersonalData("ELOISE 한", party)).not.toContain("ELOISE");
+  });
+
+  it("garde les dates et les montants, et reste rapide sur un texte piégé", () => {
+    const masked = maskPersonalData(
+      "Échéance le 2026-10-28 ; honoraires de 1 500 000 $ ; NAS 123 456 789.",
+      {},
+    );
+    expect(masked).toContain("2026-10-28");
+    expect(masked).toContain("1 500 000 $");
+    expect(masked).not.toContain("123 456 789");
+    const start = Date.now();
+    maskPersonalData("a@" + "a-".repeat(10_000) + " " + "1-".repeat(10_000) + "a", {});
+    expect(Date.now() - start).toBeLessThan(200);
+  });
 });

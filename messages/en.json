@@ -843,7 +843,10 @@
         "synced": "Synchronization completed.",
         "failed": "The operation failed. Try again or reconnect Clio.",
         "calendarSaved": "Clio calendar saved.",
-        "calendarCut": "The calendar connection was cut."
+        "calendarCut": "The calendar connection was cut.",
+        "aiSaved": "AI assistant settings saved.",
+        "aiInvalid": "Check the cap and the price (numbers, at most 2 and 4 decimals).",
+        "aiFailed": "The settings could not be saved."
       },
       "errors": {
         "INVALID": "Please enter a valid email.",
@@ -877,6 +880,18 @@
         "simulator": "simulator",
         "reminders": "reminders on",
         "cut": "Cut connection"
+      },
+      "ai": {
+        "title": "AI assistant (drafting)",
+        "on": "On",
+        "off": "Off",
+        "modeMock": "Mode: simulator (OpenAI not connected, awaiting the firm's approval).",
+        "usage": "This month: {requests, plural, =0 {no requests} one {# request} other {# requests}}, estimated cost {cost} out of a cap of {cap}.",
+        "help": "Before anything is sent to the AI, the client's details and any personal data (emails, phone numbers, postal codes, numbers) are replaced by labels. Beyond the monthly cap, the assistant turns off until the next month. The log records each use, never its content.",
+        "enabled": "Assistant on for staff",
+        "cap": "Monthly cap (CAD)",
+        "price": "Estimated cost (cents per 1,000 characters)",
+        "save": "Save the settings"
       }
     },
     "messages": {
@@ -1736,7 +1751,9 @@
           "reject": "Reject",
           "errors": {
             "RATE_LIMITED": "Too many requests: try again in a few minutes.",
-            "UNAVAILABLE": "Drafting help is not available right now."
+            "UNAVAILABLE": "Drafting help is not available right now.",
+            "BUDGET_EXCEEDED": "The assistant's monthly cap has been reached. It will be available again next month.",
+            "DISABLED": "The AI assistant has been turned off by the administrator."
           }
         },
         "lockedBy": "Being edited by {name}: read only.",
@@ -1966,9 +1983,20 @@
           "saved": "Template settings saved.",
           "published": "Template published.",
           "invalid": "Check the fields and try again.",
-          "failed": "The action failed. Try again."
+          "failed": "The action failed. Try again.",
+          "aiDraft": "Template created as a draft “to be reviewed”. Click “Review and publish”.",
+          "aiInvalid": "Enter a name and a description of at least 10 characters.",
+          "aiBudget": "The AI assistant's monthly cap has been reached.",
+          "aiDisabled": "The AI assistant is turned off (Integrations)."
         },
-        "description": "Description"
+        "description": "Description",
+        "ai": {
+          "title": "Create a template with the AI assistant",
+          "language": "Template language",
+          "description": "Description of the contract you need",
+          "help": "Describe the type of contract (area, services, particulars) without any client name or details. The template is created as a draft “to be reviewed”: review it, then publish it.",
+          "submit": "Suggest a template"
+        }
       },
       "clauses": {
         "title": "Clause library",

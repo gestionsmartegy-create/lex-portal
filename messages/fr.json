@@ -843,7 +843,10 @@
         "synced": "Synchronisation terminée.",
         "failed": "L'opération a échoué. Réessayez ou reconnectez Clio.",
         "calendarSaved": "Calendrier Clio enregistré.",
-        "calendarCut": "La connexion d'agenda a été coupée."
+        "calendarCut": "La connexion d'agenda a été coupée.",
+        "aiSaved": "Réglages de l'assistant IA enregistrés.",
+        "aiInvalid": "Vérifiez le plafond et le prix (nombres, 2 et 4 décimales au plus).",
+        "aiFailed": "Les réglages n'ont pas pu être enregistrés."
       },
       "errors": {
         "INVALID": "Veuillez saisir un e-mail valide.",
@@ -877,6 +880,18 @@
         "simulator": "simulateur",
         "reminders": "rappels activés",
         "cut": "Couper la connexion"
+      },
+      "ai": {
+        "title": "Assistant IA (rédaction)",
+        "on": "Activé",
+        "off": "Désactivé",
+        "modeMock": "Mode : simulateur (OpenAI non branché, en attente de l'accord du cabinet).",
+        "usage": "Ce mois-ci : {requests, plural, =0 {aucune demande} one {# demande} other {# demandes}}, coût estimé {cost} sur un plafond de {cap}.",
+        "help": "Avant tout envoi à l'IA, les coordonnées du client et toute donnée personnelle (courriels, téléphones, codes postaux, numéros) sont remplacées par des étiquettes. Au-delà du plafond mensuel, l'assistant se désactive jusqu'au mois suivant. Le journal indique chaque utilisation, jamais son contenu.",
+        "enabled": "Assistant activé pour le personnel",
+        "cap": "Plafond mensuel (CAD)",
+        "price": "Coût estimé (cents par 1 000 caractères)",
+        "save": "Enregistrer les réglages"
       }
     },
     "messages": {
@@ -1736,7 +1751,9 @@
           "reject": "Rejeter",
           "errors": {
             "RATE_LIMITED": "Trop de demandes : réessayez dans quelques minutes.",
-            "UNAVAILABLE": "L'aide à la rédaction n'est pas disponible pour le moment."
+            "UNAVAILABLE": "L'aide à la rédaction n'est pas disponible pour le moment.",
+            "BUDGET_EXCEEDED": "Le plafond mensuel de l'assistant est atteint. Il sera de nouveau disponible le mois prochain.",
+            "DISABLED": "L'assistant IA est désactivé par l'administrateur."
           }
         },
         "lockedBy": "En cours de modification par {name} : lecture seule.",
@@ -1966,9 +1983,20 @@
           "saved": "Réglages du modèle enregistrés.",
           "published": "Modèle publié.",
           "invalid": "Vérifiez les champs et réessayez.",
-          "failed": "L'action a échoué. Réessayez."
+          "failed": "L'action a échoué. Réessayez.",
+          "aiDraft": "Gabarit créé en brouillon « à faire valider ». Cliquez « Relire et publier ».",
+          "aiInvalid": "Indiquez un nom et une description d'au moins 10 caractères.",
+          "aiBudget": "Le plafond mensuel de l'assistant IA est atteint.",
+          "aiDisabled": "L'assistant IA est désactivé (Intégrations)."
         },
-        "description": "Description"
+        "description": "Description",
+        "ai": {
+          "title": "Créer un gabarit avec l'assistant IA",
+          "language": "Langue du gabarit",
+          "description": "Description du contrat voulu",
+          "help": "Décrivez le type de contrat (domaine, services, particularités) sans nom ni coordonnée de client. Le gabarit est créé en brouillon « à faire valider » : relisez-le puis publiez-le.",
+          "submit": "Proposer un gabarit"
+        }
       },
       "clauses": {
         "title": "Bibliothèque de clauses",

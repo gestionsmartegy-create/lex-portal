@@ -10,7 +10,27 @@ export type Database = {
   
   "public": {
           Tables: {
-            "appointments": {
+            "ai_settings": {
+                  Row: {
+                    "cents_per_1k_chars": number,"enabled": boolean,"id": boolean,"monthly_cap_cents": number,"updated_at": string,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cents_per_1k_chars"?: number,"enabled"?: boolean,"id"?: boolean,"monthly_cap_cents"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "cents_per_1k_chars"?: number,"enabled"?: boolean,"id"?: boolean,"monthly_cap_cents"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_settings_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"appointments": {
                   Row: {
                     "clio_calendar_entry_id": string | null,"created_at": string,"description": string | null,"ends_at": string | null,"id": string,"last_synced_at": string | null,"location": string | null,"matter_id": string,"meeting_url": string | null,"starts_at": string,"status": Database["public"]['Enums']["appointment_status"],"timezone": string,"title": string,"updated_at": string,"with_staff_name": string | null
                   }
@@ -1246,7 +1266,18 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "authorize_staff_provisioning":
+            "ai_complete":
+{ Args: { "p_chars_out": number,"p_ok": boolean,"p_usage": string }; Returns: undefined
+                           },
+"ai_month_usage":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "cap_cents": number,"cost_cents": number,"requests": number
+            }[]
+                           },
+"ai_reserve":
+{ Args: { "p_chars_in": number,"p_contract": string,"p_kind": string,"p_mock": boolean }; Returns: string
+                           },
+"authorize_staff_provisioning":
 { Args: { "p_actor": string,"p_email": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: undefined
                            },
 "calendar_connection_list":
@@ -1373,6 +1404,9 @@ isOneToOne: false
                            },
 "contract_send":
 { Args: { "p_contract": string,"p_mode": string }; Returns: number
+                           },
+"contract_template_create_draft":
+{ Args: { "p_domain": string,"p_language": string,"p_name": string,"p_sections": Json }; Returns: string
                            },
 "contract_template_from_contract":
 { Args: { "p_contract": string,"p_description"?: string,"p_domain": string,"p_name": string,"p_signing": string }; Returns: string
