@@ -430,3 +430,13 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
   - `private.is_contract_lawyer`.
 - Journal : `contract.pdf_generated`, `contract.pdf_downloaded`, `contract.reopened`, `contract.reminded`, `contract.declined` (trigger), `contract.new_version`. Jamais le motif d'un refus.
 - Corrections (`20261023120200`) : contrat sans dossier validé par le firm_admin seulement ; `public.contract_client_account` (aperçu du destinataire) et `private.contract_recipient` ; journal `contract.client_linked` ; `contract_link_matter` exige l'accès du client au dossier ; résolution des commentaires non réécrivable ; `is_mock` reporté sur une nouvelle version.
+
+## Assistant IA (ADR 0037, migration `20261024120000`)
+- `public.ai_settings` : une seule ligne (activé, plafond mensuel en cents, coût estimé par 1 000 caractères). RLS : lecture personnel, écriture firm_admin ; journal `ai.settings_updated`.
+- `private.ai_usage` : une ligne par demande (utilisateur, contrat, sorte, caractères, coût estimé, simulateur, statut). Jamais le contenu.
+- Fonctions :
+  - `public.ai_reserve` : refus `55000` si l'IA est désactivée, `54000` si le plafond est atteint ;
+  - `public.ai_complete` ;
+  - `public.ai_month_usage` (firm_admin) ;
+  - `public.contract_template_create_draft` (firm_admin, brouillon « à faire valider »).
+

@@ -109,7 +109,9 @@ type Fail =
   | "RATE_LIMITED"
   | "UNAVAILABLE"
   | "NO_CLIENT_ACCOUNT"
-  | "MISSING_FIELDS";
+  | "MISSING_FIELDS"
+  | "BUDGET_EXCEEDED"
+  | "DISABLED";
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; code: Fail };
 const fail = (code: Fail) => ({ ok: false as const, code });
 const ok = <T>(data: T) => ({ ok: true as const, data });
@@ -725,19 +727,40 @@ export async function aiAssist(
   if (!loaded.contract.editable) return fail("INVALID");
   const c = loaded.contract;
   const party = { name: c.clientName, email: c.clientEmail, address: c.clientAddress, phone: c.clientPhone };
+  // Texte borné AVANT le masquage (les expressions du masquage restent rapides).
   const text = maskPersonalData(
-    docToText(section.body, (key: ContractFieldKey) => `[${key}]`),
+    docToText(section.body, (key: ContractFieldKey) => `[${key}]`).slice(0, 20_000),
     party,
   );
+  const supabase = await createSupabaseServerClient();
+  let usageId: string | null = null;
   try {
     const gateway = getAiGateway();
-    const proposal = await gateway.assist({
+    const payload = {
       kind: input.kind as AiAssistKind,
       language: c.language,
       sectionTitle: maskPersonalData(section.title, party),
       text: text.slice(0, 20_000),
       instruction: maskPersonalData(input.instruction, party),
+    };
+    // Garde-fous (ADR 0037) : IA activée et plafond du mois, vérifiés par la base AVANT l'appel.
+    const { data: reserved, error: reserveError } = await supabase.rpc("ai_reserve", {
+      p_contract: c.id,
+      p_kind: input.kind,
+      p_chars_in: payload.text.length + payload.instruction.length + payload.sectionTitle.length,
+      p_mock: gateway.isMock,
     });
+    if (reserveError || !reserved)
+      throw new AiError(
+        reserveError?.code === "54000"
+          ? "BUDGET_EXCEEDED"
+          : reserveError?.code === "55000"
+            ? "DISABLED"
+            : "UNAVAILABLE",
+      );
+    usageId = reserved;
+    const proposal = await gateway.assist(payload);
+    await supabase.rpc("ai_complete", { p_usage: usageId, p_chars_out: proposal.length, p_ok: true });
     await recordAudit({
       action: "contract.ai_assisted",
       resourceType: "contract",
@@ -749,8 +772,11 @@ export async function aiAssist(
     return ok({ text: proposal.slice(0, 20_000), mock: gateway.isMock });
   } catch (error) {
     const code = error instanceof AiError ? error.code : "UNAVAILABLE";
+    if (usageId) await supabase.rpc("ai_complete", { p_usage: usageId, p_chars_out: 0, p_ok: false });
     console.error(JSON.stringify({ event: "contract_ai_failed", code }));
-    return fail(code === "RATE_LIMITED" ? "RATE_LIMITED" : "UNAVAILABLE");
+    return fail(
+      code === "RATE_LIMITED" || code === "BUDGET_EXCEEDED" || code === "DISABLED" ? code : "UNAVAILABLE",
+    );
   }
 }
 

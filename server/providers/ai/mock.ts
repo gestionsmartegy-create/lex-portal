@@ -1,5 +1,5 @@
 import "server-only";
-import type { AiAssistInput, AiDraftingGateway } from "./gateway";
+import type { AiAssistInput, AiDraftingGateway, AiTemplate, AiTemplateInput } from "./gateway";
 
 /**
  * Simulateur d'IA (AGENTS.md §2.6-7) : aucune requête externe. Les propositions sont des textes
@@ -39,5 +39,38 @@ export class MockAiDraftingGateway implements AiDraftingGateway {
       case "translate":
         return `${fr ? "[AI simulator] English translation:" : "[Simulateur IA] Traduction française :"}\n${body}`;
     }
+  }
+
+  async generateTemplate(input: AiTemplateInput): Promise<AiTemplate> {
+    const fr = input.language === "fr";
+    const tag = fr ? "[Simulateur IA]" : "[AI simulator]";
+    const titles = fr
+      ? [
+          "Parties",
+          "Objet du mandat",
+          "Honoraires et débours",
+          "Obligations des parties",
+          "Confidentialité",
+          "Fin du mandat",
+          "Signatures",
+        ]
+      : [
+          "Parties",
+          "Scope of the mandate",
+          "Fees and disbursements",
+          "Obligations of the parties",
+          "Confidentiality",
+          "End of the mandate",
+          "Signatures",
+        ];
+    return {
+      sections: titles.map((title, i) => ({
+        title,
+        text:
+          i === 0
+            ? `${tag} ${fr ? "Entre le Cabinet et le Client désigné dans la fiche." : "Between the Firm and the Client named in the record."}`
+            : `${tag} ${fr ? "Texte à rédiger pour" : "Text to draft for"} « ${title} » — ${input.description.slice(0, 200)}`,
+      })),
+    };
   }
 }
