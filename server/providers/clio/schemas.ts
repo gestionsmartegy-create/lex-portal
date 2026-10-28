@@ -124,3 +124,53 @@ export type ClioCalendarEntryInput = {
   endAt: string;
   allDay: boolean;
 };
+
+// ---------------------------------------------------------------------------------------------
+// Documents (dépôt du contrat validé, ADR 0038) — openapi.json v4, vérifié le 2026-10-28.
+// ---------------------------------------------------------------------------------------------
+const putHeadersSchema = z
+  .union([
+    z.array(z.object({ name: z.string().max(200), value: z.string().max(2000) })).max(20),
+    z.record(z.string().max(200), z.string().max(2000)),
+  ])
+  .optional();
+
+export const clioDocumentCreatedSchema = z.object({
+  data: z.object({
+    id: z.number().int().positive(),
+    latest_document_version: z.object({
+      uuid: z.string().min(1).max(100),
+      put_url: z.url().max(4000),
+      put_headers: putHeadersSchema,
+    }),
+  }),
+});
+export const DOCUMENT_UPLOAD_FIELDS = "id,latest_document_version{uuid,put_url,put_headers}";
+
+// ---------------------------------------------------------------------------------------------
+// Agenda d'un dossier (dates de cour venues de Clio, ADR 0038) — vérifié le 2026-10-28.
+// ---------------------------------------------------------------------------------------------
+export const clioMatterCalendarEntrySchema = z.object({
+  id: z.union([z.number(), z.string()]).transform(String),
+  summary: z.string().max(500).nullable().optional(),
+  location: z.string().max(500).nullable().optional(),
+  start_at: z.string().nullable().optional(),
+  end_at: z.string().nullable().optional(),
+  all_day: z.boolean().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+  calendar_entry_event_type: z
+    .object({ name: z.string().max(200).nullable().optional() })
+    .nullable()
+    .optional(),
+});
+export type ClioMatterCalendarEntry = {
+  id: string;
+  summary: string;
+  location: string | null;
+  startAt: string;
+  endAt: string | null;
+  allDay: boolean;
+  eventType: string | null;
+};
+export const MATTER_CALENDAR_FIELDS =
+  "id,summary,location,start_at,end_at,all_day,updated_at,calendar_entry_event_type{name}";

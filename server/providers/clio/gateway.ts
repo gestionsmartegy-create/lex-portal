@@ -6,7 +6,18 @@ import type {
   ClioCalendarEntryState,
   ClioContact,
   ClioMatter,
+  ClioMatterCalendarEntry,
 } from "./schemas";
+
+/** Dépôt d'un fichier dans un dossier Clio (ADR 0038). */
+export type ClioDocumentUpload = {
+  matterId: number;
+  /** Document Clio existant : le fichier en devient une nouvelle version. */
+  previousDocumentId: number | null;
+  name: string;
+  contentType: "application/pdf";
+  bytes: Uint8Array;
+};
 
 /**
  * ClioManageGateway (docs/class-diagram.md) — lecture (Phase 2) et, depuis l'ADR 0025, écriture des
@@ -29,6 +40,13 @@ export interface ClioManageGateway {
   deleteCalendarEntry(id: string): Promise<void>;
   /** Heure actuelle de l'entrée dans Clio (retour Clio, ADR 0031) ; « gone » si elle a été supprimée. */
   getCalendarEntry(id: string): Promise<ClioCalendarEntryState>;
+  /** Dépose un fichier (Documents : création, envoi signé, fin du dépôt) ; renvoie l'identifiant du document. */
+  uploadDocument(input: ClioDocumentUpload): Promise<number>;
+  /** Entrées d'agenda d'un dossier, modifiées depuis une date (facultatif). */
+  listMatterCalendarEntries(
+    matterId: number,
+    updatedSince: string | null,
+  ): Promise<ClioMatterCalendarEntry[]>;
 }
 
 /** Erreurs internes (AGENTS.md §5) : jamais la réponse brute de l'API. */

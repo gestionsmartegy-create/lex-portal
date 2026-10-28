@@ -126,3 +126,5 @@ graph TD
 - **Fraîcheur** : toute donnée issue de Clio affiche `FreshnessIndicator` (« Mis à jour il y a X min »). Au-delà de 24 h, avertissement « Données possiblement périmées ».
 - **États** : chaque page prévoit un état de chargement (squelettes), un état vide (message et action utile) et un état d'erreur (message neutre, sans détail technique).
 - **Expiration de session** : retour au login avec un message, puis redirection vers la page demandée.
+
+> Ajout (ADR 0038) : l'onglet « Cour » d'un dossier lié à Clio affiche « Agenda Clio du dossier » (lecture, bouton « Importer ») ; l'éditeur d'un contrat validé affiche « Rangement du contrat » (Clio, SharePoint).

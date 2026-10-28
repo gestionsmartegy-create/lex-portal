@@ -34,6 +34,17 @@ export function getClioGateway(): ClioManageGateway {
     : new MockClioManageGateway();
 }
 
+/**
+ * Dépôt de documents dans Clio (ADR 0038) : écriture réelle seulement si Clio ET le dépôt sont en « live »
+ * (accord du cabinet requis) ; sinon le simulateur, sans aucun envoi.
+ */
+export function getClioDocumentsGateway(): ClioManageGateway {
+  const env = serverEnv();
+  return env.INTEGRATION_MODE_CLIO === "live" && env.INTEGRATION_MODE_CLIO_DOCUMENTS === "live"
+    ? new ClioManageClient(getClioTokenStore())
+    : new MockClioManageGateway();
+}
+
 export function getClioTokenStore() {
   return new VaultTokenStore("clio_manage", "ca");
 }
