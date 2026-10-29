@@ -12,6 +12,16 @@ lexlaw.2-24-110-184.sslip.io {
 		reverse_proxy 127.0.0.1:54021
 	}
 
+	# Connexion Microsoft du personnel (ADR 0040) : départ vers Microsoft et retour de Microsoft.
+	# GET uniquement ; le reste de /auth/v1 reste interne.
+	@oauth {
+		method GET
+		path /auth/v1/authorize /auth/v1/callback
+	}
+	handle @oauth {
+		reverse_proxy 127.0.0.1:54021
+	}
+
 	# Boîte d'e-mails de TEST (aucun e-mail réel), protégée par mot de passe.
 	# `basicauth` : nom de la directive dans Caddy 2.6 (celui du serveur) ; `basic_auth` à partir de 2.8.
 	handle /_mail* {

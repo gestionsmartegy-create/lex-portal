@@ -1,6 +1,6 @@
 # Connexion Microsoft du personnel — serveur de test
 
-> Demande pour le **responsable technique** : les fichiers de déploiement (`deploy/vps/`) et de session (`server/actions/auth.ts`, `server/env.ts`) sont protégés par les garde-fous. Rien n'a été modifié ; voici les changements prêts à appliquer.
+> **Appliqué le 2026-10-29** dans le cadre de l'exception ADR 0040 (pas de responsable technique) : option A pour l'adresse publique (`lib/oauth-authorize-url.ts`, test `tests/unit/oauth-authorize-url.test.ts`).
 
 ## État côté Microsoft (fait le 2026-10-29)
 

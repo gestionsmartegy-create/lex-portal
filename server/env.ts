@@ -13,6 +13,9 @@ const schema = z
     APP_BASE_URL: z.url().default("http://localhost:3000"),
     NEXT_PUBLIC_SUPABASE_URL: z.url(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    // Serveur de test (ADR 0016) : adresse publique de Supabase Auth quand l'application lui parle
+    // par une adresse interne. Sert seulement au départ vers Microsoft (lib/oauth-authorize-url).
+    SUPABASE_PUBLIC_URL: z.url().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
     SMTP_URL: z.string().min(1).optional(),
     EMAIL_FROM: z.string().min(3).default("Lex Canada Law <no-reply@lexcanadalaw.test>"),
