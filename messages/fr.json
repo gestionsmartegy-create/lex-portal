@@ -1904,7 +1904,8 @@
           "linked": "Contrat rattaché au dossier.",
           "invite": "Inviter ce client dans le portail",
           "askAdminInvite": "Si le client n'a pas encore de compte, demandez à un administrateur de l'inviter. L'envoi trouvera ensuite son compte.",
-          "startOpening": "Démarrer l'ouverture du dossier"
+          "startOpening": "Démarrer l'ouverture du dossier",
+          "downloadDocx": "Télécharger en Word (copie de travail, version {version})"
         },
         "comments": {
           "title": "{count, plural, =0 {Commentaires de relecture} one {Commentaires de relecture (# ouvert)} other {Commentaires de relecture (# ouverts)}}",

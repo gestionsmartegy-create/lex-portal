@@ -1904,7 +1904,8 @@
           "linked": "Contract linked to the matter.",
           "invite": "Invite this client to the portal",
           "askAdminInvite": "If the client has no account yet, ask an administrator to invite them. Sending will then find their account.",
-          "startOpening": "Start opening the matter"
+          "startOpening": "Start opening the matter",
+          "downloadDocx": "Download as Word (working copy, version {version})"
         },
         "comments": {
           "title": "{count, plural, =0 {Review comments} one {Review comments (# open)} other {Review comments (# open)}}",
