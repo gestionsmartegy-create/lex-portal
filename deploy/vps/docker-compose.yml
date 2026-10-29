@@ -47,6 +47,14 @@ services:
       GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${SITE_URL}/auth/v1/verify
       GOTRUE_MAILER_URLPATHS_INVITE: ${SITE_URL}/auth/v1/verify
       GOTRUE_MAILER_URLPATHS_RECOVERY: ${SITE_URL}/auth/v1/verify
+      # Connexion Microsoft du personnel (ADR 0010, 0040) : désactivée tant que STAFF_SSO_ENABLED ne vaut
+      # pas « true » sur le serveur. Locataire du cabinet seulement (jamais « common »). Remplace la
+      # valeur « false » du fichier d'Auth. Le secret client reste dans le fichier de secrets du serveur.
+      GOTRUE_EXTERNAL_AZURE_ENABLED: ${STAFF_SSO_ENABLED:-false}
+      GOTRUE_EXTERNAL_AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+      GOTRUE_EXTERNAL_AZURE_SECRET: ${AZURE_CLIENT_SECRET:-}
+      GOTRUE_EXTERNAL_AZURE_URL: https://login.microsoftonline.com/${AZURE_TENANT_ID:-invalid}
+      GOTRUE_EXTERNAL_AZURE_REDIRECT_URI: ${SITE_URL}/auth/v1/callback
 
   rest:
     image: postgrest/postgrest:v16.4
@@ -93,7 +101,7 @@ services:
       args:
         NEXT_PUBLIC_SUPABASE_URL: http://gateway:8000
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
-        NEXT_PUBLIC_STAFF_SSO_ENABLED: "false"
+        NEXT_PUBLIC_STAFF_SSO_ENABLED: ${STAFF_SSO_ENABLED:-false}
         NEXT_DEPLOYMENT_ID: ${DEPLOYMENT_ID:-local}
     restart: unless-stopped
     depends_on: [gateway, mailpit]
@@ -102,6 +110,8 @@ services:
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       APP_BASE_URL: ${SITE_URL}
+      # Adresse publique de Supabase Auth : le départ vers Microsoft ne peut pas utiliser gateway:8000.
+      SUPABASE_PUBLIC_URL: ${SITE_URL}
       CRON_SECRET: ${CRON_SECRET}
       SMTP_URL: smtp://mailpit:1025
       EMAIL_FROM: Lex Canada Law (test) <no-reply@lexcanadalaw.test>
