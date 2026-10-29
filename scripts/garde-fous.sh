@@ -52,6 +52,8 @@ if [ "$tool" != "Bash" ]; then
       refuse "Les fichiers .env contiennent des secrets : on ne les modifie pas d'ici. Pour une nouvelle variable, ajoute son NOM (sans valeur) dans .env.example." ;;
     supabase/seed.local.md|supabase/.temp/*)
       refuse "Ce fichier contient des mots de passe de test ; il n'est ni lu ni modifié par l'agent." ;;
+    # Exception ADR 0040 (responsable du projet, 2026-10-29) : connexion Microsoft.
+    deploy/vps/docker-compose.yml|deploy/vps/lexlaw.caddy|server/env.ts|server/actions/auth.ts) exit 0 ;;
     .claude/*|scripts/garde-fous.sh|scripts/audit-routes.mts|deploy/*|Dockerfile|.dockerignore|.github/*|vercel.json|.gitleaks.toml|supabase/config.toml|AGENTS.md|CLAUDE.md|docs/runbooks/test-server.md)
       refuse "Ce fichier fait partie des garde-fous, de la CI ou du déploiement : il relève du responsable technique. Explique le besoin dans /envoyer-pour-verification." ;;
     proxy.ts|next.config.ts|server/security/*|server/auth/*|server/db/*|server/env.ts|server/actions/auth.ts|supabase/schema.sql|lib/safe-redirect.ts|lib/session-timeout.ts|lib/auth-constants.ts)
@@ -118,10 +120,10 @@ hit "migrate\.sh +--reset" \
   && demander "Réinitialiser la base du serveur de test ? Toutes les données fictives et les comptes créés seront effacés ; de nouveaux mots de passe seront écrits dans ACCES.md."
 hit "docker$SEG compose$SEG (down|rm|stop)$END" && ! hit "$TEST_HOST" \
   && demander "Arrêter des conteneurs locaux ? Pour la base locale, préfère pnpm db:stop."
-if hit "(^|[ ;&|(])vercel( |$)" && ! hit "vercel +(ls|list|inspect|logs|whoami|help|--version|-v$END)"; then
-  refuse "Le projet se déploie sur le serveur de test (deploy/vps/scripts/deploy.sh), pas sur Vercel."
-fi
-hit "supabase$SEG (link|login|logout|projects|orgs|secrets|branches|functions deploy|db push|db pull|db dump|db remote|config push|migration repair|--linked|--db-url|--project-ref)" \
+# Correctif ADR 0040 : la CLI vercel est permise (préproduction), sauf secrets et suppressions.
+hit "(^|[ ;&|(])vercel$SEG (env|secrets|remove|rm|project rm|projects rm|domains rm|dns rm|teams)$END" \
+  && refuse "Vercel : les variables (secrets) et les suppressions relèvent du responsable du projet, dans le tableau de bord (ADR 0040)."
+hit "supabase$SEG (logout|orgs|projects|secrets|branches|functions deploy|db pull|db dump|db remote|config push|migration repair|--linked|--db-url|--include-seed|--include-all)" \
   && refuse "Cette commande vise une base Supabase DISTANTE. Ici, seule la base locale est utilisée (pnpm db:start, db:reset, db:test). Le serveur relève du responsable technique."
 hit "docker$SEG compose$SEG down$SEG-v|docker$SEG volume$SEG (rm|prune)|docker$SEG system prune" \
   && refuse "Cela effacerait des données Docker (base locale ou serveur). Pour repartir de zéro en local : pnpm db:reset."

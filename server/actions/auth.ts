@@ -3,6 +3,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { isDemoStaffEmail, isStaffEmail } from "@/lib/auth-constants";
+import { toBrowserAuthorizeUrl } from "@/lib/oauth-authorize-url";
 import { safeNextPath } from "@/lib/safe-redirect";
 import { getAssurance, getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
@@ -202,7 +203,10 @@ export async function staffMicrosoftAction(formData: FormData): Promise<void> {
     },
   });
   if (error || !data.url) redirect(`/${locale}/staff/login`);
-  redirect(data.url);
+  const env = serverEnv();
+  const target = toBrowserAuthorizeUrl(data.url, env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_PUBLIC_URL);
+  if (!target) redirect(`/${locale}/staff/login`);
+  redirect(target);
 }
 
 /** Formulaire de démonstration : développement ou serveur de test (ADR 0016), comptes *.test uniquement. */
