@@ -122,6 +122,12 @@ export function ContractLifecycle({
             </p>
           ) : null}
           {pdfLink}
+          {c.validatedVersion ? (
+            <a href={`/api/contracts/${c.id}/docx`} className={secondary}>
+              <Download aria-hidden className="size-4" />
+              {t("lifecycle.downloadDocx", { version: c.validatedVersion })}
+            </a>
+          ) : null}
           {c.status === "validated" ? (
             <>
               {c.needsInvitation && isFirmAdmin ? (

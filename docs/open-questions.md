@@ -166,5 +166,5 @@ Toutes ces questions découlent directement des points marqués « à valider »
 
 | Question | Décision | Conséquence |
 |---|---|---|
-| ~~Format du contrat validé~~ | ✅ **PDF seulement pour l'instant** ; Word plus tard | PDF officiel avec empreinte SHA-256 |
+| ~~Format du contrat validé~~ | ✅ **PDF officiel** ; copie Word de travail ajoutée le 2026-10-28 à la demande du responsable du projet (ADR 0039) | PDF officiel avec empreinte SHA-256 ; Word pour l'équipe seulement |
 | ~~Qui valide un contrat sans dossier ?~~ | ✅ **Le firm_admin seulement** (responsable du projet, 2026-10-21) | Un avocat qui rédige sans dossier fait valider par un administrateur, ou rattache d'abord le contrat à un dossier |

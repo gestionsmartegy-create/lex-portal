@@ -23,6 +23,7 @@ export type AuditAction =
   | "matter.opened"
   | "document_request.reminded"
   | "document_request.created"
+  | "contract.docx_downloaded"
   | "matter_access.granted"
   | "matter_access.revoked"
   | "invitation.revoked"
