@@ -1,6 +1,6 @@
 # Mise en ligne de la préproduction (lundi 5 octobre 2026)
 
-> Pour le **responsable du projet**. Décisions : ADR 0013.
+> Pour le **responsable du projet**. Décisions : ADR 0013, 0040 et 0041 (nouveau Supabase au Canada, Vercel à Montréal).
 > **Vous saisissez vous-même toutes les clés et tous les mots de passe**, directement dans Supabase, Vercel, Azure et Clio. Ne les envoyez jamais par chat ou par courriel, et ne les écrivez dans aucun fichier du dépôt.
 > La préproduction ne reçoit **que des comptes de test et le personnel** : aucun vrai client avant la Phase 5.
 
@@ -8,19 +8,19 @@ Faites les étapes dans l'ordre. Chacune se termine par une **vérification**. S
 
 ---
 
-## Étape 1 — Supabase : le projet « lex law » (vendredi soir ou samedi matin)
+## Étape 1 — Supabase : un nouveau projet (ADR 0041)
 
-### 1.1 Vérifier que le projet peut être réutilisé (ADR 0002)
-Ouvrez le projet dans https://supabase.com/dashboard.
-1. **Région** : *Project Settings → General → Region*. Elle doit être **Canada (Central) — ca-central-1**.
-2. **Contenu** : *Table Editor*, schéma `public`. Le projet doit être **vide** : pas de tables de l'ancienne application.
+### 1.1 Créer le projet
+L'ancien projet « lex law » de l'ancienne équipe n'est **pas** réutilisé (décision du 2026-10-29).
+1. https://supabase.com/dashboard → **New project**, dans l'organisation du cabinet.
+2. **Name** : `lex-portal`. **Region** : **Canada (Central) — ca-central-1**. Ce choix est définitif.
+3. **Database password** : *Generate*, puis gardez-le dans votre gestionnaire de mots de passe.
+4. Notez la **référence** du projet, visible dans l'adresse `…/project/<REF>` (elle n'est pas secrète).
 
-**Si l'une de ces deux conditions n'est pas remplie, ne réutilisez pas ce projet.** Créez un nouveau projet nommé « lex-portal-preprod » en région **Canada (Central)**. Effacer l'ancien contenu serait irréversible ; c'est une décision à prendre à part, après une sauvegarde.
+**Vérification** : *Project Settings → General → Region* = `ca-central-1`.
 
-### 1.2 Plan et clés
-1. *Organization → Billing* : plan **Pro**.
-2. *Project Settings → API Keys* : **régénérez** les clés. L'ancienne équipe connaissait peut-être les précédentes (ADR 0002).
-3. *Project Settings → Database* : **réinitialisez le mot de passe de la base** et gardez-le dans votre gestionnaire de mots de passe.
+### 1.2 Plan
+*Organization → Billing* : plan **Pro** (sauvegardes quotidiennes, pas de mise en pause, protection contre les mots de passe divulgués).
 
 ### 1.3 Envoyer le schéma
 Dans un terminal, à la racine du projet :
@@ -38,8 +38,8 @@ pnpm exec supabase db push
 - ⚠️ **Ne lancez pas** `supabase config push` : il enverrait les réglages de développement local (adresse localhost, pas de SMTP). Les réglages se font à la main, à l'étape 1.4.
 
 **Vérification** :
-- *Database → Migrations* : 7 migrations, la dernière étant `20261002120000_session_activity` ;
-- *Table Editor* : 22 tables dans `public`.
+- *Database → Migrations* : autant de migrations que de fichiers dans `supabase/migrations/` (la dernière porte la date la plus récente) ;
+- *Table Editor* : les tables de `public` existent, toutes avec la RLS activée.
 
 ### 1.4 Réglages d'authentification (*Authentication*)
 
@@ -80,7 +80,7 @@ Le compte est créé avec le rôle `firm_admin`. Il devient utilisable à votre 
 ## Étape 2 — Vercel (samedi matin)
 1. https://vercel.com → **Add New → Project** → importez `SmartegyCanada/lex-portal` (branche `main`).
 2. **Framework** : Next.js (détecté). Ne modifiez pas les commandes.
-3. *Settings → Functions → Region* : **Montréal (yul1)** si la région est proposée, sinon **Washington (iad1)**. Choisissez la plus proche de Supabase `ca-central-1`.
+3. *Settings → Functions → Region* : **Montréal, Canada (East) — yul1** (disponible). *Settings → General → Data Preferences* : **désactivez** « Improve models with this project's data ». Projet **neuf** : l'ancien projet « lex-law » de l'ancienne équipe n'est pas réutilisé (ADR 0041).
 4. *Settings → Environment Variables* (environnement **Production**), une variable à la fois, à partir de `.env.example` :
 
 | Variable | Valeur |
@@ -122,21 +122,17 @@ Le compte est créé avec le rôle `firm_admin`. Il devient utilisable à votre 
 
 ---
 
-## Étape 4 — Connexion Microsoft du personnel (samedi)
-Suivez `docs/auth-entra-id-integration.md` §2 :
-1. **Azure, Entra ID → App registrations → New** : « Lex Canada Portal — Staff Auth ».
-   - Comptes de **ce répertoire uniquement**.
-   - URI de redirection Web : `https://<REF>.supabase.co/auth/v1/callback`.
-2. **API permissions** : `openid`, `email`, `profile`, `offline_access` (délégués), et rien d'autre.
-3. **Certificates & secrets** : nouveau secret. Notez sa date d'expiration.
-4. **Supabase**, *Authentication → Providers → Azure* :
+## Étape 4 — Connexion Microsoft du personnel
+L'application Entra **existe déjà et est configurée** (2026-10-29, `docs/runbooks/connexion-microsoft-serveur-test.md`) : « Lex Canada Portal — Staff Auth », client `e7764f9e-7867-48ff-97b5-972ce7501b41`, locataire `428d7eab-9f1c-4b81-86fe-677c89ff7bd1`, comptes de ce répertoire uniquement, permissions déléguées avec consentement, claims `email` et `xms_edov`.
+1. **Entra → Authentication** : ajoutez l'URI de redirection Web `https://<REF>.supabase.co/auth/v1/callback`.
+2. **Supabase**, *Authentication → Providers → Azure* :
    - activé ;
-   - Client ID ;
-   - Secret ;
-   - **Azure Tenant URL** = `https://login.microsoftonline.com/<ID-du-tenant>`, **jamais** `common`.
-5. **Vercel** : `NEXT_PUBLIC_STAFF_SSO_ENABLED` = `true`, puis redéployez.
-6. Connectez-vous sur `https://<domaine>/en/staff/login` → « Se connecter avec Microsoft » avec le compte créé à l'étape 1.6.
-7. Allez dans `/en/admin/staff` pour pré-créer les autres membres du personnel.
+   - Client ID : `e7764f9e-7867-48ff-97b5-972ce7501b41` ;
+   - Secret : le secret client créé le 2026-10-29 (gestionnaire de mots de passe) ;
+   - **Azure Tenant URL** = `https://login.microsoftonline.com/428d7eab-9f1c-4b81-86fe-677c89ff7bd1`, **jamais** `common`.
+3. **Vercel** : `NEXT_PUBLIC_STAFF_SSO_ENABLED` = `true`, puis redéployez. Ne définissez **pas** `SUPABASE_PUBLIC_URL` (serveur de test uniquement).
+4. Connectez-vous sur `https://<domaine>/en/staff/login` → « Se connecter avec Microsoft » avec le compte créé à l'étape 1.6.
+5. Allez dans `/en/admin/staff` pour pré-créer les autres membres du personnel.
 
 **Vérification** : `/en/admin` s'ouvre, et `/en/admin/staff` aussi (firm_admin).
 

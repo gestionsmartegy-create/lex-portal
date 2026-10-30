@@ -103,11 +103,11 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Question | Décision | — |
 |---|---|---|
 | ~~Hébergement final : Vercel ou Azure ?~~ | ✅ **Vercel** | — |
-| ~~Accès au projet Supabase « lex law » existant et région réelle ?~~ | ✅ Réutilisé **si** `ca-central-1` et vide (sinon nouveau projet) ; vérification par le responsable, `docs/runbooks/preprod-deploy.md` §1.1 | — |
+| ~~Accès au projet Supabase « lex law » existant et région réelle ?~~ | ✅ **Non réutilisé** (décision du 2026-10-29) : **nouveau projet** Supabase en `ca-central-1`, créé par le cabinet ; l'adresse de l'ancien projet a été retirée de l'application Entra | — |
 | ~~Fournisseur d'e-mails de production~~ | ✅ **SMTP Microsoft 365** (boîte du cabinet) | — |
 | ~~Coffre-fort des jetons OAuth : Supabase Vault ou Azure Key Vault ?~~ | ✅ **Supabase Vault** | — |
 | Domaine de préproduction (`portal-preprod.lexcanadalaw.com` ?) puis de production | Adresses de retour OAuth (Clio, Entra), Site URL Supabase | Élevée |
-| Hébergement de **production** : Vercel (ADR 0013) ou le VPS Hostinger, qui sert déjà de serveur de test (ADR 0016) ? | Sécurité d'exploitation (mises à jour, sauvegardes, surveillance) à la charge du cabinet si VPS | Élevée |
+| ~~Hébergement de **production** : Vercel (ADR 0013) ou le VPS Hostinger ?~~ | ✅ **Vercel (région Montréal `yul1`) + Supabase hébergé (`ca-central-1`)**, décision du responsable du projet le 2026-10-29 (ADR 0041). Azure App Service écarté pour l'instant ; le VPS reste le serveur de test | — |
 
 ## Décisions du 2026-10-15 (responsable du projet)
 
