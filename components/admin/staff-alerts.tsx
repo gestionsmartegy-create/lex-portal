@@ -20,23 +20,26 @@ export function StaffAlerts({ alerts }: { alerts: Alert[] }) {
   const total = alerts.reduce((n, a) => n + a.count, 0);
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="relative flex size-11 items-center justify-center rounded-[2px] text-marine hover:bg-surface"
-          aria-label={total > 0 ? t("labelCount", { count: total }) : t("label")}
-        >
-          <Bell aria-hidden className="size-5" />
-          {total > 0 ? (
-            <span
-              aria-hidden
-              className="absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
-            >
-              {total > 9 ? "9+" : total}
-            </span>
-          ) : null}
-        </button>
-      </DropdownMenuTrigger>
+      {/* Pastille hors du bouton : le nombre est déjà dans le nom accessible (règle axe label-content-name-mismatch). */}
+      <span className="relative flex">
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="flex size-11 items-center justify-center rounded-[2px] text-marine hover:bg-surface"
+            aria-label={total > 0 ? t("labelCount", { count: total }) : t("label")}
+          >
+            <Bell aria-hidden className="size-5" />
+          </button>
+        </DropdownMenuTrigger>
+        {total > 0 ? (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
+          >
+            {total > 9 ? "9+" : total}
+          </span>
+        ) : null}
+      </span>
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel>{t("title")}</DropdownMenuLabel>
         <DropdownMenuSeparator />

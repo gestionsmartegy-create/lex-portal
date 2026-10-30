@@ -18,23 +18,26 @@ export function NotificationsMenu({ items, unread }: { items: HeaderNotification
   const t = useTranslations("portal.header");
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="relative flex size-11 items-center justify-center rounded-[2px] text-marine hover:bg-surface"
-          aria-label={unread > 0 ? `${t("notifications")} (${unread})` : t("notifications")}
-        >
-          <Bell aria-hidden className="size-5" />
-          {unread > 0 ? (
-            <span
-              aria-hidden
-              className="absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
-            >
-              {unread > 9 ? "9+" : unread}
-            </span>
-          ) : null}
-        </button>
-      </DropdownMenuTrigger>
+      {/* Pastille hors du bouton : le nombre est déjà dans le nom accessible (règle axe label-content-name-mismatch). */}
+      <span className="relative flex">
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="flex size-11 items-center justify-center rounded-[2px] text-marine hover:bg-surface"
+            aria-label={unread > 0 ? `${t("notifications")} (${unread})` : t("notifications")}
+          >
+            <Bell aria-hidden className="size-5" />
+          </button>
+        </DropdownMenuTrigger>
+        {unread > 0 ? (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
+          >
+            {unread > 9 ? "9+" : unread}
+          </span>
+        ) : null}
+      </span>
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel>{t("notifications")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
