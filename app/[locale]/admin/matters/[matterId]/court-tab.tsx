@@ -7,6 +7,7 @@ import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatZoned, formatZonedTime, utcToZonedInput } from "@/lib/zoned-time";
 import {
+  importClioEntryAction,
   adjournCourtDateAction,
   courtDateStatusAction,
   saveCourtDateAction,
@@ -21,6 +22,7 @@ import {
 } from "@/server/services/court-dates";
 import { pick } from "@/server/services/matter-templates";
 import { listCourts, timezones } from "@/server/services/offices";
+import { listClioEntriesForMatter } from "@/server/services/clio-agenda";
 
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
@@ -51,12 +53,13 @@ export async function CourtTab({
   matterId: string;
   team: { id: string; name: string }[];
 }) {
-  const [t, tOffices, dates, courts, defaultTz] = await Promise.all([
+  const [t, tOffices, dates, courts, defaultTz, clio] = await Promise.all([
     getTranslations("admin.court"),
     getTranslations("admin.offices"),
     listCourtDates(matterId),
     listCourts(),
     defaultTimezoneFor(matterId),
+    listClioEntriesForMatter(matterId),
   ]);
   const list = dates ?? [];
   const courtById = new Map(courts.map((c) => [c.id, c]));
@@ -474,6 +477,75 @@ export async function CourtTab({
           <ul className="divide-y divide-gray-100">{upcoming.map(item)}</ul>
         )}
       </SectionCard>
+      {clio?.linked ? (
+        <SectionCard
+          title={t("clioAgenda.title")}
+          help={<HelpTip label={t("clioAgenda.helpLabel")}>{t("clioAgenda.help")}</HelpTip>}
+        >
+          {"unavailable" in clio && clio.unavailable ? (
+            <p className="text-sm text-ink-muted">{t("clioAgenda.unavailable")}</p>
+          ) : clio.entries.length === 0 ? (
+            <p className="text-sm text-ink-muted">{t("clioAgenda.none")}</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {clio.entries.map((e) => (
+                <li key={e.id} className="flex flex-wrap items-center gap-3 py-3">
+                  <div className="min-w-0 flex-1 basis-56">
+                    <p className="font-semibold break-words text-marine">
+                      {e.summary || t("clioAgenda.untitled")}
+                    </p>
+                    <p className="text-sm text-ink-muted">
+                      {[formatZoned(e.startAt, defaultTz, locale, e.allDay), e.location]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </div>
+                  {e.imported ? (
+                    <StatusBadge tone="completed" label={t("clioAgenda.imported")} />
+                  ) : (
+                    <form action={importClioEntryAction} className="flex flex-wrap items-center gap-2">
+                      {hidden}
+                      <input type="hidden" name="entryId" value={e.id} />
+                      <label htmlFor={`clio-kind-${e.id}`} className="sr-only">
+                        {t("clioAgenda.kindFor", { title: e.summary || t("clioAgenda.untitled") })}
+                      </label>
+                      <select
+                        id={`clio-kind-${e.id}`}
+                        name="kind"
+                        defaultValue={e.suggestedKind ?? "hearing"}
+                        className="h-9 rounded-[2px] border border-gray-200 bg-white px-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+                      >
+                        {(
+                          [
+                            "hearing",
+                            "trial",
+                            "motion",
+                            "case_conference",
+                            "appearance",
+                            "filing_deadline",
+                          ] as const
+                        ).map((k) => (
+                          <option key={k} value={k}>
+                            {t(`kinds.${k}`)}
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        type="submit"
+                        variant="outline-marine"
+                        size="sm"
+                        aria-label={t("clioAgenda.importFor", { title: e.summary })}
+                      >
+                        {t("clioAgenda.import")}
+                      </Button>
+                    </form>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </SectionCard>
+      ) : null}
       {history.length ? (
         <SectionCard title={t("history")}>
           <ul className="divide-y divide-gray-100">{history.map(item)}</ul>

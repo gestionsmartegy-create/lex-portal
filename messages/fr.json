@@ -843,7 +843,10 @@
         "synced": "Synchronisation terminée.",
         "failed": "L'opération a échoué. Réessayez ou reconnectez Clio.",
         "calendarSaved": "Calendrier Clio enregistré.",
-        "calendarCut": "La connexion d'agenda a été coupée."
+        "calendarCut": "La connexion d'agenda a été coupée.",
+        "aiSaved": "Réglages de l'assistant IA enregistrés.",
+        "aiInvalid": "Vérifiez le plafond et le prix (nombres, 2 et 4 décimales au plus).",
+        "aiFailed": "Les réglages n'ont pas pu être enregistrés."
       },
       "errors": {
         "INVALID": "Veuillez saisir un e-mail valide.",
@@ -877,6 +880,18 @@
         "simulator": "simulateur",
         "reminders": "rappels activés",
         "cut": "Couper la connexion"
+      },
+      "ai": {
+        "title": "Assistant IA (rédaction)",
+        "on": "Activé",
+        "off": "Désactivé",
+        "modeMock": "Mode : simulateur (OpenAI non branché, en attente de l'accord du cabinet).",
+        "usage": "Ce mois-ci : {requests, plural, =0 {aucune demande} one {# demande} other {# demandes}}, coût estimé {cost} sur un plafond de {cap}.",
+        "help": "Avant tout envoi à l'IA, les coordonnées du client et toute donnée personnelle (courriels, téléphones, codes postaux, numéros) sont remplacées par des étiquettes. Au-delà du plafond mensuel, l'assistant se désactive jusqu'au mois suivant. Le journal indique chaque utilisation, jamais son contenu.",
+        "enabled": "Assistant activé pour le personnel",
+        "cap": "Plafond mensuel (CAD)",
+        "price": "Coût estimé (cents par 1 000 caractères)",
+        "save": "Enregistrer les réglages"
       }
     },
     "messages": {
@@ -976,7 +991,8 @@
         "courtHeld": "Date de cour marquée comme tenue.",
         "courtCancelled": "Date de cour annulée.",
         "courtAdjourned": "Date de cour remise : la nouvelle date doit être confirmée.",
-        "courtInvalid": "Veuillez vérifier la date de cour : début obligatoire, fin après le début, lien commençant par https://, motif pour annuler, pas de retour à la ligne dans la salle, le juge ou le numéro de greffe."
+        "courtInvalid": "Veuillez vérifier la date de cour : début obligatoire, fin après le début, lien commençant par https://, motif pour annuler, pas de retour à la ligne dans la salle, le juge ou le numéro de greffe.",
+        "clioImported": "Date importée de Clio : elle est « à confirmer »."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -1480,7 +1496,19 @@
       "moreActions": "Autres actions",
       "closePanel": "Fermer",
       "markHeldHelp": "L'audience a eu lieu : elle passe dans l'historique.",
-      "helpLabel": "Aide : dates de cour"
+      "helpLabel": "Aide : dates de cour",
+      "clioAgenda": {
+        "title": "Agenda Clio du dossier",
+        "helpLabel": "À propos de l'agenda Clio",
+        "help": "Les rendez-vous de ce dossier dans Clio. Ceux dont le type d'événement Clio est « Cour » sont importés automatiquement ; les autres peuvent l'être à la main. Une date importée arrive « à confirmer » et n'est jamais recréée dans Clio.",
+        "unavailable": "L'agenda Clio est indisponible pour le moment. Réessayez plus tard.",
+        "none": "Aucun rendez-vous à venir dans Clio pour ce dossier.",
+        "untitled": "Rendez-vous sans titre",
+        "imported": "Déjà dans le portail",
+        "import": "Importer",
+        "importFor": "Importer : {title}",
+        "kindFor": "Type de date pour : {title}"
+      }
     },
     "courtCalendar": {
       "title": "Calendrier de cour",
@@ -1736,7 +1764,9 @@
           "reject": "Rejeter",
           "errors": {
             "RATE_LIMITED": "Trop de demandes : réessayez dans quelques minutes.",
-            "UNAVAILABLE": "L'aide à la rédaction n'est pas disponible pour le moment."
+            "UNAVAILABLE": "L'aide à la rédaction n'est pas disponible pour le moment.",
+            "BUDGET_EXCEEDED": "Le plafond mensuel de l'assistant est atteint. Il sera de nouveau disponible le mois prochain.",
+            "DISABLED": "L'assistant IA est désactivé par l'administrateur."
           }
         },
         "lockedBy": "En cours de modification par {name} : lecture seule.",
@@ -1874,7 +1904,8 @@
           "linked": "Contrat rattaché au dossier.",
           "invite": "Inviter ce client dans le portail",
           "askAdminInvite": "Si le client n'a pas encore de compte, demandez à un administrateur de l'inviter. L'envoi trouvera ensuite son compte.",
-          "startOpening": "Démarrer l'ouverture du dossier"
+          "startOpening": "Démarrer l'ouverture du dossier",
+          "downloadDocx": "Télécharger en Word (copie de travail, version {version})"
         },
         "comments": {
           "title": "{count, plural, =0 {Commentaires de relecture} one {Commentaires de relecture (# ouvert)} other {Commentaires de relecture (# ouverts)}}",
@@ -1889,6 +1920,26 @@
           "reopen": "Rouvrir",
           "showResolved": "{count, plural, one {Voir # commentaire réglé} other {Voir # commentaires réglés}}",
           "hideResolved": "Masquer les commentaires réglés"
+        },
+        "deposits": {
+          "title": "Rangement du contrat",
+          "targets": {
+            "clio": "Clio",
+            "sharepoint": "SharePoint"
+          },
+          "status": {
+            "pending": "en cours de dépôt",
+            "done": "déposé",
+            "failed": "échec après plusieurs essais"
+          },
+          "waiting": {
+            "noMatter": "en attente : contrat sans dossier Clio",
+            "microsoft": "en attente du branchement Microsoft",
+            "approval": "en attente de l'accord du cabinet pour le dépôt réel"
+          },
+          "retry": "Réessayer",
+          "retried": "Le dépôt sera retenté sous peu.",
+          "openClio": "Ouvrir le dossier dans Clio (signature)"
         }
       },
       "tabs": {
@@ -1966,9 +2017,20 @@
           "saved": "Réglages du modèle enregistrés.",
           "published": "Modèle publié.",
           "invalid": "Vérifiez les champs et réessayez.",
-          "failed": "L'action a échoué. Réessayez."
+          "failed": "L'action a échoué. Réessayez.",
+          "aiDraft": "Gabarit créé en brouillon « à faire valider ». Cliquez « Relire et publier ».",
+          "aiInvalid": "Indiquez un nom et une description d'au moins 10 caractères.",
+          "aiBudget": "Le plafond mensuel de l'assistant IA est atteint.",
+          "aiDisabled": "L'assistant IA est désactivé (Intégrations)."
         },
-        "description": "Description"
+        "description": "Description",
+        "ai": {
+          "title": "Créer un gabarit avec l'assistant IA",
+          "language": "Langue du gabarit",
+          "description": "Description du contrat voulu",
+          "help": "Décrivez le type de contrat (domaine, services, particularités) sans nom ni coordonnée de client. Le gabarit est créé en brouillon « à faire valider » : relisez-le puis publiez-le.",
+          "submit": "Proposer un gabarit"
+        }
       },
       "clauses": {
         "title": "Bibliothèque de clauses",
@@ -2144,7 +2206,8 @@
         "calendar_disconnected": "Un agenda a été déconnecté",
         "auth_login": "{actor} s'est connecté",
         "other": "{actor} : action enregistrée au journal"
-      }
+      },
+      "depositFailed": "Dépôt dans Clio en échec : {title} (version {version})"
     }
   }
 }

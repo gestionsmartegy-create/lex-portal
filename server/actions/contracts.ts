@@ -34,6 +34,7 @@ import {
   resolveComment,
   validateContract,
 } from "@/server/services/contract-workflow";
+import { retryDeposit } from "@/server/services/clio-deposits";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -163,6 +164,7 @@ const workflowOp = z.discriminatedUnion("op", [
   z.object({ op: z.literal("remind") }),
   z.object({ op: z.literal("newVersion") }),
   z.object({ op: z.literal("linkMatter"), matterId: z.uuid() }),
+  z.object({ op: z.literal("retryDeposit"), depositId: z.uuid() }),
 ]);
 
 export async function workflowAction(
@@ -182,6 +184,8 @@ export async function workflowAction(
       return done(await remindContract(contractId));
     case "linkMatter":
       return done(await linkContractMatter(contractId, parsed.data.matterId));
+    case "retryDeposit":
+      return done(await retryDeposit(parsed.data.depositId));
     case "newVersion": {
       const r = await newContractVersion(contractId);
       return r.ok ? { ok: true, id: r.data } : { ok: false, code: r.code };

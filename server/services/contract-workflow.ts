@@ -8,6 +8,8 @@ import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { hitRateLimit } from "@/server/security/rate-limit";
 import { notifyContractSent } from "@/server/services/client-notifier";
+import { recordAudit } from "@/server/services/audit";
+import { renderContractDocx } from "@/server/services/contract-docx";
 import { renderContractPdf, type PdfInput } from "@/server/services/contract-pdf";
 import { getContract } from "@/server/services/contracts";
 import { assertStaffMatterAccess } from "@/server/services/matter-tracking";
@@ -238,4 +240,27 @@ export async function readContractPdf(contractId: string) {
   const row = (data ?? [])[0];
   if (!row?.pdf_base64) return null;
   return { version: row.version, sha256: row.sha256, body: Buffer.from(row.pdf_base64, "base64") };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Copie Word (ADR 0039) : équipe seulement ; même contenu que le PDF officiel de la version validée.
+// ---------------------------------------------------------------------------------------------
+export async function readContractDocx(contractId: string) {
+  const loaded = await loadForStaff(contractId);
+  const c = loaded?.contract;
+  if (!loaded || !c || !c.validatedVersion || !c.validatedAt) return null;
+  // Le texte est figé depuis la validation (plus modifiable) : c'est celui de la version validée.
+  const body = await renderContractDocx(
+    await pdfInputFor(loaded, c.validatedVersion, new Date(c.validatedAt)),
+  );
+  const user = await getUser();
+  await recordAudit({
+    action: "contract.docx_downloaded",
+    resourceType: "contract",
+    resourceId: c.id,
+    matterId: c.matter?.id ?? null,
+    actorId: user?.id ?? null,
+    metadata: { version: c.validatedVersion },
+  });
+  return { version: c.validatedVersion, body };
 }

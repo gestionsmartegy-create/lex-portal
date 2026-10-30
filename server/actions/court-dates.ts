@@ -12,6 +12,7 @@ import {
   setCourtDateStatus,
   updateCourtDate,
 } from "@/server/services/court-dates";
+import { importClioEntry, importEntrySchema } from "@/server/services/clio-agenda";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -25,6 +26,7 @@ type Notice =
   | "courtCancelled"
   | "courtAdjourned"
   | "courtInvalid"
+  | "clioImported"
   | "failed";
 
 function back(locale: string, matterId: string, notice: Notice): never {
@@ -110,4 +112,14 @@ export async function courtCalendarAction(formData: FormData): Promise<void> {
   if (!parsed.success) redirect(`/${locale}/admin/integrations?notice=failed`);
   const ok = await setCourtCalendar(parsed.data.calendarId);
   redirect(`/${locale}/admin/integrations?notice=${ok ? "calendarSaved" : "failed"}`);
+}
+
+/** Importer une entrée de l'agenda Clio comme date de cour (ADR 0038) : relue dans Clio par le service. */
+export async function importClioEntryAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  await requireStaff(locale);
+  const parsed = importEntrySchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) redirect(`/${locale}/admin/matters`);
+  const r = await importClioEntry(parsed.data);
+  back(locale, parsed.data.matterId, r.ok ? "clioImported" : "failed");
 }

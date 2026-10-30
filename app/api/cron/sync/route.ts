@@ -4,6 +4,8 @@ import { serverEnv } from "@/server/env";
 import { pushCourtDateReminders } from "@/server/services/client-court-dates";
 import { syncOutlookCalendars } from "@/server/services/calendar-connections";
 import { pullClioCourtDateChanges, pushPendingCourtDates } from "@/server/services/court-dates";
+import { importClioCourtDates } from "@/server/services/clio-agenda";
+import { pushPendingDeposits } from "@/server/services/clio-deposits";
 import { syncLinkedMatters } from "@/server/services/sync";
 
 export const maxDuration = 300;
@@ -39,6 +41,16 @@ export async function GET(request: NextRequest) {
     console.error(JSON.stringify({ event: "calendar_sync_failed", code: "UNEXPECTED" }));
     return { synced: 0, failed: -1 };
   });
+  // Contrats validés : dépôt du PDF officiel dans le dossier Clio (ADR 0038).
+  const deposits = await pushPendingDeposits().catch(() => {
+    console.error(JSON.stringify({ event: "contract_deposits_failed", code: "UNEXPECTED" }));
+    return { done: 0, failed: -1 };
+  });
+  // Agenda Clio des dossiers liés : dates de cour importées automatiquement (ADR 0038).
+  const clioAgenda = await importClioCourtDates().catch(() => {
+    console.error(JSON.stringify({ event: "clio_agenda_import_failed", code: "UNEXPECTED" }));
+    return { matters: 0, imported: -1 };
+  });
   return NextResponse.json(
     {
       ok: result.ok,
@@ -48,6 +60,8 @@ export async function GET(request: NextRequest) {
       reminders,
       clioChanges,
       calendars,
+      deposits,
+      clioAgenda,
     },
     { headers: { "Cache-Control": "no-store" } },
   );

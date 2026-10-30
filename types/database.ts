@@ -10,7 +10,27 @@ export type Database = {
   
   "public": {
           Tables: {
-            "appointments": {
+            "ai_settings": {
+                  Row: {
+                    "cents_per_1k_chars": number,"enabled": boolean,"id": boolean,"monthly_cap_cents": number,"updated_at": string,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cents_per_1k_chars"?: number,"enabled"?: boolean,"id"?: boolean,"monthly_cap_cents"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "cents_per_1k_chars"?: number,"enabled"?: boolean,"id"?: boolean,"monthly_cap_cents"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ai_settings_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"appointments": {
                   Row: {
                     "clio_calendar_entry_id": string | null,"created_at": string,"description": string | null,"ends_at": string | null,"id": string,"last_synced_at": string | null,"location": string | null,"matter_id": string,"meeting_url": string | null,"starts_at": string,"status": Database["public"]['Enums']["appointment_status"],"timezone": string,"title": string,"updated_at": string,"with_staff_name": string | null
                   }
@@ -175,6 +195,26 @@ isOneToOne: false
       columns: ["section_id"]
 isOneToOne: false
       referencedRelation: "contract_sections"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"contract_deposits": {
+                  Row: {
+                    "attempts": number,"contract_id": string,"created_at": string,"deposited_at": string | null,"external_id": string | null,"id": string,"last_error": string | null,"next_attempt_at": string,"status": string,"target": string,"updated_at": string,"version": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempts"?: number,"contract_id": string,"created_at"?: string,"deposited_at"?: string | null,"external_id"?: string | null,"id"?: string,"last_error"?: string | null,"next_attempt_at"?: string,"status"?: string,"target": string,"updated_at"?: string,"version": number
+                  }
+                  Update: {
+                    "attempts"?: number,"contract_id"?: string,"created_at"?: string,"deposited_at"?: string | null,"external_id"?: string | null,"id"?: string,"last_error"?: string | null,"next_attempt_at"?: string,"status"?: string,"target"?: string,"updated_at"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "contract_deposits_contract_id_fkey"
+      columns: ["contract_id"]
+isOneToOne: false
+      referencedRelation: "contracts"
       referencedColumns: ["id"]
     }
                   ]
@@ -476,14 +516,14 @@ isOneToOne: false
                   ]
                 },"court_dates": {
                   Row: {
-                    "all_day": boolean,"cancel_reason": string | null,"client_instructions": string | null,"clio_calendar_entry_id": string | null,"clio_change": string | null,"clio_changed_at": string | null,"clio_sync_status": string,"clio_synced_at": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"court_id": string | null,"created_at": string,"created_by": string | null,"docket_number": string | null,"ends_at": string | null,"id": string,"judge": string | null,"kind": string,"matter_id": string,"mode": string,"notes": string | null,"replaces_id": string | null,"room": string | null,"starts_at": string,"status": string,"timezone": string,"updated_at": string,"virtual_link": string | null,"visible_to_client": boolean
+                    "all_day": boolean,"cancel_reason": string | null,"client_instructions": string | null,"clio_calendar_entry_id": string | null,"clio_change": string | null,"clio_changed_at": string | null,"clio_sync_status": string,"clio_synced_at": string | null,"confirmed_at": string | null,"confirmed_by": string | null,"court_id": string | null,"created_at": string,"created_by": string | null,"docket_number": string | null,"ends_at": string | null,"id": string,"judge": string | null,"kind": string,"matter_id": string,"mode": string,"notes": string | null,"replaces_id": string | null,"room": string | null,"source": string,"starts_at": string,"status": string,"timezone": string,"updated_at": string,"virtual_link": string | null,"visible_to_client": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind": string,"matter_id": string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at": string,"status"?: string,"timezone": string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind": string,"matter_id": string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"source"?: string,"starts_at": string,"status"?: string,"timezone": string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
                   }
                   Update: {
-                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind"?: string,"matter_id"?: string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"starts_at"?: string,"status"?: string,"timezone"?: string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
+                    "all_day"?: boolean,"cancel_reason"?: string | null,"client_instructions"?: string | null,"clio_calendar_entry_id"?: string | null,"clio_change"?: string | null,"clio_changed_at"?: string | null,"clio_sync_status"?: string,"clio_synced_at"?: string | null,"confirmed_at"?: string | null,"confirmed_by"?: string | null,"court_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"docket_number"?: string | null,"ends_at"?: string | null,"id"?: string,"judge"?: string | null,"kind"?: string,"matter_id"?: string,"mode"?: string,"notes"?: string | null,"replaces_id"?: string | null,"room"?: string | null,"source"?: string,"starts_at"?: string,"status"?: string,"timezone"?: string,"updated_at"?: string,"virtual_link"?: string | null,"visible_to_client"?: boolean
                   }
                   Relationships: [
                     {
@@ -1246,7 +1286,18 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "authorize_staff_provisioning":
+            "ai_complete":
+{ Args: { "p_chars_out": number,"p_ok": boolean,"p_usage": string }; Returns: undefined
+                           },
+"ai_month_usage":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "cap_cents": number,"cost_cents": number,"requests": number
+            }[]
+                           },
+"ai_reserve":
+{ Args: { "p_chars_in": number,"p_contract": string,"p_kind": string,"p_mock": boolean }; Returns: string
+                           },
+"authorize_staff_provisioning":
 { Args: { "p_actor": string,"p_email": string,"p_role": Database["public"]['Enums']["app_role"] }; Returns: undefined
                            },
 "calendar_connection_list":
@@ -1323,6 +1374,14 @@ isOneToOne: false
               "active_matters": number,"outstanding_balance": number,"pending_documents": number,"unread_messages": number
             }[]
                            },
+"clio_agenda_mark":
+{ Args: { "p_at": string,"p_matter": string }; Returns: undefined
+                           },
+"clio_agenda_next":
+{ Args: { "p_limit"?: number }; Returns: {
+              "clio_matter_id": string,"matter_id": string,"office_timezone": string,"since": string
+            }[]
+                           },
 "clio_court_calendar":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
@@ -1341,6 +1400,17 @@ isOneToOne: false
                            },
 "contract_client_email_known":
 { Args: { "p_email": string }; Returns: boolean
+                           },
+"contract_deposit_claim":
+{ Args: { "p_limit"?: number }; Returns: {
+              "clio_matter_id": string,"contract_id": string,"file_name": string,"id": string,"pdf_base64": string,"previous_document_id": string,"version": number
+            }[]
+                           },
+"contract_deposit_result":
+{ Args: { "p_error": string,"p_external_id": string,"p_id": string,"p_ok": boolean }; Returns: undefined
+                           },
+"contract_deposit_retry":
+{ Args: { "p_id": string }; Returns: undefined
                            },
 "contract_link_matter":
 { Args: { "p_contract": string,"p_matter": string }; Returns: undefined
@@ -1374,6 +1444,9 @@ isOneToOne: false
 "contract_send":
 { Args: { "p_contract": string,"p_mode": string }; Returns: number
                            },
+"contract_template_create_draft":
+{ Args: { "p_domain": string,"p_language": string,"p_name": string,"p_sections": Json }; Returns: string
+                           },
 "contract_template_from_contract":
 { Args: { "p_contract": string,"p_description"?: string,"p_domain": string,"p_name": string,"p_signing": string }; Returns: string
                            },
@@ -1395,6 +1468,9 @@ isOneToOne: false
 { Args: { "p_from": string,"p_to": string }; Returns: {
               "court_date_id": string,"user_id": string
             }[]
+                           },
+"court_date_import_clio":
+{ Args: { "p_all_day": boolean,"p_ends_at": string,"p_entry_id": string,"p_kind": string,"p_matter": string,"p_starts_at": string,"p_timezone": string }; Returns: string
                            },
 "current_session_role":
 { Args: Record<PropertyKey, never>; Returns: Database["public"]['Enums']["app_role"]
@@ -1445,6 +1521,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"matter_clio_id":
+{ Args: { "p_matter": string }; Returns: string
+                           },
 "matter_permissions":
 { Args: { "p_matter": string }; Returns: {
               "can_read": boolean,"can_write": boolean
