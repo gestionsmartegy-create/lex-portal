@@ -4,7 +4,7 @@ import { PrintButton } from "@/components/admin/print-button";
 import { ContractDocView } from "@/components/shared/contract-doc-view";
 import { Link } from "@/i18n/navigation";
 import { contractFieldKeys, type ContractFieldKey } from "@/lib/contract-doc";
-import { formatMoney } from "@/lib/format";
+import { formatDecimal, formatMoney } from "@/lib/format";
 import { fromCents, lineTotal } from "@/lib/money";
 import { requireStaff } from "@/server/auth/session";
 import { getContract } from "@/server/services/contracts";
@@ -82,7 +82,9 @@ export default async function ContractPrintPage({
                 {loaded.lines.map((l) => (
                   <tr key={l.id} className="border-b border-gray-100">
                     <td className="py-2 pr-2">{l.description}</td>
-                    <td className="py-2 pr-2 text-right tabular-nums">{l.quantity}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">
+                      {formatDecimal(l.quantity, loaded.contract.language)}
+                    </td>
                     <td className="py-2 pr-2 text-right tabular-nums">
                       {formatMoney(l.unit_price, loaded.contract.language)}
                     </td>
@@ -104,7 +106,7 @@ export default async function ContractPrintPage({
                 {loaded.totals.taxes.map((tx) => (
                   <tr key={tx.code}>
                     <th scope="row" colSpan={3} className="py-1.5 pr-2 text-right font-normal">
-                      {tDoc(`services.tax.${tx.code}`)} ({tx.rate.replace(/\.?0+$/, "")} %)
+                      {tDoc(`services.tax.${tx.code}`)} ({formatDecimal(tx.rate, loaded.contract.language)} %)
                     </th>
                     <td className="py-1.5 text-right tabular-nums">
                       {formatMoney(tx.amount, loaded.contract.language)}

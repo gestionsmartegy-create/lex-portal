@@ -40,7 +40,15 @@ export default async function ClientContractsPage({ params }: PageProps<"/[local
                     </p>
                   </div>
                   <StatusBadge
-                    tone={state === "accepted" ? "completed" : state === "toAccept" ? "urgent" : "pending"}
+                    tone={
+                      state === "accepted"
+                        ? "completed"
+                        : state === "toAccept"
+                          ? "urgent"
+                          : state === "declined"
+                            ? "warning"
+                            : "pending"
+                    }
                     label={t(`states.${state}`)}
                   />
                 </li>

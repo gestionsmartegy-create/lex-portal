@@ -109,7 +109,9 @@ type Fail =
   | "RATE_LIMITED"
   | "UNAVAILABLE"
   | "NO_CLIENT_ACCOUNT"
-  | "MISSING_FIELDS";
+  | "MISSING_FIELDS"
+  | "BUDGET_EXCEEDED"
+  | "DISABLED";
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; code: Fail };
 const fail = (code: Fail) => ({ ok: false as const, code });
 const ok = <T>(data: T) => ({ ok: true as const, data });
@@ -286,7 +288,7 @@ export async function getContract(id: string) {
   const { data: c } = await supabase
     .from("contracts")
     .select(
-      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, client_province, template_id, template_version, template_draft, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at, sent_at, sent_by, sent_version, signing_mode, viewed_at, accepted_at, accepted_name",
+      "id, title, language, status, matter_id, client_id, client_name, client_email, client_address, client_phone, client_language, client_province, template_id, template_version, template_draft, created_by, locked_by, locked_until, is_mock, cancel_reason, created_at, updated_at, sent_at, sent_by, sent_version, signing_mode, viewed_at, accepted_at, accepted_name, validated_at, validated_by, validated_version, pdf_sha256, reminded_at, reminder_count, declined_at, decline_reason, previous_id, superseded_by",
     )
     .eq("id", id)
     .maybeSingle();
@@ -310,8 +312,8 @@ export async function getContract(id: string) {
       : Promise.resolve({ data: null }),
   ]);
   const names = await namesOf(
-    [c.created_by, c.locked_by, ...(versions ?? []).map((v) => v.created_by)].filter((x): x is string =>
-      Boolean(x),
+    [c.created_by, c.locked_by, c.validated_by, ...(versions ?? []).map((v) => v.created_by)].filter(
+      (x): x is string => Boolean(x),
     ),
   );
   const editorSections: EditorSection[] = (sections ?? []).map((s) => {
@@ -356,7 +358,42 @@ export async function getContract(id: string) {
     acceptedAt: c.accepted_at,
     acceptedName: c.accepted_name,
     templateSigning: null as "clio" | "portal" | "both" | null,
+    // Lot 3 (ADR 0036)
+    validatedAt: c.validated_at,
+    validatedBy: c.validated_by ? (names.get(c.validated_by) ?? null) : null,
+    validatedVersion: c.validated_version,
+    pdfSha256: c.pdf_sha256,
+    remindedAt: c.reminded_at,
+    reminderCount: c.reminder_count,
+    canRemind:
+      c.status === "sent" &&
+      Date.now() - Date.parse(c.reminded_at ?? c.sent_at ?? new Date().toISOString()) > 86_400_000,
+    declinedAt: c.declined_at,
+    declineReason: c.decline_reason,
+    previousId: c.previous_id,
+    supersededBy: c.superseded_by,
+    // Avocat de l'équipe (responsable, d'origine, collaborateur) ou firm_admin ; un contrat sans dossier
+    // n'est validé que par le firm_admin (décisions du 2026-10-21 ; la base le revérifie).
+    isLawyer: false,
   };
+  // Destinataire de l'envoi (compte lié, ou retrouvé par le courriel de la fiche) : affiché et confirmé.
+  let recipient: { name: string | null; email: string; linked: boolean } | null = null;
+  if (c.status === "validated") {
+    const { data: acc } = await supabase.rpc("contract_client_account", { p_contract: id });
+    const row = (acc ?? [])[0];
+    if (row) recipient = { name: row.name, email: row.email, linked: row.linked };
+  }
+  const role = await getSessionRole();
+  if (role === "firm_admin") contract.isLawyer = true;
+  else if (c.matter_id) {
+    const { data: team } = await supabase
+      .from("matter_team")
+      .select("role")
+      .eq("matter_id", c.matter_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    contract.isLawyer = ["responsible", "originating", "collaborator"].includes(team?.role ?? "");
+  }
   if (c.template_id) {
     const { data: tpl } = await supabase
       .from("contract_templates")
@@ -383,7 +420,7 @@ export async function getContract(id: string) {
   const totals = lines.length ? computeTotals(lines, rates) : null;
   const values = fieldValues(contract, totals);
   return {
-    contract,
+    contract: { ...contract, recipient },
     sections: editorSections,
     versions: (versions ?? []).map((v) => ({
       version: v.version,
@@ -632,17 +669,19 @@ export async function setReviewStatus(id: string, status: "draft" | "in_review")
 }
 
 /**
- * Envoi au client (ADR 0035) : tout membre de l'équipe qui tient le verrou (décision du 2026-10-20).
- * Exige un client avec un compte et aucun champ vide ; la base fige une version et la revérifie.
+ * Envoi au client (ADR 0035, 0036) : tout membre de l'équipe, sur un contrat VALIDÉ (version figée et PDF).
+ * La base retrouve le compte d'un client invité entre-temps (courriel de la fiche) et revérifie tout.
  */
 export async function sendContract(id: string, mode: "clio" | "portal"): Promise<Result> {
-  const loaded = await getContract(id);
-  if (!loaded || !(await writable(id))) return fail("NOT_FOUND");
-  if (!loaded.contract.clientId) return fail("NO_CLIENT_ACCOUNT");
-  if (loaded.missing.length) return fail("MISSING_FIELDS");
+  if (!(await writable(id))) return fail("NOT_FOUND");
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("contract_send", { p_contract: id, p_mode: mode });
-  if (error) return fail(error.code === "55006" || error.code === "42501" ? "LOCKED" : dbFail(error.code));
+  if (error)
+    return fail(
+      error.message.includes("client account") || error.message.includes("no access to the matter")
+        ? "NO_CLIENT_ACCOUNT"
+        : dbFail(error.code),
+    );
   await notifyContractSent(id);
   return ok(undefined);
 }
@@ -688,19 +727,40 @@ export async function aiAssist(
   if (!loaded.contract.editable) return fail("INVALID");
   const c = loaded.contract;
   const party = { name: c.clientName, email: c.clientEmail, address: c.clientAddress, phone: c.clientPhone };
+  // Texte borné AVANT le masquage (les expressions du masquage restent rapides).
   const text = maskPersonalData(
-    docToText(section.body, (key: ContractFieldKey) => `[${key}]`),
+    docToText(section.body, (key: ContractFieldKey) => `[${key}]`).slice(0, 20_000),
     party,
   );
+  const supabase = await createSupabaseServerClient();
+  let usageId: string | null = null;
   try {
     const gateway = getAiGateway();
-    const proposal = await gateway.assist({
+    const payload = {
       kind: input.kind as AiAssistKind,
       language: c.language,
       sectionTitle: maskPersonalData(section.title, party),
       text: text.slice(0, 20_000),
       instruction: maskPersonalData(input.instruction, party),
+    };
+    // Garde-fous (ADR 0037) : IA activée et plafond du mois, vérifiés par la base AVANT l'appel.
+    const { data: reserved, error: reserveError } = await supabase.rpc("ai_reserve", {
+      p_contract: c.id,
+      p_kind: input.kind,
+      p_chars_in: payload.text.length + payload.instruction.length + payload.sectionTitle.length,
+      p_mock: gateway.isMock,
     });
+    if (reserveError || !reserved)
+      throw new AiError(
+        reserveError?.code === "54000"
+          ? "BUDGET_EXCEEDED"
+          : reserveError?.code === "55000"
+            ? "DISABLED"
+            : "UNAVAILABLE",
+      );
+    usageId = reserved;
+    const proposal = await gateway.assist(payload);
+    await supabase.rpc("ai_complete", { p_usage: usageId, p_chars_out: proposal.length, p_ok: true });
     await recordAudit({
       action: "contract.ai_assisted",
       resourceType: "contract",
@@ -712,8 +772,11 @@ export async function aiAssist(
     return ok({ text: proposal.slice(0, 20_000), mock: gateway.isMock });
   } catch (error) {
     const code = error instanceof AiError ? error.code : "UNAVAILABLE";
+    if (usageId) await supabase.rpc("ai_complete", { p_usage: usageId, p_chars_out: 0, p_ok: false });
     console.error(JSON.stringify({ event: "contract_ai_failed", code }));
-    return fail(code === "RATE_LIMITED" ? "RATE_LIMITED" : "UNAVAILABLE");
+    return fail(
+      code === "RATE_LIMITED" || code === "BUDGET_EXCEEDED" || code === "DISABLED" ? code : "UNAVAILABLE",
+    );
   }
 }
 

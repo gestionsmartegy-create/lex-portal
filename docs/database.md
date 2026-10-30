@@ -413,3 +413,38 @@ Le serveur journalise en plus, via `audit.record()` : `auth.login`, `auth.mfa_en
 - Types de notification `contract_sent` et `court_date_changed`.
 - Journal : `contract.sent`, `contract.viewed`, `contract.signed`, `contract.accepted` (sans le nom tapé).
 - `private.client_sees_contract(id)` : le sien, envoyé, en session client, **et** accès non révoqué au dossier lié. L'envoi exige aussi cet accès.
+
+## Contrats, lot 3 (ADR 0036, migrations `20261023120000` et `20261023120100`)
+- `contracts` reçoit `validated_at`, `validated_by`, `validated_version`, `pdf_sha256`, `reminded_at`, `reminder_count`, `declined_at`, `decline_reason`, `previous_id` et `superseded_by`, écrits seulement par les fonctions.
+- `private.contract_pdfs` : PDF officiel (`bytea`, au plus 5 Mo) par version, avec son empreinte SHA-256 calculée par la base.
+- `public.contract_comments` : commentaires de relecture (section facultative), RLS équipe du contrat ; seule la résolution change ensuite (trigger `guard_contract_comment`).
+- Fonctions :
+  - `contract_validate` : avocat de l'équipe, verrou ;
+  - `contract_reopen` ;
+  - `contract_send` : contrat validé ; retrouve le compte du client d'après son courriel ;
+  - `contract_pdf` : équipe ou client destinataire, journalisé ;
+  - `contract_remind` : une fois par jour ;
+  - `client_contract_decline` ;
+  - `contract_new_version` ;
+  - `contract_link_matter` : firm_admin, contrat accepté ;
+  - `private.is_contract_lawyer`.
+- Journal : `contract.pdf_generated`, `contract.pdf_downloaded`, `contract.reopened`, `contract.reminded`, `contract.declined` (trigger), `contract.new_version`. Jamais le motif d'un refus.
+- Corrections (`20261023120200`) : contrat sans dossier validé par le firm_admin seulement ; `public.contract_client_account` (aperçu du destinataire) et `private.contract_recipient` ; journal `contract.client_linked` ; `contract_link_matter` exige l'accès du client au dossier ; résolution des commentaires non réécrivable ; `is_mock` reporté sur une nouvelle version.
+
+## Assistant IA (ADR 0037, migration `20261024120000`)
+- `public.ai_settings` : une seule ligne (activé, plafond mensuel en cents, coût estimé par 1 000 caractères). RLS : lecture personnel, écriture firm_admin ; journal `ai.settings_updated`.
+- `private.ai_usage` : une ligne par demande (utilisateur, contrat, sorte, caractères, coût estimé, simulateur, statut). Jamais le contenu.
+- Fonctions :
+  - `public.ai_reserve` : refus `55000` si l'IA est désactivée, `54000` si le plafond est atteint ;
+  - `public.ai_complete` ;
+  - `public.ai_month_usage` (firm_admin) ;
+  - `public.contract_template_create_draft` (firm_admin, brouillon « à faire valider »).
+
+## Clio : dépôt et agenda (ADR 0038, migrations `20261025120000`, `120100` et `120200`)
+- `public.contract_deposits` : un dépôt par version validée et par destination (`clio`, `sharepoint`). États : `pending`, `done`, `failed`, `waiting`. Contenu : identifiant externe, essais, code d'erreur, prochaine tentative. Il est créé par le trigger `contracts_queue_deposits` à la validation. RLS : lecture par l'équipe du contrat ; aucune écriture par l'API.
+- Fonctions du planificateur (service_role seulement) : `contract_deposit_claim`, `contract_deposit_result`, `clio_agenda_next`, `clio_agenda_mark`. Côté équipe : `contract_deposit_retry`.
+- `court_dates.source` (`portal`, `clio`) et `public.court_date_import_clio` (équipe ou planificateur) : date « à confirmer », déjà liée à l'entrée Clio.
+- `private.clio_agenda_cursor` : dernier passage de l'import, par dossier.
+- `public.matter_clio_id` : identifiant Clio d'un dossier, pour l'équipe seulement.
+- Journal : `contract.deposited`, `contract.deposit_failed`, `court_date.imported_from_clio`.
+

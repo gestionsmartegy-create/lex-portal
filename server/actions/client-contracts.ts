@@ -3,7 +3,12 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { requireClientSession } from "@/server/auth/session";
-import { acceptContract, acceptSchema } from "@/server/services/client-contracts";
+import {
+  acceptContract,
+  acceptSchema,
+  declineContract,
+  declineSchema,
+} from "@/server/services/client-contracts";
 import { localeSchema } from "@/server/validation/auth";
 
 /**
@@ -26,4 +31,19 @@ export async function acceptContractAction(formData: FormData): Promise<void> {
   const r = await acceptContract(parsed.data);
   if (!r.ok) redirect(r.code === "NOT_FOUND" ? `/${locale}/portal/contracts` : `${back}?notice=failed`);
   redirect(`${back}?notice=accepted`);
+}
+
+/** Refus d'un contrat par le client (ADR 0036) : session CLIENT, Zod, la base revérifie tout. */
+export async function declineContractAction(formData: FormData): Promise<void> {
+  const locale = localeSchema.catch("en").parse(formData.get("locale"));
+  await requireClientSession(locale);
+  const parsed = declineSchema.safeParse({
+    contractId: formData.get("contractId"),
+    reason: formData.get("reason") ?? "",
+  });
+  if (!parsed.success) redirect(`/${locale}/portal/contracts`);
+  const back = `/${locale}/portal/contracts/${parsed.data.contractId}`;
+  const r = await declineContract(parsed.data);
+  if (!r.ok) redirect(r.code === "NOT_FOUND" ? `/${locale}/portal/contracts` : `${back}?notice=failed`);
+  redirect(`${back}?notice=declined`);
 }

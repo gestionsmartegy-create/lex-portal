@@ -21,14 +21,26 @@ export type AiAssistInput = {
   instruction: string;
 };
 
+export type AiTemplateInput = {
+  language: "fr" | "en";
+  domain: string;
+  /** Description du contrat voulu, masquée (aucune donnée de client). */
+  description: string;
+};
+
+/** Gabarit proposé : des sections en texte simple, à relire puis publier par le firm_admin. */
+export type AiTemplate = { sections: { title: string; text: string }[] };
+
 export interface AiDraftingGateway {
   readonly isMock: boolean;
   /** Proposition en texte simple (paragraphes ; « - » pour une liste). */
   assist(input: AiAssistInput): Promise<string>;
+  /** Gabarit de contrat à partir d'une description (F13) ; toujours un brouillon. */
+  generateTemplate(input: AiTemplateInput): Promise<AiTemplate>;
 }
 
 export class AiError extends Error {
-  constructor(readonly code: "UNAVAILABLE" | "RATE_LIMITED" | "UPSTREAM" | "BUDGET_EXCEEDED") {
+  constructor(readonly code: "UNAVAILABLE" | "RATE_LIMITED" | "UPSTREAM" | "BUDGET_EXCEEDED" | "DISABLED") {
     super(code);
   }
 }

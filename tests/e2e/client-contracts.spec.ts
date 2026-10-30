@@ -62,6 +62,11 @@ test("contrat envoyé au client, accepté dans le portail ; avis de date de cour
     // Cabinet : envoi (version figée), suivi.
     await staffPage.goto(`/fr/admin/contracts/${contract!.id}`);
     await expect(staffPage.getByRole("heading", { name: title, level: 1 })).toBeVisible({ timeout: 15_000 });
+    // Lot 3 : un avocat de l'équipe valide d'abord (version figée, PDF officiel), puis on envoie.
+    staffPage.once("dialog", (d) => void d.accept());
+    await staffPage.getByRole("button", { name: "Valider le contrat" }).click();
+    await expect(staffPage.getByRole("heading", { name: "Contrat validé" })).toBeVisible({ timeout: 30_000 });
+    await expect(staffPage.getByText(/Empreinte \(SHA-256\)/)).toBeVisible();
     staffPage.once("dialog", (d) => void d.accept());
     await staffPage.getByRole("button", { name: "Envoyer au client" }).click();
     await expect(staffPage.getByText("Suivi de l'envoi")).toBeVisible({ timeout: 15_000 });

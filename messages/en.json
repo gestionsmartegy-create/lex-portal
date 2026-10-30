@@ -468,7 +468,8 @@
         "changed": "A court date has been changed",
         "cancelled": "A court date has been cancelled"
       },
-      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions."
+      "courtChangeBody": "{kind}: {when}. See the details and your lawyer's instructions.",
+      "contractReminderTitle": "Reminder: a contract is waiting for you"
     },
     "search": {
       "label": "Search the portal",
@@ -541,14 +542,16 @@
       "states": {
         "toAccept": "To accept",
         "toSignClio": "To sign in Clio",
-        "accepted": "Accepted"
+        "accepted": "Accepted",
+        "declined": "Declined"
       },
       "back": "My contracts",
       "print": "Print or save as PDF",
       "notices": {
         "accepted": "Thank you, your acceptance has been recorded.",
         "invalid": "Type your full name and tick the box to accept.",
-        "failed": "Your acceptance could not be recorded. Try again."
+        "failed": "Your acceptance could not be recorded. Try again.",
+        "declined": "Your decision has been recorded. Your lawyer has been informed."
       },
       "acceptTitle": "Accept this contract",
       "acceptedTitle": "Contract accepted",
@@ -558,7 +561,14 @@
       "acceptHelp": "By typing your name and ticking the box, you accept this contract as shown above. The date and time are recorded.",
       "fullName": "Your full name",
       "agree": "I have read this contract and I accept it.",
-      "accept": "Accept the contract"
+      "accept": "Accept the contract",
+      "downloadPdf": "Download the PDF",
+      "declinedTitle": "Contract declined",
+      "declinedOn": "You declined this contract on {date}. Your lawyer may offer you a new version.",
+      "declineTitle": "I do not wish to accept this contract",
+      "declineHelp": "You can say why (optional). Your lawyer will be informed.",
+      "declineReason": "Reason (optional)",
+      "decline": "Decline the contract"
     }
   },
   "admin": {
@@ -833,7 +843,10 @@
         "synced": "Synchronization completed.",
         "failed": "The operation failed. Try again or reconnect Clio.",
         "calendarSaved": "Clio calendar saved.",
-        "calendarCut": "The calendar connection was cut."
+        "calendarCut": "The calendar connection was cut.",
+        "aiSaved": "AI assistant settings saved.",
+        "aiInvalid": "Check the cap and the price (numbers, at most 2 and 4 decimals).",
+        "aiFailed": "The settings could not be saved."
       },
       "errors": {
         "INVALID": "Please enter a valid email.",
@@ -867,6 +880,18 @@
         "simulator": "simulator",
         "reminders": "reminders on",
         "cut": "Cut connection"
+      },
+      "ai": {
+        "title": "AI assistant (drafting)",
+        "on": "On",
+        "off": "Off",
+        "modeMock": "Mode: simulator (OpenAI not connected, awaiting the firm's approval).",
+        "usage": "This month: {requests, plural, =0 {no requests} one {# request} other {# requests}}, estimated cost {cost} out of a cap of {cap}.",
+        "help": "Before anything is sent to the AI, the client's details and any personal data (emails, phone numbers, postal codes, numbers) are replaced by labels. Beyond the monthly cap, the assistant turns off until the next month. The log records each use, never its content.",
+        "enabled": "Assistant on for staff",
+        "cap": "Monthly cap (CAD)",
+        "price": "Estimated cost (cents per 1,000 characters)",
+        "save": "Save the settings"
       }
     },
     "messages": {
@@ -966,7 +991,8 @@
         "courtHeld": "Court date marked as held.",
         "courtCancelled": "Court date cancelled.",
         "courtAdjourned": "Court date adjourned: the new date must be confirmed.",
-        "courtInvalid": "Please check the court date: start required, end after start, link starting with https://, a reason to cancel, no line breaks in room, judge or file number."
+        "courtInvalid": "Please check the court date: start required, end after start, link starting with https://, a reason to cancel, no line breaks in room, judge or file number.",
+        "clioImported": "Date imported from Clio: it is “to be confirmed”."
       },
       "upLabel": "Move up: {title}",
       "downLabel": "Move down: {title}",
@@ -1470,7 +1496,19 @@
       "moreActions": "More actions",
       "closePanel": "Close",
       "markHeldHelp": "The hearing took place: it moves to the history.",
-      "helpLabel": "Help: court dates"
+      "helpLabel": "Help: court dates",
+      "clioAgenda": {
+        "title": "Matter's Clio calendar",
+        "helpLabel": "About the Clio calendar",
+        "help": "This matter's calendar entries in Clio. Those whose Clio event type is “Court” are imported automatically; the others can be imported by hand. An imported date arrives “to be confirmed” and is never recreated in Clio.",
+        "unavailable": "The Clio calendar is unavailable right now. Try again later.",
+        "none": "No upcoming entries in Clio for this matter.",
+        "untitled": "Untitled entry",
+        "imported": "Already in the portal",
+        "import": "Import",
+        "importFor": "Import: {title}",
+        "kindFor": "Date type for: {title}"
+      }
     },
     "courtCalendar": {
       "title": "Court calendar",
@@ -1638,7 +1676,7 @@
         "in_review": "In review",
         "validated": "Validated",
         "sent": "Sent",
-        "signed": "Signed",
+        "signed": "Accepted",
         "declined": "Declined",
         "cancelled": "Cancelled",
         "superseded": "Superseded"
@@ -1726,7 +1764,9 @@
           "reject": "Reject",
           "errors": {
             "RATE_LIMITED": "Too many requests: try again in a few minutes.",
-            "UNAVAILABLE": "Drafting help is not available right now."
+            "UNAVAILABLE": "Drafting help is not available right now.",
+            "BUDGET_EXCEEDED": "The assistant's monthly cap has been reached. It will be available again next month.",
+            "DISABLED": "The AI assistant has been turned off by the administrator."
           }
         },
         "lockedBy": "Being edited by {name}: read only.",
@@ -1776,7 +1816,11 @@
         "errors": {
           "LOCKED": "You no longer hold this contract (someone else is editing it). Reload the page.",
           "INVALID": "Check the information entered.",
-          "FAILED": "Saving failed. Please try again."
+          "FAILED": "Saving failed. Please try again.",
+          "NOT_LAWYER": "Only a lawyer on the team can validate this contract.",
+          "MISSING_FIELDS": "First complete the fields to fill in.",
+          "NO_CLIENT_ACCOUNT": "The client does not have a portal account yet (or no access to this matter). An administrator can invite them.",
+          "TOO_SOON": "One reminder per day: try again tomorrow."
         },
         "insertClause": "Insert a clause…",
         "template": {
@@ -1824,7 +1868,78 @@
           "viewedOn": "Viewed by the client on {date}",
           "notViewed": "Not yet viewed by the client.",
           "acceptedBy": "Accepted by {name} on {date}",
-          "clioNext": "To start in Clio: signature is launched from the Clio matter."
+          "clioNext": "To start in Clio: signature is launched from the Clio matter.",
+          "recipient": "Recipient: {name}",
+          "confirmTo": "Send this contract to {name}? The validated version will be sent and the client notified."
+        },
+        "lifecycle": {
+          "validate": "Validate the contract",
+          "validated": "Contract validated: frozen version and official PDF created.",
+          "confirmValidate": "Validate this contract? The text will be frozen and the official PDF created.",
+          "validateHelp": "Validation freezes the text and creates the official PDF with its fingerprint. Only then can the contract be sent.",
+          "lawyerOnly": "A lawyer on the team validates the contract before it is sent. You can ask for a review.",
+          "validatedTitle": "Contract validated",
+          "validatedOn": "Validated on {date} by {name} · version {version}",
+          "fingerprint": "Fingerprint (SHA-256):",
+          "downloadPdf": "Download the official PDF (version {version})",
+          "reopen": "Back to draft",
+          "confirmReopen": "Back to draft? The validation will be removed; you will need to validate again before sending.",
+          "reopened": "The contract is back in draft.",
+          "remind": "Remind the client",
+          "reminded": "Reminder sent to the client.",
+          "remindedOn": "Last reminder on {date}",
+          "remindLater": "A reminder is possible one day after sending or after the last reminder.",
+          "newVersion": "Edit (new version)",
+          "confirmNewVersion": "Create a new version? This one will be marked “Superseded” and removed from the client's portal.",
+          "declinedOn": "Declined by the client on {date}",
+          "declineReason": "Reason: {reason}",
+          "replaces": "This contract replaces a previous version.",
+          "openPrevious": "See the previous version",
+          "supersededTitle": "Superseded by a new version",
+          "openNew": "Open the new version",
+          "matterTitle": "Matter",
+          "linkMatter": "Link this accepted contract to a matter",
+          "chooseMatter": "Choose a matter…",
+          "link": "Link to the matter",
+          "linked": "Contract linked to the matter.",
+          "invite": "Invite this client to the portal",
+          "askAdminInvite": "If the client has no account yet, ask an administrator to invite them. Sending will then find their account.",
+          "startOpening": "Start opening the matter",
+          "downloadDocx": "Download as Word (working copy, version {version})"
+        },
+        "comments": {
+          "title": "{count, plural, =0 {Review comments} one {Review comments (# open)} other {Review comments (# open)}}",
+          "none": "No open comments.",
+          "whole": "Whole contract",
+          "removedSection": "Removed section",
+          "about": "About",
+          "body": "Comment",
+          "add": "Add the comment",
+          "added": "Comment added.",
+          "resolve": "Mark resolved",
+          "reopen": "Reopen",
+          "showResolved": "{count, plural, one {Show # resolved comment} other {Show # resolved comments}}",
+          "hideResolved": "Hide resolved comments"
+        },
+        "deposits": {
+          "title": "Contract filing",
+          "targets": {
+            "clio": "Clio",
+            "sharepoint": "SharePoint"
+          },
+          "status": {
+            "pending": "being filed",
+            "done": "filed",
+            "failed": "failed after several attempts"
+          },
+          "waiting": {
+            "noMatter": "waiting: contract without a Clio matter",
+            "microsoft": "waiting for the Microsoft connection",
+            "approval": "waiting for the firm's approval for real filing"
+          },
+          "retry": "Retry",
+          "retried": "Filing will be retried shortly.",
+          "openClio": "Open the matter in Clio (signature)"
         }
       },
       "tabs": {
@@ -1902,9 +2017,20 @@
           "saved": "Template settings saved.",
           "published": "Template published.",
           "invalid": "Check the fields and try again.",
-          "failed": "The action failed. Try again."
+          "failed": "The action failed. Try again.",
+          "aiDraft": "Template created as a draft “to be reviewed”. Click “Review and publish”.",
+          "aiInvalid": "Enter a name and a description of at least 10 characters.",
+          "aiBudget": "The AI assistant's monthly cap has been reached.",
+          "aiDisabled": "The AI assistant is turned off (Integrations)."
         },
-        "description": "Description"
+        "description": "Description",
+        "ai": {
+          "title": "Create a template with the AI assistant",
+          "language": "Template language",
+          "description": "Description of the contract you need",
+          "help": "Describe the type of contract (area, services, particulars) without any client name or details. The template is created as a draft “to be reviewed”: review it, then publish it.",
+          "submit": "Suggest a template"
+        }
       },
       "clauses": {
         "title": "Clause library",
@@ -1964,6 +2090,10 @@
           "invalid": "Check the fields and try again.",
           "failed": "The change could not be saved. Try again."
         }
+      },
+      "pdf": {
+        "footer": "Lex Canada Law — version {version} validated on {date}",
+        "page": "Page {page} of {pages}"
       }
     },
     "search": {
@@ -2076,7 +2206,8 @@
         "calendar_disconnected": "A calendar was disconnected",
         "auth_login": "{actor} signed in",
         "other": "{actor}: action recorded in the log"
-      }
+      },
+      "depositFailed": "Filing in Clio failed: {title} (version {version})"
     }
   }
 }

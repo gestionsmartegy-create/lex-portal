@@ -12,10 +12,19 @@ export function InvitationForm({
   action,
   locale,
   matters,
+  defaults,
 }: {
   action: FormAction;
   locale: string;
   matters: MatterOption[];
+  /** Préremplissage depuis un contrat (ADR 0036) : lu par le serveur, jamais passé dans l'URL. */
+  defaults?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    language: "fr" | "en";
+    matterId: string | null;
+  };
 }) {
   const t = useTranslations("admin");
   const ta = useTranslations("auth.common");
@@ -28,16 +37,38 @@ export function InvitationForm({
       <input type="hidden" name="locale" value={locale} />
       <FormAlert message={state.error ? t(`errors.${state.error}`) : undefined} />
       <FormAlert message={state.ok ? t("invitations.sent") : undefined} tone="info" />
-      <Field id="inv-email" name="email" type="email" required label={ta("email")} />
+      <Field
+        id="inv-email"
+        name="email"
+        type="email"
+        required
+        label={ta("email")}
+        defaultValue={defaults?.email}
+      />
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id="inv-first" name="firstName" label={t("invitations.firstName")} />
-        <Field id="inv-last" name="lastName" label={t("invitations.lastName")} />
+        <Field
+          id="inv-first"
+          name="firstName"
+          label={t("invitations.firstName")}
+          defaultValue={defaults?.firstName}
+        />
+        <Field
+          id="inv-last"
+          name="lastName"
+          label={t("invitations.lastName")}
+          defaultValue={defaults?.lastName}
+        />
       </div>
       <div className="space-y-2">
         <label htmlFor="inv-lang" className={label}>
           {t("invitations.language")}
         </label>
-        <select id="inv-lang" name="preferredLanguage" defaultValue={locale} className={select}>
+        <select
+          id="inv-lang"
+          name="preferredLanguage"
+          defaultValue={defaults?.language ?? locale}
+          className={select}
+        >
           <option value="en">English</option>
           <option value="fr">Français</option>
         </select>
@@ -49,7 +80,13 @@ export function InvitationForm({
             key={m.id}
             className="flex items-center gap-3 rounded-[2px] border border-gray-100 bg-white p-3 text-sm"
           >
-            <input type="checkbox" name="matterIds" value={m.id} className="size-4 accent-[#0d1b3e]" />
+            <input
+              type="checkbox"
+              name="matterIds"
+              value={m.id}
+              defaultChecked={defaults?.matterId === m.id}
+              className="size-4 accent-[#0d1b3e]"
+            />
             <span className="font-medium text-marine">{m.display_number}</span>
             <span className="text-ink-muted">{m.title}</span>
           </label>

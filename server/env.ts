@@ -21,6 +21,9 @@ const schema = z
     EMAIL_FROM: z.string().min(3).default("Lex Canada Law <no-reply@lexcanadalaw.test>"),
     CRON_SECRET: z.string().min(32).optional(),
     INTEGRATION_MODE_CLIO: integrationMode,
+    // Dépôt de documents dans Clio (ADR 0038) : simulateur tant que le cabinet n'a pas donné son accord,
+    // même si la connexion Clio est réelle.
+    INTEGRATION_MODE_CLIO_DOCUMENTS: integrationMode,
     INTEGRATION_MODE_SHAREPOINT: integrationMode,
     INTEGRATION_MODE_SIGNATURE: integrationMode,
     INTEGRATION_MODE_PAYMENTS: integrationMode,

@@ -412,7 +412,9 @@ export function SectionEditor(props: SectionEditorProps) {
             </button>
             {aiError ? (
               <p role="alert" className="text-xs text-destructive">
-                {t(`ai.errors.${aiError === "RATE_LIMITED" ? "RATE_LIMITED" : "UNAVAILABLE"}`)}
+                {t(
+                  `ai.errors.${["RATE_LIMITED", "BUDGET_EXCEEDED", "DISABLED"].includes(aiError ?? "") ? aiError : "UNAVAILABLE"}`,
+                )}
               </p>
             ) : null}
             {proposal ? (

@@ -31,7 +31,7 @@ export async function getMyDay() {
   const supabase = await createSupabaseServerClient();
   const since = new Date(Date.now() - RECENT_DOCS_DAYS * 86_400_000).toISOString();
 
-  const [court, watch, unread, documents, inReview, events] = await Promise.all([
+  const [court, watch, unread, documents, inReview, events, failedDeposits] = await Promise.all([
     getCourtWatch(),
     getWatchlist(),
     listStaffConversations({ unreadOnly: true }),
@@ -44,6 +44,13 @@ export async function getMyDay() {
       .limit(5),
     listContracts({ status: "in_review" }),
     isAdmin ? listAuditEvents({ limit: 8 }) : Promise.resolve([]),
+    // Dépôts Clio en échec après plusieurs essais (ADR 0038) : à relancer (RLS : contrats visibles).
+    supabase
+      .from("contract_deposits")
+      .select("id, contract_id, version, contracts(title)")
+      .eq("status", "failed")
+      .order("updated_at", { ascending: false })
+      .limit(5),
   ]);
 
   // Activité : noms du personnel et numéros de dossier (visibles sous RLS), jamais le contenu.
@@ -97,6 +104,12 @@ export async function getMyDay() {
     ].slice(0, 5),
     lateTotal: (watch?.overdueRequests.total ?? 0) + (watch?.lateDeliverables.total ?? 0),
     contracts: (inReview ?? []).slice(0, 3),
+    failedDeposits: (failedDeposits.data ?? []).map((d) => ({
+      id: d.id,
+      contractId: d.contract_id,
+      version: d.version,
+      title: (d.contracts as unknown as { title: string } | null)?.title ?? "",
+    })),
     watch,
     activity: events.map((e): ActivityItem => ({
       id: String(e.id),

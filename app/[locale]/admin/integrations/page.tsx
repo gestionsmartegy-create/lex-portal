@@ -5,7 +5,7 @@ import { Notice } from "@/components/admin/notice";
 import { InfoNote, PageHeader, SectionCard } from "@/components/portal/ui";
 import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatRelative } from "@/lib/format";
+import { formatDate, formatMoney, formatRelative } from "@/lib/format";
 import { disconnectClioAction, importClioContactAction, syncClioNowAction } from "@/server/actions/admin";
 import { cutCalendarAction } from "@/server/actions/calendar";
 import { courtCalendarAction } from "@/server/actions/court-dates";
@@ -14,6 +14,9 @@ import { getCourtCalendarSetting, listClioCalendars } from "@/server/services/co
 import { requireStaff } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { serverEnv } from "@/server/env";
+import { aiSettingsAction } from "@/server/actions/contract-library";
+import { getAiMonthUsage, getAiSettings } from "@/server/services/ai-admin";
+import { fromCents } from "@/lib/money";
 
 const TONE: Record<string, StatusTone> = {
   connected: "completed",
@@ -21,7 +24,17 @@ const TONE: Record<string, StatusTone> = {
   error: "urgent",
   revoked: "pending",
 };
-const NOTICES = ["connected", "disconnected", "synced", "calendarSaved", "calendarCut", "failed"] as const;
+const NOTICES = [
+  "connected",
+  "disconnected",
+  "synced",
+  "calendarSaved",
+  "calendarCut",
+  "failed",
+  "aiSaved",
+  "aiInvalid",
+  "aiFailed",
+] as const;
 
 export default async function IntegrationsPage({
   params,
@@ -41,16 +54,24 @@ export default async function IntegrationsPage({
   const status = live ? (clio?.status ?? "not_configured") : "connected";
   const notice = NOTICES.find((n) => n === sp.notice);
   // Calendriers Clio où l'on peut écrire (seulement si la connexion est active).
-  const [courtCalendar, calendars, outlook] = await Promise.all([
+  const [courtCalendar, calendars, outlook, aiSettings, aiUsage] = await Promise.all([
     getCourtCalendarSetting(),
     status === "connected" ? listClioCalendars() : Promise.resolve({ ok: false as const, calendars: [] }),
     listCalendarConnections(),
+    getAiSettings(),
+    getAiMonthUsage(),
   ]);
+  // Cents (chaîne exacte de la base) → montant affiché, sans nombre flottant.
+  const dollars = (cents: string | number) =>
+    formatMoney(fromCents(BigInt(String(cents).split(".")[0] ?? "0")), locale);
 
   return (
     <>
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
-      <Notice message={notice ? t(`notices.${notice}`) : undefined} error={notice === "failed"} />
+      <Notice
+        message={notice ? t(`notices.${notice}`) : undefined}
+        error={notice === "failed" || notice === "aiInvalid" || notice === "aiFailed"}
+      />
       <div className="grid gap-6 lg:grid-cols-5">
         <SectionCard title={t("clio")} className="lg:col-span-2">
           <div className="space-y-4">
@@ -168,6 +189,80 @@ export default async function IntegrationsPage({
             </ul>
           )}
         </SectionCard>
+        {aiSettings ? (
+          <SectionCard title={t("ai.title")} className="lg:col-span-5">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2 text-sm text-marine">
+                <p>
+                  <StatusBadge
+                    tone={aiSettings.enabled ? "active" : "pending"}
+                    label={aiSettings.enabled ? t("ai.on") : t("ai.off")}
+                  />{" "}
+                  <span className="text-ink-muted">{t("ai.modeMock")}</span>
+                </p>
+                {aiUsage ? (
+                  <p>
+                    {t("ai.usage", {
+                      requests: aiUsage.requests,
+                      cost: dollars(aiUsage.costCents),
+                      cap: dollars(aiUsage.capCents),
+                    })}
+                  </p>
+                ) : null}
+                <InfoNote>{t("ai.help")}</InfoNote>
+              </div>
+              <form action={aiSettingsAction} className="space-y-3">
+                <input type="hidden" name="locale" value={locale} />
+                <label className="flex items-center gap-2 text-sm text-marine">
+                  <input
+                    type="checkbox"
+                    name="enabled"
+                    defaultChecked={aiSettings.enabled}
+                    className="size-4 accent-marine"
+                  />
+                  {t("ai.enabled")}
+                </label>
+                <div className="space-y-1">
+                  <label
+                    htmlFor="ai-cap"
+                    className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
+                  >
+                    {t("ai.cap")}
+                  </label>
+                  <input
+                    id="ai-cap"
+                    name="monthlyCap"
+                    inputMode="decimal"
+                    required
+                    pattern="\d{1,6}(\.\d{1,2})?"
+                    defaultValue={fromCents(BigInt(aiSettings.monthlyCapCents))}
+                    className="h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label
+                    htmlFor="ai-price"
+                    className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
+                  >
+                    {t("ai.price")}
+                  </label>
+                  <input
+                    id="ai-price"
+                    name="centsPer1kChars"
+                    inputMode="decimal"
+                    required
+                    pattern="\d{1,3}(\.\d{1,4})?"
+                    defaultValue={aiSettings.centsPer1kChars.replace(/\.?0+$/, "")}
+                    className="h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+                  />
+                </div>
+                <Button type="submit" variant="outline-marine" size="sm">
+                  {t("ai.save")}
+                </Button>
+              </form>
+            </div>
+          </SectionCard>
+        ) : null}
       </div>
     </>
   );

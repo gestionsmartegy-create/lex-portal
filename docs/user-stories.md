@@ -67,7 +67,7 @@
 | [E5](https://github.com/SmartegyCanada/lex-portal/issues/74) | En tant que Personnel, je veux inscrire une date de cour dans un dossier. | 2 | 🟡 lot 2 |
 | [E6](https://github.com/SmartegyCanada/lex-portal/issues/75) | En tant qu'Avocat, je veux confirmer chaque date de cour. | 2 | 🟡 lot 2 |
 | [E7](https://github.com/SmartegyCanada/lex-portal/issues/76) | En tant que Personnel, je veux remettre ou annuler une date de cour sans perdre l'historique. | 2 | 🟡 lot 2 |
-| [E8](https://github.com/SmartegyCanada/lex-portal/issues/77) | En tant que Personnel, je veux voir dans un dossier les dates de cour déjà saisies dans Clio. | 2 | ⏳ |
+| [E8](https://github.com/SmartegyCanada/lex-portal/issues/77) | En tant que Personnel, je veux voir dans un dossier les dates de cour déjà saisies dans Clio. | 2 | 🟡 |
 | [E9](https://github.com/SmartegyCanada/lex-portal/issues/78) | En tant qu'Admin, je veux une vue générale du calendrier de cour de tout le cabinet. | 3 | 🟡 lot 3 |
 | [E10](https://github.com/SmartegyCanada/lex-portal/issues/79) | En tant que Personnel, je veux le calendrier de cour de mon bureau et le mien. | 3 | 🟡 lot 3 |
 | [E11](https://github.com/SmartegyCanada/lex-portal/issues/80) | En tant qu'Avocat, je veux être averti d'un conflit d'horaire. | 3 | 🟡 lot 3 |
@@ -75,7 +75,7 @@
 | [E13](https://github.com/SmartegyCanada/lex-portal/issues/82) | En tant que Personnel sur téléphone, je veux un calendrier lisible. | 3 | 🟡 lot 3 |
 | [E14](https://github.com/SmartegyCanada/lex-portal/issues/83) | En tant que Personnel, je veux connecter mon agenda Outlook. | 4 | 🟡 lot 4 (simulateur ; vrai Outlook après l'accès Microsoft) |
 | [E15](https://github.com/SmartegyCanada/lex-portal/issues/84) | En tant que Personnel, je veux déconnecter mon agenda, et en tant qu'Admin couper la connexion d'une personne. | 4 | 🟡 lot 4 |
-| [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | 🟡 partiel (dates créées par la plateforme ; import des autres : décision du cabinet) |
+| [E16](https://github.com/SmartegyCanada/lex-portal/issues/85) | En tant que Personnel, je veux que les dates de cour de Clio arrivent seules dans la plateforme. | 4 | 🟡 (import automatique du type « Cour » ; ADR 0038) |
 | [E17](https://github.com/SmartegyCanada/lex-portal/issues/86) | En tant que Client, je veux voir mes prochaines dates de cour et les consignes de mon avocat. | 5 | 🟡 lot 5 |
 | [E18](https://github.com/SmartegyCanada/lex-portal/issues/87) | En tant qu'Admin, je veux voir la charge d'audiences par avocat, par bureau et par tribunal. | 6 | 🟡 lot 6 |
 
@@ -89,11 +89,11 @@
 | [F4](https://github.com/SmartegyCanada/lex-portal/issues/100) | En tant qu'Admin, je veux créer et maintenir des modèles de contrats. | 2 | 🟡 |
 | [F5](https://github.com/SmartegyCanada/lex-portal/issues/101) | En tant qu'Admin, je veux une bibliothèque de clauses bilingues. | 2 | 🟡 |
 | [F6](https://github.com/SmartegyCanada/lex-portal/issues/102) | En tant qu'Admin, je veux un catalogue de services et d'honoraires avec les taxes par province. | 2 | 🟡 |
-| [F7](https://github.com/SmartegyCanada/lex-portal/issues/103) | En tant qu'avocat, je veux valider un contrat. | 3 | ⏳ |
-| [F8](https://github.com/SmartegyCanada/lex-portal/issues/104) | En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut. | 3 | ⏳ |
-| [F9](https://github.com/SmartegyCanada/lex-portal/issues/105) | En tant que client, je veux voir les contrats que le cabinet m'a envoyés. | 3 | ⏳ |
-| [F10](https://github.com/SmartegyCanada/lex-portal/issues/106) | En tant qu'avocat, je veux ouvrir le dossier et inviter le client à partir d'un contrat signé. | 3 | ⏳ |
+| [F7](https://github.com/SmartegyCanada/lex-portal/issues/103) | En tant qu'avocat, je veux valider un contrat. | 3 | 🟡 |
+| [F8](https://github.com/SmartegyCanada/lex-portal/issues/104) | En tant qu'avocat, je veux envoyer un contrat au client et suivre son statut. | 3 | 🟡 |
+| [F9](https://github.com/SmartegyCanada/lex-portal/issues/105) | En tant que client, je veux voir les contrats que le cabinet m'a envoyés. | 3 | 🟡 |
+| [F10](https://github.com/SmartegyCanada/lex-portal/issues/106) | En tant qu'avocat, je veux ouvrir le dossier et inviter le client à partir d'un contrat signé. | 3 | 🟡 |
 | [F11](https://github.com/SmartegyCanada/lex-portal/issues/107) | En tant qu'avocat, je veux que le contrat validé soit rangé dans Clio et SharePoint. | 4 | ⏳ |
-| [F12](https://github.com/SmartegyCanada/lex-portal/issues/108) | En tant qu'avocat, je veux que l'IA m'aide à rédiger une section. | 5 | ⏳ |
-| [F13](https://github.com/SmartegyCanada/lex-portal/issues/109) | En tant qu'avocat, je veux que l'IA crée un gabarit de contrat à partir d'une description. | 5 | ⏳ |
-| [F14](https://github.com/SmartegyCanada/lex-portal/issues/110) | En tant qu'Admin, je veux encadrer l'IA (données masquées, plafond de coût). | 5 | ⏳ |
+| [F12](https://github.com/SmartegyCanada/lex-portal/issues/108) | En tant qu'avocat, je veux que l'IA m'aide à rédiger une section. | 5 | 🟡 |
+| [F13](https://github.com/SmartegyCanada/lex-portal/issues/109) | En tant qu'avocat, je veux que l'IA crée un gabarit de contrat à partir d'une description. | 5 | 🟡 |
+| [F14](https://github.com/SmartegyCanada/lex-portal/issues/110) | En tant qu'Admin, je veux encadrer l'IA (données masquées, plafond de coût). | 5 | 🟡 |

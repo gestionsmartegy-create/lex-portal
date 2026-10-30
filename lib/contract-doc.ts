@@ -183,11 +183,102 @@ export function textToDoc(text: string): ContractDoc {
  * client sont remplacées par des étiquettes, et les champs par leur clé. L'IA ne voit jamais le vrai
  * nom, le courriel, l'adresse ni le téléphone.
  */
+// Mots courts courants : jamais pris pour une partie de nom de 2 lettres.
+const SHORT_WORDS = new Set([
+  "le",
+  "la",
+  "de",
+  "du",
+  "et",
+  "en",
+  "au",
+  "un",
+  "il",
+  "on",
+  "ou",
+  "ce",
+  "se",
+  "ne",
+  "sa",
+  "son",
+  "of",
+  "to",
+  "an",
+  "in",
+  "at",
+  "by",
+  "or",
+  "is",
+  "it",
+  "as",
+  "be",
+  "we",
+  "me",
+  "mr",
+  "ms",
+  "dr",
+  "st",
+]);
+
+const foldChar = (ch: string) => ch.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+
+/**
+ * Texte « plié » (sans accents ni majuscules) avec, pour chaque caractère plié, la position et la
+ * longueur du caractère d'origine : le remplacement se fait aux positions d'origine, quel que soit
+ * le nombre de caractères que donne le pliage (accents décomposés, ligatures, alphabets non latins).
+ */
+function foldWithMap(text: string) {
+  let folded = "";
+  const start: number[] = [];
+  const size: number[] = [];
+  let at = 0;
+  for (const ch of text) {
+    const f = foldChar(ch);
+    for (let k = 0; k < f.length; k++) {
+      start.push(at);
+      size.push(ch.length);
+    }
+    folded += f;
+    at += ch.length;
+  }
+  return { folded, start, size };
+}
+
+function replaceLoose(text: string, needle: string, label: string): string {
+  const target = foldChar(needle);
+  if (target.length < 2) return text;
+  const { folded, start, size } = foldWithMap(text);
+  const isWordChar = (c: string | undefined) => c !== undefined && /[\p{L}\p{N}]/u.test(c);
+  let out = "";
+  let from = 0;
+  for (let at = folded.indexOf(target); at !== -1; at = folded.indexOf(target, at + target.length)) {
+    // Mot entier seulement pour les parties courtes du nom (évite de masquer « Ana » dans « analyse »).
+    if (target.length < 5 && (isWordChar(folded[at - 1]) || isWordChar(folded[at + target.length]))) continue;
+    const origStart = start[at]!;
+    const last = at + target.length - 1;
+    const origEnd = start[last]! + size[last]!;
+    if (origStart < from) continue;
+    out += text.slice(from, origStart) + label;
+    from = origEnd;
+  }
+  return out + text.slice(from);
+}
+
+/**
+ * Masquage avant l'IA (ADR 0032, renforcé par l'ADR 0037) : jamais une coordonnée du client vers un tiers.
+ *  1. Les coordonnées de la fiche (nom complet ET chaque partie du nom, y compris les noms composés
+ *     et ceux de 2 lettres, courriel, adresse et chacune de ses lignes, téléphone), sans tenir compte
+ *     des majuscules, des accents ni de leur codage (NFC/NFD).
+ *  2. Puis tout ce qui ressemble à une donnée personnelle, même hors de la fiche : courriels, numéros de
+ *     téléphone, codes postaux canadiens, suites de 7 chiffres ou plus (NAS, passeport, dossier IRCC…),
+ *     sauf les dates (AAAA-MM-JJ) et les montants suivis d'une devise.
+ * Le texte est borné par l'appelant avant le masquage ; les répétitions des expressions sont bornées.
+ */
 export function maskPersonalData(
   text: string,
   party: { name?: string | null; email?: string | null; address?: string | null; phone?: string | null },
 ) {
-  let out = text;
+  let out = text.normalize("NFC");
   const pairs: [string | null | undefined, string][] = [
     [party.email, "[COURRIEL_CLIENT]"],
     [party.address, "[ADRESSE_CLIENT]"],
@@ -195,16 +286,30 @@ export function maskPersonalData(
     [party.name, "[NOM_CLIENT]"],
   ];
   for (const [value, label] of pairs) {
-    const v = value?.trim();
+    const v = value?.normalize("NFC").trim();
     if (!v || v.length < 2) continue;
-    out = out.split(v).join(label);
+    out = replaceLoose(out, v, label);
     // Adresse sur plusieurs lignes : chaque ligne est aussi masquée.
     if (label === "[ADRESSE_CLIENT]")
       for (const line of v
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length > 3))
-        out = out.split(line).join(label);
+        out = replaceLoose(out, line, label);
+    // Nom : chaque partie (prénom, nom de famille, chaque moitié d'un nom composé).
+    if (label === "[NOM_CLIENT]")
+      for (const part of v.split(/[\s,\-'’.]+/))
+        if (part.length >= 3 || (part.length === 2 && !SHORT_WORDS.has(foldChar(part))))
+          out = replaceLoose(out, part, label);
   }
-  return out;
+  return out
+    .replace(/[\p{L}\p{N}._%+-]{1,64}@(?:[\p{L}\p{N}-]{1,63}\.){1,8}\p{L}{2,24}/gu, "[COURRIEL]")
+    .replace(/(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/g, "[TÉLÉPHONE]")
+    .replace(/\b[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d\b/gi, "[CODE_POSTAL]")
+    .replace(/\b\d(?:[\s-]?\d){6,20}\b/g, (match, offset: number, whole: string) => {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(match)) return match;
+      const after = whole.slice(offset + match.length, offset + match.length + 12);
+      if (/^(?:,\d{1,2})?\s?(?:\$|CAD\b|dollars?\b)/i.test(after)) return match;
+      return "[NUMÉRO]";
+    });
 }

@@ -10,12 +10,14 @@ import { contractFieldKeys, type ContractFieldKey } from "@/lib/contract-doc";
 import {
   acquireLockAction,
   aiAssistAction,
+  commentAction,
   releaseLockAction,
   saveSectionAction,
   sectionOpAction,
   statusAction,
   updateHeaderAction,
   versionAction,
+  workflowAction,
 } from "@/server/actions/contracts";
 import {
   publishTemplateAction,
@@ -24,7 +26,11 @@ import {
 } from "@/server/actions/contract-library";
 import { listClauses, listServices } from "@/server/services/contract-library";
 import { requireStaff } from "@/server/auth/session";
-import { getContract } from "@/server/services/contracts";
+import { listContractDeposits } from "@/server/services/clio-deposits";
+import { listComments } from "@/server/services/contract-workflow";
+import { createSupabaseServerClient } from "@/server/db/server-client";
+import { serverEnv } from "@/server/env";
+import { getContract, listMatterChoices } from "@/server/services/contracts";
 
 /** Rédaction d'un contrat (F3). Invisible ou inexistant : même 404 (AGENTS.md §2.9). */
 export default async function ContractPage({ params }: PageProps<"/[locale]/admin/contracts/[contractId]">) {
@@ -33,11 +39,30 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
   const { role } = await requireStaff(locale);
   const loaded = await getContract(contractId);
   if (!loaded) notFound();
-  const [t, services, clauses] = await Promise.all([
+  const [t, services, clauses, comments, matters, deposits] = await Promise.all([
     getTranslations("admin.contracts"),
     listServices(true),
     listClauses(loaded.contract.language),
+    listComments(contractId),
+    role === "firm_admin" && loaded.contract.status === "signed" && !loaded.contract.matter
+      ? listMatterChoices()
+      : Promise.resolve([]),
+    listContractDeposits(contractId),
   ]);
+  // Lien vers le dossier Clio (connexion réelle seulement) : la signature se lance depuis Clio.
+  const clioId = loaded.contract.matter
+    ? ((
+        await (
+          await createSupabaseServerClient()
+        ).rpc("matter_clio_id", {
+          p_matter: loaded.contract.matter.id,
+        })
+      ).data as string | null)
+    : null;
+  const clioMatterUrl =
+    serverEnv().INTEGRATION_MODE_CLIO === "live" && clioId && /^\d{1,15}$/.test(clioId)
+      ? `https://ca.app.clio.com/nc/#/matters/${clioId}`
+      : null;
   const { contract } = loaded;
   const labels = Object.fromEntries(
     contractFieldKeys.map((k) => [k, t(`fieldKeys.${k.replace(".", "_")}`)]),
@@ -97,14 +122,42 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           clientLanguage: contract.clientLanguage,
           clientProvince: contract.clientProvince,
           templateDraft: contract.templateDraft,
-          hasClientAccount: Boolean(contract.clientId),
           templateSigning: contract.templateSigning,
           sentAt: contract.sentAt,
           signingMode: contract.signingMode,
           viewedAt: contract.viewedAt,
           acceptedAt: contract.acceptedAt,
           acceptedName: contract.acceptedName,
+          isLawyer: contract.isLawyer,
+          matterId: contract.matter?.id ?? null,
+          // Compte retrouvé à l'envoi d'après le courriel de la fiche (client invité entre-temps).
+          hasClientAccount: Boolean(contract.clientId || contract.recipient),
+          needsInvitation: !contract.clientId && !contract.recipient && Boolean(contract.clientEmail),
+          recipientLabel: contract.recipient
+            ? [contract.recipient.name, `(${contract.recipient.email})`].filter(Boolean).join(" ")
+            : null,
+          validatedAt: contract.validatedAt,
+          validatedBy: contract.validatedBy,
+          validatedVersion: contract.validatedVersion,
+          pdfSha256: contract.pdfSha256,
+          remindedAt: contract.remindedAt,
+          canRemind: contract.canRemind,
+          declinedAt: contract.declinedAt,
+          declineReason: contract.declineReason,
+          supersededBy: contract.supersededBy,
+          previousId: contract.previousId,
         }}
+        comments={comments}
+        deposits={deposits}
+        clioMatterUrl={clioMatterUrl}
+        clioDocumentsLive={
+          serverEnv().INTEGRATION_MODE_CLIO === "live" &&
+          serverEnv().INTEGRATION_MODE_CLIO_DOCUMENTS === "live"
+        }
+        matterChoices={matters.map((m) => ({
+          id: m.id,
+          label: [m.display_number, m.title].filter(Boolean).join(" — "),
+        }))}
         isFirmAdmin={role === "firm_admin"}
         lines={loaded.lines.map((l) => ({
           description: l.description,
@@ -138,6 +191,8 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           saveLines: saveLinesAction,
           templateFromContract: templateFromContractAction,
           publishTemplate: publishTemplateAction,
+          workflow: workflowAction,
+          comment: commentAction,
         }}
       />
     </>

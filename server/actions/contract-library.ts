@@ -20,6 +20,12 @@ import {
 } from "@/server/services/contract-library";
 import { saveLines } from "@/server/services/contracts";
 import { localeSchema } from "@/server/validation/auth";
+import {
+  aiSettingsSchema,
+  aiTemplateSchema,
+  generateAiTemplate,
+  saveAiSettings,
+} from "@/server/services/ai-admin";
 
 /**
  * Bibliothèque des contrats (ADR 0034). Chaque action revérifie la session et le rôle (requireStaff ;
@@ -101,4 +107,30 @@ export async function saveTaxRateAction(formData: FormData): Promise<void> {
   if (!parsed.success) back(locale, "services", "invalid");
   const r = await saveTaxRate(parsed.data);
   back(locale, "services", r.ok ? "taxSaved" : "failed");
+}
+
+/** Gabarit proposé par l'assistant IA (ADR 0037, F13) : brouillon « à faire valider ». firm_admin. */
+export async function aiTemplateAction(formData: FormData): Promise<void> {
+  const locale = loc(formData.get("locale"));
+  await requireStaff(locale, ["firm_admin"]);
+  const parsed = aiTemplateSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) back(locale, "templates", "aiInvalid");
+  const r = await generateAiTemplate(parsed.data);
+  if (!r.ok)
+    back(
+      locale,
+      "templates",
+      r.code === "BUDGET_EXCEEDED" ? "aiBudget" : r.code === "DISABLED" ? "aiDisabled" : "failed",
+    );
+  back(locale, "templates", "aiDraft");
+}
+
+/** Réglages de l'assistant IA (ADR 0037, F14) : activé, plafond mensuel, prix estimé. firm_admin. */
+export async function aiSettingsAction(formData: FormData): Promise<void> {
+  const locale = loc(formData.get("locale"));
+  await requireStaff(locale, ["firm_admin"]);
+  const parsed = aiSettingsSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) redirect(`/${locale}/admin/integrations?notice=aiInvalid`);
+  const r = await saveAiSettings(parsed.data);
+  redirect(`/${locale}/admin/integrations?notice=${r.ok ? "aiSaved" : "aiFailed"}`);
 }

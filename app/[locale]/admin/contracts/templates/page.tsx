@@ -9,11 +9,24 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/format";
-import { openTemplateDraftAction, updateTemplateAction } from "@/server/actions/contract-library";
+import {
+  aiTemplateAction,
+  openTemplateDraftAction,
+  updateTemplateAction,
+} from "@/server/actions/contract-library";
 import { requireStaff } from "@/server/auth/session";
 import { contractDomains, listTemplates, signingModes } from "@/server/services/contract-library";
 
-const NOTICES = ["saved", "published", "invalid", "failed"] as const;
+const NOTICES = [
+  "saved",
+  "published",
+  "invalid",
+  "failed",
+  "aiDraft",
+  "aiInvalid",
+  "aiBudget",
+  "aiDisabled",
+] as const;
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
 const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
@@ -48,8 +61,74 @@ export default async function TemplatesPage({
       <ContractsTabs active="templates" isFirmAdmin={isAdmin} />
       <Notice
         message={notice ? t(`templates.notices.${notice}`) : undefined}
-        error={notice === "failed" || notice === "invalid"}
+        error={
+          notice === "failed" ||
+          notice === "invalid" ||
+          notice === "aiInvalid" ||
+          notice === "aiBudget" ||
+          notice === "aiDisabled"
+        }
       />
+      {isAdmin ? (
+        <details className="mb-6 rounded-[8px] border border-gray-100 bg-white p-4">
+          <summary className="cursor-pointer font-semibold text-marine">{t("templates.ai.title")}</summary>
+          <form action={aiTemplateAction} className="mt-3 grid gap-3 sm:grid-cols-2">
+            <input type="hidden" name="locale" value={locale} />
+            <div className="space-y-1 sm:col-span-2">
+              <label htmlFor="ai-tpl-name" className={labelClass}>
+                {t("editor.template.name")}
+              </label>
+              <input id="ai-tpl-name" name="name" required maxLength={200} className={fieldClass} />
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="ai-tpl-domain" className={labelClass}>
+                {t("editor.template.domain")}
+              </label>
+              <select id="ai-tpl-domain" name="domain" defaultValue="other" className={fieldClass}>
+                {contractDomains.map((d) => (
+                  <option key={d} value={d}>
+                    {t(`editor.template.domains.${d}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="ai-tpl-lang" className={labelClass}>
+                {t("templates.ai.language")}
+              </label>
+              <select
+                id="ai-tpl-lang"
+                name="language"
+                defaultValue={locale === "fr" ? "fr" : "en"}
+                className={fieldClass}
+              >
+                <option value="fr">{tl("fr")}</option>
+                <option value="en">{tl("en")}</option>
+              </select>
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <label htmlFor="ai-tpl-desc" className={labelClass}>
+                {t("templates.ai.description")}
+              </label>
+              <textarea
+                id="ai-tpl-desc"
+                name="description"
+                required
+                minLength={10}
+                maxLength={2000}
+                rows={4}
+                className="w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none"
+              />
+              <p className="text-xs text-ink-muted">{t("templates.ai.help")}</p>
+            </div>
+            <div>
+              <Button type="submit" variant="primary" size="sm">
+                {t("templates.ai.submit")}
+              </Button>
+            </div>
+          </form>
+        </details>
+      ) : null}
       <SectionCard>
         {templates.length === 0 ? (
           <EmptyState icon={LayoutTemplate} message={t("templates.none")} />

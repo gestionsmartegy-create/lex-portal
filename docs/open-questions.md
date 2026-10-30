@@ -130,7 +130,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 
 | Question | Pourquoi c'est important | Priorité |
 |---|---|---|
-| **Importer les dates de cour saisies directement dans Clio** (celles que la plateforme n'a pas créées) ? Si oui, comment les reconnaître parmi tous les rendez-vous Clio : une catégorie « Cour », un calendrier Clio dédié, un mot dans le titre ? | Sans règle claire, la plateforme pourrait prendre un simple rendez-vous pour une audience, ou en oublier une. Aujourd'hui, seules les dates créées dans la plateforme sont suivies (modifiées ou supprimées dans Clio). | Moyenne |
+| ~~Importer les dates de cour saisies directement dans Clio ?~~ | ✅ **Oui, celles dont le type d'événement Clio est « Cour » / « Court »** (responsable du projet, 2026-10-28, ADR 0038). Les autres rendez-vous restent importables à la main depuis l'onglet « Cour » du dossier. | Moyenne |
 | **Accès Microsoft 365 pour les agendas Outlook** : enregistrement de l'application par l'administrateur du cabinet (`docs/outlook-integration.md`) | Sans lui, les agendas restent en simulateur (données fictives) | Moyenne |
 | **Date changée dans Clio et visible du client** : faut-il la masquer au client tant qu'un avocat ne l'a pas reconfirmée ? Aujourd'hui, le client voit la nouvelle heure, marquée « à confirmer » | Évite d'annoncer au client une heure saisie par erreur dans Clio | Moyenne |
 | Rappels de préparation : **J-7 et J-1** vous conviennent-ils ? Faut-il d'autres échéances (J-30 pour un procès) ? | Valeurs par défaut posées par le plan (E12) ; facile à changer | Faible |
@@ -142,7 +142,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Où ranger les contrats et documents générés par la plateforme ?~~ | ✅ **Dans Clio Documents ET dans SharePoint** (responsable du projet) | Le même fichier final est déposé dans les deux, avec les mêmes identifiants, et redéposé à chaque nouvelle version. Le dépôt Clio par l'API reste à vérifier sur le compte de test ; SharePoint est en simulateur jusqu'à l'accès Microsoft. La question générale « Répartition SharePoint / Clio » (lecture des documents partagés avec le client) reste ouverte. |
 | Vrais modèles de contrats à mettre dans la bibliothèque en premier | **À fournir** (fichiers Word du cabinet, sans données de clients) | 3 modèles de démonstration en attendant |
 | Québec : imposer la version française d'abord pour un client du bureau de Montréal (Charte de la langue française) ? | **À décider par le cabinet** | Par défaut : langue du client, français toujours disponible |
-| Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ? | **À décider par le cabinet** | Lot 4 du plan des contrats |
+| ~~Qui valide un document avant dépôt : l'avocat responsable seulement, ou tout avocat de l'équipe ?~~ | ✅ **Tout avocat de l'équipe** (responsable, d'origine, collaborateur) et le firm_admin ; pas les adjoint·e·s (responsable du projet, 2026-10-21, ADR 0036) | Règle appliquée à la validation des contrats ; à reprendre pour le dépôt dans Clio et SharePoint (lot 4) |
 
 ## Décisions du 2026-10-19 (contrats, lot 2, ADR 0034)
 
@@ -161,3 +161,10 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | ~~Qui peut envoyer un contrat au client ?~~ | ✅ **Tout membre de l'équipe du dossier**, adjoint·e·s compris (et le firm_admin) | Même règle que la confirmation des dates de cour |
 | ~~Une date de cour est-elle visible du client automatiquement ?~~ | ✅ **Non** : l'équipe coche « visible au client » | Avis au client seulement pour les dates visibles |
 | Valeur juridique de l'acceptation dans le portail pour un contrat autre que les conditions générales | **À confirmer par le cabinet** | Par défaut, le mode « Clio » reste disponible pour les vrais contrats |
+
+## Décisions du 2026-10-21 (contrats, lot 3, ADR 0036)
+
+| Question | Décision | Conséquence |
+|---|---|---|
+| ~~Format du contrat validé~~ | ✅ **PDF officiel** ; copie Word de travail ajoutée le 2026-10-28 à la demande du responsable du projet (ADR 0039) | PDF officiel avec empreinte SHA-256 ; Word pour l'équipe seulement |
+| ~~Qui valide un contrat sans dossier ?~~ | ✅ **Le firm_admin seulement** (responsable du projet, 2026-10-21) | Un avocat qui rédige sans dossier fait valider par un administrateur, ou rattache d'abord le contrat à un dossier |

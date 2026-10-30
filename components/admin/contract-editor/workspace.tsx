@@ -8,7 +8,8 @@ import type { ContractDoc } from "@/lib/contract-doc";
 import { formatDateTime } from "@/lib/format";
 import type { FieldDisplay } from "./field-node";
 import { SectionEditor } from "./section-editor";
-import { SendToClient } from "./send-to-client";
+import { ContractLifecycle, type LifecycleContract } from "./contract-lifecycle";
+import { ReviewComments, type ReviewComment } from "./review-comments";
 import { ServicesPanel, type PanelLine } from "./services-panel";
 
 type Outcome = { ok: true } | { ok: false; code: string };
@@ -40,7 +41,20 @@ export type WorkspaceProps = {
     viewedAt: string | null;
     acceptedAt: string | null;
     acceptedName: string | null;
-  };
+    /** Lot 3 (ADR 0036) */
+    isLawyer: boolean;
+  } & Omit<LifecycleContract, "id" | "status">;
+  comments: ReviewComment[];
+  matterChoices: { id: string; label: string }[];
+  deposits: {
+    id: string;
+    version: number;
+    target: "clio" | "sharepoint";
+    status: string;
+    lastError: string | null;
+  }[];
+  clioMatterUrl: string | null;
+  clioDocumentsLive: boolean;
   isFirmAdmin: boolean;
   /** Tableau des services (lot 2) : lignes, catalogue, taux de la province du client. */
   lines: PanelLine[];
@@ -64,6 +78,12 @@ export type WorkspaceProps = {
     saveLines: (locale: string, id: string, input: unknown) => Promise<Outcome>;
     templateFromContract: (locale: string, input: unknown) => Promise<Outcome>;
     publishTemplate: (locale: string, id: string) => Promise<Outcome>;
+    workflow: (
+      locale: string,
+      id: string,
+      input: unknown,
+    ) => Promise<{ ok: true; id?: string } | { ok: false; code: string }>;
+    comment: (locale: string, id: string, input: unknown) => Promise<Outcome>;
   };
 };
 
@@ -93,6 +113,11 @@ export function ContractWorkspace({
   rates,
   taxesToVerify,
   clauses,
+  comments,
+  matterChoices,
+  deposits,
+  clioMatterUrl,
+  clioDocumentsLive,
 }: WorkspaceProps) {
   const t = useTranslations("admin.contracts.editor");
   const tp = useTranslations("admin.contracts.provinces");
@@ -168,7 +193,9 @@ export function ContractWorkspace({
       router.refresh();
     } else
       setMessage({
-        text: t(`errors.${r.code === "LOCKED" ? "LOCKED" : r.code === "INVALID" ? "INVALID" : "FAILED"}`),
+        text: t(
+          `errors.${["LOCKED", "INVALID", "NOT_LAWYER", "MISSING_FIELDS", "NO_CLIENT_ACCOUNT", "TOO_SOON"].includes(r.code) ? r.code : "FAILED"}`,
+        ),
         error: true,
       });
   };
@@ -622,35 +649,19 @@ export function ContractWorkspace({
             )}
           </section>
 
-          {contract.sentAt ? (
-            <section
-              aria-labelledby="c-sent"
-              className="space-y-2 rounded-[4px] border border-gray-100 bg-white p-4 text-sm text-marine"
-            >
-              <h2 id="c-sent" className="font-display text-base font-bold text-marine">
-                {t("send.trackTitle")}
-              </h2>
-              <p>
-                {t("send.sentOn", { date: formatDateTime(contract.sentAt, locale) })} ·{" "}
-                {t(`send.modes.${contract.signingMode ?? "clio"}`)}
-              </p>
-              <p>
-                {contract.viewedAt
-                  ? t("send.viewedOn", { date: formatDateTime(contract.viewedAt, locale) })
-                  : t("send.notViewed")}
-              </p>
-              {contract.acceptedAt ? (
-                <p className="font-semibold">
-                  {t("send.acceptedBy", {
-                    name: contract.acceptedName ?? "",
-                    date: formatDateTime(contract.acceptedAt, locale),
-                  })}
-                </p>
-              ) : contract.signingMode === "clio" ? (
-                <p className="text-ink-muted">{t("send.clioNext")}</p>
-              ) : null}
-            </section>
-          ) : null}
+          <ContractLifecycle
+            locale={locale}
+            contract={{ ...contract }}
+            busy={busy}
+            isFirmAdmin={isFirmAdmin}
+            matterChoices={matterChoices}
+            deposits={deposits}
+            clioMatterUrl={clioMatterUrl}
+            clioDocumentsLive={clioDocumentsLive}
+            run={run}
+            workflow={(input) => actions.workflow(locale, contract.id, input)}
+            send={(mode) => actions.status(locale, contract.id, { op: "send", mode })}
+          />
           {editable ? (
             <section
               aria-labelledby="c-status"
@@ -674,16 +685,33 @@ export function ContractWorkspace({
               >
                 {contract.status === "in_review" ? t("backToDraft") : t("askReview")}
               </button>
-              {contract.templateDraft ? null : (
-                <SendToClient
-                  busy={busy}
-                  hasClientAccount={contract.hasClientAccount}
-                  missingLabels={missingLabels}
-                  templateSigning={contract.templateSigning}
-                  onSend={(mode) =>
-                    void run(() => actions.status(locale, contract.id, { op: "send", mode }), t("send.sent"))
-                  }
-                />
+              {contract.templateDraft ? null : contract.isLawyer ? (
+                <div className="space-y-2 border-t border-gray-100 pt-3">
+                  {missingLabels.length ? (
+                    <p className="text-xs text-ink-muted">
+                      {t("send.needsFields", { fields: missingLabels.join(", ") })}
+                    </p>
+                  ) : null}
+                  <button
+                    type="button"
+                    disabled={busy || missingLabels.length > 0}
+                    onClick={() => {
+                      if (window.confirm(t("lifecycle.confirmValidate")))
+                        void run(
+                          () => actions.workflow(locale, contract.id, { op: "validate" }),
+                          t("lifecycle.validated"),
+                        );
+                    }}
+                    className="inline-flex h-10 w-full items-center justify-center rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none disabled:opacity-50"
+                  >
+                    {t("lifecycle.validate")}
+                  </button>
+                  <p className="text-xs text-ink-muted">{t("lifecycle.validateHelp")}</p>
+                </div>
+              ) : (
+                <p className="border-t border-gray-100 pt-3 text-xs text-ink-muted">
+                  {t("lifecycle.lawyerOnly")}
+                </p>
               )}
               <details className="text-sm">
                 <summary className="cursor-pointer font-semibold text-destructive">
@@ -712,6 +740,17 @@ export function ContractWorkspace({
               </details>
             </section>
           ) : null}
+          {contract.templateDraft ? null : (
+            <ReviewComments
+              locale={locale}
+              comments={comments}
+              sections={sections.map((sct) => ({ id: sct.id, title: sct.title }))}
+              canAdd={["draft", "in_review", "validated"].includes(contract.status)}
+              busy={busy}
+              run={run}
+              act={(input) => actions.comment(locale, contract.id, input)}
+            />
+          )}
         </aside>
       </div>
     </div>

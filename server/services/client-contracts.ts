@@ -15,7 +15,7 @@ export type ClientContractRow = {
   id: string;
   title: string;
   language: "fr" | "en";
-  status: "sent" | "signed";
+  status: "sent" | "signed" | "declined";
   signing_mode: "clio" | "portal";
   sent_at: string;
   viewed_at: string | null;
@@ -38,12 +38,15 @@ const snapshotSchema = z.object({
 });
 const loadedSchema = z.object({
   id: z.uuid(),
-  status: z.enum(["sent", "signed"]),
+  status: z.enum(["sent", "signed", "declined"]),
   signing_mode: z.enum(["clio", "portal"]),
   language: z.enum(["fr", "en"]),
   sent_at: z.string(),
   accepted_at: z.string().nullable(),
   accepted_name: z.string().nullable(),
+  declined_at: z.string().nullable().optional(),
+  decline_reason: z.string().nullable().optional(),
+  pdf_sha256: z.string().nullable().optional(),
   snapshot: snapshotSchema,
   matter: z.object({ number: z.string().nullable(), title: z.string() }).nullable(),
   lawyer: z.string().nullable(),
@@ -111,6 +114,26 @@ export async function acceptContract(input: z.infer<typeof acceptSchema>) {
   const { error } = await supabase.rpc("client_contract_accept", {
     p_contract: input.contractId,
     p_name: input.name,
+  });
+  if (!error) return { ok: true as const };
+  return { ok: false as const, code: error.code === "P0002" ? ("NOT_FOUND" as const) : ("FAILED" as const) };
+}
+
+export const declineSchema = z.object({
+  contractId: z.uuid(),
+  reason: z
+    .string()
+    .transform((v) => v.replace(/\r\n?/g, "\n").trim())
+    .pipe(z.string().max(500))
+    .refine((v) => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(v)),
+});
+
+/** Refus par le client (ADR 0036) : le motif est facultatif et n'est jamais journalisé. */
+export async function declineContract(input: z.infer<typeof declineSchema>) {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("client_contract_decline", {
+    p_contract: input.contractId,
+    p_reason: input.reason,
   });
   if (!error) return { ok: true as const };
   return { ok: false as const, code: error.code === "P0002" ? ("NOT_FOUND" as const) : ("FAILED" as const) };

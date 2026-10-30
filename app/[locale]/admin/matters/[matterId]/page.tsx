@@ -83,6 +83,7 @@ const NOTICES = [
   "courtCancelled",
   "courtAdjourned",
   "courtInvalid",
+  "clioImported",
   "duplicate",
   "invalid",
   "failed",
