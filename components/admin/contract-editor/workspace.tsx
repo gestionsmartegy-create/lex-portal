@@ -46,6 +46,15 @@ export type WorkspaceProps = {
   } & Omit<LifecycleContract, "id" | "status">;
   comments: ReviewComment[];
   matterChoices: { id: string; label: string }[];
+  deposits: {
+    id: string;
+    version: number;
+    target: "clio" | "sharepoint";
+    status: string;
+    lastError: string | null;
+  }[];
+  clioMatterUrl: string | null;
+  clioDocumentsLive: boolean;
   isFirmAdmin: boolean;
   /** Tableau des services (lot 2) : lignes, catalogue, taux de la province du client. */
   lines: PanelLine[];
@@ -106,6 +115,9 @@ export function ContractWorkspace({
   clauses,
   comments,
   matterChoices,
+  deposits,
+  clioMatterUrl,
+  clioDocumentsLive,
 }: WorkspaceProps) {
   const t = useTranslations("admin.contracts.editor");
   const tp = useTranslations("admin.contracts.provinces");
@@ -643,6 +655,9 @@ export function ContractWorkspace({
             busy={busy}
             isFirmAdmin={isFirmAdmin}
             matterChoices={matterChoices}
+            deposits={deposits}
+            clioMatterUrl={clioMatterUrl}
+            clioDocumentsLive={clioDocumentsLive}
             run={run}
             workflow={(input) => actions.workflow(locale, contract.id, input)}
             send={(mode) => actions.status(locale, contract.id, { op: "send", mode })}

@@ -279,3 +279,160 @@ describe("ClioManageClient — dates de cour (calendrier, ADR 0025)", () => {
     expect(calls[0]!.url.pathname).toBe("/api/v4/calendar_entries/..%2Fmatters%2F1.json");
   });
 });
+
+describe("Clio : dépôt de document et agenda d'un dossier (ADR 0038)", () => {
+  const created = (putUrl: string) =>
+    json({
+      data: {
+        id: 4242,
+        latest_document_version: {
+          uuid: "u-1",
+          put_url: putUrl,
+          put_headers: [
+            { name: "Content-Type", value: "application/pdf" },
+            { name: "x-amz-server-side-encryption", value: "AES256" },
+            { name: "Authorization", value: "à ne jamais transmettre" },
+          ],
+        },
+      },
+    });
+
+  it("crée le document, envoie le fichier sur l'URL S3 signée (sans jeton Clio), puis termine le dépôt", async () => {
+    const { impl, calls } = fakeFetch([
+      (url, init) =>
+        url.pathname === "/api/v4/documents.json" && init?.method === "POST"
+          ? created("https://bucket.s3.amazonaws.com/x?sig=1")
+          : undefined,
+      (url, init) =>
+        url.hostname === "bucket.s3.amazonaws.com" && init?.method === "PUT"
+          ? new Response(null, { status: 200 })
+          : undefined,
+      (url, init) =>
+        url.pathname === "/api/v4/documents/4242.json" && init?.method === "PATCH"
+          ? json({ data: { id: 4242 } })
+          : undefined,
+    ]);
+    const id = await new ClioManageClient(new MemoryStore(token()), impl, noSleep).uploadDocument({
+      matterId: 77,
+      previousDocumentId: null,
+      name: "Mandat - v1.pdf",
+      contentType: "application/pdf",
+      bytes: new Uint8Array([37, 80, 68, 70]),
+    });
+    expect(id).toBe(4242);
+    const post = JSON.parse(String(calls[0]!.init!.body));
+    expect(post.data.parent).toEqual({ id: 77, type: "Matter" });
+    const put = calls[1]!;
+    const headers = put.init!.headers as Record<string, string>;
+    expect(headers.Authorization).toBeUndefined();
+    expect(headers["x-amz-server-side-encryption"]).toBe("AES256");
+    expect(JSON.parse(String(calls[2]!.init!.body))).toEqual({ data: { uuid: "u-1", fully_uploaded: true } });
+  });
+
+  it("nouvelle version : le parent est le document précédent", async () => {
+    const { impl, calls } = fakeFetch([
+      (url, init) => (init?.method === "POST" ? created("https://bucket.s3.amazonaws.com/x") : undefined),
+      (_url, init) => (init?.method === "PUT" ? new Response(null, { status: 200 }) : undefined),
+      (_url, init) => (init?.method === "PATCH" ? json({ data: { id: 4242 } }) : undefined),
+    ]);
+    await new ClioManageClient(new MemoryStore(token()), impl, noSleep).uploadDocument({
+      matterId: 77,
+      previousDocumentId: 999,
+      name: "Mandat - v2.pdf",
+      contentType: "application/pdf",
+      bytes: new Uint8Array([1]),
+    });
+    expect(JSON.parse(String(calls[0]!.init!.body)).data.parent).toEqual({ id: 999, type: "Document" });
+  });
+
+  it("refuse une URL d'envoi qui n'est pas S3 en https (aucun fichier envoyé ailleurs)", async () => {
+    const { impl, calls } = fakeFetch([
+      (_url, init) => (init?.method === "POST" ? created("https://evil.example.com/upload") : undefined),
+    ]);
+    await expect(
+      new ClioManageClient(new MemoryStore(token()), impl, noSleep).uploadDocument({
+        matterId: 77,
+        previousDocumentId: null,
+        name: "x.pdf",
+        contentType: "application/pdf",
+        bytes: new Uint8Array([1]),
+      }),
+    ).rejects.toEqual(new ClioError("INVALID_RESPONSE"));
+    expect(calls).toHaveLength(1);
+  });
+
+  it("refuse un hôte AWS qui n'est pas S3, un port explicite, et échoue si la fin du dépôt est introuvable", async () => {
+    for (const url of [
+      "https://ec2-1-2-3-4.compute.amazonaws.com/x",
+      "https://bucket.s3.amazonaws.com:8443/x",
+    ]) {
+      const { impl, calls } = fakeFetch([(_u, init) => (init?.method === "POST" ? created(url) : undefined)]);
+      await expect(
+        new ClioManageClient(new MemoryStore(token()), impl, noSleep).uploadDocument({
+          matterId: 1,
+          previousDocumentId: null,
+          name: "x.pdf",
+          contentType: "application/pdf",
+          bytes: new Uint8Array([1]),
+        }),
+      ).rejects.toEqual(new ClioError("INVALID_RESPONSE"));
+      expect(calls).toHaveLength(1);
+    }
+    const { impl } = fakeFetch([
+      (_u, init) =>
+        init?.method === "POST" ? created("https://bucket.s3.ca-central-1.amazonaws.com/x") : undefined,
+      (_u, init) => (init?.method === "PUT" ? new Response(null, { status: 200 }) : undefined),
+      (_u, init) => (init?.method === "PATCH" ? new Response("{}", { status: 404 }) : undefined),
+    ]);
+    await expect(
+      new ClioManageClient(new MemoryStore(token()), impl, noSleep).uploadDocument({
+        matterId: 1,
+        previousDocumentId: null,
+        name: "x.pdf",
+        contentType: "application/pdf",
+        bytes: new Uint8Array([1]),
+      }),
+    ).rejects.toEqual(new ClioError("UPSTREAM"));
+  });
+
+  it("lit l'agenda d'un dossier : filtre matter_id, tous les utilisateurs, depuis une date", async () => {
+    const { impl, calls } = fakeFetch([
+      (url) =>
+        url.pathname === "/api/v4/calendar_entries.json"
+          ? json({
+              data: [
+                {
+                  id: 5,
+                  summary: "Audience",
+                  start_at: "2026-12-01T14:00:00Z",
+                  end_at: null,
+                  all_day: false,
+                  calendar_entry_event_type: { name: "Court" },
+                },
+                { id: 6, summary: "Sans date", start_at: null },
+              ],
+            })
+          : undefined,
+    ]);
+    const rows = await new ClioManageClient(
+      new MemoryStore(token()),
+      impl,
+      noSleep,
+    ).listMatterCalendarEntries(77, "2026-10-01T00:00:00Z");
+    expect(rows).toEqual([
+      {
+        id: "5",
+        summary: "Audience",
+        location: null,
+        startAt: "2026-12-01T14:00:00Z",
+        endAt: null,
+        allDay: false,
+        eventType: "Court",
+      },
+    ]);
+    const q = calls[0]!.url.searchParams;
+    expect(q.get("matter_id")).toBe("77");
+    expect(q.get("owner_entries_across_all_users")).toBe("true");
+    expect(q.get("updated_since")).toBe("2026-10-01T00:00:00Z");
+  });
+});

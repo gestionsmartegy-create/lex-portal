@@ -88,6 +88,10 @@ test("contrat : relecture, validation et PDF, envoi, refus, nouvelle version", a
     expect(pdf.status()).toBe(200);
     expect(pdf.headers()["content-type"]).toBe("application/pdf");
     expect((await pdf.body()).subarray(0, 5).toString("latin1")).toBe("%PDF-");
+    // Copie Word (ADR 0039) : équipe seulement.
+    const docx = await page.request.get(`/api/contracts/${contract!.id}/docx`);
+    expect(docx.status()).toBe(200);
+    expect((await docx.body()).subarray(0, 2).toString("latin1")).toBe("PK");
 
     // Envoi ; la relance n'est pas possible le jour même.
     page.once("dialog", (d) => void d.accept());
@@ -104,6 +108,8 @@ test("contrat : relecture, validation et PDF, envoi, refus, nouvelle version", a
     });
     const clientPdf = await clientPage.request.get(`/api/contracts/${contract!.id}/pdf`);
     expect(clientPdf.status()).toBe(200);
+    // Le client n'a jamais la copie Word.
+    expect((await clientPage.request.get(`/api/contracts/${contract!.id}/docx`)).status()).toBe(404);
     await clientPage.getByText("Je ne souhaite pas accepter ce contrat").click();
     await clientPage.getByLabel("Motif (facultatif)").fill("Le tarif ne me convient pas.");
     await clientPage.getByRole("button", { name: "Refuser le contrat" }).click();

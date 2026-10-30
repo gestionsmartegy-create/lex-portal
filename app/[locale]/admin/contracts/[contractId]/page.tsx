@@ -26,7 +26,10 @@ import {
 } from "@/server/actions/contract-library";
 import { listClauses, listServices } from "@/server/services/contract-library";
 import { requireStaff } from "@/server/auth/session";
+import { listContractDeposits } from "@/server/services/clio-deposits";
 import { listComments } from "@/server/services/contract-workflow";
+import { createSupabaseServerClient } from "@/server/db/server-client";
+import { serverEnv } from "@/server/env";
 import { getContract, listMatterChoices } from "@/server/services/contracts";
 
 /** Rédaction d'un contrat (F3). Invisible ou inexistant : même 404 (AGENTS.md §2.9). */
@@ -36,7 +39,7 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
   const { role } = await requireStaff(locale);
   const loaded = await getContract(contractId);
   if (!loaded) notFound();
-  const [t, services, clauses, comments, matters] = await Promise.all([
+  const [t, services, clauses, comments, matters, deposits] = await Promise.all([
     getTranslations("admin.contracts"),
     listServices(true),
     listClauses(loaded.contract.language),
@@ -44,7 +47,22 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
     role === "firm_admin" && loaded.contract.status === "signed" && !loaded.contract.matter
       ? listMatterChoices()
       : Promise.resolve([]),
+    listContractDeposits(contractId),
   ]);
+  // Lien vers le dossier Clio (connexion réelle seulement) : la signature se lance depuis Clio.
+  const clioId = loaded.contract.matter
+    ? ((
+        await (
+          await createSupabaseServerClient()
+        ).rpc("matter_clio_id", {
+          p_matter: loaded.contract.matter.id,
+        })
+      ).data as string | null)
+    : null;
+  const clioMatterUrl =
+    serverEnv().INTEGRATION_MODE_CLIO === "live" && clioId && /^\d{1,15}$/.test(clioId)
+      ? `https://ca.app.clio.com/nc/#/matters/${clioId}`
+      : null;
   const { contract } = loaded;
   const labels = Object.fromEntries(
     contractFieldKeys.map((k) => [k, t(`fieldKeys.${k.replace(".", "_")}`)]),
@@ -130,6 +148,12 @@ export default async function ContractPage({ params }: PageProps<"/[locale]/admi
           previousId: contract.previousId,
         }}
         comments={comments}
+        deposits={deposits}
+        clioMatterUrl={clioMatterUrl}
+        clioDocumentsLive={
+          serverEnv().INTEGRATION_MODE_CLIO === "live" &&
+          serverEnv().INTEGRATION_MODE_CLIO_DOCUMENTS === "live"
+        }
         matterChoices={matters.map((m) => ({
           id: m.id,
           label: [m.display_number, m.title].filter(Boolean).join(" — "),

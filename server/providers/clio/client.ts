@@ -8,18 +8,24 @@ import {
   CALENDAR_ENTRY_STATE_FIELDS,
   CALENDAR_FIELDS,
   CONTACT_FIELDS,
+  DOCUMENT_UPLOAD_FIELDS,
+  MATTER_CALENDAR_FIELDS,
   MATTER_FIELDS,
   clioBillSchema,
   clioCalendarEntryRefSchema,
   clioCalendarEntryStateSchema,
   clioCalendarSchema,
   clioContactSchema,
+  clioDocumentCreatedSchema,
+  clioMatterCalendarEntrySchema,
   clioMatterSchema,
   pageSchema,
   type ClioCalendarEntryInput,
   type ClioCalendarEntryState,
+  type ClioMatterCalendarEntry,
   type StoredTokens,
 } from "./schemas";
+import type { ClioDocumentUpload } from "./gateway";
 
 const PAGE_LIMIT = 200; // maximum documenté par requête d'index
 const MAX_PER_MINUTE = 45; // marge sous la limite documentée de 50 req/min par jeton
@@ -123,6 +129,92 @@ export class ClioManageClient implements ClioManageGateway {
     await this.request(new URL(`/api/v4/calendar_entries/${encodeURIComponent(id)}.json`, CLIO_BASE_URL), {
       method: "DELETE",
     });
+  }
+
+  /**
+   * Dépôt d'un document (openapi.json v4, vérifié le 2026-10-28) : 1) création avec le dossier (ou le
+   * document précédent pour une nouvelle version) ; 2) envoi du fichier, côté serveur, sur l'URL S3
+   * signée fournie par Clio (https, hôte S3 d'Amazon, port par défaut, aucune redirection suivie) ;
+   * 3) fin du dépôt (fully_uploaded). Aucun lien de Clio ni d'Amazon n'est transmis au navigateur.
+   */
+  async uploadDocument(input: ClioDocumentUpload): Promise<number> {
+    const create = new URL("/api/v4/documents.json", CLIO_BASE_URL);
+    create.searchParams.set("fields", DOCUMENT_UPLOAD_FIELDS);
+    const body = await this.request(create, {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          name: input.name,
+          content_type: input.contentType,
+          parent: input.previousDocumentId
+            ? { id: input.previousDocumentId, type: "Document" }
+            : { id: input.matterId, type: "Matter" },
+        },
+      }),
+    });
+    const parsed = clioDocumentCreatedSchema.safeParse(body);
+    if (!parsed.success) throw new ClioError("INVALID_RESPONSE");
+    const { id, latest_document_version: version } = parsed.data.data;
+    const target = new URL(version.put_url);
+    if (
+      target.protocol !== "https:" ||
+      target.port !== "" ||
+      !/^[a-z0-9.-]+\.s3[.-]([a-z0-9-]+\.)?amazonaws\.com$/i.test(target.hostname)
+    )
+      throw new ClioError("INVALID_RESPONSE");
+    const headers: Record<string, string> = {};
+    const raw = version.put_headers;
+    const pairs = Array.isArray(raw) ? raw.map((h) => [h.name, h.value] as const) : Object.entries(raw ?? {});
+    for (const [name, value] of pairs)
+      if (/^(content-type|x-amz-[a-z0-9-]+)$/i.test(name)) headers[name] = value;
+    const put = await this.fetchImpl(target, {
+      method: "PUT",
+      headers,
+      body: input.bytes as unknown as BodyInit,
+      cache: "no-store",
+      signal: AbortSignal.timeout(120_000),
+      // Jamais suivre une redirection : le fichier n'irait que vers l'hôte vérifié ci-dessus.
+      redirect: "error",
+    });
+    if (!put.ok) throw new ClioError("UPSTREAM");
+    const done = new URL(`/api/v4/documents/${id}.json`, CLIO_BASE_URL);
+    done.searchParams.set("fields", "id");
+    const finished = await this.request(done, {
+      method: "PATCH",
+      body: JSON.stringify({ data: { uuid: version.uuid, fully_uploaded: true } }),
+    });
+    // 404 sur la fin du dépôt : échec (le prochain essai recrée le document ; risque de doublon noté, ADR 0038).
+    if (finished === null) throw new ClioError("UPSTREAM");
+    return id;
+  }
+
+  /** Entrées d'agenda d'un dossier (pagination par curseur, ordre id croissant). */
+  async listMatterCalendarEntries(
+    matterId: number,
+    updatedSince: string | null,
+  ): Promise<ClioMatterCalendarEntry[]> {
+    const rows = await this.list(
+      "/api/v4/calendar_entries.json",
+      {
+        matter_id: String(matterId),
+        fields: MATTER_CALENDAR_FIELDS,
+        order: "id(asc)",
+        owner_entries_across_all_users: "true",
+        ...(updatedSince ? { updated_since: updatedSince } : {}),
+      },
+      clioMatterCalendarEntrySchema,
+    );
+    return rows
+      .filter((r) => r.start_at)
+      .map((r) => ({
+        id: r.id,
+        summary: r.summary ?? "",
+        location: r.location ?? null,
+        startAt: r.start_at!,
+        endAt: r.end_at ?? null,
+        allDay: r.all_day ?? false,
+        eventType: r.calendar_entry_event_type?.name ?? null,
+      }));
   }
 
   private async list<T extends z.ZodType>(

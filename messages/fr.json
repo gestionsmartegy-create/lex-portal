@@ -991,7 +991,8 @@
         "courtHeld": "Date de cour marquée comme tenue.",
         "courtCancelled": "Date de cour annulée.",
         "courtAdjourned": "Date de cour remise : la nouvelle date doit être confirmée.",
-        "courtInvalid": "Veuillez vérifier la date de cour : début obligatoire, fin après le début, lien commençant par https://, motif pour annuler, pas de retour à la ligne dans la salle, le juge ou le numéro de greffe."
+        "courtInvalid": "Veuillez vérifier la date de cour : début obligatoire, fin après le début, lien commençant par https://, motif pour annuler, pas de retour à la ligne dans la salle, le juge ou le numéro de greffe.",
+        "clioImported": "Date importée de Clio : elle est « à confirmer »."
       },
       "upLabel": "Monter : {title}",
       "downLabel": "Descendre : {title}",
@@ -1495,7 +1496,19 @@
       "moreActions": "Autres actions",
       "closePanel": "Fermer",
       "markHeldHelp": "L'audience a eu lieu : elle passe dans l'historique.",
-      "helpLabel": "Aide : dates de cour"
+      "helpLabel": "Aide : dates de cour",
+      "clioAgenda": {
+        "title": "Agenda Clio du dossier",
+        "helpLabel": "À propos de l'agenda Clio",
+        "help": "Les rendez-vous de ce dossier dans Clio. Ceux dont le type d'événement Clio est « Cour » sont importés automatiquement ; les autres peuvent l'être à la main. Une date importée arrive « à confirmer » et n'est jamais recréée dans Clio.",
+        "unavailable": "L'agenda Clio est indisponible pour le moment. Réessayez plus tard.",
+        "none": "Aucun rendez-vous à venir dans Clio pour ce dossier.",
+        "untitled": "Rendez-vous sans titre",
+        "imported": "Déjà dans le portail",
+        "import": "Importer",
+        "importFor": "Importer : {title}",
+        "kindFor": "Type de date pour : {title}"
+      }
     },
     "courtCalendar": {
       "title": "Calendrier de cour",
@@ -1891,7 +1904,8 @@
           "linked": "Contrat rattaché au dossier.",
           "invite": "Inviter ce client dans le portail",
           "askAdminInvite": "Si le client n'a pas encore de compte, demandez à un administrateur de l'inviter. L'envoi trouvera ensuite son compte.",
-          "startOpening": "Démarrer l'ouverture du dossier"
+          "startOpening": "Démarrer l'ouverture du dossier",
+          "downloadDocx": "Télécharger en Word (copie de travail, version {version})"
         },
         "comments": {
           "title": "{count, plural, =0 {Commentaires de relecture} one {Commentaires de relecture (# ouvert)} other {Commentaires de relecture (# ouverts)}}",
@@ -1906,6 +1920,26 @@
           "reopen": "Rouvrir",
           "showResolved": "{count, plural, one {Voir # commentaire réglé} other {Voir # commentaires réglés}}",
           "hideResolved": "Masquer les commentaires réglés"
+        },
+        "deposits": {
+          "title": "Rangement du contrat",
+          "targets": {
+            "clio": "Clio",
+            "sharepoint": "SharePoint"
+          },
+          "status": {
+            "pending": "en cours de dépôt",
+            "done": "déposé",
+            "failed": "échec après plusieurs essais"
+          },
+          "waiting": {
+            "noMatter": "en attente : contrat sans dossier Clio",
+            "microsoft": "en attente du branchement Microsoft",
+            "approval": "en attente de l'accord du cabinet pour le dépôt réel"
+          },
+          "retry": "Réessayer",
+          "retried": "Le dépôt sera retenté sous peu.",
+          "openClio": "Ouvrir le dossier dans Clio (signature)"
         }
       },
       "tabs": {
@@ -2172,7 +2206,8 @@
         "calendar_disconnected": "Un agenda a été déconnecté",
         "auth_login": "{actor} s'est connecté",
         "other": "{actor} : action enregistrée au journal"
-      }
+      },
+      "depositFailed": "Dépôt dans Clio en échec : {title} (version {version})"
     }
   }
 }

@@ -160,6 +160,7 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
               day.documents.length +
               day.late.length +
               day.contracts.length +
+              day.failedDeposits.length +
               day.clioChanges.length ===
             0 ? (
               <p className="text-sm text-ink-muted">{t("nothingToHandle")}</p>
@@ -240,6 +241,19 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
                     </div>
                     <Link href={`/admin/contracts/${c.id}`} className={actionLink}>
                       {t("review")}
+                    </Link>
+                  </li>
+                ))}
+                {day.failedDeposits.map((d) => (
+                  <li key={`d-${d.id}`} className={rowClass}>
+                    <RefreshCw aria-hidden className="size-4 shrink-0 text-warning-ink" />
+                    <div className="min-w-0 flex-1 basis-56">
+                      <p className="font-semibold text-marine">
+                        {t("depositFailed", { title: d.title, version: d.version })}
+                      </p>
+                    </div>
+                    <Link href={`/admin/contracts/${d.contractId}`} className={actionLink}>
+                      {t("open")}
                     </Link>
                   </li>
                 ))}
