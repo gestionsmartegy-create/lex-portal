@@ -88,7 +88,11 @@ export function AccountMenu({
           aria-label={t("account")}
           className="flex size-11 items-center justify-center rounded-full"
         >
-          <span className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-bold text-white">
+          {/* Initiales décoratives : le nom accessible est « Menu du compte » (règle axe label-content-name-mismatch). */}
+          <span
+            aria-hidden
+            className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-bold text-white"
+          >
             {initials}
           </span>
         </button>
