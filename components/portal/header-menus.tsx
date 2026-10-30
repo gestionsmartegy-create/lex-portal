@@ -85,14 +85,11 @@ export function AccountMenu({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label={t("account")}
+          // Le nom accessible contient le texte visible, les initiales (règle axe label-content-name-mismatch).
+          aria-label={`${t("account")} ${initials}`}
           className="flex size-11 items-center justify-center rounded-full"
         >
-          {/* Initiales décoratives : le nom accessible est « Menu du compte » (règle axe label-content-name-mismatch). */}
-          <span
-            aria-hidden
-            className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-bold text-white"
-          >
+          <span className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-bold text-white">
             {initials}
           </span>
         </button>
