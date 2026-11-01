@@ -200,6 +200,9 @@ export async function staffMicrosoftAction(formData: FormData): Promise<void> {
     options: {
       redirectTo: `${serverEnv().APP_BASE_URL}/api/auth/callback?next=${encodeURIComponent(`/${locale}/admin`)}`,
       scopes: "openid email profile",
+      // Microsoft affiche toujours « Choisir un compte » : on ne se connecte pas
+      // en silence avec le compte déjà ouvert dans le navigateur.
+      queryParams: { prompt: "select_account" },
     },
   });
   if (error || !data.url) redirect(`/${locale}/staff/login`);
