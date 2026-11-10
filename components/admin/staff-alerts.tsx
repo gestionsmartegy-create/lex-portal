@@ -34,7 +34,7 @@ export function StaffAlerts({ alerts }: { alerts: Alert[] }) {
         {total > 0 ? (
           <span
             aria-hidden
-            className="pointer-events-none absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
+            className="pointer-events-none absolute top-2 right-2 flex size-4.5 items-center justify-center rounded-full bg-status-urgent text-[11px] font-semibold text-white"
           >
             {total > 9 ? "9+" : total}
           </span>

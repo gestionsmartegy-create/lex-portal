@@ -32,7 +32,7 @@ export function NotificationsMenu({ items, unread }: { items: HeaderNotification
         {unread > 0 ? (
           <span
             aria-hidden
-            className="pointer-events-none absolute top-2 right-2 flex size-4 items-center justify-center rounded-full bg-status-urgent text-[10px] font-bold text-white"
+            className="pointer-events-none absolute top-2 right-2 flex size-4.5 items-center justify-center rounded-full bg-status-urgent text-[11px] font-semibold text-white"
           >
             {unread > 9 ? "9+" : unread}
           </span>
@@ -92,7 +92,7 @@ export function AccountMenu({
           aria-label={`${t("account")} ${initials}`}
           className="flex size-11 items-center justify-center rounded-full"
         >
-          <span className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-bold text-white">
+          <span className="flex size-9 items-center justify-center rounded-full bg-marine text-xs font-semibold text-white">
             {initials}
           </span>
         </button>

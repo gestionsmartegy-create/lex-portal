@@ -272,8 +272,8 @@
       "closed": "Clos"
     },
     "dashboard": {
-      "title": "Bon retour, {name}",
-      "titleNoName": "Bon retour",
+      "title": "Tableau de bord",
+      "titleNoName": "Tableau de bord",
       "subtitle": "Voici un aperçu de vos dossiers chez Lex Canada Law.",
       "actionRequired": "Action requise",
       "actionSignature": "{title} — signature requise",
@@ -2130,8 +2130,8 @@
       }
     },
     "myDay": {
-      "hello": "Bonjour, {name}",
-      "helloNoName": "Bonjour",
+      "hello": "Ma journée",
+      "helloNoName": "Ma journée",
       "today": "{date} · voici ce qui vous attend.",
       "counters": {
         "thisWeek": "{count, plural, one {audience dans les 14 jours} other {audiences dans les 14 jours}}",

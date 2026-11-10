@@ -66,7 +66,7 @@ export async function CourtWatchPanel({
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           <section aria-labelledby="cw-upcoming">
-            <h3 id="cw-upcoming" className="mb-2 flex items-center gap-2 text-sm font-bold text-marine">
+            <h3 id="cw-upcoming" className="mb-2 flex items-center gap-2 text-sm font-semibold text-marine">
               <Gavel aria-hidden className="size-4" />
               {t("upcomingCount", { count: data.upcoming.length })}
             </h3>
@@ -74,7 +74,10 @@ export async function CourtWatchPanel({
           </section>
           {data.conflicts.length || data.toConfirm.length ? (
             <section aria-labelledby="cw-alerts">
-              <h3 id="cw-alerts" className="mb-2 flex items-center gap-2 text-sm font-bold text-destructive">
+              <h3
+                id="cw-alerts"
+                className="mb-2 flex items-center gap-2 text-sm font-semibold text-destructive"
+              >
                 <AlertTriangle aria-hidden className="size-4" />
                 {t("alertsCount", { conflicts: data.conflicts.length, toConfirm: data.toConfirm.length })}
               </h3>
@@ -87,7 +90,7 @@ export async function CourtWatchPanel({
       )}
       {data.clioChanges.length ? (
         <section aria-labelledby="cw-clio" className="mt-6 border-t border-gray-100 pt-4">
-          <h3 id="cw-clio" className="mb-2 flex items-center gap-2 text-sm font-bold text-destructive">
+          <h3 id="cw-clio" className="mb-2 flex items-center gap-2 text-sm font-semibold text-destructive">
             <RefreshCw aria-hidden className="size-4" />
             {t("clioChangesCount", { count: data.clioChanges.length })}
           </h3>

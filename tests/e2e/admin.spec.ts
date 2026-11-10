@@ -113,7 +113,7 @@ test.describe("espace cabinet", () => {
     const staff = await createStaffSession(context, baseURL!, "staff");
     try {
       await page.goto("/en/admin");
-      await expect(page.getByRole("heading", { level: 1, name: "Hello, Morgan" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "My day" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Clients" })).toHaveCount(0);
       await page.goto("/en/admin/clients");
       await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();

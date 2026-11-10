@@ -160,7 +160,7 @@ export function SessionTimeoutGuard({ locale, area, keepAlive, idleLogout, logou
           >
             <div className="flex items-center gap-3">
               <Clock aria-hidden className="size-6 shrink-0 text-gold-ink" />
-              <AlertDialog.Title className="font-display text-xl font-bold text-marine">
+              <AlertDialog.Title className="font-display text-xl font-semibold text-marine">
                 {t("warningTitle")}
               </AlertDialog.Title>
             </div>

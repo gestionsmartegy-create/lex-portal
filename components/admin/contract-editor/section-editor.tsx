@@ -201,7 +201,7 @@ export function SectionEditor(props: SectionEditorProps) {
             schedule();
           }}
           onBlur={() => void flush()}
-          className="min-w-0 flex-1 basis-[calc(100%-2rem)] rounded-[2px] border border-transparent bg-transparent px-1 py-1 font-display text-base font-bold text-marine hover:border-gray-200 focus-visible:border-gold focus-visible:outline-none disabled:hover:border-transparent sm:basis-auto"
+          className="min-w-0 flex-1 basis-[calc(100%-2rem)] rounded-[2px] border border-transparent bg-transparent px-1 py-1 font-display text-base font-semibold text-marine hover:border-gray-200 focus-visible:border-gold focus-visible:outline-none disabled:hover:border-transparent sm:basis-auto"
         />
         {section.aiAssisted ? (
           <span className="rounded-[2px] bg-cream px-2 py-0.5 text-[11px] font-semibold text-gold-ink">
@@ -419,7 +419,7 @@ export function SectionEditor(props: SectionEditorProps) {
             ) : null}
             {proposal ? (
               <div className="space-y-2 rounded-[2px] border border-gold/40 bg-white p-3">
-                <p className="text-[11px] font-semibold tracking-[0.05em] text-gold-ink uppercase">
+                <p className="text-xs font-medium text-gold-ink">
                   {proposal.mock ? t("ai.mockProposal") : t("ai.proposal")}
                 </p>
                 <p className="max-h-64 overflow-y-auto text-sm whitespace-pre-wrap text-marine">

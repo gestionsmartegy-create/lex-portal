@@ -23,7 +23,7 @@ import { listOffices } from "@/server/services/offices";
 
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 const STATUSES = ["open", "action_required", "on_hold", "closed"] as const;
 const NOTICES = [
   "viewSaved",
@@ -308,7 +308,7 @@ export default async function AdminMattersPage({
                   aria-label={heading}
                   className={`${col.cards.length ? "flex" : "hidden sm:flex"} flex-col rounded-[2px] border border-gray-200 bg-cream/60 p-3 sm:w-72 sm:shrink-0`}
                 >
-                  <h2 className="mb-3 flex items-baseline justify-between gap-2 text-sm font-bold text-marine">
+                  <h2 className="mb-3 flex items-baseline justify-between gap-2 text-sm font-semibold text-marine">
                     <span>{heading}</span>
                     <span className="text-xs font-semibold text-ink-muted">{col.cards.length}</span>
                   </h2>

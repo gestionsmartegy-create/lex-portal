@@ -18,7 +18,7 @@ export function Field({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id} className="text-xs font-semibold tracking-[0.05em] text-marine uppercase">
+        <Label htmlFor={id} className="text-[13px] font-medium text-marine">
           {label}
         </Label>
         {aside}
@@ -63,7 +63,7 @@ export function FormAlert({ message, tone = "error" }: { message?: string; tone?
       role={tone === "error" ? "alert" : "status"}
       className={
         tone === "error"
-          ? "flex items-start gap-2 rounded-[2px] border border-status-urgent/30 bg-status-urgent/5 p-3 text-sm text-[#B91C1C]"
+          ? "flex items-start gap-2 rounded-[2px] border border-status-urgent/30 bg-status-urgent/5 p-3 text-sm text-danger-ink"
           : "rounded-[2px] border border-gold/40 bg-cream p-3 text-sm text-marine"
       }
     >

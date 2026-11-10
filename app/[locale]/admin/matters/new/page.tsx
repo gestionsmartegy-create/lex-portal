@@ -10,7 +10,7 @@ import { pick, practiceGroups } from "@/server/services/matter-templates";
 
 const fieldClass =
   "w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 type Person = { first_name: string | null; last_name: string | null; email: string };
 const personName = (p: Person) => [p.first_name, p.last_name].filter(Boolean).join(" ") || p.email;
 

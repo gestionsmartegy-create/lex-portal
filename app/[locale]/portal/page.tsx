@@ -66,7 +66,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/por
 
       <section aria-labelledby="todo-title" className="mb-8 rounded-[8px] border border-gold/50 bg-white">
         <div className="rounded-t-[8px] border-b border-gold/30 bg-cream px-5 py-4 sm:px-6">
-          <h2 id="todo-title" className="font-display text-xl font-bold text-marine">
+          <h2 id="todo-title" className="font-display text-xl font-semibold text-marine">
             {t("home.todoTitle")}
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
@@ -94,7 +94,7 @@ export default async function DashboardPage({ params }: PageProps<"/[locale]/por
                       <p
                         className={
                           item.kind === "invoice" && item.overdue
-                            ? "text-sm text-[#B91C1C]"
+                            ? "text-sm text-danger-ink"
                             : "text-sm text-ink-muted"
                         }
                       >

@@ -26,7 +26,7 @@ export default async function LoginPage({ params, searchParams }: PageProps<"/[l
 
   return (
     <AuthShell pathname="/login">
-      <h1 className="text-[28px] font-bold">{t("login.title")}</h1>
+      <h1 className="text-[28px] font-semibold">{t("login.title")}</h1>
       <p className="mt-2 mb-8 text-sm text-ink-muted">{t("login.subtitle")}</p>
       <LoginForm action={loginAction} locale={locale} next={next} notice={notice} />
       <div className="mt-8 space-y-3 text-center text-sm">

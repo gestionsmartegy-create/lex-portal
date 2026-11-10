@@ -10,7 +10,7 @@ export default async function ForgotPasswordPage({ params }: PageProps<"/[locale
   const t = await getTranslations("auth");
   return (
     <AuthShell pathname="/forgot-password">
-      <h1 className="text-[28px] font-bold">{t("forgot.title")}</h1>
+      <h1 className="text-[28px] font-semibold">{t("forgot.title")}</h1>
       <p className="mt-2 mb-8 text-sm text-ink-muted">{t("forgot.subtitle")}</p>
       <ForgotPasswordForm action={forgotPasswordAction} locale={locale} />
       <p className="mt-6 text-center text-sm">

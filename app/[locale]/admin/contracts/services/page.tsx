@@ -15,7 +15,7 @@ import { contractDomains, listServices, listTaxRates } from "@/server/services/c
 const NOTICES = ["saved", "taxSaved", "invalid", "failed"] as const;
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 
 type Service = Awaited<ReturnType<typeof listServices>>[number];
 
@@ -153,11 +153,11 @@ export default async function ServicesPage({
         error={notice === "failed" || notice === "invalid"}
       />
       <SectionCard className="mb-6">
-        <h2 className="mb-3 font-display text-base font-bold text-marine">{t("catalog.new")}</h2>
+        <h2 className="mb-3 font-display text-base font-semibold text-marine">{t("catalog.new")}</h2>
         {serviceForm(null)}
       </SectionCard>
       <SectionCard className="mb-6">
-        <h2 className="mb-3 font-display text-base font-bold text-marine">{t("catalog.listTitle")}</h2>
+        <h2 className="mb-3 font-display text-base font-semibold text-marine">{t("catalog.listTitle")}</h2>
         {services.length === 0 ? (
           <EmptyState icon={Receipt} message={t("catalog.none")} />
         ) : (
@@ -184,7 +184,7 @@ export default async function ServicesPage({
         )}
       </SectionCard>
       <SectionCard>
-        <h2 className="mb-1 font-display text-base font-bold text-marine">{t("catalog.taxTitle")}</h2>
+        <h2 className="mb-1 font-display text-base font-semibold text-marine">{t("catalog.taxTitle")}</h2>
         <p className="mb-3 text-sm text-ink-muted">{t("catalog.taxHelp")}</p>
         <ul className="divide-y divide-gray-100">
           {rates.map((r) => (

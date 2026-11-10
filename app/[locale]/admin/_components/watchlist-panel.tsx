@@ -70,7 +70,7 @@ export async function WatchlistPanel({ data, locale }: { data: Watchlist; locale
                 <section key={g.key} aria-labelledby={`watch-${g.key}`}>
                   <h3
                     id={`watch-${g.key}`}
-                    className={`mb-2 flex items-center gap-2 text-sm font-bold ${
+                    className={`mb-2 flex items-center gap-2 text-sm font-semibold ${
                       g.urgent ? "text-destructive" : "text-marine"
                     }`}
                   >

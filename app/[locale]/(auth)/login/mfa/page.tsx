@@ -36,7 +36,7 @@ export default async function MfaPage({ params, searchParams }: PageProps<"/[loc
   const t = await getTranslations("auth.mfa");
   return (
     <AuthShell pathname="/login/mfa">
-      <h1 className="text-[28px] font-bold">{enrollment ? t("enrollTitle") : t("verifyTitle")}</h1>
+      <h1 className="text-[28px] font-semibold">{enrollment ? t("enrollTitle") : t("verifyTitle")}</h1>
       <p className="mt-2 mb-8 text-sm text-ink-muted">
         {enrollment ? t("enrollSubtitle") : t("verifySubtitle")}
       </p>

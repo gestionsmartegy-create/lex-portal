@@ -22,7 +22,7 @@ export async function RequestClients({ locale, q }: { locale: string; q: string 
     <SectionCard>
       <form method="get" action={`/${locale}/admin/requests`} className="mb-4 flex flex-wrap items-end gap-2">
         <div className="min-w-56 flex-1 space-y-1">
-          <label htmlFor="rc-who" className="text-xs font-semibold tracking-[0.05em] text-marine uppercase">
+          <label htmlFor="rc-who" className="text-[13px] font-medium text-marine">
             {t("search")}
           </label>
           <input id="rc-who" name="who" defaultValue={q} maxLength={100} className={fieldClass} />

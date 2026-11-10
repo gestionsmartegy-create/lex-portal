@@ -19,7 +19,7 @@ export default async function StaffLoginPage({ params, searchParams }: PageProps
 
   return (
     <AuthShell pathname="/staff/login">
-      <h1 className="text-[28px] font-bold">{t("title")}</h1>
+      <h1 className="text-[28px] font-semibold">{t("title")}</h1>
       <p className="mt-2 mb-8 text-sm text-ink-muted">{t("subtitle")}</p>
       {sp.reason === TIMEOUT_REASON ? (
         <div className="mb-6">
@@ -35,7 +35,7 @@ export default async function StaffLoginPage({ params, searchParams }: PageProps
       {!ssoEnabled ? <p className="mt-3 text-xs text-ink-muted">{t("ssoPending")}</p> : null}
       {isDev ? (
         <section className="mt-10 border-t border-gray-200 pt-8">
-          <h2 className="font-display text-lg font-bold">{t("demoTitle")}</h2>
+          <h2 className="font-display text-lg font-semibold">{t("demoTitle")}</h2>
           <p className="mt-1 mb-5 text-xs text-ink-muted">{t("demoHint")}</p>
           <StaffDemoLoginForm action={staffDemoLoginAction} locale={locale} />
         </section>

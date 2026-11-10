@@ -45,9 +45,7 @@ export default async function MatterPage({
           {matter.description ? <p className="mb-5 text-sm text-ink-muted">{matter.description}</p> : null}
           {matter.progress_percent !== null ? (
             <div className="mb-5">
-              <p className="mb-2 text-xs font-semibold tracking-[0.05em] text-marine uppercase">
-                {t("common.progress")}
-              </p>
+              <p className="mb-2 text-[13px] font-medium text-marine">{t("common.progress")}</p>
               <ProgressBar value={matter.progress_percent} label={t("common.progress")} />
             </div>
           ) : null}
@@ -214,7 +212,7 @@ function Timeline({
       {steps.map((s) => (
         <li key={s.id} className="flex gap-3">
           {s.is_completed ? (
-            <CheckCircle2 aria-hidden className="mt-0.5 size-5 shrink-0 text-[#15803D]" />
+            <CheckCircle2 aria-hidden className="mt-0.5 size-5 shrink-0 text-success-ink" />
           ) : (
             <Circle aria-hidden className="mt-0.5 size-5 shrink-0 text-ink-muted" />
           )}

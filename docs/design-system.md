@@ -68,7 +68,7 @@
 
 **Règle des couleurs (ADR 0033)** : ambre = à confirmer ; rouge = conflit ou retard ; vert = confirmé, terminé ; une seule couleur par sens, sur tous les écrans.
 
-Badge : `inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[.06em] rounded-[2px]`.
+Badge : `inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-[2px]` (casse normale depuis la révision du 2026-11-10).
 
 **Accessibilité (ADR 0006, décidé) :** le doré `#B8962E` sur blanc a un contraste ≈ 2,8:1. Il reste utilisé pour les icônes, bordures, focus et grands textes. **Les liens et textes dorés de moins de 18px utilisent `gold-ink #7F6416`** (5,6:1 sur blanc, 5,15:1 sur `surface`, 4,65:1 sur `gold-pale` ; ADR 0011). `ink-subtle #8A8A9A` (≈ 3,4:1) est réservé aux textes ≥ 14px ; en dessous, utiliser `ink-muted`.
 
@@ -136,14 +136,23 @@ Le style est sobre : peu d'ombres, des coins presque droits et des bordures fine
 
 **Révision du 2026-10-07** (choix du responsable : « de vraies couleurs ») : coins arrondis `8px`, **couleurs pleines** reprises de la feuille de style de lexcanadalaw.com, en sRGB (profil du web), **sans transparence ni flou**.
 - `primary` : fond et bordure `marine` (#0D1B3E), texte blanc ; `marine-light` (#162347) au survol. Contraste 16,9:1 (15,4:1 au survol).
-- `outline-gold` : fond et bordure `gold` (#B8962E), **texte `marine`** (un texte blanc sur ce doré n'atteindrait que 2,9:1) ; `gold-light` (#D4AF5A) au survol. Contraste 6:1, et 8,1:1 au survol.
+- `outline-gold` *(remplacé le 2026-11-10 par un contour sur fond blanc, voir plus bas)* : fond et bordure `gold` (#B8962E), **texte `marine`** (un texte blanc sur ce doré n'atteindrait que 2,9:1) ; `gold-light` (#D4AF5A) au survol. Contraste 6:1, et 8,1:1 au survol.
 - `ghost-white` (fonds sombres) : bordure et texte blancs ; au survol, fond blanc et texte `marine`.
 - Le rayon de 8px s'applique à toutes les tailles (`compoundVariants`).
 
 **Révision du 2026-10-18 (ADR 0033, décision du responsable)** :
-- **Boutons en casse normale** (« Confirmer », plus « CONFIRMER ») : `font-semibold`, sans majuscules ni espacement des lettres. Les majuscules restent pour les petits libellés de section et les étiquettes de statut.
+- **Boutons en casse normale** (« Confirmer », plus « CONFIRMER ») : `font-semibold` *(`font-medium` et plus aucune majuscule depuis le 2026-11-10)*, sans majuscules ni espacement des lettres. Les majuscules restent pour les petits libellés de section et les étiquettes de statut.
 - **Une seule action principale par écran ou par ligne** (`primary`). Les actions secondaires utilisent `outline-marine` (contour gris, texte marine, survol crème) ou passent dans un menu **« ⋯ »** (`RowActions`) qui ouvre leur formulaire sous la ligne.
 - **Aide « ? »** (`HelpTip`) à côté d'un titre, à la place des bandeaux d'explication permanents ; les bandeaux restent pour un état important (simulateur, connexion à refaire).
+
+**Révision du 2026-11-10 (ADR 0042, décision du responsable : « moins gabarit, plus sobre »)**. Elle remplace les lignes correspondantes du tableau et des révisions ci-dessus :
+- **Plus de MAJUSCULES espacées** : libellés de champ en casse normale, DM Sans 13px 500 marine ; étiquettes de statut, en-têtes de tableau et groupes du menu en 12px 500, sans `uppercase` ni `tracking`. Aucun texte sous 11px.
+- **Graisses** : titres en Libre Franklin **600** (plus de 700 ni de 800) ; boutons en 500. La hiérarchie vient de la taille et de la couleur.
+- **Un seul bouton plein** (`primary`, marine). `outline-gold` devient un **vrai contour** : fond blanc, bordure dorée, texte marine, survol crème. L'or plein est réservé au menu actif, à la barre de progression et au focus.
+- **Titres de page sans salutation** : « Tableau de bord », « Ma journée » (plus de « Bon retour, … » ni de « Bonjour, … »).
+- **Couleurs d'état nommées** : `danger-ink` (#B91C1C), `info-ink` (#1D4ED8), `success-ink` (#15803D), au lieu de valeurs en dur.
+- **Chiffres alignés** (`tabular-nums`) sur tout le site ; transitions de couleur seulement (plus de `transition-all`).
+- **Journal d'audit** : une ligne par bloc sous 640px, sans défilement horizontal.
 
 Les icônes viennent de **lucide-react**, en 14–18px. Une flèche `→` suit les CTA principaux (« ACCESS MY PORTAL → »).
 

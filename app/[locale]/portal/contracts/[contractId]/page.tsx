@@ -88,11 +88,11 @@ export default async function ClientContractPage({
         lang={c.language}
         className="contract-print mx-auto mb-6 max-w-3xl rounded-[4px] border border-gray-100 bg-white px-5 py-8 sm:px-12"
       >
-        <h2 className="mb-8 text-center font-display text-2xl font-bold text-marine">{c.title}</h2>
+        <h2 className="mb-8 text-center font-display text-2xl font-semibold text-marine">{c.title}</h2>
         {c.sections.map((s, i) => (
           <section key={i} className="mb-6">
             {s.title ? (
-              <h3 className="mb-2 font-display text-lg font-bold text-marine">
+              <h3 className="mb-2 font-display text-lg font-semibold text-marine">
                 {i + 1}. {s.title}
               </h3>
             ) : null}
@@ -101,7 +101,7 @@ export default async function ClientContractPage({
         ))}
         {c.lines.length && c.totals ? (
           <section className="mt-8 overflow-x-auto">
-            <h3 className="mb-3 font-display text-lg font-bold text-marine">{tDoc("annex")}</h3>
+            <h3 className="mb-3 font-display text-lg font-semibold text-marine">{tDoc("annex")}</h3>
             <table className="w-full border-collapse text-sm text-marine">
               <thead>
                 <tr className="border-b border-gray-300 text-left">
@@ -148,7 +148,7 @@ export default async function ClientContractPage({
                     <td className="py-1.5 text-right tabular-nums">{money(tx.amount)}</td>
                   </tr>
                 ))}
-                <tr className="border-t border-gray-300 font-bold">
+                <tr className="border-t border-gray-300 font-semibold">
                   <th scope="row" colSpan={3} className="py-2 pr-2 text-right">
                     {tDoc("annexCols.total")}
                   </th>
@@ -164,7 +164,7 @@ export default async function ClientContractPage({
         aria-labelledby="accept-title"
         className="mx-auto max-w-3xl rounded-[8px] border border-gold/50 bg-white p-5 print:hidden"
       >
-        <h2 id="accept-title" className="mb-2 font-display text-lg font-bold text-marine">
+        <h2 id="accept-title" className="mb-2 font-display text-lg font-semibold text-marine">
           {state === "accepted"
             ? t("acceptedTitle")
             : state === "declined"
@@ -192,10 +192,7 @@ export default async function ClientContractPage({
             <input type="hidden" name="contractId" value={c.id} />
             <p className="text-sm text-ink-muted">{t("acceptHelp")}</p>
             <div className="space-y-1">
-              <label
-                htmlFor="accept-name"
-                className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-              >
+              <label htmlFor="accept-name" className="text-[13px] font-medium text-marine">
                 {t("fullName")}
               </label>
               <input
@@ -224,10 +221,7 @@ export default async function ClientContractPage({
               <input type="hidden" name="locale" value={locale} />
               <input type="hidden" name="contractId" value={c.id} />
               <p className="text-ink-muted">{t("declineHelp")}</p>
-              <label
-                htmlFor="decline-reason"
-                className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-              >
+              <label htmlFor="decline-reason" className="text-[13px] font-medium text-marine">
                 {t("declineReason")}
               </label>
               <textarea

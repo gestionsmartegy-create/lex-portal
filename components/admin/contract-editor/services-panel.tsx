@@ -93,7 +93,7 @@ export function ServicesPanel({
       aria-labelledby="services-title"
       className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
     >
-      <h2 id="services-title" className="font-display text-base font-bold text-marine">
+      <h2 id="services-title" className="font-display text-base font-semibold text-marine">
         {t("title")}
       </h2>
       {lines.length === 0 ? <p className="text-sm text-ink-muted">{t("empty")}</p> : null}
@@ -190,7 +190,7 @@ export function ServicesPanel({
 
       <div className="space-y-1 border-t border-gray-100 pt-3 text-sm" aria-live="polite">
         {!valid ? (
-          <p className="text-[#B91C1C]">{t("invalid")}</p>
+          <p className="text-danger-ink">{t("invalid")}</p>
         ) : totals ? (
           <dl className="space-y-1">
             <div className="flex justify-between">
@@ -207,7 +207,7 @@ export function ServicesPanel({
             ))}
             <div className="flex justify-between border-t border-gray-100 pt-1">
               <dt className="font-semibold text-marine">{t("total")}</dt>
-              <dd className="font-bold text-marine tabular-nums">{money(totals.total)}</dd>
+              <dd className="font-semibold text-marine tabular-nums">{money(totals.total)}</dd>
             </div>
           </dl>
         ) : null}

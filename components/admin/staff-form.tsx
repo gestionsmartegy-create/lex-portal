@@ -29,7 +29,7 @@ export function StaffProvisionForm({ action, locale }: { action: FormAction; loc
         <Field id="staff-last" name="lastName" required label={t("invitations.lastName")} />
       </div>
       <div className="space-y-2">
-        <label htmlFor="staff-role" className="text-xs font-semibold tracking-[0.05em] text-marine uppercase">
+        <label htmlFor="staff-role" className="text-[13px] font-medium text-marine">
           {t("staff.role")}
         </label>
         <select

@@ -64,10 +64,7 @@ export function ProfileForm({
         defaultValue={profile.phone ?? ""}
       />
       <div className="space-y-2">
-        <label
-          htmlFor="profile-language"
-          className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-        >
+        <label htmlFor="profile-language" className="text-[13px] font-medium text-marine">
           {t("language")}
         </label>
         <select
@@ -81,9 +78,7 @@ export function ProfileForm({
         </select>
       </div>
       <fieldset className="space-y-2">
-        <legend className="text-xs font-semibold tracking-[0.05em] text-marine uppercase">
-          {t("notifications")}
-        </legend>
+        <legend className="text-[13px] font-medium text-marine">{t("notifications")}</legend>
         <label htmlFor="profile-email-notif" className="flex min-h-6 items-start gap-3 text-sm text-marine">
           <input
             id="profile-email-notif"

@@ -33,6 +33,12 @@
   /* À confirmer, en attente d'une décision : ambre (texte #92400E sur ambre pâle, AA 7:1). */
   --color-status-warning: #f59e0b;
   --color-warning-ink: #92400e;
+  /* Textes d'état sur fond clair (AA sur blanc : 6,5:1, 6,7:1, 5,0:1). */
+  --color-danger-ink: #b91c1c;
+  --color-info-ink: #1d4ed8;
+  --color-success-ink: #15803d;
+  --color-success-ink-deep: #166534; /* texte sur fond vert pâle (étiquette « terminé ») */
+  --color-danger-soft: #fca5a5; /* survol sur fond marine */
 
   /* --- Domaines du calendrier de cour (ADR 0030) : couleurs franches, saturées.
      Texte blanc sur rouge, bleu et vert (contraste AA ≥ 4,5:1) ; texte marine sur jaune. --- */
@@ -134,6 +140,8 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    /* Chiffres alignés partout : montants, compteurs, numéros de dossier. */
+    font-variant-numeric: tabular-nums;
   }
   h1,
   h2,
@@ -168,10 +176,10 @@
     @apply my-2;
   }
   .contract-prose h3 {
-    @apply mt-4 mb-2 text-lg font-bold;
+    @apply mt-4 mb-2 text-lg font-semibold;
   }
   .contract-prose h4 {
-    @apply mt-3 mb-1 text-base font-bold;
+    @apply mt-3 mb-1 text-base font-semibold;
   }
   .contract-prose ul {
     @apply my-2 list-disc pl-6;

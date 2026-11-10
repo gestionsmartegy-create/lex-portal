@@ -49,7 +49,7 @@ export default async function DocumentsPage({
                   const matter = s.matters as unknown as { display_number: string | null } | null;
                   return (
                     <li key={s.id} className="flex gap-3">
-                      <FilePen aria-hidden className="mt-0.5 size-5 shrink-0 text-[#B91C1C]" />
+                      <FilePen aria-hidden className="mt-0.5 size-5 shrink-0 text-danger-ink" />
                       <div>
                         <p className="text-sm font-medium text-marine">{doc?.display_name}</p>
                         <p className="text-xs text-ink-muted">

@@ -34,7 +34,7 @@ test("Ma journée : compteurs, audiences, sous-menus, recherche et cloche", asyn
   });
   try {
     await page.goto("/fr/admin");
-    await expect(page.getByRole("heading", { level: 1, name: "Bonjour, Morgan" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Ma journée" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Mes audiences" })).toBeVisible();
     await expect(page.getByText(`Audience · E2E-UX-${stamp}`)).toBeVisible();
     await expect(page.getByRole("button", { name: "Confirmer" }).first()).toBeVisible();
