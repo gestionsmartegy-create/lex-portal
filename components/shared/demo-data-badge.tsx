@@ -12,7 +12,7 @@ export function DemoDataBadge({ className }: { className?: string }) {
     <span
       role="status"
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-[2px] border border-gold/40 bg-cream px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] text-gold-ink uppercase",
+        "inline-flex items-center gap-1.5 rounded-[2px] border border-gold/40 bg-cream px-2.5 py-1 text-xs font-medium text-gold-ink",
         className,
       )}
     >

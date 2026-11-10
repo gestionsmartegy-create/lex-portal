@@ -35,7 +35,7 @@ export function HelpTip({ label, children }: { label: string; children: React.Re
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex size-6 items-center justify-center rounded-full border border-gold bg-cream text-xs font-bold text-gold-ink hover:bg-gold-pale focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+        className="inline-flex size-6 items-center justify-center rounded-full border border-gold bg-cream text-xs font-semibold text-gold-ink hover:bg-gold-pale focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
       >
         ?
       </button>

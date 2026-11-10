@@ -22,7 +22,7 @@ import { listCourts, listOffices } from "@/server/services/offices";
 
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 /** Couleur pleine par domaine (légende au-dessus du calendrier), texte lisible sur chaque fond. */
 const DOMAIN_CHIP: Record<(typeof calendarDomains)[number], string> = {
   immigration: "bg-dom-immigration text-white border-dom-immigration",
@@ -160,7 +160,7 @@ export default async function CourtCalendarPage({
         <section key={d} aria-labelledby={`d-${d}`}>
           <h2
             id={`d-${d}`}
-            className={`mb-2 text-sm font-bold ${d === today ? "text-gold-ink" : "text-marine"}`}
+            className={`mb-2 text-sm font-semibold ${d === today ? "text-gold-ink" : "text-marine"}`}
           >
             {dayLabel(d, locale, "long")}
             {d === today ? ` · ${t("today")}` : ""}
@@ -198,7 +198,7 @@ export default async function CourtCalendarPage({
           <div
             key={`h-${d}`}
             aria-hidden="true"
-            className="border-r border-b border-gray-200 bg-cream px-2 py-1 text-xs font-semibold text-marine uppercase"
+            className="border-r border-b border-gray-200 bg-cream px-2 py-1 text-xs font-medium text-marine"
           >
             {new Intl.DateTimeFormat(intlLocale(locale), { timeZone: "UTC", weekday: "short" }).format(
               new Date(`${d}T12:00:00Z`),
@@ -214,7 +214,7 @@ export default async function CourtCalendarPage({
               className={`min-h-28 space-y-1 border-r border-b border-gray-200 p-1.5 ${outside ? "bg-gray-50" : "bg-white"}`}
             >
               <p
-                className={`text-xs ${d === today ? "font-bold text-gold-ink" : outside ? "text-ink-muted" : "text-marine"}`}
+                className={`text-xs ${d === today ? "font-semibold text-gold-ink" : outside ? "text-ink-muted" : "text-marine"}`}
               >
                 <span aria-hidden="true">{Number(d.slice(8))}</span>
                 <span className="sr-only">{dayLabel(d, locale, "long")}</span>
@@ -272,7 +272,7 @@ export default async function CourtCalendarPage({
           </Button>
         </nav>
       </div>
-      <p className="mb-4 text-lg font-bold text-marine first-letter:uppercase" aria-live="polite">
+      <p className="mb-4 text-lg font-semibold text-marine first-letter:uppercase" aria-live="polite">
         {periodLabel}
       </p>
 

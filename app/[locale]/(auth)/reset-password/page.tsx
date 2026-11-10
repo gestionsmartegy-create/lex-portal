@@ -13,7 +13,7 @@ export default async function ResetPasswordPage({ params }: PageProps<"/[locale]
   const t = await getTranslations("auth.reset");
   return (
     <AuthShell pathname="/reset-password">
-      <h1 className="mb-8 text-[28px] font-bold">{t("title")}</h1>
+      <h1 className="mb-8 text-[28px] font-semibold">{t("title")}</h1>
       <NewPasswordForm action={updatePasswordAction} locale={locale} submitLabel={t("submit")} />
     </AuthShell>
   );

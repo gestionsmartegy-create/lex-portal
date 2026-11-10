@@ -144,9 +144,7 @@ export function StaffSearch({
             groups.map(({ key, icon: Icon }) =>
               shown[key].length ? (
                 <section key={key} aria-label={t(`groups.${key}`)} className="mb-2">
-                  <p className="px-3 pt-2 pb-1 text-[11px] font-semibold tracking-[0.1em] text-ink-muted uppercase">
-                    {t(`groups.${key}`)}
-                  </p>
+                  <p className="px-3 pt-2 pb-1 text-xs font-medium text-ink-muted">{t(`groups.${key}`)}</p>
                   <ul>
                     {shown[key].map((h) => (
                       <li key={h.id}>

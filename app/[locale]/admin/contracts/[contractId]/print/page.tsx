@@ -45,13 +45,13 @@ export default async function ContractPrintPage({
         lang={loaded.contract.language}
         className="contract-print mx-auto max-w-3xl rounded-[4px] border border-gray-100 bg-white px-6 py-10 sm:px-12"
       >
-        <h1 className="mb-8 text-center font-display text-2xl font-bold text-marine">
+        <h1 className="mb-8 text-center font-display text-2xl font-semibold text-marine">
           {loaded.contract.title}
         </h1>
         {loaded.sections.map((s, i) => (
           <section key={s.id} className="mb-6">
             {s.title ? (
-              <h2 className="mb-2 font-display text-lg font-bold text-marine">
+              <h2 className="mb-2 font-display text-lg font-semibold text-marine">
                 {i + 1}. {s.title}
               </h2>
             ) : null}
@@ -60,7 +60,7 @@ export default async function ContractPrintPage({
         ))}
         {loaded.lines.length && loaded.totals ? (
           <section className="mt-8">
-            <h2 className="mb-3 font-display text-lg font-bold text-marine">{tDoc("annex")}</h2>
+            <h2 className="mb-3 font-display text-lg font-semibold text-marine">{tDoc("annex")}</h2>
             <table className="w-full border-collapse text-sm text-marine">
               <thead>
                 <tr className="border-b border-gray-300 text-left">
@@ -117,7 +117,7 @@ export default async function ContractPrintPage({
                   <th scope="row" colSpan={3} className="py-2 pr-2 text-right">
                     {tDoc("annexCols.total")}
                   </th>
-                  <td className="py-2 text-right font-bold tabular-nums">
+                  <td className="py-2 text-right font-semibold tabular-nums">
                     {formatMoney(loaded.totals.total, loaded.contract.language)}
                   </td>
                 </tr>

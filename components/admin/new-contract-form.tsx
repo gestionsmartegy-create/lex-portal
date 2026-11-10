@@ -10,7 +10,7 @@ type Action = (prev: unknown, formData: FormData) => Promise<{ error?: string }>
 
 const inputClass =
   "w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 
 /**
  * Nouveau contrat (F2) : client existant (fiche remplie, modifiable) ou nouveau client, dossier lié
@@ -74,7 +74,7 @@ export function NewContractForm({
       />
 
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-marine">{t("contractLegend")}</legend>
+        <legend className="mb-2 font-display text-lg font-semibold text-marine">{t("contractLegend")}</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1 sm:col-span-2">
             <label htmlFor="n-template" className={labelClass}>
@@ -148,7 +148,7 @@ export function NewContractForm({
       </fieldset>
 
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-marine">{t("clientLegend")}</legend>
+        <legend className="mb-2 font-display text-lg font-semibold text-marine">{t("clientLegend")}</legend>
         <div
           className="flex flex-wrap gap-4 text-sm text-marine"
           role="radiogroup"

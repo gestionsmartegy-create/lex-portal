@@ -12,7 +12,7 @@ export default function NotFound() {
       className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 text-center"
     >
       <BrandMark size="lg" className="mb-10 self-center" />
-      <h1 className="text-3xl font-bold">{t("title")}</h1>
+      <h1 className="text-3xl font-semibold">{t("title")}</h1>
       <p className="mt-3 max-w-md text-sm text-ink-muted">{t("body")}</p>
       <Button asChild variant="primary" size="brand" className="mt-8">
         <Link href="/">{t("back")}</Link>

@@ -13,9 +13,9 @@ export function AuthShell({ children, pathname }: { children: ReactNode; pathnam
         <BrandMark tone="light" priority />
         <div className="max-w-md">
           {/* Comme le grand titre de lexcanadalaw.com : 800, serré, mot mis en avant en italique 700 doré. */}
-          <h2 className="font-display text-4xl leading-tight font-extrabold tracking-[-0.025em] text-white">
+          <h2 className="font-display text-4xl leading-tight font-semibold tracking-[-0.025em] text-white">
             {t("auth.panel.title")}{" "}
-            <em className="font-bold text-gold-light italic">{t("auth.panel.titleAccent")}</em>
+            <em className="font-semibold text-gold-light italic">{t("auth.panel.titleAccent")}</em>
           </h2>
           <p className="mt-6 text-[15px] leading-relaxed text-white/70">{t("auth.panel.body")}</p>
         </div>

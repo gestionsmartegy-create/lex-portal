@@ -56,7 +56,7 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
   return (
     <>
       <div className="mb-6">
-        <h1 className="text-[28px] leading-tight font-extrabold text-marine">
+        <h1 className="text-[28px] leading-tight font-semibold text-marine">
           {name ? t("hello", { name }) : t("helloNoName")}
         </h1>
         <p className="mt-1 text-sm text-ink-muted first-letter:uppercase">{t("today", { date: today })}</p>
@@ -76,11 +76,11 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
             }`}
           >
             <span
-              className={`block font-display text-3xl font-extrabold ${
+              className={`block font-display text-3xl font-semibold ${
                 c.tone === "warning" && c.value > 0
                   ? "text-warning-ink"
                   : c.tone === "urgent" && c.value > 0
-                    ? "text-[#B91C1C]"
+                    ? "text-danger-ink"
                     : "text-marine"
               }`}
             >
@@ -126,7 +126,7 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
                         {formatZoned(i.startsAt, i.timezone, locale, i.allDay)}
                       </p>
                       {i.conflict ? (
-                        <p className="text-sm text-[#B91C1C]">
+                        <p className="text-sm text-danger-ink">
                           {i.busyConflict ? t("busyConflict") : t("conflict")}
                         </p>
                       ) : null}
@@ -206,14 +206,14 @@ export default async function MyDayPage({ params }: PageProps<"/[locale]/admin">
                 ))}
                 {day.late.map((l) => (
                   <li key={`l-${l.id}`} className={rowClass}>
-                    <PackageCheck aria-hidden className="size-4 shrink-0 text-[#B91C1C]" />
+                    <PackageCheck aria-hidden className="size-4 shrink-0 text-danger-ink" />
                     <div className="min-w-0 flex-1 basis-56">
                       <p className="font-semibold text-marine">
                         {t(l.kind === "request" ? "lateRequest" : "lateDeliverable", {
                           title: locale === "en" && l.title_en ? l.title_en : l.title,
                         })}
                       </p>
-                      <p className="text-sm text-[#B91C1C]">
+                      <p className="text-sm text-danger-ink">
                         {[
                           l.matterNumber,
                           l.date ? t("dueOn", { date: formatCalendarDate(l.date, locale) }) : null,

@@ -92,7 +92,7 @@ const DOMAINS = ["immigration", "legal", "business", "advisory", "other"] as con
 
 const inputClass =
   "w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none disabled:bg-surface";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 
 /**
  * Espace de rédaction d'un contrat (F3) : verrou d'édition (une personne à la fois, renouvelé toutes
@@ -341,7 +341,7 @@ export function ContractWorkspace({
             onSubmit={(e) => void saveHeader(e)}
             className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
           >
-            <h2 className="font-display text-base font-bold text-marine">{t("clientAndContract")}</h2>
+            <h2 className="font-display text-base font-semibold text-marine">{t("clientAndContract")}</h2>
             <fieldset disabled={!editable || busy} className="space-y-3">
               <div className="space-y-1">
                 <label htmlFor="c-title" className={labelClass}>
@@ -484,7 +484,7 @@ export function ContractWorkspace({
               aria-labelledby="c-template"
               className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
             >
-              <h2 id="c-template" className="font-display text-base font-bold text-marine">
+              <h2 id="c-template" className="font-display text-base font-semibold text-marine">
                 {t("template.title")}
               </h2>
               {contract.templateDraft ? (
@@ -588,7 +588,7 @@ export function ContractWorkspace({
           >
             <h2
               id="c-versions"
-              className="flex items-center gap-2 font-display text-base font-bold text-marine"
+              className="flex items-center gap-2 font-display text-base font-semibold text-marine"
             >
               <History aria-hidden className="size-4" />
               {t("versions")}
@@ -667,7 +667,7 @@ export function ContractWorkspace({
               aria-labelledby="c-status"
               className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
             >
-              <h2 id="c-status" className="font-display text-base font-bold text-marine">
+              <h2 id="c-status" className="font-display text-base font-semibold text-marine">
                 {t("statusTitle")}
               </h2>
               <button

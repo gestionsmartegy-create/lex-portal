@@ -22,7 +22,7 @@ export function PageHeader({
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-[28px] leading-tight font-extrabold text-marine">{title}</h1>
+          <h1 className="text-[28px] leading-tight font-semibold text-marine">{title}</h1>
           {help}
         </div>
         {subtitle ? <p className="mt-1 text-sm text-ink-muted">{subtitle}</p> : null}
@@ -54,7 +54,7 @@ export function SectionCard({
       {title ? (
         <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6">
           <div className="flex items-center gap-2">
-            <Heading className="font-display text-lg font-bold text-marine">{title}</Heading>
+            <Heading className="font-display text-lg font-semibold text-marine">{title}</Heading>
             {help}
           </div>
           {action}
@@ -92,9 +92,9 @@ export function StatCard({
 }) {
   const iconTone = {
     gold: "bg-gold/15 text-gold-ink",
-    blue: "bg-status-pending/10 text-[#1D4ED8]",
+    blue: "bg-status-pending/10 text-info-ink",
     marine: "bg-marine/10 text-marine",
-    red: "bg-status-urgent/10 text-[#B91C1C]",
+    red: "bg-status-urgent/10 text-danger-ink",
   }[tone];
   return (
     <Link
@@ -105,7 +105,7 @@ export function StatCard({
         <Icon aria-hidden className="size-5" />
       </span>
       <span className="min-w-0">
-        <span className="block font-display text-[clamp(22px,2.2vw,28px)] leading-none font-bold whitespace-nowrap text-marine tabular-nums">
+        <span className="block font-display text-[clamp(22px,2.2vw,28px)] leading-none font-semibold whitespace-nowrap text-marine tabular-nums">
           {value}
         </span>
         <span className="mt-1 block text-xs text-ink-muted">{label}</span>

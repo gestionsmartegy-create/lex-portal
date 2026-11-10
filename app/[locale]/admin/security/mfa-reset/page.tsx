@@ -11,7 +11,7 @@ export default async function MfaResetPage({ params }: PageProps<"/[locale]/admi
   const t = await getTranslations("admin.mfaReset");
   return (
     <div className="max-w-xl">
-      <h1 className="mb-8 text-[28px] font-bold">{t("title")}</h1>
+      <h1 className="mb-8 text-[28px] font-semibold">{t("title")}</h1>
       <MfaResetForm action={resetClientMfaAction} locale={locale} />
     </div>
   );

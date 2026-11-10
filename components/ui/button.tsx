@@ -4,7 +4,7 @@ import { cn } from "cn";
 import { Slot } from "radix-ui";
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -20,14 +20,15 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // --- Variantes Lex Canada (docs/design-system.md §4) : coins arrondis 8px, couleurs pleines du site (sRGB) ---
         primary:
-          "rounded-[8px] border-marine bg-marine font-semibold text-white transition-all duration-200 ease-premium hover:border-marine-light hover:bg-marine-light",
+          "rounded-[8px] border-marine bg-marine font-medium text-white transition-colors duration-150 hover:border-marine-light hover:bg-marine-light",
+        // Action secondaire : contour doré sur fond blanc. L'or plein est réservé au menu actif et à la progression.
         "outline-gold":
-          "rounded-[8px] border-gold bg-gold font-semibold text-marine transition-all duration-200 ease-premium hover:border-gold-light hover:bg-gold-light",
+          "rounded-[8px] border-gold/70 bg-white font-medium text-marine transition-colors duration-150 hover:border-gold hover:bg-cream",
         // Action secondaire : contour neutre (une seule action principale par écran).
         "outline-marine":
-          "rounded-[8px] border border-gray-300 bg-white font-semibold text-marine transition-all duration-200 ease-premium hover:border-gold hover:bg-cream",
+          "rounded-[8px] border border-gray-300 bg-white font-medium text-marine transition-colors duration-150 hover:border-gold hover:bg-cream",
         "ghost-white":
-          "rounded-[8px] border-white bg-transparent font-semibold text-white transition-all duration-200 ease-premium hover:bg-white hover:text-marine",
+          "rounded-[8px] border-white bg-transparent font-medium text-white transition-colors duration-150 hover:bg-white hover:text-marine",
       },
       size: {
         default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",

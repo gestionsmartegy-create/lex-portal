@@ -9,7 +9,7 @@ import { requireClientSession } from "@/server/auth/session";
 import { listNotifications } from "@/server/services/notification";
 
 const ICONS = { urgent: AlertTriangle, info: Info, success: CheckCircle2 } as const;
-const TONES = { urgent: "text-[#B91C1C]", info: "text-[#1D4ED8]", success: "text-[#15803D]" } as const;
+const TONES = { urgent: "text-danger-ink", info: "text-info-ink", success: "text-success-ink" } as const;
 
 export default async function NotificationsPage({ params }: PageProps<"/[locale]/portal/notifications">) {
   const { locale } = await params;

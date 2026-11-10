@@ -52,7 +52,7 @@ export function RowActions({
                   className={cn(
                     "py-2 text-sm",
                     p.danger
-                      ? "font-semibold text-[#B91C1C] focus:bg-status-urgent/10 focus:text-[#B91C1C]"
+                      ? "font-semibold text-danger-ink focus:bg-status-urgent/10 focus:text-danger-ink"
                       : "text-marine",
                   )}
                 >

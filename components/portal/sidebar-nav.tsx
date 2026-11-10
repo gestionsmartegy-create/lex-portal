@@ -126,7 +126,7 @@ function AdminNav({
           if (variant === "sheet")
             return (
               <details key={group.key} open={anyActive} className="text-white/75">
-                <summary className="flex min-h-11 cursor-pointer items-center px-4 text-[11px] font-semibold tracking-[0.12em] uppercase hover:text-white">
+                <summary className="flex min-h-11 cursor-pointer items-center px-4 text-xs font-medium hover:text-white">
                   {t(group.key)}
                 </summary>
                 <ul className="space-y-1">
@@ -156,7 +156,7 @@ function AdminNav({
                 onClick={() => setOpenKey((k) => (k === group.key ? null : group.key))}
                 className={cn(linkClass(anyActive), "w-full justify-between text-left")}
               >
-                <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">{t(group.key)}</span>
+                <span className="text-xs font-medium">{t(group.key)}</span>
                 <span aria-hidden>›</span>
               </button>
               <Flyout
@@ -181,9 +181,7 @@ function AdminNav({
         }
         return (
           <div key={group.key}>
-            <p className="px-4 pb-1 text-[11px] font-semibold tracking-[0.12em] text-white/60 uppercase">
-              {t(group.key)}
-            </p>
+            <p className="px-4 pb-1 text-xs font-medium text-white/60">{t(group.key)}</p>
             <ul className="space-y-1">
               {group.items.map((item) => {
                 const { key, href, icon: Icon } = item;
@@ -292,7 +290,7 @@ function SidebarBody({
     <div className="flex h-full flex-col bg-marine text-white">
       <div className="px-6 pt-7 pb-6">
         <BrandMark tone="light" size="sm" />
-        <p className="mt-3 text-[9px] font-semibold tracking-[0.25em] text-white/60 uppercase">
+        <p className="mt-3 text-[11px] font-medium text-white/60">
           {area === "admin" ? ta("workspace") : tc("clientPortal")}
         </p>
       </div>
@@ -315,7 +313,7 @@ function SidebarBody({
         <div className="flex items-center gap-3">
           <span
             aria-hidden
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-marine"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-semibold text-marine"
           >
             {user.initials}
           </span>
@@ -328,7 +326,7 @@ function SidebarBody({
           <input type="hidden" name="locale" value={locale} />
           <button
             type="submit"
-            className="flex min-h-11 w-full items-center gap-3 px-1 text-sm text-white/75 transition-colors hover:text-[#FCA5A5]"
+            className="flex min-h-11 w-full items-center gap-3 px-1 text-sm text-white/75 transition-colors hover:text-danger-soft"
           >
             <LogOut aria-hidden className="size-4" />
             {t("signOut")}

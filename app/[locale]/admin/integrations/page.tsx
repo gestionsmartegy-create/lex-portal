@@ -129,10 +129,7 @@ export default async function IntegrationsPage({
             <form action={courtCalendarAction} className="flex flex-wrap items-end gap-3">
               <input type="hidden" name="locale" value={locale} />
               <div className="w-full space-y-1 sm:w-80">
-                <label
-                  htmlFor="court-calendar"
-                  className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-                >
+                <label htmlFor="court-calendar" className="text-[13px] font-medium text-marine">
                   {t("courtCalendar.label")}
                 </label>
                 <select
@@ -223,10 +220,7 @@ export default async function IntegrationsPage({
                   {t("ai.enabled")}
                 </label>
                 <div className="space-y-1">
-                  <label
-                    htmlFor="ai-cap"
-                    className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-                  >
+                  <label htmlFor="ai-cap" className="text-[13px] font-medium text-marine">
                     {t("ai.cap")}
                   </label>
                   <input
@@ -240,10 +234,7 @@ export default async function IntegrationsPage({
                   />
                 </div>
                 <div className="space-y-1">
-                  <label
-                    htmlFor="ai-price"
-                    className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-                  >
+                  <label htmlFor="ai-price" className="text-[13px] font-medium text-marine">
                     {t("ai.price")}
                   </label>
                   <input

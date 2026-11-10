@@ -49,7 +49,10 @@ export function ReviewComments({
       aria-labelledby="c-comments"
       className="space-y-3 rounded-[4px] border border-gray-100 bg-white p-4"
     >
-      <h2 id="c-comments" className="flex items-center gap-2 font-display text-base font-bold text-marine">
+      <h2
+        id="c-comments"
+        className="flex items-center gap-2 font-display text-base font-semibold text-marine"
+      >
         <MessageSquare aria-hidden className="size-4" />
         {t("title", { count: open.length })}
       </h2>
@@ -101,10 +104,7 @@ export function ReviewComments({
             }, t("added"));
           }}
         >
-          <label
-            htmlFor="c-comment-section"
-            className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-          >
+          <label htmlFor="c-comment-section" className="text-[13px] font-medium text-marine">
             {t("about")}
           </label>
           <select
@@ -120,10 +120,7 @@ export function ReviewComments({
               </option>
             ))}
           </select>
-          <label
-            htmlFor="c-comment-body"
-            className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-          >
+          <label htmlFor="c-comment-body" className="text-[13px] font-medium text-marine">
             {t("body")}
           </label>
           <textarea

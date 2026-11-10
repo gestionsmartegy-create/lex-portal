@@ -106,7 +106,7 @@ export function ContractLifecycle({
 
       {c.validatedAt ? (
         <section aria-labelledby="c-validated" className={box}>
-          <h2 id="c-validated" className="font-display text-base font-bold text-marine">
+          <h2 id="c-validated" className="font-display text-base font-semibold text-marine">
             {t("lifecycle.validatedTitle")}
           </h2>
           <p>
@@ -164,7 +164,7 @@ export function ContractLifecycle({
 
       {deposits.length ? (
         <section aria-labelledby="c-deposits" className={box}>
-          <h2 id="c-deposits" className="font-display text-base font-bold text-marine">
+          <h2 id="c-deposits" className="font-display text-base font-semibold text-marine">
             {t("deposits.title")}
           </h2>
           <ul className="space-y-1.5">
@@ -204,7 +204,7 @@ export function ContractLifecycle({
 
       {c.sentAt ? (
         <section aria-labelledby="c-sent" className={box}>
-          <h2 id="c-sent" className="font-display text-base font-bold text-marine">
+          <h2 id="c-sent" className="font-display text-base font-semibold text-marine">
             {t("send.trackTitle")}
           </h2>
           <p>
@@ -267,7 +267,7 @@ export function ContractLifecycle({
 
       {c.status === "signed" && isFirmAdmin ? (
         <section aria-labelledby="c-matter" className={box}>
-          <h2 id="c-matter" className="font-display text-base font-bold text-marine">
+          <h2 id="c-matter" className="font-display text-base font-semibold text-marine">
             {t("lifecycle.matterTitle")}
           </h2>
           {c.matterId ? (
@@ -283,10 +283,7 @@ export function ContractLifecycle({
                   void run(() => workflow({ op: "linkMatter", matterId: matter }), t("lifecycle.linked"));
               }}
             >
-              <label
-                htmlFor="c-link-matter"
-                className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-              >
+              <label htmlFor="c-link-matter" className="text-[13px] font-medium text-marine">
                 {t("lifecycle.linkMatter")}
               </label>
               <select
@@ -313,7 +310,7 @@ export function ContractLifecycle({
 
       {c.status === "superseded" && c.supersededBy ? (
         <section aria-labelledby="c-superseded" className={box}>
-          <h2 id="c-superseded" className="font-display text-base font-bold text-marine">
+          <h2 id="c-superseded" className="font-display text-base font-semibold text-marine">
             {t("lifecycle.supersededTitle")}
           </h2>
           <a href={`/${locale}/admin/contracts/${c.supersededBy}`} className={secondary}>

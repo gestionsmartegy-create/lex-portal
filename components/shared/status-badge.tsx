@@ -6,9 +6,9 @@ export type StatusTone = "active" | "pending" | "completed" | "urgent" | "warnin
 // Couleurs de la maquette (docs/design-system.md §1, « Statuts »).
 const toneClasses: Record<StatusTone, string> = {
   active: "bg-status-active/15 text-gold-ink",
-  pending: "bg-status-pending/10 text-[#1D4ED8]",
-  completed: "bg-status-completed/10 text-[#166534]",
-  urgent: "bg-status-urgent/10 text-[#B91C1C]",
+  pending: "bg-status-pending/10 text-info-ink",
+  completed: "bg-status-completed/10 text-success-ink-deep",
+  urgent: "bg-status-urgent/10 text-danger-ink",
   // À confirmer : ambre (vert = confirmé, rouge = conflit ou retard).
   warning: "bg-status-warning/20 text-warning-ink",
 };
@@ -25,7 +25,7 @@ export function StatusBadge({ tone, label, className }: StatusBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-[2px] px-2.5 py-1 text-[11px] font-semibold tracking-[0.06em] uppercase",
+        "inline-flex items-center gap-1.5 rounded-[2px] px-2.5 py-1 text-xs font-medium",
         toneClasses[tone],
         className,
       )}

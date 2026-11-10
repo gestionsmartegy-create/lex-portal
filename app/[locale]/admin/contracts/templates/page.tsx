@@ -29,7 +29,7 @@ const NOTICES = [
 ] as const;
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 
 /**
  * Modèles de contrats (ADR 0034, F4) : le personnel utilise les modèles publiés ; le firm_admin modifie un

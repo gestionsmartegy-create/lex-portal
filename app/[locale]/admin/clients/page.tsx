@@ -47,7 +47,7 @@ export default async function ClientsPage({ params, searchParams }: PageProps<"/
             tabIndex={0}
           >
             <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-gray-100 text-xs text-ink-muted uppercase">
+              <thead className="border-b border-gray-100 text-xs text-ink-muted">
                 <tr>
                   <th scope="col" className="px-5 py-3 font-semibold sm:px-6">
                     {t("clients.name")}

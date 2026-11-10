@@ -6,7 +6,7 @@ import { Field, FormAlert, SubmitButton } from "@/components/auth/form-parts";
 import type { FormAction } from "@/components/auth/types";
 
 const selectClass = "h-11 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 
 /** Réinitialisation de la MFA d'un client (firm_admin) — ADR 0012, docs/runbooks/mfa-reset.md. */
 export function MfaResetForm({ action, locale }: { action: FormAction; locale: string }) {

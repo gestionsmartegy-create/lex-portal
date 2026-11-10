@@ -18,7 +18,7 @@ import { pick } from "@/server/services/matter-templates";
 
 const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 const STATUSES = ["pending", "overdue", "fulfilled", "cancelled"] as const;
 const NOTICES = ["fulfilled", "cancelled", "remind", "created", "invalid"] as const;
 const count = z.coerce.number().int().min(0).max(10_000).catch(0);

@@ -31,7 +31,7 @@ export function InvitationForm({
   const [state, formAction] = useActionState(action, {});
   const select =
     "h-11 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:outline-none";
-  const label = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+  const label = "text-[13px] font-medium text-marine";
   return (
     <form action={formAction} className="space-y-5" noValidate>
       <input type="hidden" name="locale" value={locale} />
@@ -85,7 +85,7 @@ export function InvitationForm({
               name="matterIds"
               value={m.id}
               defaultChecked={defaults?.matterId === m.id}
-              className="size-4 accent-[#0d1b3e]"
+              className="size-4 accent-marine"
             />
             <span className="font-medium text-marine">{m.display_number}</span>
             <span className="text-ink-muted">{m.title}</span>

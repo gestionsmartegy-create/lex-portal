@@ -73,7 +73,7 @@ export default async function AdminConversationPage({
                 <span
                   aria-hidden
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                    "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
                     isClient ? "bg-gold text-marine" : "bg-marine text-white",
                   )}
                 >

@@ -30,8 +30,8 @@ export default async function AuditPage({ params, searchParams }: PageProps<"/[l
           <EmptyState icon={ScrollText} message={t("none")} />
         ) : (
           <div className="-mx-5 overflow-x-auto sm:-mx-6" role="region" aria-label={t("title")} tabIndex={0}>
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-gray-100 text-xs text-ink-muted uppercase">
+            <table className="w-full text-left text-sm sm:min-w-[720px]">
+              <thead className="border-b border-gray-100 text-xs text-ink-muted max-sm:sr-only">
                 <tr>
                   <th scope="col" className="px-5 py-3 font-semibold sm:px-6">
                     {t("when")}
@@ -49,16 +49,18 @@ export default async function AuditPage({ params, searchParams }: PageProps<"/[l
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {events.map((e) => (
-                  <tr key={e.id}>
-                    <td className="px-5 py-2 text-xs whitespace-nowrap text-ink-muted sm:px-6">
+                  <tr key={e.id} className="max-sm:block max-sm:px-5 max-sm:py-3">
+                    <td className="text-xs text-ink-muted max-sm:block sm:px-6 sm:py-2 sm:whitespace-nowrap">
                       {formatDateTime(e.occurred_at, locale)}
                     </td>
-                    <td className="px-3 py-2 font-mono text-xs text-marine">{e.action}</td>
-                    <td className="px-3 py-2 text-xs text-marine">
+                    <td className="font-mono text-xs wrap-anywhere text-marine max-sm:block max-sm:py-0.5 sm:px-3 sm:py-2">
+                      {e.action}
+                    </td>
+                    <td className="text-xs wrap-anywhere text-marine max-sm:block sm:px-3 sm:py-2">
                       {e.actor_email ?? (e.actor_id ? e.actor_id.slice(0, 8) : t("system"))}
                       {e.actor_role ? <span className="text-ink-muted"> · {e.actor_role}</span> : null}
                     </td>
-                    <td className="px-5 py-2 font-mono text-xs text-ink-muted sm:px-6">
+                    <td className="font-mono text-xs text-ink-muted max-sm:block sm:px-6 sm:py-2">
                       {e.resource_type}
                       {e.resource_id ? ` · ${e.resource_id.slice(0, 8)}` : ""}
                     </td>

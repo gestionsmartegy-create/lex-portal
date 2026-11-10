@@ -91,7 +91,7 @@ export function InvoiceList({ invoices }: { invoices: InvoiceRow[] }) {
               </p>
             </div>
             <div className="text-right">
-              <p className="font-display text-lg font-bold text-marine">
+              <p className="font-display text-lg font-semibold text-marine">
                 {formatMoney(inv.amount_total, locale, inv.currency)}
               </p>
               {payable ? (
@@ -172,7 +172,7 @@ export function ConversationList({ conversations }: { conversations: Conversatio
           >
             <span
               aria-hidden
-              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-marine text-xs font-bold text-white"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-marine text-xs font-semibold text-white"
             >
               LC
             </span>

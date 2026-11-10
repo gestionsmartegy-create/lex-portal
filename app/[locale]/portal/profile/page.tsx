@@ -42,7 +42,7 @@ export default async function ProfilePage({ params }: PageProps<"/[locale]/porta
         </SectionCard>
         <SectionCard title={t("security")} className="lg:col-span-2">
           <p className="mb-5 flex items-start gap-2 text-sm text-marine">
-            <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-[#15803D]" />
+            <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-success-ink" />
             {t("mfaOn")}
           </p>
           <Button asChild variant="outline-gold" size="brand" className="mb-5 w-full">

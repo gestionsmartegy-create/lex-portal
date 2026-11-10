@@ -44,7 +44,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
       <div className="mx-auto max-w-5xl space-y-8 p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-[28px] font-bold">{t("title")}</h1>
+            <h1 className="text-[28px] font-semibold">{t("title")}</h1>
             <p className="mt-1 text-sm text-ink-muted">{t("intro")}</p>
           </div>
           <DemoDataBadge />
@@ -52,7 +52,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">{t("colors")}</CardTitle>
+            <CardTitle className="font-display text-lg font-semibold text-marine">{t("colors")}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {swatches.map((s) => (
@@ -69,19 +69,21 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">{t("typography")}</CardTitle>
+            <CardTitle className="font-display text-lg font-semibold text-marine">
+              {t("typography")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="font-display text-[28px] font-bold text-marine">{t("displaySample")}</p>
+            <p className="font-display text-[28px] font-semibold text-marine">{t("displaySample")}</p>
             <p className="text-sm text-ink-muted">{t("bodySample")}</p>
             <p className="font-accent text-2xl text-gold-ink italic">{t("accentSample")}</p>
-            <p className="text-xs font-semibold tracking-[0.05em] text-marine uppercase">{t("emailLabel")}</p>
+            <p className="text-[13px] font-medium text-marine">{t("emailLabel")}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">{t("buttons")}</CardTitle>
+            <CardTitle className="font-display text-lg font-semibold text-marine">{t("buttons")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-4">
             <Button variant="primary" size="brand">
@@ -100,7 +102,7 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">{t("badges")}</CardTitle>
+            <CardTitle className="font-display text-lg font-semibold text-marine">{t("badges")}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
             <StatusBadge tone="active" />
@@ -113,14 +115,11 @@ export default function StyleguidePage({ params }: PageProps<"/[locale]/stylegui
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-display text-lg font-bold text-marine">{t("fields")}</CardTitle>
+            <CardTitle className="font-display text-lg font-semibold text-marine">{t("fields")}</CardTitle>
           </CardHeader>
           <CardContent className="max-w-md space-y-2">
             <div className="flex items-center justify-between">
-              <Label
-                htmlFor="sg-email"
-                className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-              >
+              <Label htmlFor="sg-email" className="text-[13px] font-medium text-marine">
                 {t("emailLabel")}
               </Label>
               <a href="#" className="inline-flex min-h-6 items-center text-xs text-gold-ink hover:underline">

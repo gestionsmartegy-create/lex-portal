@@ -52,7 +52,7 @@ export async function ClientCourtDates({ dates, locale }: { dates: ClientCourtDa
             ) : null}
             {d.client_instructions ? (
               <div className="rounded-[2px] border border-gold/40 bg-cream p-3 text-sm text-marine">
-                <p className="mb-1 text-xs font-semibold tracking-[0.05em] uppercase">{t("instructions")}</p>
+                <p className="mb-1 text-[13px] font-medium">{t("instructions")}</p>
                 <p className="whitespace-pre-line">{d.client_instructions}</p>
               </div>
             ) : null}

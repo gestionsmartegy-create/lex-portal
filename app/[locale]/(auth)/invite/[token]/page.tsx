@@ -17,7 +17,7 @@ export default async function InvitationPage({ params }: PageProps<"/[locale]/in
     <AuthShell pathname={`/invite/${token}`}>
       {invitation ? (
         <>
-          <h1 className="text-[28px] font-bold">{t("invite.title")}</h1>
+          <h1 className="text-[28px] font-semibold">{t("invite.title")}</h1>
           <p className="mt-2 mb-8 text-sm text-ink-muted">
             {t("invite.subtitle", { name: invitation.first_name ? `, ${invitation.first_name}` : "" })}
           </p>
@@ -30,7 +30,7 @@ export default async function InvitationPage({ params }: PageProps<"/[locale]/in
         </>
       ) : (
         <>
-          <h1 className="text-[28px] font-bold">{t("invite.invalidTitle")}</h1>
+          <h1 className="text-[28px] font-semibold">{t("invite.invalidTitle")}</h1>
           <p className="mt-3 text-sm text-ink-muted">{t("invite.invalidBody")}</p>
           <p className="mt-8 text-sm">
             <Link href="/login" className="inline-flex min-h-6 items-center text-gold-ink hover:underline">

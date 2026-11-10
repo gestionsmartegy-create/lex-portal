@@ -10,7 +10,7 @@ export default async function MfaLostPage({ params }: PageProps<"/[locale]/login
   const t = await getTranslations("auth.mfaLost");
   return (
     <AuthShell pathname="/login/mfa/lost">
-      <h1 className="text-[28px] font-bold">{t("title")}</h1>
+      <h1 className="text-[28px] font-semibold">{t("title")}</h1>
       <p className="mt-2 mb-6 text-sm text-ink-muted">{t("intro")}</p>
       <ol className="list-decimal space-y-3 pl-5 text-sm text-marine">
         <li>{t("step1")}</li>

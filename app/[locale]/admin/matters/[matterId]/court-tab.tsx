@@ -28,7 +28,7 @@ const fieldClass =
   "h-10 w-full rounded-[2px] border border-gray-200 bg-white px-3 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
 const areaClass =
   "w-full rounded-[2px] border border-gray-200 bg-white px-3 py-2 text-sm text-marine focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none";
-const labelClass = "text-xs font-semibold tracking-[0.05em] text-marine uppercase";
+const labelClass = "text-[13px] font-medium text-marine";
 const tzKey = (tz: string) => tz.replace("/", "_");
 
 const STATUS_TONE: Record<CourtDate["status"], StatusTone> = {
@@ -344,7 +344,7 @@ export async function CourtTab({
             <p
               className={
                 d.clio_sync_status === "failed"
-                  ? "text-xs font-semibold text-[#B91C1C]"
+                  ? "text-xs font-semibold text-danger-ink"
                   : "text-xs text-ink-muted"
               }
             >

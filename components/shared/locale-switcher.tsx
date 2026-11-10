@@ -24,7 +24,7 @@ export function LocaleSwitcher({
       lang={target}
       aria-label={`${t("language")} : ${t("switchTo")}`}
       className={cn(
-        "inline-flex items-center gap-1.5 text-xs font-medium tracking-[0.08em] uppercase underline-offset-4 hover:underline",
+        "inline-flex items-center gap-1.5 text-xs font-medium underline-offset-4 hover:underline",
         tone === "light" ? "text-white/80 hover:text-white" : "text-ink-muted hover:text-marine",
       )}
     >

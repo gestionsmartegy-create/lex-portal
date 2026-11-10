@@ -25,10 +25,7 @@ export function GrantAccessForm({
       <FormAlert message={state.ok ? t("granted") : undefined} tone="info" />
       <Field id="grant-email" name="email" type="email" required label={t("grantEmail")} />
       <div className="space-y-2">
-        <label
-          htmlFor="grant-level"
-          className="text-xs font-semibold tracking-[0.05em] text-marine uppercase"
-        >
+        <label htmlFor="grant-level" className="text-[13px] font-medium text-marine">
           {t("grant")}
         </label>
         <select
