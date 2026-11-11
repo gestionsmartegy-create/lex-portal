@@ -4,8 +4,10 @@ import { createSupabaseServerClient } from "@/server/db/server-client";
 import { createSupabaseServiceClient } from "@/server/db/service-client";
 import { serverEnv } from "@/server/env";
 import { getOutlookGateway } from "@/server/providers";
+import { VaultOutlookTokenStore } from "@/server/providers/outlook/client";
 import { OutlookError } from "@/server/providers/outlook/gateway";
-import { busyBlockSchema } from "@/server/providers/outlook/schemas";
+import { canWriteReminders, fetchOutlookAccount } from "@/server/providers/outlook/oauth";
+import { busyBlockSchema, type OutlookTokens } from "@/server/providers/outlook/schemas";
 import { KIND_LABEL, type CourtDateKind } from "@/server/services/court-dates";
 
 /**
@@ -33,7 +35,7 @@ export type CalendarConnection = {
   lastError: string | null;
 };
 
-/** Mode du cabinet : simulateur (mock) ou vrai Microsoft 365 (live, pas encore disponible). */
+/** Mode du cabinet : simulateur (mock) ou vrai Microsoft 365 (live, ADR 0043). */
 export function outlookMode() {
   return serverEnv().INTEGRATION_MODE_OUTLOOK;
 }
@@ -72,11 +74,12 @@ export async function listCalendarConnections() {
   return data ?? [];
 }
 
-type Result = { ok: true } | { ok: false; code: "ACCESS_DENIED" | "NOT_AVAILABLE" | "SYNC_FAILED" };
+type Result =
+  { ok: true } | { ok: false; code: "ACCESS_DENIED" | "NOT_AVAILABLE" | "SYNC_FAILED" | "NEEDS_CONSENT" };
 
 /**
- * Connecter mon agenda. Simulateur : connexion immédiate, sans jeton. Mode réel : indisponible tant
- * que le cabinet n'a pas enregistré l'application Microsoft (docs/outlook-integration.md).
+ * Connecter mon agenda, SIMULATEUR seulement : connexion immédiate, sans jeton. En mode réel, la
+ * connexion passe par Microsoft (/api/integrations/outlook/connect), puis saveLiveCalendarConnection().
  */
 export async function connectMyCalendar(): Promise<Result> {
   const session = await staffSession();
@@ -93,6 +96,46 @@ export async function connectMyCalendar(): Promise<Result> {
   return synced ? { ok: true } : { ok: false, code: "SYNC_FAILED" };
 }
 
+/**
+ * Mode réel : enregistre MA connexion au retour de Microsoft. La personne vient de la session,
+ * jamais de la requête. Jetons dans Supabase Vault (service_role : connexion d'intégration, usage
+ * permis par AGENTS.md §6) ; la base journalise « calendar.connected ».
+ */
+export async function saveLiveCalendarConnection(
+  tokens: OutlookTokens,
+  wantsReminders: boolean,
+): Promise<
+  | { ok: true; remindersOn: boolean }
+  | { ok: false; code: "ACCESS_DENIED" | "NOT_AVAILABLE" | "SYNC_FAILED" | "ACCOUNT_MISMATCH" }
+> {
+  const session = await staffSession();
+  if (!session) return { ok: false, code: "ACCESS_DENIED" };
+  if (outlookMode() !== "live") return { ok: false, code: "NOT_AVAILABLE" };
+  // L'agenda connecté doit être celui de la personne : le compte Microsoft choisi est comparé à
+  // l'adresse de la session (une boîte partagée ou le compte d'un collègue est refusé).
+  const email = (await getUser())?.email?.toLowerCase();
+  const accounts = await fetchOutlookAccount(tokens.access_token);
+  if (!email || !accounts.includes(email)) return { ok: false, code: "ACCOUNT_MISMATCH" };
+  const { error } = await createSupabaseServiceClient().rpc("calendar_save_connection", {
+    p_user: session.userId,
+    p_is_mock: false,
+    p_payload: JSON.stringify(tokens),
+    p_scopes: (tokens.scope ?? "").split(/\s+/).filter(Boolean).slice(0, 20),
+  });
+  if (error) return { ok: false, code: "ACCESS_DENIED" };
+  let remindersOn = false;
+  if (wantsReminders && canWriteReminders(tokens.scope)) {
+    const supabase = await createSupabaseServerClient();
+    const { data, error: remindersError } = await supabase.rpc("calendar_set_reminders", {
+      p_enabled: true,
+    });
+    remindersOn = !remindersError && Boolean(data);
+  }
+  return (await syncCalendarOf(session.userId))
+    ? { ok: true, remindersOn }
+    : { ok: false, code: "SYNC_FAILED" };
+}
+
 /** Synchroniser maintenant (ma connexion). */
 export async function syncMyCalendar(): Promise<Result> {
   const session = await staffSession();
@@ -104,6 +147,11 @@ export async function syncMyCalendar(): Promise<Result> {
 export async function setMyReminders(enabled: boolean): Promise<Result> {
   const session = await staffSession();
   if (!session) return { ok: false, code: "ACCESS_DENIED" };
+  // Mode réel : écrire les rappels demande une permission de plus, accordée par la personne chez Microsoft.
+  if (enabled && outlookMode() === "live") {
+    const tokens = await new VaultOutlookTokenStore().get(session.userId);
+    if (!canWriteReminders(tokens?.scope)) return { ok: false, code: "NEEDS_CONSENT" };
+  }
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("calendar_set_reminders", { p_enabled: enabled });
   if (error || !data) return { ok: false, code: "ACCESS_DENIED" };

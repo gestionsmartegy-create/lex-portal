@@ -74,14 +74,25 @@ Seules ces personnes pourront connecter leur agenda.
 - **Désactiver le compte Microsoft 365** : Microsoft révoque aussi la connexion. Le portail affiche alors « À reconnecter » et ne lit plus rien.
 - Les rappels déjà écrits dans l'agenda « Lex Portail » restent dans la boîte de la personne : la plateforme n'a plus de jeton pour les retirer. Ils ne contiennent que la sorte de date et le numéro du dossier. Ils suivent le sort de la boîte, et l'administrateur peut supprimer cet agenda au départ de la personne. Une déconnexion faite **par la personne ou par le firm_admin** retire d'abord les rappels.
 
-## 8. Ce qui reste à faire côté portail, après ces étapes (responsable technique)
+## 8. État côté portail (ADR 0043, 2026-11-10)
 
-- Le client Microsoft Graph (`server/providers/outlook/client.ts`) et la route de connexion OAuth (PKCE, `state`), sur le modèle de Clio.
-- `INTEGRATION_MODE_OUTLOOK=live`, avec les variables `OUTLOOK_TENANT_ID`, `OUTLOOK_CLIENT_ID` et `OUTLOOK_CLIENT_SECRET` (noms à ajouter à `.env.example`, sans valeurs).
-- Les points d'accès Graph envisagés sont listés ci-dessous. Ils sont **à confirmer** sur le locataire avant l'implémentation (règle AGENTS.md §2.6) :
+L'application Microsoft est enregistrée (2026-11-10) : « Lex Portail — Agendas », client `b055d7bc-fabb-437a-a0b6-93c2ffecd26b`, locataire `428d7eab-9f1c-4b81-86fe-677c89ff7bd1`, un seul locataire, permissions déléguées `User.Read`, `offline_access`, `Calendars.ReadBasic` et `Calendars.ReadWrite`. Adresse de retour : `https://lexcanada-portail.vercel.app/api/integrations/outlook/callback` (ajouter celle du serveur de test et du domaine définitif au besoin).
 
-| Besoin | Point d'accès envisagé | Statut |
-|---|---|---|
-| Plages occupées | `POST /me/calendar/getSchedule` (ou `GET /me/calendarView` avec `$select=start,end,showAs`) | À confirmer |
-| Agenda « Lex Portail » | `POST /me/calendars` | À confirmer |
-| Rappels | `POST`, `PATCH` et `DELETE /me/calendars/{id}/events`, avec `showAs = free` | À confirmer |
+Le code réel existe : `server/providers/outlook/client.ts` (Microsoft Graph), `oauth.ts` (PKCE, `state`), routes `/api/integrations/outlook/connect` et `/callback`.
+
+**Pour l'activer** sur un environnement :
+1. Créer le secret (§5) et définir `OUTLOOK_TENANT_ID`, `OUTLOOK_CLIENT_ID` et `OUTLOOK_CLIENT_SECRET` (**Sensitive**).
+2. `INTEGRATION_MODE_OUTLOOK` = `live`, puis redéployer. Les connexions du simulateur passent alors « À reconnecter ».
+3. Chaque personne ouvre **Mon agenda → Connecter mon agenda Outlook**. `Calendars.ReadWrite` n'est demandée qu'à une personne qui active les rappels.
+
+Points d'accès Microsoft Graph utilisés, **confirmés dans la documentation officielle le 2026-11-10** (learn.microsoft.com/graph/api) :
+
+| Besoin | Point d'accès | Permission déléguée | Statut |
+|---|---|---|---|
+| Compte connecté (vérification) | `GET /me?$select=mail,userPrincipalName` | `User.Read` | Confirmé (documentation) |
+| Plages occupées | `GET /me/calendarView?startDateTime=…&endDateTime=…&$select=start,end,showAs,isCancelled` | `Calendars.ReadBasic` | Confirmé (documentation) |
+| Retrouver l'agenda « Lex Portail » | `GET /me/calendars`, `GET /me/calendars/{id}` | `Calendars.ReadBasic` | Confirmé (documentation) |
+| Créer l'agenda « Lex Portail » | `POST /me/calendars` (201) | `Calendars.ReadWrite` | Confirmé (documentation) |
+| Rappels | `POST /me/calendars/{id}/events` (201), `PATCH /me/events/{id}` (200), `DELETE /me/events/{id}` (204), avec `showAs = free` | `Calendars.ReadWrite` | Confirmé (documentation) |
+
+**Reste à faire** : le premier essai réel sur le locataire du cabinet (connexion, plage occupée vue comme conflit, rappel visible dans Outlook). Tant qu'il n'est pas fait, le code réel n'est vérifié que par des tests avec de fausses réponses de Microsoft.

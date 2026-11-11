@@ -1623,7 +1623,6 @@
       "reconnectHelp": "The connection expired or the mode changed: reconnect your calendar.",
       "connect": "Connect my Outlook calendar",
       "reconnect": "Reconnect my calendar",
-      "liveUnavailable": "The Outlook connection will be available as soon as the firm's Microsoft 365 administrator has authorized the application.",
       "syncNow": "Sync now",
       "disconnect": "Disconnect my calendar",
       "privacyTitle": "What the platform sees",
@@ -1632,6 +1631,7 @@
       "privacyControl": "You can disconnect at any time; access is then removed. Every connection is recorded in the audit log.",
       "remindersTitle": "Preparation reminders",
       "remindersHelp": "Get a 30-minute reminder 7 days and 1 day before each of your court dates, in a separate \"Lex Portail\" calendar. The reminder shows the kind of date and the matter number, never the client's name. It is shown as \"free\".",
+      "remindersConsent": "With the real Outlook, turning reminders on sends you to Microsoft to allow writing to your calendar. The platform only writes to the \"Lex Portail\" calendar, never to your other appointments.",
       "remindersOn": "Reminders on",
       "remindersOff": "Reminders off",
       "remindersEnable": "Turn on reminders",
@@ -1643,6 +1643,7 @@
         "remindersOn": "Reminders on: they appear in the \"Lex Portail\" calendar.",
         "remindersOff": "Reminders removed from your calendar.",
         "unavailable": "The Outlook connection is not available yet.",
+        "wrongAccount": "The Microsoft account you picked is not yours. Reconnect your calendar and choose your own firm account.",
         "failed": "That didn't work. Please try again shortly."
       }
     },

@@ -1623,7 +1623,6 @@
       "reconnectHelp": "La connexion a expiré ou le mode a changé : reconnectez votre agenda.",
       "connect": "Connecter mon agenda Outlook",
       "reconnect": "Reconnecter mon agenda",
-      "liveUnavailable": "La connexion à Outlook sera disponible dès que l'administrateur Microsoft 365 du cabinet aura autorisé l'application.",
       "syncNow": "Synchroniser maintenant",
       "disconnect": "Déconnecter mon agenda",
       "privacyTitle": "Ce que la plateforme voit",
@@ -1632,6 +1631,7 @@
       "privacyControl": "Vous pouvez vous déconnecter à tout moment ; l'accès est alors supprimé. Chaque connexion est inscrite au journal d'audit.",
       "remindersTitle": "Rappels de préparation",
       "remindersHelp": "Recevez un rappel de 30 minutes à J-7 et J-1 avant chacune de vos dates de cour, dans un agenda séparé « Lex Portail ». Le rappel indique la sorte de date et le numéro du dossier, jamais le nom du client. Il est affiché « disponible ».",
+      "remindersConsent": "En mode réel, activer les rappels vous renvoie chez Microsoft pour autoriser l'écriture dans votre agenda. La plateforme n'écrit que dans l'agenda « Lex Portail », jamais dans vos autres rendez-vous.",
       "remindersOn": "Rappels activés",
       "remindersOff": "Rappels désactivés",
       "remindersEnable": "Activer les rappels",
@@ -1643,6 +1643,7 @@
         "remindersOn": "Rappels activés : ils apparaissent dans l'agenda « Lex Portail ».",
         "remindersOff": "Rappels retirés de votre agenda.",
         "unavailable": "La connexion à Outlook n'est pas encore disponible.",
+        "wrongAccount": "Le compte Microsoft choisi n'est pas le vôtre. Reconnectez votre agenda en choisissant votre propre compte du cabinet.",
         "failed": "L'opération n'a pas abouti. Réessayez dans un instant."
       }
     },

@@ -1344,6 +1344,9 @@ isOneToOne: false
 "calendar_store_busy":
 { Args: { "p_blocks": Json,"p_from": string,"p_to": string,"p_user": string }; Returns: number
                            },
+"calendar_update_tokens":
+{ Args: { "p_payload": string,"p_user": string }; Returns: boolean
+                           },
 "claim_court_date_reminder":
 { Args: { "p_court_date": string,"p_kind": string,"p_user": string }; Returns: boolean
                            },

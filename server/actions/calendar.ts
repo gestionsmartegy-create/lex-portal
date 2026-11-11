@@ -8,6 +8,7 @@ import { hitRateLimit } from "@/server/security/rate-limit";
 import {
   connectMyCalendar,
   disconnectCalendar,
+  outlookMode,
   setMyReminders,
   syncMyCalendar,
 } from "@/server/services/calendar-connections";
@@ -31,6 +32,8 @@ export async function connectCalendarAction(formData: FormData): Promise<void> {
   const locale = localeSchema.catch("en").parse(formData.get("locale"));
   const { profile } = await requireStaff(locale);
   if (!(await hitRateLimit(`calendar_sync:user:${profile.id}`, SYNC_RULE))) toMyCalendar(locale, "failed");
+  // Mode réel : la connexion se fait chez Microsoft (la route revérifie la session et le rôle).
+  if (outlookMode() === "live") redirect(`/api/integrations/outlook/connect?locale=${locale}`);
   const r = await connectMyCalendar();
   toMyCalendar(locale, r.ok ? "connected" : r.code === "NOT_AVAILABLE" ? "unavailable" : "failed");
 }
@@ -51,6 +54,9 @@ export async function remindersAction(formData: FormData): Promise<void> {
   if (!parsed.success) toMyCalendar(locale, "failed");
   const enabled = parsed.data.enabled === "true";
   const r = await setMyReminders(enabled);
+  // Permission manquante : retour chez Microsoft pour l'accorder, puis les rappels s'activent.
+  if (!r.ok && r.code === "NEEDS_CONSENT")
+    redirect(`/api/integrations/outlook/connect?locale=${locale}&reminders=1`);
   toMyCalendar(locale, r.ok ? (enabled ? "remindersOn" : "remindersOff") : "failed");
 }
 
