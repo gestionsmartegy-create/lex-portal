@@ -22,6 +22,7 @@ const NOTICES = [
   "remindersOn",
   "remindersOff",
   "unavailable",
+  "wrongAccount",
   "failed",
 ] as const;
 
@@ -45,7 +46,7 @@ export default async function MyCalendarPage({
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
       <Notice
         message={notice ? t(`notices.${notice}`) : undefined}
-        error={notice === "failed" || notice === "unavailable"}
+        error={notice === "failed" || notice === "unavailable" || notice === "wrongAccount"}
       />
       <div className="grid gap-6 lg:grid-cols-5">
         <SectionCard title={t("outlook")} className="lg:col-span-3">
@@ -70,16 +71,12 @@ export default async function MyCalendarPage({
             {connection?.status === "needs_reconnect" ? <InfoNote>{t("reconnectHelp")}</InfoNote> : null}
             <div className="flex flex-wrap gap-3">
               {!connection || connection.status === "needs_reconnect" ? (
-                mock ? (
-                  <form action={connectCalendarAction}>
-                    {hidden}
-                    <Button type="submit" variant="primary" size="brand">
-                      {connection ? t("reconnect") : t("connect")}
-                    </Button>
-                  </form>
-                ) : (
-                  <InfoNote>{t("liveUnavailable")}</InfoNote>
-                )
+                <form action={connectCalendarAction}>
+                  {hidden}
+                  <Button type="submit" variant="primary" size="brand">
+                    {connection ? t("reconnect") : t("connect")}
+                  </Button>
+                </form>
               ) : (
                 <form action={syncCalendarAction}>
                   {hidden}
@@ -120,6 +117,9 @@ export default async function MyCalendarPage({
         {connection?.status === "connected" ? (
           <SectionCard title={t("remindersTitle")} className="lg:col-span-5">
             <p className="mb-3 text-sm text-ink-muted">{t("remindersHelp")}</p>
+            {!mock && !connection.remindersEnabled ? (
+              <p className="mb-3 text-sm text-ink-muted">{t("remindersConsent")}</p>
+            ) : null}
             <form action={remindersAction} className="flex flex-wrap items-center gap-3">
               {hidden}
               <input type="hidden" name="enabled" value={connection.remindersEnabled ? "false" : "true"} />

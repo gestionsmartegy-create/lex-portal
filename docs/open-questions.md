@@ -131,7 +131,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Question | Pourquoi c'est important | Priorité |
 |---|---|---|
 | ~~Importer les dates de cour saisies directement dans Clio ?~~ | ✅ **Oui, celles dont le type d'événement Clio est « Cour » / « Court »** (responsable du projet, 2026-10-28, ADR 0038). Les autres rendez-vous restent importables à la main depuis l'onglet « Cour » du dossier. | Moyenne |
-| **Accès Microsoft 365 pour les agendas Outlook** : enregistrement de l'application par l'administrateur du cabinet (`docs/outlook-integration.md`) | Sans lui, les agendas restent en simulateur (données fictives) | Moyenne |
+| ~~Accès Microsoft 365 pour les agendas Outlook~~ | ✅ **Application « Lex Portail — Agendas » enregistrée le 2026-11-10** (ADR 0043, `docs/outlook-integration.md` §8). Reste le secret et le premier essai réel | — |
 | **Date changée dans Clio et visible du client** : faut-il la masquer au client tant qu'un avocat ne l'a pas reconfirmée ? Aujourd'hui, le client voit la nouvelle heure, marquée « à confirmer » | Évite d'annoncer au client une heure saisie par erreur dans Clio | Moyenne |
 | Rappels de préparation : **J-7 et J-1** vous conviennent-ils ? Faut-il d'autres échéances (J-30 pour un procès) ? | Valeurs par défaut posées par le plan (E12) ; facile à changer | Faible |
 

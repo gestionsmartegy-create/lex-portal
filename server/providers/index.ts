@@ -7,6 +7,7 @@ import type { DocumentStore } from "./sharepoint/gateway";
 import { VaultTokenStore } from "./tokens/vault-store";
 import { MockDocumentStore } from "./sharepoint/mock";
 import type { OutlookCalendarGateway } from "./outlook/gateway";
+import { GraphOutlookCalendarGateway } from "./outlook/client";
 import { MockOutlookCalendarGateway } from "./outlook/mock";
 import type { AiDraftingGateway } from "./ai/gateway";
 import { MockAiDraftingGateway } from "./ai/mock";
@@ -50,17 +51,16 @@ export function getClioTokenStore() {
 }
 
 /**
- * Agendas Outlook du personnel (lot 4, ADR 0031) : simulateur seulement. L'implémentation Microsoft Graph
- * attend l'enregistrement de l'application par le cabinet (docs/outlook-integration.md) : « live » échoue.
+ * Agendas Outlook du personnel (ADR 0031, 0043) : Microsoft Graph (mode live, permissions déléguées,
+ * jetons par personne dans Supabase Vault) ou simulateur (mock, agenda fictif).
  */
 let outlook: OutlookCalendarGateway | undefined;
 
 export function getOutlookGateway(): OutlookCalendarGateway {
-  if (serverEnv().INTEGRATION_MODE_OUTLOOK === "live")
-    throw new Error(
-      "OutlookCalendarGateway réel non disponible avant l'accès Microsoft du cabinet (ADR 0031).",
-    );
-  outlook ??= new MockOutlookCalendarGateway();
+  outlook ??=
+    serverEnv().INTEGRATION_MODE_OUTLOOK === "live"
+      ? new GraphOutlookCalendarGateway()
+      : new MockOutlookCalendarGateway();
   return outlook;
 }
 

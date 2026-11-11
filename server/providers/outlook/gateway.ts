@@ -6,8 +6,8 @@ import type { BusyBlock, ReminderEventInput } from "./schemas";
  * Lecture : plages OCCUPÉES seulement (début, fin), jamais le titre, le lieu ni les participants.
  * Écriture : rappels de préparation dans un agenda séparé « Lex Portail », jamais les dates de cour
  * elles-mêmes (Clio les recopie déjà dans Outlook : pas de doublon).
- * Implémentations : MockOutlookCalendarGateway (simulateur). L'implémentation réelle (Microsoft Graph)
- * attend l'enregistrement de l'application par le cabinet (docs/outlook-integration.md).
+ * Implémentations : MockOutlookCalendarGateway (simulateur) et GraphOutlookCalendarGateway
+ * (Microsoft Graph, ADR 0043), choisies par INTEGRATION_MODE_OUTLOOK.
  */
 export interface OutlookCalendarGateway {
   readonly isMock: boolean;

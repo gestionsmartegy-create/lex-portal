@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 
 const integrationMode = z.enum(["mock", "live"]).default("mock");
+const emptyAsUndefined = (value: unknown) => (value === "" ? undefined : value);
 
 /**
  * Variables serveur, validées au premier accès. Les secrets (clé service_role,
@@ -28,7 +29,7 @@ const schema = z
     INTEGRATION_MODE_SIGNATURE: integrationMode,
     INTEGRATION_MODE_PAYMENTS: integrationMode,
     INTEGRATION_MODE_MALWARE: integrationMode,
-    // Agendas Outlook du personnel (lot 4, ADR 0031) : « live » indisponible avant l'accès Microsoft du cabinet.
+    // Agendas Outlook du personnel (ADR 0031, 0043) : « live » = Microsoft Graph, avec les OUTLOOK_* ci-dessous.
     INTEGRATION_MODE_OUTLOOK: integrationMode,
     // Assistant de rédaction (contrats, ADR 0032) : « live » (OpenAI) indisponible avant les décisions du cabinet.
     INTEGRATION_MODE_AI: integrationMode,
@@ -37,6 +38,11 @@ const schema = z
     // Clio Manage, région CA (Phase 2, ADR 0014) : requis seulement si INTEGRATION_MODE_CLIO=live.
     CLIO_CLIENT_ID: z.string().min(1).optional(),
     CLIO_CLIENT_SECRET: z.string().min(1).optional(),
+    // Agendas Outlook réels (ADR 0043) : requis seulement si INTEGRATION_MODE_OUTLOOK=live.
+    // Une variable laissée vide (« OUTLOOK_TENANT_ID= ») vaut « absente ».
+    OUTLOOK_TENANT_ID: z.preprocess(emptyAsUndefined, z.uuid().optional()),
+    OUTLOOK_CLIENT_ID: z.preprocess(emptyAsUndefined, z.uuid().optional()),
+    OUTLOOK_CLIENT_SECRET: z.preprocess(emptyAsUndefined, z.string().min(1).optional()),
     // Serveur de TEST uniquement (ADR 0016) : autorise la connexion de démonstration du personnel
     // (*.test, mot de passe). Jamais en production : le domaine *.test n'y existe pas en base.
     STAFF_DEMO_LOGIN: z.enum(["enabled", "disabled"]).default("disabled"),
@@ -45,6 +51,12 @@ const schema = z
   .refine((e) => e.INTEGRATION_MODE_CLIO !== "live" || Boolean(e.CLIO_CLIENT_ID && e.CLIO_CLIENT_SECRET), {
     message: "CLIO_CLIENT_ID et CLIO_CLIENT_SECRET sont requis en mode live",
   })
+  .refine(
+    (e) =>
+      e.INTEGRATION_MODE_OUTLOOK !== "live" ||
+      Boolean(e.OUTLOOK_TENANT_ID && e.OUTLOOK_CLIENT_ID && e.OUTLOOK_CLIENT_SECRET),
+    { message: "OUTLOOK_TENANT_ID, OUTLOOK_CLIENT_ID et OUTLOOK_CLIENT_SECRET sont requis en mode live" },
+  )
   // Liens d'invitation et de réinitialisation : jamais « localhost » en production (revue J3, F1).
   .refine((e) => e.NODE_ENV !== "production" || Boolean(process.env.APP_BASE_URL), {
     message: "APP_BASE_URL est obligatoire en production",
