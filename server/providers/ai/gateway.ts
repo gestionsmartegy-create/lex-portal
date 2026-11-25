@@ -4,8 +4,8 @@ import "server-only";
  * AiDraftingGateway (ADR 0032, plan des contrats lot 5) — aide à la rédaction d'une section.
  * Règles : appelée par le serveur seulement ; le texte reçu est DÉJÀ masqué (aucune coordonnée du
  * client) ; la réponse est une proposition, jamais écrite sans validation de l'avocat ; rien n'est
- * journalisé de son contenu. Implémentations : MockAiDraftingGateway (simulateur). L'implémentation
- * OpenAI attend les décisions du cabinet (docs/plan-contrats.md §6).
+ * journalisé de son contenu. Implémentations : MockAiDraftingGateway (simulateur) et
+ * OpenAiDraftingGateway (client.ts, ADR 0044).
  */
 export const aiAssistKinds = ["draft", "rephrase", "simplify", "translate"] as const;
 export type AiAssistKind = (typeof aiAssistKinds)[number];

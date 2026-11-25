@@ -31,7 +31,7 @@ const schema = z
     INTEGRATION_MODE_MALWARE: integrationMode,
     // Agendas Outlook du personnel (ADR 0031, 0043) : « live » = Microsoft Graph, avec les OUTLOOK_* ci-dessous.
     INTEGRATION_MODE_OUTLOOK: integrationMode,
-    // Assistant de rédaction (contrats, ADR 0032) : « live » (OpenAI) indisponible avant les décisions du cabinet.
+    // Assistant de rédaction (contrats, ADR 0032, 0044) : « live » = OpenAI, avec les OPENAI_* ci-dessous.
     INTEGRATION_MODE_AI: integrationMode,
     // Nombre de proxys de confiance devant l'application (revue J3, M2) : l'IP du client
     // est lue à droite de x-forwarded-for, en sautant ce nombre de proxys.
@@ -43,6 +43,16 @@ const schema = z
     OUTLOOK_TENANT_ID: z.preprocess(emptyAsUndefined, z.uuid().optional()),
     OUTLOOK_CLIENT_ID: z.preprocess(emptyAsUndefined, z.uuid().optional()),
     OUTLOOK_CLIENT_SECRET: z.preprocess(emptyAsUndefined, z.string().min(1).optional()),
+    // OpenAI (ADR 0044) : clé requise seulement si INTEGRATION_MODE_AI=live ; saisie par le cabinet, jamais
+    // dans le dépôt ni dans un log. Modèle modifiable sans toucher au code.
+    OPENAI_API_KEY: z.preprocess(emptyAsUndefined, z.string().min(20).optional()),
+    OPENAI_MODEL: z.preprocess(
+      emptyAsUndefined,
+      z
+        .string()
+        .regex(/^[A-Za-z0-9._:-]{1,100}$/)
+        .default("gpt-5-mini"),
+    ),
     // Serveur de TEST uniquement (ADR 0016) : autorise la connexion de démonstration du personnel
     // (*.test, mot de passe). Jamais en production : le domaine *.test n'y existe pas en base.
     STAFF_DEMO_LOGIN: z.enum(["enabled", "disabled"]).default("disabled"),
@@ -57,6 +67,9 @@ const schema = z
       Boolean(e.OUTLOOK_TENANT_ID && e.OUTLOOK_CLIENT_ID && e.OUTLOOK_CLIENT_SECRET),
     { message: "OUTLOOK_TENANT_ID, OUTLOOK_CLIENT_ID et OUTLOOK_CLIENT_SECRET sont requis en mode live" },
   )
+  .refine((e) => e.INTEGRATION_MODE_AI !== "live" || Boolean(e.OPENAI_API_KEY), {
+    message: "OPENAI_API_KEY est requis en mode live",
+  })
   // Liens d'invitation et de réinitialisation : jamais « localhost » en production (revue J3, F1).
   .refine((e) => e.NODE_ENV !== "production" || Boolean(process.env.APP_BASE_URL), {
     message: "APP_BASE_URL est obligatoire en production",
