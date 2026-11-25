@@ -48,10 +48,13 @@ export async function CourtTab({
   locale,
   matterId,
   team,
+  busyId,
 }: {
   locale: string;
   matterId: string;
   team: { id: string; name: string }[];
+  /** Date dont la confirmation a été arrêtée par un conflit Outlook : propose « Confirmer quand même ». */
+  busyId?: string;
 }) {
   const [t, tOffices, dates, courts, defaultTz, clio] = await Promise.all([
     getTranslations("admin.court"),
@@ -341,6 +344,23 @@ export async function CourtTab({
               <p className="text-xs text-ink-muted">{t("cancelReasonValue", { reason: d.cancel_reason })}</p>
             ) : null}
             {d.visible_to_client ? <p className="text-xs text-ink-muted">{t("visibleValue")}</p> : null}
+            {d.id === busyId && d.status === "scheduled" ? (
+              <div
+                role="alert"
+                className="mt-2 space-y-2 rounded-[2px] border border-danger-ink/30 bg-danger-ink/5 p-3"
+              >
+                <p className="text-sm font-medium text-danger-ink">{t("busyWarning")}</p>
+                <form action={courtDateStatusAction}>
+                  {hidden}
+                  <input type="hidden" name="id" value={d.id} />
+                  <input type="hidden" name="status" value="confirmed" />
+                  <input type="hidden" name="override" value="1" />
+                  <Button type="submit" variant="outline" size="sm" className="h-9">
+                    {t("confirmAnyway")}
+                  </Button>
+                </form>
+              </div>
+            ) : null}
             <p
               className={
                 d.clio_sync_status === "failed"

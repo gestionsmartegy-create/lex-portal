@@ -78,6 +78,8 @@ const NOTICES = [
   "tagsSaved",
   "officeSaved",
   "courtSaved",
+  "courtSavedBusy",
+  "courtBusyConflict",
   "courtConfirmed",
   "courtHeld",
   "courtCancelled",
@@ -88,6 +90,7 @@ const NOTICES = [
   "invalid",
   "failed",
 ] as const;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ROLES = ["responsible", "originating", "collaborator", "assistant"] as const;
 
 const fieldClass =
@@ -196,6 +199,11 @@ export default async function MatterWorkspacePage({
   const isAdmin = role === "firm_admin";
   const today = new Date().toISOString().slice(0, 10);
   const notice = NOTICES.find((n) => n === sp.notice);
+  // Date en conflit avec Outlook, en attente de « Confirmer quand même » (uuid seulement).
+  const busyId =
+    notice === "courtBusyConflict" && typeof sp.busy === "string" && UUID_RE.test(sp.busy)
+      ? sp.busy
+      : undefined;
   const PARTS = ["steps", "team", "access", "requests", "deliverables", "office"] as const;
   const partial =
     typeof sp.partial === "string"
@@ -268,6 +276,7 @@ export default async function MatterWorkspacePage({
           notice === "duplicate" ||
           notice === "invalid" ||
           notice === "courtInvalid" ||
+          notice === "courtBusyConflict" ||
           partial.length > 0
         }
       />
@@ -779,6 +788,7 @@ export default async function MatterWorkspacePage({
         <CourtTab
           locale={locale}
           matterId={matter.id}
+          busyId={busyId}
           team={team.filter((m) => m.person).map((m) => ({ id: m.user_id, name: personName(m.person!) }))}
         />
       ) : null}

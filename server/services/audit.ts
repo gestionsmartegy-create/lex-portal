@@ -39,6 +39,7 @@ export type AuditAction =
   | "staff.provisioned"
   | "court_date.clio_written"
   | "court_date.clio_deleted"
+  | "court_date.confirmed_despite_conflict"
   | "contract.ai_assisted";
 
 type AuditInput = {
