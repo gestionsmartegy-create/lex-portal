@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { DEFAULT_TIMEZONE } from "@/lib/format";
 import { formatZoned, zonedToUtc } from "@/lib/zoned-time";
-import { getSessionRole } from "@/server/auth/session";
+import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { createSupabaseServiceClient } from "@/server/db/service-client";
 import { getClioGateway } from "@/server/providers";
@@ -61,8 +61,10 @@ export type CourtDate = {
 const COLUMNS =
   "id, matter_id, kind, starts_at, ends_at, all_day, timezone, court_id, room, judge, docket_number, mode, virtual_link, notes, client_instructions, visible_to_client, status, confirmed_by, confirmed_at, replaces_id, cancel_reason, clio_sync_status, clio_synced_at";
 
-type Result = { ok: true; id?: string } | { ok: false; code: "NOT_FOUND" | "FAILED" | "INVALID" | "CLOSED" };
-const fail = (code: "NOT_FOUND" | "FAILED" | "INVALID" | "CLOSED" = "FAILED"): Result => ({
+type FailCode = "NOT_FOUND" | "FAILED" | "INVALID" | "CLOSED" | "BUSY_CONFLICT";
+/** `busy` : un avocat présent est occupé dans Outlook à cette heure-là (avertissement, jamais bloquant à l'enregistrement). */
+type Result = { ok: true; id?: string; busy?: boolean } | { ok: false; code: FailCode };
+const fail = (code: FailCode = "FAILED"): Result => ({
   ok: false,
   code,
 });
@@ -220,6 +222,33 @@ async function loadForWrite(id: string) {
   return data;
 }
 
+/**
+ * Conflit avec l'agenda Outlook d'un avocat présent (ADR 0031, correctif du 2026-11-25) : les agendas
+ * connectés des présents sont relus d'abord (la synchronisation planifiée peut dater de la veille), puis
+ * la base compare (court_date_busy_conflicts, mêmes règles que le calendrier de cour). Un échec de
+ * relecture n'empêche rien : la comparaison se fait alors avec les plages déjà connues.
+ */
+async function hasBusyConflict(id: string): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  const { data: cd } = await supabase
+    .from("court_dates")
+    .select("starts_at, court_date_attendees(user_id)")
+    .eq("id", id)
+    .maybeSingle();
+  if (!cd) return false;
+  const attendees = (cd.court_date_attendees as unknown as { user_id: string }[]).map((a) => a.user_id);
+  if (!attendees.length) return false;
+  // Import différé : calendar-connections importe déjà ce module (pas de dépendance circulaire au chargement).
+  const { refreshBusyBlocksFor } = await import("@/server/services/calendar-connections");
+  await refreshBusyBlocksFor(attendees).catch(() => undefined);
+  const start = Date.parse(cd.starts_at);
+  const { data } = await supabase.rpc("court_date_busy_conflicts", {
+    p_from: new Date(start - 1000).toISOString(),
+    p_to: new Date(start + 1000).toISOString(),
+  });
+  return (data ?? []).some((c) => c.court_date_id === id);
+}
+
 export async function createCourtDate(
   matterId: string,
   input: CourtDateInput,
@@ -241,7 +270,7 @@ export async function createCourtDate(
   // Avis au client si la date lui est visible (le notificateur le revérifie).
   await notifyCourtDateChange(data.id, replacesId ? "moved" : "added");
   if (!attendeesOk) return fail();
-  return { ok: true, id: data.id };
+  return { ok: true, id: data.id, busy: await hasBusyConflict(data.id) };
 }
 
 export async function updateCourtDate(id: string, input: CourtDateInput): Promise<Result> {
@@ -270,7 +299,7 @@ export async function updateCourtDate(id: string, input: CourtDateInput): Promis
       Date.parse(row.starts_at) !== Date.parse(current.starts_at) ? "moved" : "changed",
     );
   if (!attendeesOk) return fail();
-  return { ok: true, id };
+  return { ok: true, id, busy: await hasBusyConflict(id) };
 }
 
 /** Changement de statut : confirmer (avocat de l'équipe), tenue, annulée (motif obligatoire). */
@@ -278,17 +307,35 @@ export async function setCourtDateStatus(
   id: string,
   status: "confirmed" | "held" | "cancelled",
   reason = "",
+  options: { confirmDespiteConflict?: boolean } = {},
 ): Promise<Result> {
   const current = await loadForWrite(id);
   if (!current) return fail("NOT_FOUND");
   if (current.status !== "scheduled" && current.status !== "confirmed") return fail("CLOSED");
   if (status === "cancelled" && !reason.trim()) return fail("INVALID");
+  // Confirmation : un avocat présent occupé dans Outlook demande « Confirmer quand même » (choix journalisé).
+  let overridden = false;
+  if (status === "confirmed" && current.status === "scheduled" && (await hasBusyConflict(id))) {
+    if (!options.confirmDespiteConflict) return fail("BUSY_CONFLICT");
+    overridden = true;
+  }
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("court_dates")
     .update({ status, cancel_reason: status === "cancelled" ? reason.trim() : null })
     .eq("id", id);
   if (error) return fail();
+  if (overridden) {
+    const user = await getUser();
+    await recordAudit({
+      action: "court_date.confirmed_despite_conflict",
+      resourceType: "court_date",
+      resourceId: id,
+      matterId: current.matter_id,
+      actorId: user?.id ?? null,
+      metadata: { source: "outlook_busy" },
+    });
+  }
   await syncCourtDateToClio(id);
   if (status === "cancelled") await notifyCourtDateChange(id, "cancelled");
   return { ok: true, id };

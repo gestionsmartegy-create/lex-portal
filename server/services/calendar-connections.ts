@@ -204,7 +204,7 @@ async function syncCalendarOf(userId: string): Promise<boolean> {
   return syncConnection(conn);
 }
 
-async function syncConnection(conn: SyncConnection): Promise<boolean> {
+async function syncConnection(conn: SyncConnection, withReminders = true): Promise<boolean> {
   const admin = createSupabaseServiceClient();
   const report = async (code: string) => {
     console.error(JSON.stringify({ event: "calendar_sync_failed", code }));
@@ -228,7 +228,7 @@ async function syncConnection(conn: SyncConnection): Promise<boolean> {
       p_blocks: blocks.slice(0, 1000),
     });
     if (error) return report("STORE_FAILED");
-    await syncReminders(conn);
+    if (withReminders) await syncReminders(conn);
     return true;
   } catch (error) {
     return report(error instanceof OutlookError ? error.code : "UPSTREAM");
@@ -277,6 +277,29 @@ async function syncReminders(conn: SyncConnection) {
       p_starts: start.toISOString(),
     });
   }
+}
+
+/** Dernière relecture « à la demande » par personne (ce processus) : évite les appels Graph répétés. */
+const lastOnDemand = new Map<string, number>();
+const ON_DEMAND_MIN_INTERVAL_MS = 2 * 60_000;
+
+/**
+ * Relecture immédiate des plages occupées de quelques personnes (avocats présents à une date de cour),
+ * avant de vérifier un conflit (correctif du 2026-11-25). Plages seulement, sans les rappels ; une
+ * personne relue il y a moins de 2 minutes ou sans agenda connecté est ignorée ; au plus 20 personnes.
+ * service_role : synchronisation (AGENTS.md §6), après le contrôle de la session du personnel.
+ */
+export async function refreshBusyBlocksFor(userIds: string[]): Promise<void> {
+  if (!(await staffSession())) return;
+  const now = Date.now();
+  const wanted = new Set(
+    userIds.slice(0, 20).filter((id) => now - (lastOnDemand.get(id) ?? 0) >= ON_DEMAND_MIN_INTERVAL_MS),
+  );
+  if (!wanted.size) return;
+  const { data } = await createSupabaseServiceClient().rpc("calendar_connections_for_sync");
+  const targets = (data ?? []).filter((c) => wanted.has(c.user_id));
+  for (const c of targets) lastOnDemand.set(c.user_id, now);
+  await Promise.all(targets.map((c) => syncConnection(c, false)));
 }
 
 /** Planificateur : toutes les connexions actives (les plus anciennes d'abord). */

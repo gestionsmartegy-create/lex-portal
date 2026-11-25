@@ -21,6 +21,8 @@ import { localeSchema } from "@/server/validation/auth";
  */
 type Notice =
   | "courtSaved"
+  | "courtSavedBusy"
+  | "courtBusyConflict"
   | "courtConfirmed"
   | "courtHeld"
   | "courtCancelled"
@@ -29,8 +31,10 @@ type Notice =
   | "clioImported"
   | "failed";
 
-function back(locale: string, matterId: string, notice: Notice): never {
-  redirect(`/${locale}/admin/matters/${matterId}?tab=court&notice=${notice}`);
+function back(locale: string, matterId: string, notice: Notice, busyId?: string): never {
+  // busyId : date en conflit avec Outlook, pour afficher « Confirmer quand même » à côté (uuid validé).
+  const busy = busyId ? `&busy=${busyId}` : "";
+  redirect(`/${locale}/admin/matters/${matterId}?tab=court&notice=${notice}${busy}`);
 }
 
 const ctx = z.object({ locale: localeSchema, matterId: z.uuid() });
@@ -65,7 +69,8 @@ export async function saveCourtDateAction(formData: FormData): Promise<void> {
   const input = readInput(formData);
   if (!input.success) back(locale, matterId, "courtInvalid");
   const r = id ? await updateCourtDate(id, input.data) : await createCourtDate(matterId, input.data);
-  back(locale, matterId, r.ok ? "courtSaved" : r.code === "INVALID" ? "courtInvalid" : "failed");
+  if (r.ok) back(locale, matterId, r.busy ? "courtSavedBusy" : "courtSaved");
+  back(locale, matterId, r.code === "INVALID" ? "courtInvalid" : "failed");
 }
 
 export async function adjournCourtDateAction(formData: FormData): Promise<void> {
@@ -74,7 +79,8 @@ export async function adjournCourtDateAction(formData: FormData): Promise<void> 
   const input = readInput(formData);
   if (!id.success || !input.success) back(locale, matterId, "courtInvalid");
   const r = await adjournCourtDate(id.data, input.data);
-  back(locale, matterId, r.ok ? "courtAdjourned" : r.code === "INVALID" ? "courtInvalid" : "failed");
+  if (r.ok) back(locale, matterId, r.busy ? "courtSavedBusy" : "courtAdjourned");
+  back(locale, matterId, r.code === "INVALID" ? "courtInvalid" : "failed");
 }
 
 export async function courtDateStatusAction(formData: FormData): Promise<void> {
@@ -84,10 +90,15 @@ export async function courtDateStatusAction(formData: FormData): Promise<void> {
       id: z.uuid(),
       status: z.enum(["confirmed", "held", "cancelled"]),
       reason: z.string().trim().max(500).default(""),
+      // « Confirmer quand même » malgré un conflit Outlook (choix journalisé par le service).
+      override: z.literal("1").optional(),
     })
     .safeParse(Object.fromEntries(formData));
   if (!parsed.success) back(locale, matterId, "courtInvalid");
-  const r = await setCourtDateStatus(parsed.data.id, parsed.data.status, parsed.data.reason);
+  const r = await setCourtDateStatus(parsed.data.id, parsed.data.status, parsed.data.reason, {
+    confirmDespiteConflict: parsed.data.override === "1",
+  });
+  if (!r.ok && r.code === "BUSY_CONFLICT") back(locale, matterId, "courtBusyConflict", parsed.data.id);
   const ok: Record<typeof parsed.data.status, Notice> = {
     confirmed: "courtConfirmed",
     held: "courtHeld",
