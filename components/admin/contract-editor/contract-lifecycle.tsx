@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Download, RotateCcw, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Download, PenLine, RotateCcw, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { formatDateTime } from "@/lib/format";
@@ -92,6 +92,21 @@ export function ContractLifecycle({
   ) : null;
   // Relance : une par jour au plus (la base le revérifie).
   const canRemind = c.canRemind;
+  // Dépôt Clio de la dernière version (ADR 0045) : fait en arrière-plan juste après la validation.
+  const clioDeposit = deposits.find((d) => d.target === "clio");
+  const depositing = clioDocumentsLive && clioDeposit?.status === "pending";
+  const readyToSign = Boolean(clioMatterUrl) && clioDeposit?.status === "done";
+  // Pendant le dépôt, l'écran se relit tout seul (toutes les 3 s, au plus 1 min) : l'avocat n'a rien
+  // à rafraîchir. Au-delà, le planificateur reprend et l'état se met à jour à la prochaine visite.
+  useEffect(() => {
+    if (!depositing) return;
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      if (Date.now() - started > 60_000) window.clearInterval(timer);
+      else router.refresh();
+    }, 3_000);
+    return () => window.clearInterval(timer);
+  }, [depositing, router]);
 
   return (
     <>
@@ -194,9 +209,24 @@ export function ContractLifecycle({
               </li>
             ))}
           </ul>
+          {readyToSign ? (
+            <p role="status" className="text-sm text-marine">
+              {t("deposits.readyToSign")}
+            </p>
+          ) : null}
           {clioMatterUrl ? (
-            <a href={clioMatterUrl} target="_blank" rel="noopener noreferrer" className={secondary}>
-              {t("deposits.openClio")}
+            <a
+              href={clioMatterUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={
+                readyToSign
+                  ? "inline-flex h-10 w-full items-center justify-center gap-2 rounded-[8px] bg-marine px-4 text-sm font-semibold text-white hover:bg-marine/90 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+                  : secondary
+              }
+            >
+              {readyToSign ? <PenLine aria-hidden className="size-4" /> : null}
+              {t(readyToSign ? "deposits.signInClio" : "deposits.openClio")}
             </a>
           ) : null}
         </section>

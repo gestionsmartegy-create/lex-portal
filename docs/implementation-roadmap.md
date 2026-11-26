@@ -87,7 +87,7 @@ Détail complet : `docs/sharepoint-integration.md`.
 Une fonction à la fois, chacune avec son ADR et ses tests :
 - **Messagerie** : notifications e-mail (sans contenu sensible dans l'e-mail : « Vous avez un nouveau message », avec un lien).
 - **Paiement** : `PaymentProvider` (Clio Payments ou Stripe). Le portail ne voit jamais de numéro de carte (page hébergée chez le fournisseur). Webhook signé et idempotent.
-- **Signature** : `SignatureProvider` (DocuSign) avec webhook Connect signé.
+- **Signature** : dans Clio (option A, 2026-10-15). Le portail dépose le PDF validé dans le dossier Clio dès la validation (ADR 0038, 0045), puis l'avocat lance la signature depuis Clio. Aucun fournisseur de signature à intégrer.
 
 ## Phase 5 — Mise en production
 Audit de sécurité indépendant · AIVP validée · plan de réponse aux incidents · sauvegardes testées (restauration) · monitoring et alertes · domaine `portal.lexcanadalaw.com` (à confirmer) · secrets renouvelés · plan Supabase Pro ou supérieur.

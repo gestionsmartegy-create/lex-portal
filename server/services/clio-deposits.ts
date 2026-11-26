@@ -1,4 +1,5 @@
 import "server-only";
+import { after } from "next/server";
 import { z } from "zod";
 import { getSessionRole } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
@@ -8,8 +9,9 @@ import { ClioError } from "@/server/providers/clio/gateway";
 
 /**
  * Dépôt du contrat validé dans Clio (ADR 0038, F11 partie Clio). La base crée les dépôts à la
- * validation ; le planificateur les traite. service_role : synchronisation (usage permis, AGENTS.md §6),
- * seulement dans pushPendingDeposits. Aucune URL de Clio ni d'Amazon n'est transmise au navigateur.
+ * validation ; ils sont traités aussitôt, en arrière-plan (ADR 0045), puis repris par le planificateur
+ * en cas d'échec. service_role : synchronisation (usage permis, AGENTS.md §6), seulement dans
+ * pushPendingDeposits. Aucune URL de Clio ni d'Amazon n'est transmise au navigateur.
  */
 export type ContractDeposit = {
   id: string;
@@ -50,7 +52,25 @@ export async function retryDeposit(depositId: string) {
     return { ok: false };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("contract_deposit_retry", { p_id: depositId });
+  if (!error) depositInBackground();
   return { ok: !error };
+}
+
+/**
+ * Dépôt immédiat, sans faire attendre l'avocat (ADR 0045) : appelé après une validation ou une relance
+ * réussie, il s'exécute une fois la réponse envoyée. La réservation en base (`for update skip locked`,
+ * prochain essai repoussé) empêche un double dépôt si le planificateur passe en même temps.
+ * Un échec ici n'annule rien : le dépôt reste en file pour le planificateur. Le passage peut aussi
+ * traiter d'autres dépôts déjà dus (au plus 5 en tout), comme le planificateur le ferait.
+ */
+export function depositInBackground() {
+  after(async () => {
+    try {
+      await pushPendingDeposits(5);
+    } catch {
+      console.error(JSON.stringify({ event: "contract_deposits_failed", code: "UNEXPECTED" }));
+    }
+  });
 }
 
 /** Planificateur : dépose les PDF en attente (au plus 10 par passage, délai croissant entre essais). */

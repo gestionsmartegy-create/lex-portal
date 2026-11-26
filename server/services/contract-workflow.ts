@@ -8,6 +8,7 @@ import { getSessionRole, getUser } from "@/server/auth/session";
 import { createSupabaseServerClient } from "@/server/db/server-client";
 import { hitRateLimit } from "@/server/security/rate-limit";
 import { notifyContractSent } from "@/server/services/client-notifier";
+import { depositInBackground } from "@/server/services/clio-deposits";
 import { recordAudit } from "@/server/services/audit";
 import { renderContractDocx } from "@/server/services/contract-docx";
 import { renderContractPdf, type PdfInput } from "@/server/services/contract-pdf";
@@ -108,6 +109,8 @@ export async function validateContract(id: string): Promise<WorkflowResult<strin
     if (error?.message.includes("lawyer only")) return fail("NOT_LAWYER");
     return fail(error?.code === "42501" ? "LOCKED" : "FAILED");
   }
+  // Dépôt dans le dossier Clio tout de suite, en arrière-plan (ADR 0045).
+  depositInBackground();
   return ok(data);
 }
 

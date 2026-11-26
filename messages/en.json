@@ -1933,7 +1933,7 @@
             "sharepoint": "SharePoint"
           },
           "status": {
-            "pending": "being filed",
+            "pending": "filing in Clio…",
             "done": "filed",
             "failed": "failed after several attempts"
           },
@@ -1943,8 +1943,10 @@
             "approval": "waiting for the firm's approval for real filing"
           },
           "retry": "Retry",
-          "retried": "Filing will be retried shortly.",
-          "openClio": "Open the matter in Clio (signature)"
+          "retried": "Filing restarted.",
+          "openClio": "Open the matter in Clio (signature)",
+          "signInClio": "Sign in Clio",
+          "readyToSign": "The contract is filed in the Clio matter: start the signature from Clio."
         }
       },
       "tabs": {

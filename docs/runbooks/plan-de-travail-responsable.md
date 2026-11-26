@@ -28,7 +28,7 @@
 | Antivirus des dépôts (option A ou B) | Dépôt de documents | Phase 3 |
 | Répartition SharePoint / Clio des documents | Source des documents | Phase 3 |
 | Enregistrement Azure « Documents (Graph) » + `Sites.Selected` | Accès SharePoint | Phase 3 |
-| Comptes Clio Payments / Stripe, et DocuSign | Paiement et signature | Phase 4 |
+| Comptes Clio Payments / Stripe | Paiement (la signature se fait dans Clio, ADR 0045) | Phase 4 |
 | Passkeys, CAPTCHA, alerte « nouvelle connexion » | Renforcement de la connexion | Avant la production |
 | Pourquoi un portail sur mesure plutôt que Clio for Clients (à confirmer par écrit) | Justification du projet | Dès que possible |
 
