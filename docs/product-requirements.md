@@ -23,7 +23,7 @@ Portail client sécurisé, bilingue (FR/EN), permettant à un client de Lex Cana
 | Calendrier | Rendez-vous, échéances | Confirmé par la documentation — ressource Calendar Entries / Activities de Clio Manage |
 | Facturation | Factures, soldes, historique | Confirmé par la documentation — ressource Bills de Clio Manage |
 | Paiement | Paiement en ligne | Confirmé par la documentation — Clio Payments est disponible pour les comptes canadiens ; l'intégration API précise au portail reste à valider |
-| Signature | Documents à signer | Non disponible dans Clio (pas de produit de signature natif confirmé) — DocuSign proposé comme hypothèse d'architecture |
+| Signature | Documents à signer | Signature dans Clio (option A, 2026-10-15) : le portail dépose le PDF validé dans le dossier Clio (ADR 0038, 0045) et l'avocat lance la signature depuis Clio |
 | Notifications | In-app, e-mail, SMS (préparé, non activé) | Hypothèse d'architecture — propre au portail (Supabase) |
 | Administration | Association utilisateur↔contact↔dossier, révocation | Hypothèse d'architecture — propre au portail |
 

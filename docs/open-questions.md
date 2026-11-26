@@ -40,7 +40,7 @@
 
 | Question | Conséquence | Priorité |
 |---|---|---|
-| Le cabinet a-t-il déjà un compte DocuSign (ou équivalent) ? | Détermine si la signature électronique peut entrer dans le MVP ou doit être reportée | Moyenne |
+| ~~Le cabinet a-t-il déjà un compte DocuSign (ou équivalent) ?~~ | ✅ Sans objet : signature dans Clio (option A, 2026-10-15) | — |
 
 ## Utilisateurs
 
@@ -78,7 +78,7 @@ Toutes ces questions découlent directement des points marqués « à valider »
 | Qui est le premier firm_admin ? | Personne ne peut inviter de client | Élevée |
 | Taille maximale des fichiers, formats acceptés | Paramètres d'interface (Phase 3) | Moyenne |
 | L'écran « Integrations » de la maquette doit-il exister ? (retiré du portail client, éventuellement dans `/admin`) | Périmètre de l'espace admin | Faible |
-| ~~Fournisseur de signature : DocuSign ou Adobe Sign ?~~ | ✅ **Tranché le 2026-10-01 : DocuSign** (ADR 0005) | — |
+| ~~Fournisseur de signature : DocuSign ou Adobe Sign ?~~ | ✅ Tranché le 2026-10-01 : DocuSign (ADR 0005), **remplacé le 2026-10-15 par la signature dans Clio** (option A) | — |
 | ~~SharePoint : site à créer ou structure existante ?~~ | ✅ **Réponse du 2026-10-01 : les dossiers clients existent déjà dans SharePoint ET dans Clio.** Reste à décrire : l'arborescence SharePoint actuelle (site, bibliothèque, nommage) et le rôle de chacun (voir la question suivante) | Élevée |
 | **Répartition SharePoint / Clio** : quels fichiers vivent dans SharePoint, lesquels dans Clio Documents, et y a-t-il une synchronisation entre les deux (manuelle, intégration Clio, Power Automate) ? Lequel est la référence pour les fichiers **partagés avec le client** ? | Détermine si le portail lit SharePoint seul (ADR 0004) ou les deux sources ; risque de doublons ou de versions divergentes | **Critique** |
 | **Antivirus des dépôts client** : option A (antivirus du portail avant SharePoint) ou option B (Microsoft Defender dans SharePoint) ? — **en cours de validation par le cabinet (2026-10-01)** | Pipeline de téléversement et résidence des fichiers. Bloque seulement la Phase 3 | Élevée |

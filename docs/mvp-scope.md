@@ -17,7 +17,7 @@
 | Audit | MVP indispensable | Exigence de traçabilité dès le premier accès réel à des données Clio |
 | Messagerie bidirectionnelle | Phase 2 (à reporter) | Capacité API non confirmée — nécessite arbitrage |
 | Paiement intégré | Phase 2 (à reporter) | Fournisseur non confirmé |
-| Signature électronique | Phase 2/3 (à reporter) | Aucun produit natif Clio confirmé, dépend d'un compte DocuSign |
+| Signature électronique | Livrée par Clio | Option A (2026-10-15) : dépôt du PDF validé dans le dossier Clio dès la validation (ADR 0045), signature lancée par l'avocat dans Clio |
 | Synchronisation en temps réel (Realtime) | Phase 2 (à reporter) | Non indispensable tant que le volume de dossiers reste faible |
 | Application mobile | À exclure tant que non confirmé | Hors périmètre du cahier des charges actuel |
 | Intelligence artificielle (assistance rédaction, etc.) | À exclure tant que non confirmé | Hors périmètre du portail client, relève du pôle Cognitive AI Platform du mémorandum interne |

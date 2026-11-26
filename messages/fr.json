@@ -1933,7 +1933,7 @@
             "sharepoint": "SharePoint"
           },
           "status": {
-            "pending": "en cours de dépôt",
+            "pending": "dépôt dans Clio en cours…",
             "done": "déposé",
             "failed": "échec après plusieurs essais"
           },
@@ -1943,8 +1943,10 @@
             "approval": "en attente de l'accord du cabinet pour le dépôt réel"
           },
           "retry": "Réessayer",
-          "retried": "Le dépôt sera retenté sous peu.",
-          "openClio": "Ouvrir le dossier dans Clio (signature)"
+          "retried": "Nouveau dépôt lancé.",
+          "openClio": "Ouvrir le dossier dans Clio (signature)",
+          "signInClio": "Signer dans Clio",
+          "readyToSign": "Le contrat est déposé dans le dossier Clio : lancez la signature depuis Clio."
         }
       },
       "tabs": {

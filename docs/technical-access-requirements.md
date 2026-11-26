@@ -45,7 +45,7 @@
 
 | Élément | Fourni par | Utilisé pour | Statut |
 |---|---|---|---|
-| Environnement DocuSign (compte développeur sandbox, puis production ; région Canada si disponible **[À VÉRIFIER]**) | Cabinet | `DocuSignProvider` (fournisseur retenu, ADR 0005) | ⬜ Phase 4 — compte sandbox à créer |
+| ~~Environnement DocuSign~~ | — | Sans objet : signature dans Clio (option A, 2026-10-15 ; ADR 0045) | ✅ Aucun compte à créer |
 
 ## Paiement (si retenu au-delà du MVP)
 

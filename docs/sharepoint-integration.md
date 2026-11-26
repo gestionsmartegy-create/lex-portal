@@ -110,7 +110,7 @@ Stocké uniquement dans `private` : identifiants de site et de dossier, **URL Sh
 4. Journal : `document.downloaded` / `document.previewed`.
 
 ### 5.5 Signature électronique
-Le document à signer est lu dans `01 Partagé`. Le fournisseur (DocuSign ou Adobe Sign, voir open-questions) le fait signer. Le webhook signé du fournisseur déclenche le dépôt du PDF signé dans `03 Signés`, puis `signature_requests.status = signed`.
+La signature se fait dans Clio (option A, 2026-10-15 ; ADR 0045) : le PDF validé est déposé dans le dossier Clio et l'avocat lance la signature depuis Clio. Le rangement du PDF signé dans `03 Signés` reste à définir avec le branchement Microsoft.
 
 ## 6. Robustesse
 

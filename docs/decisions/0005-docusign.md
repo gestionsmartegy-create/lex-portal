@@ -1,6 +1,6 @@
 # ADR 0005 — DocuSign pour la signature électronique
 
-**Statut :** Acceptée (décision du cabinet, 2026-10-01)
+**Statut :** Remplacée le 2026-10-15 par l'option A, **signature dans Clio** (`docs/open-questions.md`, décisions du 2026-10-15 ; parcours décrit dans les ADR 0035, 0038 et 0045). Aucun fournisseur de signature n'est à intégrer. Le texte ci-dessous est conservé pour l'historique.
 **Date :** 2026-10-01
 
 ## Contexte
