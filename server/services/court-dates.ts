@@ -368,6 +368,27 @@ export const KIND_LABEL: Record<CourtDateKind, string> = {
 };
 
 /**
+ * Noms des présents pour l'entrée Clio : liste complète (description) et liste courte pour le titre
+ * (deux noms au plus, puis « +n »). Une seule ligne, sans caractère de contrôle.
+ */
+export function attendeeNames(people: ({ first_name: string | null; last_name: string | null } | null)[]): {
+  full: string;
+  short: string;
+} {
+  const names = people
+    .map((p) =>
+      `${p?.first_name ?? ""} ${p?.last_name ?? ""}`
+        .replace(/[\x00-\x1F\x7F]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim(),
+    )
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, "fr"));
+  const short = names.length > 2 ? `${names.slice(0, 2).join(", ")} +${names.length - 2}` : names.join(", ");
+  return { full: names.join(", "), short };
+}
+
+/**
  * Écrit (ou met à jour, ou retire) l'entrée Clio d'une date de cour.
  * service_role : synchronisation vers Clio (usage permis, AGENTS.md §6) ; appelé seulement après
  * un contrôle d'accès réussi, ou par le planificateur. Jamais de note interne envoyée.
@@ -431,16 +452,33 @@ export async function syncCourtDateToClio(id: string): Promise<ClioSyncStatus | 
     if (!calendarId) return finish("pending");
     const start = cd.starts_at;
     const end = cd.ends_at ?? new Date(new Date(start).getTime() + 3_600_000).toISOString();
+    // Avocats présents, nommés dans l'entrée pour qu'on voie qui y va dans le calendrier général de
+    // Clio (texte seulement : la correspondance avec les comptes Clio n'est pas confirmée).
+    const { data: present } = await admin
+      .from("court_date_attendees")
+      .select("profiles(first_name, last_name)")
+      .eq("court_date_id", id);
+    const attendees = attendeeNames(
+      (present ?? []).map(
+        (a) => a.profiles as unknown as { first_name: string | null; last_name: string | null } | null,
+      ),
+    );
     const input = {
       calendarId: Number(calendarId),
       matterId: Number(matter.clio_matter_id),
-      summary: `[Cour] ${KIND_LABEL[cd.kind as CourtDateKind]} — ${matter.display_number ?? ""}`.trim(),
+      summary: [
+        `[Cour] ${KIND_LABEL[cd.kind as CourtDateKind]} — ${matter.display_number ?? ""}`.trim(),
+        attendees.short,
+      ]
+        .filter(Boolean)
+        .join(" — "),
       description: [
         court ? `Tribunal / Court: ${court.name_fr} / ${court.name_en}` : null,
         cd.room ? `Salle / Room: ${cd.room}` : null,
         cd.judge ? `Juge / Judge: ${cd.judge}` : null,
         cd.docket_number ? `N° de greffe / Court file no.: ${cd.docket_number}` : null,
         cd.mode !== "in_person" && cd.virtual_link ? `Lien / Link: ${cd.virtual_link}` : null,
+        attendees.full ? `Présents / Attending: ${attendees.full}` : null,
         `Heure du tribunal / Court time: ${formatZoned(start, cd.timezone, "fr", cd.all_day)}`,
         `Statut / Status: ${
           cd.status === "confirmed"

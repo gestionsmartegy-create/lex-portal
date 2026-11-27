@@ -5,6 +5,7 @@ import { EmptyState, SectionCard } from "@/components/portal/ui";
 import { HelpTip } from "@/components/shared/help-tip";
 import { StatusBadge, type StatusTone } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { formatZoned, formatZonedTime, utcToZonedInput } from "@/lib/zoned-time";
 import {
   importClioEntryAction,
@@ -257,7 +258,21 @@ export async function CourtTab({
               ))}
             </div>
           </fieldset>
-        ) : null}
+        ) : (
+          // Dossier sans équipe (ex. importé de Clio) : on dit comment choisir les présents, au lieu
+          // de cacher la section.
+          <p className="text-sm text-ink-muted sm:col-span-2">
+            <span className={labelClass}>{t("fields.attendees")}</span>
+            {" · "}
+            {t("noTeamForAttendees")}{" "}
+            <Link
+              href={`/admin/matters/${matterId}?tab=team`}
+              className="font-semibold text-gold-ink underline focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none"
+            >
+              {t("addTeam")}
+            </Link>
+          </p>
+        )}
         <div className="space-y-1 sm:col-span-2">
           <label htmlFor={`${prefix}-notes`} className={labelClass}>
             {t("fields.notes")}

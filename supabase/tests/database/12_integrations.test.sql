@@ -8,10 +8,12 @@ select ok(not has_function_privilege('authenticated', 'public.integration_save_t
 select ok(not has_function_privilege('anon', 'public.integration_status_list()', 'EXECUTE'), 'état des connexions fermé à anon');
 select ok(not has_table_privilege('authenticated', 'private.integration_connections', 'SELECT'), 'table des connexions inaccessible par l''API');
 
-select public.integration_save_tokens('clio_manage', 'ca', '{"access_token":"a1","refresh_token":"r1"}', array['matters'], null);
-select is(public.integration_read_tokens('clio_manage', 'ca'), '{"access_token":"a1","refresh_token":"r1"}', 'jetons relus déchiffrés');
+select public.integration_save_tokens('clio_manage', 'ca', '{"access_token":"plain_access_marker","refresh_token":"r1"}', array['matters'], null);
+select is(public.integration_read_tokens('clio_manage', 'ca'), '{"access_token":"plain_access_marker","refresh_token":"r1"}', 'jetons relus déchiffrés');
 select isnt((select ic.vault_secret_id from private.integration_connections ic where ic.provider = 'clio_manage'), null, 'seule une référence est stockée');
-select is((select count(*)::int from vault.secrets s where s.secret like '%a1%'), 0, 'le secret est chiffré dans le coffre (pas de texte clair)');
+-- Marqueur avec « _ », absent de l'alphabet base64 du texte chiffré : pas de faux positif par hasard
+-- (l'ancien marqueur « a1 » apparaissait parfois dans le chiffré).
+select is((select count(*)::int from vault.secrets s where s.secret like '%plain\_access\_marker%'), 0, 'le secret est chiffré dans le coffre (pas de texte clair)');
 
 select public.integration_save_tokens('clio_manage', 'ca', '{"access_token":"a2","refresh_token":"r2"}', array['matters'], null);
 select is(public.integration_read_tokens('clio_manage', 'ca'), '{"access_token":"a2","refresh_token":"r2"}', 'rafraîchissement : le même secret est mis à jour');

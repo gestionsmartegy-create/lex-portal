@@ -68,14 +68,22 @@ export async function listClioEntriesForMatter(matterId: string) {
   }
   const ids = entries.map((e) => e.id);
   const { data: imported } = ids.length
-    ? await supabase.from("court_dates").select("clio_calendar_entry_id").in("clio_calendar_entry_id", ids)
-    : { data: [] as { clio_calendar_entry_id: string | null }[] };
+    ? await supabase
+        .from("court_dates")
+        .select("clio_calendar_entry_id, source")
+        .in("clio_calendar_entry_id", ids)
+    : { data: [] as { clio_calendar_entry_id: string | null; source: string }[] };
   const known = new Set((imported ?? []).map((r) => r.clio_calendar_entry_id));
+  // Entrées écrites par la plateforme elle-même (dates saisies dans le portail) : déjà affichées dans
+  // « Dates de cour à venir », on ne les repropose pas ici.
+  const ours = new Set(
+    (imported ?? []).filter((r) => r.source === "portal").map((r) => r.clio_calendar_entry_id),
+  );
   const soon = Date.now() - 86_400_000;
   return {
     linked: true as const,
     entries: entries
-      .filter((e) => Date.parse(e.startAt) >= soon)
+      .filter((e) => Date.parse(e.startAt) >= soon && !ours.has(e.id))
       .sort((a, b) => a.startAt.localeCompare(b.startAt))
       .slice(0, 50)
       .map((e) => ({ ...e, imported: known.has(e.id), suggestedKind: courtKindOf(e) })),
