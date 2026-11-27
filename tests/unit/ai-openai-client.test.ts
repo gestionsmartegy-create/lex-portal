@@ -83,6 +83,50 @@ describe("OpenAiDraftingGateway.assist", () => {
     expect(await codeOf(new OpenAiDraftingGateway(KEY, MODEL, impl).assist(input))).toBe(code);
   });
 
+  it("journal de diagnostic : statut et code d'erreur OpenAI, jamais le message ni la clé", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const { impl } = fakeFetch(() =>
+      json(
+        {
+          error: {
+            message: "Incorrect API key provided: sk-...",
+            type: "invalid_request_error",
+            code: "invalid_api_key",
+          },
+        },
+        { status: 401 },
+      ),
+    );
+    await codeOf(new OpenAiDraftingGateway(KEY, MODEL, impl).assist(input));
+    const line = String(log.mock.calls.at(-1)?.[0]);
+    expect(JSON.parse(line)).toEqual({
+      event: "openai_request_failed",
+      status: 401,
+      code: "invalid_api_key",
+    });
+    expect(line).not.toContain("Incorrect");
+    expect(line).not.toContain(KEY);
+    log.mockRestore();
+  });
+
+  it("journal de diagnostic : code inconnu, illisible ou réponse coupée", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const last = () => JSON.parse(String(log.mock.calls.at(-1)?.[0])) as { status: number; code: string };
+    const run = async (handler: () => Response) =>
+      codeOf(new OpenAiDraftingGateway(KEY, MODEL, fakeFetch(handler).impl).assist(input));
+    await run(() => json({ error: { code: "bad code with spaces <script>" } }, { status: 400 }));
+    expect(last()).toEqual(expect.objectContaining({ status: 400, code: "unknown" }));
+    await run(() => json({ error: { code: "sk-proj-abc123def456" } }, { status: 401 }));
+    expect(last()).toEqual(expect.objectContaining({ status: 401, code: "unknown" }));
+    await run(() => new Response("pas du JSON", { status: 404 }));
+    expect(last()).toEqual(expect.objectContaining({ status: 404, code: "unknown" }));
+    await run(() => json({ error: { type: "model_not_found" } }, { status: 404 }));
+    expect(last().code).toBe("model_not_found");
+    await run(() => json({ choices: [{ message: { content: "Coupé" }, finish_reason: "length" }] }));
+    expect(last()).toEqual(expect.objectContaining({ status: 200, code: "length" }));
+    log.mockRestore();
+  });
+
   it("refuse une réponse mal formée, vide, coupée ou un refus du modèle", async () => {
     const cases = [
       () => json({ unexpected: true }),

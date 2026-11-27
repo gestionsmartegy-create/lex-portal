@@ -48,3 +48,11 @@ export const openAiTemplateJsonSchema = {
     },
   },
 } as const;
+
+/** Corps d'erreur d'OpenAI : seuls le code et le type servent au diagnostic (jamais le message). */
+export const openAiErrorSchema = z.object({
+  error: z.object({
+    code: z.string().nullish(),
+    type: z.string().nullish(),
+  }),
+});
