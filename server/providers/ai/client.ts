@@ -7,7 +7,12 @@ import {
   type AiTemplate,
   type AiTemplateInput,
 } from "./gateway";
-import { openAiChatResponseSchema, openAiTemplateJsonSchema, openAiTemplateSchema } from "./schemas";
+import {
+  openAiChatResponseSchema,
+  openAiErrorSchema,
+  openAiTemplateJsonSchema,
+  openAiTemplateSchema,
+} from "./schemas";
 
 /**
  * Assistant de rédaction branché sur OpenAI (ADR 0044), appelé par le serveur seulement.
@@ -134,24 +139,62 @@ export class OpenAiDraftingGateway implements AiDraftingGateway {
         redirect: "error",
         signal: AbortSignal.timeout(options.timeoutMs ?? ASSIST_TIMEOUT_MS),
       });
-    } catch {
+    } catch (e) {
+      logFailure(0, e instanceof Error && e.name === "TimeoutError" ? "timeout" : "network");
       throw new AiError("UPSTREAM");
     }
-    if (res.status === 429 || res.status === 503) throw new AiError("RATE_LIMITED");
-    // 401/403 : clé absente, révoquée ou sans droits ; 400/404 : modèle ou paramètres refusés.
-    if (!res.ok) throw new AiError("UNAVAILABLE");
+    if (!res.ok) {
+      // 401/403 : clé absente, révoquée ou sans droits ; 400/404 : modèle ou paramètres refusés.
+      logFailure(res.status, await openAiErrorCode(res));
+      throw new AiError(res.status === 429 || res.status === 503 ? "RATE_LIMITED" : "UNAVAILABLE");
+    }
     let body: unknown;
     try {
       body = await res.json();
     } catch {
+      logFailure(res.status, "invalid_json");
       throw new AiError("UPSTREAM");
     }
     const parsed = openAiChatResponseSchema.safeParse(body);
-    if (!parsed.success) throw new AiError("UPSTREAM");
+    if (!parsed.success) {
+      logFailure(res.status, "unexpected_shape");
+      throw new AiError("UPSTREAM");
+    }
     const choice = parsed.data.choices[0];
     // Refus du modèle, réponse coupée ou vide : jamais une proposition partielle.
-    if (!choice || choice.message.refusal || choice.finish_reason === "length" || !choice.message.content)
+    if (!choice || choice.message.refusal || choice.finish_reason === "length" || !choice.message.content) {
+      logFailure(
+        res.status,
+        !choice
+          ? "no_choice"
+          : choice.message.refusal
+            ? "refusal"
+            : choice.finish_reason === "length"
+              ? "length"
+              : "empty",
+      );
       throw new AiError("UPSTREAM");
+    }
     return choice.message.content;
+  }
+}
+
+/**
+ * Journal de diagnostic d'un échec OpenAI : statut HTTP et code d'erreur court seulement
+ * (ex. 401 « invalid_api_key », 404 « model_not_found »). Jamais le message, le texte envoyé ni la clé.
+ */
+function logFailure(status: number, code: string) {
+  console.error(JSON.stringify({ event: "openai_request_failed", status, code }));
+}
+
+/** Code d'erreur d'OpenAI (`error.code`, sinon `error.type`), réduit à un identifiant sûr. */
+async function openAiErrorCode(res: Response): Promise<string> {
+  try {
+    const body = openAiErrorSchema.safeParse(await res.json());
+    const raw = body.success ? (body.data.error.code ?? body.data.error.type ?? "") : "";
+    // Identifiant court seulement, et jamais une valeur qui ressemble à une clé (« sk-… »).
+    return /^[a-z0-9_.-]{1,64}$/i.test(raw) && !/sk-/i.test(raw) ? raw : "unknown";
+  } catch {
+    return "unknown";
   }
 }
