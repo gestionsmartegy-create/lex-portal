@@ -158,3 +158,38 @@ test("date de cour : personnel hors équipe sans accès", async ({ page, context
     await staff.cleanup();
   }
 });
+
+test("date de cour : dossier sans équipe, le formulaire dit comment choisir les présents", async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  const admin = serviceClient();
+  const stamp = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  // firm_admin : accède au dossier sans en faire partie (dossier importé de Clio, sans équipe).
+  const staff = await createStaffSession(context, baseURL!, "firm_admin");
+  const { data: matter } = await admin
+    .from("matters")
+    .insert({
+      display_number: `E2E-CRN-${stamp}`,
+      title: `Sans équipe ${stamp}`,
+      status: "open",
+      is_mock: true,
+    })
+    .select("id")
+    .single();
+  try {
+    await page.goto(`/fr/admin/matters/${matter!.id}?tab=court`);
+    await page.getByText("Ajouter une date de cour").click();
+    await expect(
+      page.getByText("Ajoutez d'abord l'équipe du dossier pour choisir les avocats présents."),
+    ).toBeVisible();
+    await expect(page.locator("input[name=attendeeIds]")).toHaveCount(0);
+    await expectAccessible(page);
+    await page.getByRole("link", { name: "Ajouter l'équipe" }).click();
+    await expect(page).toHaveURL(new RegExp(`/fr/admin/matters/${matter!.id}\\?tab=team`));
+  } finally {
+    await admin.from("matters").delete().eq("id", matter!.id);
+    await staff.cleanup();
+  }
+});

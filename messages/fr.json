@@ -891,7 +891,8 @@
         "enabled": "Assistant activé pour le personnel",
         "cap": "Plafond mensuel (CAD)",
         "price": "Coût estimé (cents par 1 000 caractères)",
-        "save": "Enregistrer les réglages"
+        "save": "Enregistrer les réglages",
+        "modeLive": "Mode : OpenAI (réel)."
       }
     },
     "messages": {
@@ -1512,7 +1513,9 @@
         "import": "Importer",
         "importFor": "Importer : {title}",
         "kindFor": "Type de date pour : {title}"
-      }
+      },
+      "noTeamForAttendees": "Ajoutez d'abord l'équipe du dossier pour choisir les avocats présents.",
+      "addTeam": "Ajouter l'équipe"
     },
     "courtCalendar": {
       "title": "Calendrier de cour",

@@ -45,6 +45,8 @@ export default async function IntegrationsPage({
   await requireStaff(locale, ["firm_admin"]);
   const sp = await searchParams;
   const live = serverEnv().INTEGRATION_MODE_CLIO === "live";
+  // Mode réel de l'assistant (ADR 0044) : même variable que le choix de la passerelle.
+  const aiLive = serverEnv().INTEGRATION_MODE_AI === "live";
   const supabase = await createSupabaseServerClient();
   const [t, { data: connections }] = await Promise.all([
     getTranslations("admin.integrations"),
@@ -195,7 +197,7 @@ export default async function IntegrationsPage({
                     tone={aiSettings.enabled ? "active" : "pending"}
                     label={aiSettings.enabled ? t("ai.on") : t("ai.off")}
                   />{" "}
-                  <span className="text-ink-muted">{t("ai.modeMock")}</span>
+                  <span className="text-ink-muted">{t(aiLive ? "ai.modeLive" : "ai.modeMock")}</span>
                 </p>
                 {aiUsage ? (
                   <p>

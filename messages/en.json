@@ -891,7 +891,8 @@
         "enabled": "Assistant on for staff",
         "cap": "Monthly cap (CAD)",
         "price": "Estimated cost (cents per 1,000 characters)",
-        "save": "Save the settings"
+        "save": "Save the settings",
+        "modeLive": "Mode: OpenAI (live)."
       }
     },
     "messages": {
@@ -1512,7 +1513,9 @@
         "import": "Import",
         "importFor": "Import: {title}",
         "kindFor": "Date type for: {title}"
-      }
+      },
+      "noTeamForAttendees": "Add the matter team first to choose the attending lawyers.",
+      "addTeam": "Add the team"
     },
     "courtCalendar": {
       "title": "Court calendar",
